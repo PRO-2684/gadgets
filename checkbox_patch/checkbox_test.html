@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Checkbox patch test</title>
+    </head>
+    <body>
+        <p><a href="https://github.com/PRO-2684/gadgets/tree/main/checkbox_patch">Github repo</a>, licensed under gpl 3.0.</p>
+        <p>Checkbox -> <input type="checkbox"></p>
+        <p>Click to set value <code>checked</code> via script -> <button onclick="setChecked()">CLICK ME</button></p>
+        <p>You will be able to see below when <code>change</code> event is detected.</p>
+        <div id="result"></div>
+        <script>
+            function patch(checkbox) {
+                const { get, set } = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'checked');
+                Object.defineProperty(checkbox, 'checked', {
+                    get() {
+                        return get.call(this);
+                    },
+                    set(newVal) {
+                        this.dispatchEvent(new Event("change"));
+                        return set.call(this, newVal);
+                    }
+                });
+            }
+        </script>
+        <script>
+            let checkbox = document.querySelector('input[type="checkbox"]');
+            patch(checkbox);
+            function setChecked() {
+                checkbox.checked = !checkbox.checked;
+            }
+            checkbox.addEventListener("change", (e) => {
+                console.log(e);
+                let ele = document.createElement("p");
+                ele.innerText = `Change event detected! isTrusted: ${e.isTrusted}; Timestamp: ${e.timeStamp};`;
+                result.appendChild(ele);
+            })
+        </script>
+    </body>
+</html>
