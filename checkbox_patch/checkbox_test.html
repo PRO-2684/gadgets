@@ -10,7 +10,7 @@
         <p>You will be able to see below when <code>change</code> event is detected.</p>
         <div id="result"></div>
         <script>
-            function patch(checkbox) {
+            function checkbox_patch(checkbox) {
                 const { get, set } = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'checked');
                 Object.defineProperty(checkbox, 'checked', {
                     get() {
@@ -25,7 +25,7 @@
         </script>
         <script>
             let checkbox = document.querySelector('input[type="checkbox"]');
-            patch(checkbox);
+            checkbox_patch(checkbox);
             function setChecked() {
                 checkbox.checked = !checkbox.checked;
             }

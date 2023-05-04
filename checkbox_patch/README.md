@@ -8,7 +8,7 @@ You may assume that the checkbox is clicked by a user if the event `isTrusted`, 
 ## 📖 Usage
 ```javascript
 let checkbox = document.querySelector('input[type="checkbox"]'); // Provide the checkbox you'd like to patch
-patch(checkbox); // Feed it into the patch function
+checkbox_patch(checkbox); // Feed it into the patch function
 checkbox.addEventListener("change", (e) => console.log(e)); // Add an event listener to make it work
 // Done! 🥳
 ```

@@ -1,4 +1,4 @@
-function patch(checkbox) {
+function checkbox_patch(checkbox) {
     const { get, set } = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'checked');
     Object.defineProperty(checkbox, 'checked', {
         get() {
