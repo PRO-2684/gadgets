@@ -17,8 +17,9 @@
                         return get.call(this);
                     },
                     set(newVal) {
+                        let ret = set.call(this, newVal);
                         this.dispatchEvent(new Event("change"));
-                        return set.call(this, newVal);
+                        return ret;
                     }
                 });
             }
