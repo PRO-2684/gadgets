@@ -4,6 +4,7 @@ Some code snippets that's hard to categorize. See READMEs under subfolders for d
 
 ## List
 - `checkbox_patch`: Patches the property `checked` of a certain checkbox, so that a `change` event will be issued when the `checked` value is modified by other scripts.
+- `sanitify_header_id`: Sanitify/Sanitize given string (header id) so that it is (hopefully) free of emojis, with its spaces replaced by `-`.
 
 ## README template
 ```markdown
