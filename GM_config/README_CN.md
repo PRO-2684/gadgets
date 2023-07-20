@@ -1,7 +1,10 @@
 # `GM_config`
+
+[![](https://img.shields.io/badge/Crazy%20Thur.-V%20me%2050-red?logo=kfc)](https://greasyfork.org/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaWZvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10e04ed7ed56ae18d22cec6d675b34fd579cecab/wechat.jpeg?locale=zh-CN)
+
 ## 🪄 功能
 
-简易的 Tampermonkey 脚本配置库。 ([Greasy Fork](https://greasyfork.org/scripts/470224))
+简易的 Tampermonkey 脚本配置库。 ([Greasy Fork](https://greasyfork.org/scripts/470224)) ([GitHub](https://github.com/PRO-2684/gadgets/tree/main/GM_config))
 
 ## 🤔 权限
 
