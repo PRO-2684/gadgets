@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.2.3
+// @version      0.3.0
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -13,22 +13,43 @@
 // @grant        GM_unregisterMenuCommand
 // ==/UserScript==
 
+let GM_config_event = `GM_config_${Math.random().toString(36).slice(2)}`;
+function _GM_config_get(config_desc, prop) {
+    return GM_getValue(prop) || config_desc[prop].value;
+}
 let _GM_config_wrapper = {
-    get: function (target, name) {
-        // Return stored value, if any
-        let value = GM_getValue(name);
-        if (value !== undefined) {
-            return value;
-        }
-        // Return default value
-        return target[name].value;
+    get: function (target, prop) {
+        // Return stored value, else default value
+        let value = _GM_config_get(target, prop);
+        // Dispatch get event
+        let event = new CustomEvent(GM_config_event, {
+            detail: {
+                type: "get",
+                prop: prop,
+                before: value,
+                after: value
+            }
+        });
+        window.dispatchEvent(event);
+        return value;
     }
-    , set: function (target, name, value) {
-        let processor = target[name].processor;
+    , set: function (target, prop, value) {
+        let orig = _GM_config_get(target, prop); // Original value
+        let processor = target[prop].processor;
         if (processor)
-            value = target[name].processor(value);
+            value = target[prop].processor(value); // New value
         // Store value
-        GM_setValue(name, value);
+        GM_setValue(prop, value);
+        // Dispatch set event
+        let event = new CustomEvent(GM_config_event, {
+            detail: {
+                type: "set",
+                prop: prop,
+                before: orig,
+                after: value
+            }
+        });
+        window.dispatchEvent(event);
         return true;
     }
 };
@@ -42,7 +63,7 @@ function _GM_config_register(desc, config) {
     for (let k in desc) {
         // console.log(k, v); // DEBUG
         let name = desc[k].name;
-        let val = config[k];
+        let val = _GM_config_get(desc, k);
         let id = GM_registerMenuCommand(`${name}: ${val}`, function () {
             let new_value = prompt(`🤔 New value for ${name}:`, val);
             if (new_value !== null) {
@@ -51,8 +72,6 @@ function _GM_config_register(desc, config) {
                 } catch (error) {
                     alert(`⚠️ ${error}`);
                 }
-                _GM_config_register(desc, config);
-                // console.log(`Set ${k} to ${new_value}`); // DEBUG
             }
         });
         _GM_config_menu_ids.push(id);
@@ -64,6 +83,12 @@ function GM_config(desc) { // Register menu commands based on given config descr
     let config = new Proxy(desc, _GM_config_wrapper);
     // Register menu commands
     _GM_config_register(desc, config);
+    window.addEventListener(GM_config_event, (e) => { // Auto update menu commands
+        if (e.detail.type === "set") {
+            // console.log(`🔧 ${e.detail.prop} changed from ${e.detail.before} to ${e.detail.after}`); // DEBUG
+            _GM_config_register(desc, config);
+        };
+    });
     // Return proxied config
     return config;
 };
