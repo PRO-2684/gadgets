@@ -8,7 +8,7 @@ Simple config lib for Tampermonkey scripts. ([Greasy Fork](https://greasyfork.or
 
 ## 🎉 Features
 
-- Automatically register menu
+- Automatically/Manually register menu
 - Automatically update menu after config modifications (also support those by your script)
 - Support listening for config get, set events
 
@@ -54,7 +54,9 @@ let config_desc = { // *Config description*
     }
 }
 
-let config = GM_config(config_desc); // *Register menu commands*
+let config = GM_config(config_desc, false); // *Register menu commands*
+// The second parameter defaults to `true`, meaning that the configuation menu will be registered automatically
+// If set to `false`, the user need to click `Show configuration` for the configuation menu to be registered
 console.log(config.price); // *Start using config as you wish 🎉*
 window.addEventListener(GM_config_event, (e) => { // *Listen to config changes*
     console.log(config, e.detail);
@@ -112,13 +114,13 @@ Install below code as a script, and see how does it work:
             processor: parseFloat
         }
     }
-    let config = GM_config(config_desc); // Register menu commands
+    let config = GM_config(config_desc, false); // Register menu commands
     window.addEventListener(GM_config_event, (e) => { // Listen to config changes
         console.log(config, e.detail);
     });
     window.setTimeout(() => { // Change config values, and menu commands will be updated automatically
         config.val += 1;
-    }, 2000);
+    }, 5000);
 })();
 ```
 

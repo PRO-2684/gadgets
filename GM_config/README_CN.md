@@ -8,7 +8,7 @@
 
 ## 🎉 特性
 
-- 自动注册菜单
+- 自动/手动注册菜单
 - 配置修改后自动更新菜单（也支持由脚本修改）
 - 支持监听配置获取/修改事件
 
@@ -54,7 +54,9 @@ let config_desc = { // *配置描述*
     }
 }
 
-let config = GM_config(config_desc); // *注册菜单命令*
+let config = GM_config(config_desc, false); // *注册菜单命令*
+// 第二个选项默认为 `true`，表示根据配置描述自动注册配置菜单
+// 若为 `false`，则用户需要点击 `Show configuration` 后才会显示配置菜单
 console.log(config.price); // *可以开始使用了 🎉*
 window.addEventListener(GM_config_event, (e) => { // *监听配置变化*
     console.log(config, e.detail);
@@ -112,13 +114,13 @@ window.addEventListener(GM_config_event, (e) => { // *监听配置变化*
             processor: parseFloat
         }
     }
-    let config = GM_config(config_desc); // Register menu commands
+    let config = GM_config(config_desc, false); // Register menu commands
     window.addEventListener(GM_config_event, (e) => { // Listen to config changes
         console.log(config, e.detail);
     });
     window.setTimeout(() => { // Change config values, and menu commands will be updated automatically
         config.val += 1;
-    }, 2000);
+    }, 5000);
 })();
 ```
 

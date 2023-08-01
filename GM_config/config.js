@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.3.2
+// @version      0.3.3
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -83,14 +83,22 @@ function _GM_config_register(desc, config) {
     }
 };
 
-function GM_config(desc) { // Register menu commands based on given config description
+function GM_config(desc, menu=true) { // Register menu commands based on given config description
     // Get proxied config
     let config = new Proxy(desc, _GM_config_wrapper);
     // Register menu commands
-    _GM_config_register(desc, config);
+    if (menu) {
+        _GM_config_register(desc, config);
+    } else {
+        // Register menu commands after user clicks "Show configuration"
+        let id = GM_registerMenuCommand("Show configuration", function () {
+            GM_unregisterMenuCommand(id);
+            _GM_config_register(desc, config);
+        });
+    }
     window.addEventListener(GM_config_event, (e) => { // Auto update menu commands
         if (e.detail.type === "set" && e.detail.before !== e.detail.after) {
-            console.log(`🔧 ${e.detail.prop} changed from ${e.detail.before} to ${e.detail.after}`); // DEBUG
+            // console.log(`🔧 ${e.detail.prop} changed from ${e.detail.before} to ${e.detail.after}`); // DEBUG
             _GM_config_register(desc, config);
         };
     });
