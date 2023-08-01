@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.3.1
+// @version      0.3.2
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -15,8 +15,8 @@
 
 let GM_config_event = `GM_config_${Math.random().toString(36).slice(2)}`;
 function _GM_config_get(config_desc, prop) {
-    let value = GM_getValue(prop, null);
-    if (value !== null) {
+    let value = GM_getValue(prop, undefined);
+    if (value !== undefined) {
         return value;
     } else {
         return config_desc[prop].value;
