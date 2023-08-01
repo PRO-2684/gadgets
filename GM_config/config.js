@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.3.0
+// @version      0.3.1
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -15,7 +15,12 @@
 
 let GM_config_event = `GM_config_${Math.random().toString(36).slice(2)}`;
 function _GM_config_get(config_desc, prop) {
-    return GM_getValue(prop) || config_desc[prop].value;
+    let value = GM_getValue(prop, null);
+    if (value !== null) {
+        return value;
+    } else {
+        return config_desc[prop].value;
+    }
 }
 let _GM_config_wrapper = {
     get: function (target, prop) {
@@ -84,8 +89,8 @@ function GM_config(desc) { // Register menu commands based on given config descr
     // Register menu commands
     _GM_config_register(desc, config);
     window.addEventListener(GM_config_event, (e) => { // Auto update menu commands
-        if (e.detail.type === "set") {
-            // console.log(`🔧 ${e.detail.prop} changed from ${e.detail.before} to ${e.detail.after}`); // DEBUG
+        if (e.detail.type === "set" && e.detail.before !== e.detail.after) {
+            console.log(`🔧 ${e.detail.prop} changed from ${e.detail.before} to ${e.detail.after}`); // DEBUG
             _GM_config_register(desc, config);
         };
     });
