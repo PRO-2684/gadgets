@@ -6,6 +6,12 @@
 
 Simple config lib for Tampermonkey scripts. ([Greasy Fork](https://greasyfork.org/scripts/470224)) ([GitHub](https://github.com/PRO-2684/gadgets/tree/main/GM_config))
 
+## 🎉 Features
+
+- Automatically register menu
+- Automatically update menu after config modifications (also support those by your script)
+- Support listening for config get, set events
+
 ## 🤔 Permission
 
 This library needs the following permissions to work:
@@ -22,7 +28,7 @@ This library needs the following permissions to work:
 ## 📖 Usage
 
 ```javascript
-let config_desc = { // Config description
+let config_desc = { // *Config description*
     password: {
         name: "Password", // Display name
         value: "tmp", // Default value
@@ -48,8 +54,11 @@ let config_desc = { // Config description
     }
 }
 
-let config = GM_config(config_desc); // Register menu commands
-console.log(config.price); // Start using config as you wish 🎉
+let config = GM_config(config_desc); // *Register menu commands*
+console.log(config.price); // *Start using config as you wish 🎉*
+window.addEventListener(GM_config_event, (e) => { // *Listen to config changes*
+    console.log(config, e.detail);
+});
 ```
 
 ## 📦 Built-in processors
@@ -68,7 +77,7 @@ Install below code as a script, and see how does it work:
 // ==UserScript==
 // @name         Test Config
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  This is an example to demostrate the usage of greasyfork.org/scripts/470224.
 // @author       PRO
 // @match        https://greasyfork.org/*
@@ -104,17 +113,15 @@ Install below code as a script, and see how does it work:
         }
     }
     let config = GM_config(config_desc); // Register menu commands
-    window.setInterval(()=>{
-        if (config.enabled) {
-            console.log(config.password);
-            console.log(config.val);
-        }
-    }, 1000);
-
+    window.addEventListener(GM_config_event, (e) => { // Listen to config changes
+        console.log(config, e.detail);
+    });
+    window.setTimeout(() => { // Change config values, and menu commands will be updated automatically
+        config.val += 1;
+    }, 2000);
 })();
 ```
 
 ## ⚠️ Note
 
 - This project is in early development.
-- Avoid modify config values in your script. If you really need to do so, remember to invoke `_GM_config_register(config_desc, config);` so as to update the displayed menu.

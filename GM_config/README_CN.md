@@ -6,6 +6,12 @@
 
 简易的 Tampermonkey 脚本配置库。 ([Greasy Fork](https://greasyfork.org/scripts/470224)) ([GitHub](https://github.com/PRO-2684/gadgets/tree/main/GM_config))
 
+## 🎉 特性
+
+- 自动注册菜单
+- 配置修改后自动更新菜单（也支持由脚本修改）
+- 支持监听配置获取/修改事件
+
 ## 🤔 权限
 
 这个库需要以下权限:
@@ -22,7 +28,7 @@
 ## 📖 使用
 
 ```javascript
-let config_desc = { // 配置描述
+let config_desc = { // *配置描述*
     password: {
         name: "Password", // 显示名称
         value: "tmp", // 默认值
@@ -48,8 +54,11 @@ let config_desc = { // 配置描述
     }
 }
 
-let config = GM_config(config_desc); // 注册菜单命令
-console.log(config.price); // 可以开始使用了 🎉
+let config = GM_config(config_desc); // *注册菜单命令*
+console.log(config.price); // *可以开始使用了 🎉*
+window.addEventListener(GM_config_event, (e) => { // *监听配置变化*
+    console.log(config, e.detail);
+});
 ```
 
 ## 📦 内置处理器
@@ -68,7 +77,7 @@ console.log(config.price); // 可以开始使用了 🎉
 // ==UserScript==
 // @name         Test Config
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  This is an example to demostrate the usage of greasyfork.org/scripts/470224.
 // @author       PRO
 // @match        https://greasyfork.org/*
@@ -104,17 +113,15 @@ console.log(config.price); // 可以开始使用了 🎉
         }
     }
     let config = GM_config(config_desc); // Register menu commands
-    window.setInterval(()=>{
-        if (config.enabled) {
-            console.log(config.password);
-            console.log(config.val);
-        }
-    }, 1000);
-
+    window.addEventListener(GM_config_event, (e) => { // Listen to config changes
+        console.log(config, e.detail);
+    });
+    window.setTimeout(() => { // Change config values, and menu commands will be updated automatically
+        config.val += 1;
+    }, 2000);
 })();
 ```
 
 ## ⚠️ 注意
 
 - 这个项目正处于早期发展阶段
-- 尽量避免在你的脚本里修改配置。若你确实需要这么做，记得调用 `_GM_config_register(config_desc, config);` 以便更新展示的菜单
