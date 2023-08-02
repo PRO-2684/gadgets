@@ -35,6 +35,41 @@ This library needs the following permissions to work:
 
 The first step is to define your config description, which is a dictionary and each of its key represents the id of a config item. Each config item is a dictionary with the following properties: (`*` means required, else optional)
 
+#### Frequently used combinations
+
+```javascript
+let config_desc = {
+    // Switch
+    enabled: {
+        "name": "Enabled",
+        "value": true,
+        "input": "current",
+        "processor": "not",
+        "formatter": "boolean"
+    },
+    // Integer
+    value: {
+        "name": "Value",
+        "value": -10,
+        "processor": "int"
+        // Omitted default values: input="prompt", formatter="default"
+    },
+    // Natural number
+    price: {
+        "name": "Price",
+        "value": 114,
+        "processor": "int_range-1-",
+    },
+    // Float and positive number is basically the same as above. Use `float` and `float_range-0-`
+    // String
+    name: {
+        "name": "Name",
+        "value": "Crazy Thur."
+        // Omitted default values: input="prompt", processor="same", formatter="default"
+    },
+}
+```
+
 #### `prop.name` *
 
 The display name of the config item. Expected type: `string`.

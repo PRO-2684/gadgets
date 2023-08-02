@@ -35,6 +35,41 @@
 
 使用这个库的第一步是创建一个配置描述。配置描述是一个字典，它的每个属性都是一个配置项的 id。每个配置项都是具有以下各个属性的字典：（`*` 表示必须提供，没有则可选）
 
+#### 常用组合
+
+```javascript
+let config_desc = {
+    // 开关
+    enabled: {
+        "name": "Enabled",
+        "value": true,
+        "input": "current",
+        "processor": "not",
+        "formatter": "boolean"
+    },
+    // 整数
+    value: {
+        "name": "Value",
+        "value": -10,
+        "processor": "int"
+        // 省略的默认值：input="prompt", formatter="default"
+    },
+    // 自然数
+    price: {
+        "name": "Price",
+        "value": 114,
+        "processor": "int_range-1-",
+    },
+    // 浮点数以及正数基本一致，分别为 `float` 和 `float_range-0-`
+    // 字符串
+    name: {
+        "name": "Name",
+        "value": "Crazy Thur."
+        // 省略的默认值：input="prompt", processor="same", formatter="default"
+    },
+}
+```
+
 #### `prop.name` *
 
 配置项的显示名称。必须提供一个字符串。
