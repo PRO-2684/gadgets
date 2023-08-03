@@ -9,7 +9,7 @@ function checkbox_patch(checkbox) {
         set(newVal) {
             // console.log(`Setting "checked" property to "${newVal}"...`); // Debug
             let ret = set.call(this, newVal);
-            this.dispatchEvent(new Event("change"));
+            this.dispatchEvent(new Event("change", { bubbles: true }));
             return ret;
         }
     });
