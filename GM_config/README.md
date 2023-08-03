@@ -15,6 +15,7 @@ Simple config lib for Tampermonkey scripts. ([Greasy Fork](https://greasyfork.or
     - Customizable config value input method (`prop.input`)
     - Customizable processors for user inputs (`prop.processor`)
     - Customizable menu command display (`prop.formatter`)
+- Re-register menu items **on demand**, improving performance
 
 ## 🤔 Permission
 
@@ -82,7 +83,7 @@ The default value of the config item, can be of any type. Note that you should c
 
 > `(prop, orig) => input`
 
-How to get user input. Expected a string (built-in input method) or a function (invoked when user clicks the menu command). It **accepts the name of config item and returns user input**. If not specified, the default value will be `prompt`, i.e. ask for user input using `prompt()`. Note that "user input value" does not necessarily have to be actually input by user, it can be provided by script. (e.g. built-in input method `current`).
+How to get user input. Expected a string (built-in input method) or a function (invoked when user clicks the menu item). It **accepts the name of config item and returns user input**. If not specified, the default value will be `prompt`, i.e. ask for user input using `prompt()`. Note that "user input value" does not necessarily have to be actually input by user, it can be provided by script. (e.g. built-in input method `current`).
 
 Built-in input methods:
 
@@ -112,7 +113,7 @@ Built-in processors:
 
 > `(name, value) => string`
 
-How to display the menu command. Expected a string (built-in formatter) or a function. It **accepts the name of config item and its current value, and returns the text to be displayed on the menu**. If not specified, the default value will be `default`, i.e. in the format of `name: value`.
+How to display the menu item. Expected a string (built-in formatter) or a function. It **accepts the name of config item and its current value, and returns the text to be displayed on the menu**. If not specified, the default value will be `default`, i.e. in the format of `name: value`.
 
 Built-in formatters:
 
@@ -121,21 +122,21 @@ Built-in formatters:
 
 ### Register menu
 
-After defining your config description, you can register the menu command by calling `GM_config`. It accepts the following two arguments:
+After defining your config description, you can register the menu item by calling `GM_config`. It accepts the following two arguments:
 
 - `config_desc`: Your config description
-- `menu`: Whether to register the menu command automatically.
-    - If set to `true`, the menu command will be registered automatically. (default value)
+- `menu`: Whether to display the menu item automatically.
+    - If set to `true`, the menu item will be displayed automatically. (default value)
     - If set to `false`, the user need to click "Show configuration" to show it.
 
 ```javascript
-let config = GM_config(config_desc, false); // *Register menu command*
+let config = GM_config(config_desc, false); // *Register menu*
 console.log(config.price); // *You may now start using the config 🎉*
 ```
 
 ### Get/set config
 
-After registering the menu command, you can get/set config by accessing the object returned by `GM_config`. e.g:
+After registering the menu, you can get/set config by accessing the object returned by `GM_config`. e.g:
 
 ```javascript
 console.log(config.price); // *Get config*
