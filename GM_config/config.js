@@ -3,13 +3,14 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.4.1
+// @version      0.4.2
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
 // @match        *
 // @grant        GM_setValue
 // @grant        GM_getValue
+// @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // ==/UserScript==
@@ -78,16 +79,22 @@ let _GM_config_wrapper = {
     }
     , set: function (desc, prop, value) {
         // Dispatch set event
+        let before = _GM_config_get(desc, prop);
         let event = new CustomEvent(GM_config_event, {
             detail: {
                 type: "set",
                 prop: prop,
-                before: _GM_config_get(desc, prop),
+                before: before,
                 after: value
             }
         });
         // Store value
-        GM_setValue(prop, value);
+        let default_value = desc[prop].value;
+        if (value === default_value && typeof GM_deleteValue === "function") {
+            GM_deleteValue(prop); // Delete stored value if it's the same as default value
+        } else {
+            GM_setValue(prop, value);
+        }
         window.dispatchEvent(event);
         return true;
     }
