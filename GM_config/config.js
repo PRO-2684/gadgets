@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.4.3
+// @version      0.5.0
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -16,18 +16,8 @@
 // ==/UserScript==
 
 // let debug = (...args) => console.debug("[Tampermonkey Config]", ...args); // Debug function
-let debug = () => {};
-// let GM_config_event = window === window.top ? `GM_config_${Math.random().toString(36).slice(2)}` : undefined;
-if (window === window.top) {
-    GM_config_event = `GM_config_${Math.random().toString(36).slice(2)}`;
-    Object.defineProperty(window, "GM_config_event", {
-        value: GM_config_event,
-        writable: false,
-        configurable: false
-    });
-} else {
-    GM_config_event = window.top.GM_config_event;
-}
+let debug = () => { };
+let GM_config_event = "GM_config_event";
 function _GM_config_get(config_desc, prop) {
     let value = GM_getValue(prop, undefined);
     if (value !== undefined) {
