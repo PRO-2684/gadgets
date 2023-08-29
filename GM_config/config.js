@@ -15,8 +15,8 @@
 // @grant        GM_unregisterMenuCommand
 // ==/UserScript==
 
-let debug = (...args) => console.debug("[Tampermonkey Config]", ...args); // Debug function
-// let debug = () => {};
+// let debug = (...args) => console.debug("[Tampermonkey Config]", ...args); // Debug function
+let debug = () => {};
 // let GM_config_event = window === window.top ? `GM_config_${Math.random().toString(36).slice(2)}` : undefined;
 if (window === window.top) {
     GM_config_event = `GM_config_${Math.random().toString(36).slice(2)}`;
