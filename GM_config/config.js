@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.4.2
+// @version      0.4.3
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -15,9 +15,19 @@
 // @grant        GM_unregisterMenuCommand
 // ==/UserScript==
 
-// let debug = (...args) => console.debug("[Tampermonkey Config]", ...args); // Debug function
-let debug = () => {};
-let GM_config_event = `GM_config_${Math.random().toString(36).slice(2)}`;
+let debug = (...args) => console.debug("[Tampermonkey Config]", ...args); // Debug function
+// let debug = () => {};
+// let GM_config_event = window === window.top ? `GM_config_${Math.random().toString(36).slice(2)}` : undefined;
+if (window === window.top) {
+    GM_config_event = `GM_config_${Math.random().toString(36).slice(2)}`;
+    Object.defineProperty(window, "GM_config_event", {
+        value: GM_config_event,
+        writable: false,
+        configurable: false
+    });
+} else {
+    GM_config_event = window.top.GM_config_event;
+}
 function _GM_config_get(config_desc, prop) {
     let value = GM_getValue(prop, undefined);
     if (value !== undefined) {
@@ -74,7 +84,7 @@ let _GM_config_wrapper = {
                 after: value
             }
         });
-        window.dispatchEvent(event);
+        window.top.dispatchEvent(event);
         return value;
     }
     , set: function (desc, prop, value) {
@@ -92,10 +102,11 @@ let _GM_config_wrapper = {
         let default_value = desc[prop].value;
         if (value === default_value && typeof GM_deleteValue === "function") {
             GM_deleteValue(prop); // Delete stored value if it's the same as default value
+            debug(`🗑️ "${prop}" deleted`);
         } else {
             GM_setValue(prop, value);
         }
-        window.dispatchEvent(event);
+        window.top.dispatchEvent(event);
         return true;
     }
 };
@@ -170,24 +181,26 @@ function GM_config(desc, menu=true) { // Register menu items based on given conf
     // Get proxied config
     let config = new Proxy(desc, _GM_config_wrapper);
     // Register menu items
-    if (menu) {
-        _GM_config_register(desc, config);
-    } else {
-        // Register menu items after user clicks "Show configuration"
-        let id = GM_registerMenuCommand("Show configuration", function () {
+    if (window === window.top) {
+        if (menu) {
             _GM_config_register(desc, config);
-        });
-        debug(`+ Registered menu command: prop="Show configuration", id=${id}`);
-        _GM_config_registered.push([id, null]);
-    }
-    window.addEventListener(GM_config_event, (e) => { // Auto update menu items
-        if (e.detail.type === "set" && e.detail.before !== e.detail.after) {
-            debug(`🔧 "${e.detail.prop}" changed from ${e.detail.before} to ${e.detail.after}`);
-            _GM_config_register(desc, config, e.detail.prop);
-        } else if (e.detail.type === "get") {
-            debug(`🔍 "${e.detail.prop}" requested, value is ${e.detail.after}`);
+        } else {
+            // Register menu items after user clicks "Show configuration"
+            let id = GM_registerMenuCommand("Show configuration", function () {
+                _GM_config_register(desc, config);
+            });
+            debug(`+ Registered menu command: prop="Show configuration", id=${id}`);
+            _GM_config_registered.push([id, null]);
         }
-    });
+        window.top.addEventListener(GM_config_event, (e) => { // Auto update menu items
+            if (e.detail.type === "set" && e.detail.before !== e.detail.after) {
+                debug(`🔧 "${e.detail.prop}" changed from ${e.detail.before} to ${e.detail.after}`);
+                _GM_config_register(desc, config, e.detail.prop);
+            } else if (e.detail.type === "get") {
+                debug(`🔍 "${e.detail.prop}" requested, value is ${e.detail.after}`);
+            }
+        });
+    }
     // Return proxied config
     return config;
 };
