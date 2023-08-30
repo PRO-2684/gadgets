@@ -147,7 +147,7 @@ config.price = 100; // *Modify config* (The menu will be updated automatically)
 
 ### Listen for config get/set
 
-This lib provides a string `GM_config_event`, whose value represents the event that will be triggered when config is get/set. You can listen for this event by calling `window.addEventListener`. e.g:
+This lib provides a string `GM_config_event`, whose value represents the event that will be triggered when config is get/set. You can listen for this event by calling `window.addEventListener`. Its `detail` property is an object containing the detail. e.g:
 
 ```javascript
 window.addEventListener(GM_config_event, (e) => { // *Listen for config get/set*
@@ -165,6 +165,8 @@ window.addEventListener(GM_config_event, (e) => { // *Listen for config get/set*
 - `after`: The value of the config item after the operation.
 
 This feature is often used to update your script when config is modified. In this lib, auto-updating menu is implemented by listening for this event.
+
+If an iframe in the page needs to listen for this event, the iframe should use `window.top` instead of `window`.
 
 ### To sum up: the process of modifying config
 

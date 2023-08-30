@@ -166,6 +166,8 @@ window.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
 
 这个功能常用于在配置变化时实时更新脚本的功能。在库内部，自动更新菜单项的功能就是通过监听这个事件来实现的。
 
+若页面内的 iframe 需要监听此事件，则 iframe 内需要使用 `window.top` 代替 `window`。
+
 ### 总结：修改配置项过程
 
 1. 用户点击菜单项
