@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.5.1
+// @version      0.5.2
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -16,8 +16,8 @@
 // @grant        GM_unregisterMenuCommand
 // ==/UserScript==
 
-const debug = console.debug.bind(console, "[Tampermonkey Config]"); // Debug function
-// const debug = () => { };
+// const debug = console.debug.bind(console, "[Tampermonkey Config]"); // Debug function
+const debug = () => { };
 const GM_config_event = "GM_config_event"; // Compatibility with old versions
 // Adapted from https://stackoverflow.com/a/6832721
 // Returns 1 if a > b, -1 if a < b, 0 if a == b
