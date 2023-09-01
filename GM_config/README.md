@@ -26,6 +26,7 @@ This library needs the following permissions to work:
 // @grant        GM_setValue // Save your config
 // @grant        GM_getValue // Get your config
 // @grant        GM_deleteValue // Automatically delete your config (Optional. If granted, this lib will delete user config that is equal to default value)
+// @grant        GM_info // Get Tampermonkey info (Optional, if granted, this lib will determine whether to use new features based on Tampermonkey version)
 // @grant        GM_registerMenuCommand // Register menu
 // @grant        GM_unregisterMenuCommand // Update menu
 ```
@@ -121,6 +122,10 @@ Built-in formatters:
 
 - `default`: Display in the format of `name: value` (default value)
 - `boolean`: Display method aimed for boolean values. `true` will be displayed as `name: ✔`, `false` will be displayed as `name: ✘`.
+
+#### Other Tampermonkey provided properties
+
+Supports `prop.accessKey`, `prop.autoClose`, `prop.title`. The latter two only passed to TM on supported TM versions (>=4.20.0). See [Tampermonkey docs](https://www.tampermonkey.net/documentation.php#api:GM_registerMenuCommand) for details.
 
 ### Register menu
 

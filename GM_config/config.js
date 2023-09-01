@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.5.0
+// @version      0.5.1
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -11,13 +11,60 @@
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_deleteValue
+// @grant        GM_info
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // ==/UserScript==
 
-// let debug = (...args) => console.debug("[Tampermonkey Config]", ...args); // Debug function
-let debug = () => { };
-let GM_config_event = "GM_config_event";
+const debug = console.debug.bind(console, "[Tampermonkey Config]"); // Debug function
+// const debug = () => { };
+const GM_config_event = "GM_config_event"; // Compatibility with old versions
+// Adapted from https://stackoverflow.com/a/6832721
+// Returns 1 if a > b, -1 if a < b, 0 if a == b
+function versionCompare(v1, v2, options) {
+    var lexicographical = options && options.lexicographical,
+        zeroExtend = options && options.zeroExtend,
+        v1parts = v1.split('.'),
+        v2parts = v2.split('.');
+    function isValidPart(x) {
+        return (lexicographical ? /^\d+[A-Za-z]*$/ : /^\d+$/).test(x);
+    }
+    if (!v1parts.every(isValidPart) || !v2parts.every(isValidPart)) {
+        return NaN;
+    }
+    if (zeroExtend) {
+        while (v1parts.length < v2parts.length) v1parts.push("0");
+        while (v2parts.length < v1parts.length) v2parts.push("0");
+    }
+    if (!lexicographical) {
+        v1parts = v1parts.map(Number);
+        v2parts = v2parts.map(Number);
+    }
+    for (var i = 0; i < v1parts.length; ++i) {
+        if (v2parts.length == i) {
+            return 1;
+        }
+        if (v1parts[i] == v2parts[i]) {
+            continue;
+        }
+        else if (v1parts[i] > v2parts[i]) {
+            return 1;
+        }
+        else {
+            return -1;
+        }
+    }
+    if (v1parts.length != v2parts.length) {
+        return -1;
+    }
+    return 0;
+}
+function supports(minVer) { // Minimum version of Tampermonkey required
+    return typeof GM_info === "object" && GM_info.scriptHandler === "Tampermonkey" && versionCompare(GM_info.version, minVer) >= 0;
+}
+const supportsOption = supports("4.20.0");
+debug(`Tampermonkey ${GM_info.version} detected, ${supportsOption ? "supports" : "does not support"} menu command options`);
+const registerMenuCommand = supportsOption ? GM_registerMenuCommand : (name, func, option) => GM_registerMenuCommand(name, func, option && option.accessKey);
 function _GM_config_get(config_desc, prop) {
     let value = GM_getValue(prop, undefined);
     if (value !== undefined) {
@@ -26,8 +73,7 @@ function _GM_config_get(config_desc, prop) {
         return config_desc[prop].value;
     }
 }
-
-let _GM_config_builtin_processors = {
+const _GM_config_builtin_processors = {
     same: (v) => v,
     not: (v) => !v,
     int: (s) => {
@@ -57,11 +103,11 @@ let _GM_config_builtin_processors = {
         return value;
     },
 };
-let _GM_config_builtin_formatters = {
+const _GM_config_builtin_formatters = {
     default: (name, value) => `${name}: ${value}`,
     boolean: (name, value) => `${name}: ${value ? "✔" : "✘"}`,
 };
-let _GM_config_wrapper = {
+const _GM_config_wrapper = {
     get: function (target, prop) {
         // Return stored value, else default value
         let value = _GM_config_get(target, prop);
@@ -103,7 +149,7 @@ let _GM_config_wrapper = {
 
 let _GM_config_registered = []; // Items: [id, prop]
 // (Re-)register menu items on demand
-function _GM_config_register(desc, config, until=undefined) {
+function _GM_config_register(desc, config, until = undefined) {
     // `until` is the first property to be re-registered
     // If `until` is undefined, all properties will be re-registered
     let _GM_config_builtin_inputs = {
@@ -137,7 +183,12 @@ function _GM_config_register(desc, config, until=undefined) {
         let input_func = typeof input === "function" ? input : _GM_config_builtin_inputs[input];
         let formatter = desc[prop].formatter || "default";
         let formatter_func = typeof formatter === "function" ? formatter : _GM_config_builtin_formatters[formatter];
-        let id = GM_registerMenuCommand(formatter_func(name, orig), function () {
+        let option = {
+            accessKey: desc[prop].accessKey,
+            autoClose: desc[prop].autoClose,
+            title: desc[prop].title
+        };
+        let id = registerMenuCommand(formatter_func(name, orig), function () {
             let value;
             try {
                 value = input_func(prop, orig);
@@ -155,19 +206,19 @@ function _GM_config_register(desc, config, until=undefined) {
                     throw `Unknown processor format: ${typeof processor}`;
                 }
             } catch (error) {
-                alert("⚠️ "+error);
+                alert("⚠️ " + error);
                 return;
             }
             if (value !== orig) {
                 config[prop] = value;
             }
-        });
-        debug(`+ Registered menu command: prop="${prop}", id=${id}`);
+        }, option);
+        debug(`+ Registered menu command: prop="${prop}", id=${id}, option=`, option);
         _GM_config_registered.push([id, prop]);
     }
 };
 
-function GM_config(desc, menu=true) { // Register menu items based on given config description
+function GM_config(desc, menu = true) { // Register menu items based on given config description
     // Get proxied config
     let config = new Proxy(desc, _GM_config_wrapper);
     // Register menu items
@@ -176,8 +227,11 @@ function GM_config(desc, menu=true) { // Register menu items based on given conf
             _GM_config_register(desc, config);
         } else {
             // Register menu items after user clicks "Show configuration"
-            let id = GM_registerMenuCommand("Show configuration", function () {
+            let id = registerMenuCommand("Show configuration", function () {
                 _GM_config_register(desc, config);
+            }, {
+                autoClose: false,
+                title: "Show configuration options for this script"
             });
             debug(`+ Registered menu command: prop="Show configuration", id=${id}`);
             _GM_config_registered.push([id, null]);

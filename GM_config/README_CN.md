@@ -26,6 +26,7 @@
 // @grant        GM_setValue // 保存配置
 // @grant        GM_getValue // 获取配置
 // @grant        GM_deleteValue // 自动删除配置 (可选，给予后库会自动删除与默认值相同的用户配置)
+// @grant        GM_info // 获取 Tampermonkey 信息 (可选，给予后库会根据 Tampermonkey 版本确定是否启用新版本才支持的新功能)
 // @grant        GM_registerMenuCommand // 注册菜单
 // @grant        GM_unregisterMenuCommand // 更新菜单
 ```
@@ -121,6 +122,10 @@ let config_desc = {
 
 - `default`：`name: value` 的形式（默认）
 - `boolean`：针对布尔值的展现方式。`true` 显示为 `name: ✔`，`false` 显示为 `name: ✘`
+
+#### 其它 Tampermonkey 提供的属性
+
+支持 `prop.accessKey`, `prop.autoClose`, `prop.title`。后两者仅在支持的 TM 版本中被传给 TM (>=4.20.0)。详细信息请参考 [Tampermonkey 文档](https://www.tampermonkey.net/documentation.php#api:GM_registerMenuCommand)。
 
 ### 注册配置菜单
 
