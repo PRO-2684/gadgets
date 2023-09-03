@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.5.2
+// @version      0.5.3
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -11,7 +11,6 @@
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_deleteValue
-// @grant        GM_info
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // ==/UserScript==

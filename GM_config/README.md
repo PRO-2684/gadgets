@@ -26,7 +26,6 @@ This library needs the following permissions to work:
 // @grant        GM_setValue // Save your config
 // @grant        GM_getValue // Get your config
 // @grant        GM_deleteValue // Automatically delete your config (Optional. If granted, this lib will delete user config that is equal to default value)
-// @grant        GM_info // Get Tampermonkey info (Optional, if granted, this lib will determine whether to use new features based on Tampermonkey version)
 // @grant        GM_registerMenuCommand // Register menu
 // @grant        GM_unregisterMenuCommand // Update menu
 ```
