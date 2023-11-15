@@ -37,8 +37,6 @@ def humanToPrefix(s: str) -> str:
     parts = parts[0].split(".")
     # Convert to binary
     l = [bin(int(part))[2:].zfill(8) for part in parts]
-    if len(l) < 4: # Complete with 0
-        l += ["0" * 8] * (4 - len(l))
     binary = " ".join(l)
     length_with_spaces = length + (length // 8)
     return binary[:length_with_spaces]
