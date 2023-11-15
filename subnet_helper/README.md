@@ -3,6 +3,8 @@
 ## 🪄 Function
 Converts binary subnet mask to human-friendly notation (dot-decimal with length) and vice versa. In addition, it can provide available IP range and count in the given subnet.
 
+[Online version (Chinese)](https://pro-2684.github.io/?page=subnet)
+
 ## 📖 Usage
 - `python3 ./subnet_helper.py`
 - Input a subnet mask in binary or a human-friendly notation
