@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.5.4
+// @version      0.5.5
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -74,27 +74,29 @@ const _GM_config_builtin_processors = {
     same: (v) => v,
     not: (v) => !v,
     int: (s) => {
-        let value = parseInt(s);
+        const value = parseInt(s);
         if (isNaN(value)) throw `Invalid value: ${s}, expected integer!`;
+        return value;
     },
     int_range: (s, min_s, max_s) => {
-        let value = parseInt(s);
+        const value = parseInt(s);
         if (isNaN(value)) throw `Invalid value: ${s}, expected integer!`;
-        let min = (min_s === "") ? -Infinity : parseInt(min_s);
-        let max = (max_s === "") ? +Infinity : parseInt(max_s);
+        const min = (min_s === "") ? -Infinity : parseInt(min_s);
+        const max = (max_s === "") ? +Infinity : parseInt(max_s);
         if (min !== NaN && value < min) throw `Invalid value: ${s}, expected integer >= ${min}!`;
         if (max !== NaN && value > max) throw `Invalid value: ${s}, expected integer <= ${max}!`;
         return value;
     },
     float: (s) => {
-        let value = parseFloat(s);
+        const value = parseFloat(s);
         if (isNaN(value)) throw `Invalid value: ${s}, expected float!`;
+        return value;
     },
     float_range: (s, min_s, max_s) => {
-        let value = parseFloat(s);
+        const value = parseFloat(s);
         if (isNaN(value)) throw `Invalid value: ${s}, expected float!`;
-        let min = (min_s === "") ? -Infinity : parseFloat(min_s);
-        let max = (max_s === "") ? +Infinity : parseFloat(max_s);
+        const min = (min_s === "") ? -Infinity : parseFloat(min_s);
+        const max = (max_s === "") ? +Infinity : parseFloat(max_s);
         if (min !== NaN && value < min) throw `Invalid value: ${s}, expected float >= ${min}!`;
         if (max !== NaN && value > max) throw `Invalid value: ${s}, expected float <= ${max}!`;
         return value;
@@ -148,7 +150,7 @@ function _GM_config_register(desc, config, until = undefined) {
     // `until` is the first property to be re-registered
     // If `until` is undefined, all properties will be re-registered
     const _GM_config_builtin_inputs = {
-        current: (prop, orig) => { return orig },
+        current: (prop, orig) => orig,
         prompt: (prop, orig) => {
             const s = prompt(`🤔 New value for ${desc[prop].name}:`, orig);
             return s === null ? orig : s;
