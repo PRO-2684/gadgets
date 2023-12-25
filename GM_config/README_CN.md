@@ -198,13 +198,13 @@ window.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
 // @grant        GM_getValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
-// @require      https://greasyfork.org/scripts/470224-tampermonkey-config/code/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1288180/Tampermonkey%20Config.js
 // @license      gpl-3.0
 // ==/UserScript==
 
 (function() {
     'use strict';
-    let config_desc = { // Config description
+    const config_desc = { // Config description
         password: {
             name: "Password", // Display name
             value: "tmp", // Default value
@@ -246,7 +246,7 @@ window.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
             processor: "float_range-0-" // Convert to float in range [0, +∞)
         }
     }
-    let config = GM_config(config_desc, false); // Register menu commands
+    const config = GM_config(config_desc, false); // Register menu commands
     window.addEventListener(GM_config_event, (e) => { // Listen to config changes
         console.log(e.detail);
     });
@@ -258,4 +258,4 @@ window.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
 
 ## ⚠️ 注意
 
-- 这个项目正处于早期发展阶段
+这个项目正处于早期发展阶段，接口可能会发生变化。如果你有建议或者在使用过程中遇到了问题，欢迎提出 issue 或者 PR。

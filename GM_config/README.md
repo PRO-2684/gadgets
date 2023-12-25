@@ -198,13 +198,13 @@ Install below code as a script, and see how does it work:
 // @grant        GM_getValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
-// @require      https://greasyfork.org/scripts/470224-tampermonkey-config/code/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1288180/Tampermonkey%20Config.js
 // @license      gpl-3.0
 // ==/UserScript==
 
 (function() {
     'use strict';
-    let config_desc = { // Config description
+    const config_desc = { // Config description
         password: {
             name: "Password", // Display name
             value: "tmp", // Default value
@@ -246,7 +246,7 @@ Install below code as a script, and see how does it work:
             processor: "float_range-0-" // Convert to float in range [0, +∞)
         }
     }
-    let config = GM_config(config_desc, false); // Register menu commands
+    const config = GM_config(config_desc, false); // Register menu commands
     window.addEventListener(GM_config_event, (e) => { // Listen to config changes
         console.log(e.detail);
     });
@@ -258,4 +258,4 @@ Install below code as a script, and see how does it work:
 
 ## ⚠️ Note
 
-- This project is in early development.
+This project is in early development, and the API may change in the future. If you have any suggestions or find any bugs, please feel free to open an issue or pull request.
