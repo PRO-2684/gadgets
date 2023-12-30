@@ -38,37 +38,70 @@
 
 使用这个库的第一步是创建一个配置描述。配置描述是一个字典，它的每个属性都是一个配置项的 id。每个配置项都是具有以下各个属性的字典：（`*` 表示必须提供，没有则可选）
 
+#### `$default`
+
+若未在配置描述中提供 `$default`，则会对配置描述中未指定的项使用如下值 (默认值的默认值)：
+
+```javascript
+{
+    input: "prompt",
+    processor: "same",
+    formatter: "normal"
+}
+```
+
+若你想要修改默认值，你可以在配置描述中提供 `$default`，这在大量配置项均为相同/相似类型的情况下很有作用。例如：
+
+```javascript
+const config_desc = {
+    "$default": {
+        value: true,
+        input: "current",
+        processor: "not",
+        formatter: "boolean"
+    },
+    switch_true: {
+        name: "Switch true"
+    },
+    switch_false_: {
+        name: "Switch false",
+        value: false
+    }
+}
+```
+
 #### 常用组合
 
 ```javascript
 const config_desc = {
     // 开关
     enabled: {
-        "name": "Enabled",
-        "value": true,
-        "input": "current",
-        "processor": "not",
-        "formatter": "boolean"
+        name: "Enabled",
+        value: true,
+        input: "current",
+        processor: "not",
+        formatter: "boolean"
     },
     // 整数
     value: {
-        "name": "Value",
-        "value": -10,
-        "processor": "int"
-        // 省略的默认值：input="prompt", formatter="default"
+        name: "Value",
+        value: -10,
+        processor: "int"
+        input: "prompt",
+        formatter: "normal"
     },
     // 自然数
     price: {
-        "name": "Price",
-        "value": 114,
-        "processor": "int_range-1-",
+        name: "Price",
+        value: 114,
+        processor: "int_range-1-",
     },
     // 浮点数以及正数基本一致，分别为 `float` 和 `float_range-0-`
     // 字符串
     name: {
-        "name": "Name",
-        "value": "Crazy Thur."
-        // 省略的默认值：input="prompt", processor="same", formatter="default"
+        name: "Name",
+        value: "Crazy Thur."
+        // 省略的默认值：input="prompt", processor="same", formatter="normal"
     },
 }
 ```
@@ -235,7 +268,7 @@ window.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
             //     (input) => stored
             formatter: "boolean", // Format value to be displayed in menu command
             // Built-in formatters:
-            // "default": `${name}: ${value}`
+            // "normal": `${name}: ${value}`
             // "boolean": `${name}: ${value ? "✔" : "✘"}`
             // <function>: Custom function to format value
             //     (name, value) => string

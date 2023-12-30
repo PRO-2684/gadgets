@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.5.5
+// @version      0.6.0
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -59,8 +59,7 @@ function versionCompare(v1, v2, options) {
     return 0;
 }
 function supports(minVer) { // Minimum version of Tampermonkey required
-    return typeof GM_info === "object" // Has API GM_info
-        && GM_info.scriptHandler === "Tampermonkey" // Tampermonkey is detected
+    return GM_info?.scriptHandler === "Tampermonkey" // Tampermonkey is detected
         && versionCompare(GM_info.version, minVer) >= 0; // Compare version
 }
 const supportsOption = supports("4.20.0");
@@ -103,13 +102,13 @@ const _GM_config_builtin_processors = {
     },
 };
 const _GM_config_builtin_formatters = {
-    default: (name, value) => `${name}: ${value}`,
+    normal: (name, value) => `${name}: ${value}`,
     boolean: (name, value) => `${name}: ${value ? "✔" : "✘"}`,
 };
 const _GM_config_wrapper = {
-    get: function (target, prop) {
+    get: function (desc, prop) {
         // Return stored value, else default value
-        const value = _GM_config_get(target, prop);
+        const value = _GM_config_get(desc, prop);
         // Dispatch get event
         const event = new CustomEvent(GM_config_event, {
             detail: {
@@ -175,9 +174,9 @@ function _GM_config_register(desc, config, until = undefined) {
         if (!flag) continue;
         const name = desc[prop].name;
         const orig = _GM_config_get(desc, prop);
-        const input = desc[prop].input || "prompt";
+        const input = desc[prop].input;
         const input_func = typeof input === "function" ? input : _GM_config_builtin_inputs[input];
-        const formatter = desc[prop].formatter || "default";
+        const formatter = desc[prop].formatter;
         const formatter_func = typeof formatter === "function" ? formatter : _GM_config_builtin_formatters[formatter];
         const option = {
             accessKey: desc[prop].accessKey,
@@ -188,7 +187,7 @@ function _GM_config_register(desc, config, until = undefined) {
             let value;
             try {
                 value = input_func(prop, orig);
-                let processor = desc[prop].processor || "same";
+                const processor = desc[prop].processor;
                 if (typeof processor === "function") { // Process user input
                     value = processor(value);
                 } else if (typeof processor === "string") {
@@ -215,6 +214,17 @@ function _GM_config_register(desc, config, until = undefined) {
 };
 
 function GM_config(desc, menu = true) { // Register menu items based on given config description
+    // Calc true default value
+    const $default = Object.assign({
+        input: "prompt",
+        processor: "same",
+        formatter: "normal"
+    }, desc["$default"] || {});
+    delete desc.$default;
+    // Complete desc
+    for (const key in desc) {
+        desc[key] = Object.assign(Object.assign({}, $default), desc[key]);
+    }
     // Get proxied config
     const config = new Proxy(desc, _GM_config_wrapper);
     // Register menu items

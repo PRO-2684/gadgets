@@ -38,37 +38,69 @@ This library needs the following permissions to work:
 
 The first step is to define your config description, which is a dictionary and each of its key represents the id of a config item. Each config item is a dictionary with the following properties: (`*` means required, else optional)
 
+#### `$default`
+
+If `$default` is not specified in config description, following values will be used to fill unspecified fields in config description (default values of default value):
+
+```javascript
+{
+    input: "prompt",
+    processor: "same",
+    formatter: "normal"
+}
+```
+
+If you'd like to modify the default value, you may provide `$default` in your config description, which is quite handy when you've got loads of config items that share the same type. e.g.:
+
+```javascript
+const config_desc = {
+    "$default": {
+        value: true,
+        input: "current",
+        processor: "not",
+        formatter: "boolean"
+    },
+    switch_true: {
+        name: "Switch true"
+    },
+    switch_false_: {
+        name: "Switch false",
+        value: false
+    }
+}
+```
+
 #### Frequently used combinations
 
 ```javascript
 const config_desc = {
     // Switch
     enabled: {
-        "name": "Enabled",
-        "value": true,
-        "input": "current",
-        "processor": "not",
-        "formatter": "boolean"
+        name: "Enabled",
+        value: true,
+        input: "current",
+        processor: "not",
+        formatter: "boolean"
     },
     // Integer
     value: {
-        "name": "Value",
-        "value": -10,
-        "processor": "int"
-        // Omitted default values: input="prompt", formatter="default"
+        name: "Value",
+        value: -10,
+        processor: "int"
+        // Omitted default values: input="prompt", formatter="normal"
     },
     // Natural number
     price: {
-        "name": "Price",
-        "value": 114,
-        "processor": "int_range-1-",
+        name: "Price",
+        value: 114,
+        processor: "int_range-1-",
     },
     // Float and positive number is basically the same as above. Use `float` and `float_range-0-`
     // String
     name: {
-        "name": "Name",
-        "value": "Crazy Thur."
-        // Omitted default values: input="prompt", processor="same", formatter="default"
+        name: "Name",
+        value: "Crazy Thur."
+        // Omitted default values: input="prompt", processor="same", formatter="normal"
     },
 }
 ```
@@ -235,7 +267,7 @@ Install below code as a script, and see how does it work:
             //     (input) => stored
             formatter: "boolean", // Format value to be displayed in menu command
             // Built-in formatters:
-            // "default": `${name}: ${value}`
+            // "normal": `${name}: ${value}`
             // "boolean": `${name}: ${value ? "✔" : "✘"}`
             // <function>: Custom function to format value
             //     (name, value) => string
