@@ -41,7 +41,7 @@
 #### 常用组合
 
 ```javascript
-let config_desc = {
+const config_desc = {
     // 开关
     enabled: {
         "name": "Enabled",
@@ -136,7 +136,7 @@ let config_desc = {
     - 若为 `false`，需要用户点击 `Show configuration` 后才会显示配置菜单
 
 ```javascript
-let config = GM_config(config_desc, false); // *注册配置菜单*
+const config = GM_config(config_desc, false); // *注册配置菜单*
 console.log(config.price); // *可以开始使用了 🎉*
 ```
 
@@ -255,6 +255,8 @@ window.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
     }, 5000);
 })();
 ```
+
+或者，你也可以安装这个脚本来体验这个库的功能：[Greasy Fork Enhance](https://greasyfork.org/scripts/467078)
 
 ## ⚠️ 注意
 

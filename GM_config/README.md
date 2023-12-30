@@ -41,7 +41,7 @@ The first step is to define your config description, which is a dictionary and e
 #### Frequently used combinations
 
 ```javascript
-let config_desc = {
+const config_desc = {
     // Switch
     enabled: {
         "name": "Enabled",
@@ -136,7 +136,7 @@ After defining your config description, you can register the menu item by callin
     - If set to `false`, the user need to click "Show configuration" to show it.
 
 ```javascript
-let config = GM_config(config_desc, false); // *Register menu*
+const config = GM_config(config_desc, false); // *Register menu*
 console.log(config.price); // *You may now start using the config 🎉*
 ```
 
@@ -255,6 +255,8 @@ Install below code as a script, and see how does it work:
     }, 5000);
 })();
 ```
+
+Alternatively, you can try out this lib in action with [Greasy Fork Enhance](https://greasyfork.org/scripts/467078).
 
 ## ⚠️ Note
 
