@@ -231,7 +231,7 @@ window.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
 // @grant        GM_getValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
-// @require      https://update.greasyfork.org/scripts/470224/1301110/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1303666/Tampermonkey%20Config.js
 // @license      gpl-3.0
 // ==/UserScript==
 
