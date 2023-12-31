@@ -36,11 +36,11 @@ This library needs the following permissions to work:
 
 ### Config description
 
-The first step is to define your config description, which is a dictionary and each of its key represents the id of a config item. Each config item is a dictionary with the following properties: (`*` means required, else optional)
+The first step is to define your config description, which is a dictionary and each of its key (apart from possible `$default`) represents the id of a config item.
 
 #### `$default`
 
-If `$default` is not specified in config description, following values will be used to fill unspecified fields in config description (default values of default value):
+If `$default` is not specified in config description, following values will be used to fill unspecified fields in a config item:
 
 ```javascript
 {
@@ -50,7 +50,7 @@ If `$default` is not specified in config description, following values will be u
 }
 ```
 
-If you'd like to modify the default value, you may provide `$default` in your config description, which is quite handy when you've got loads of config items that share the same type. e.g.:
+If you'd like to modify the default value, you may provide `$default` in your config description to override the above default values. e.g.:
 
 ```javascript
 const config_desc = {
@@ -63,12 +63,61 @@ const config_desc = {
     switch_true: {
         name: "Switch true"
     },
-    switch_false_: {
+    switch_false: {
         name: "Switch false",
         value: false
     }
 }
 ```
+
+#### `prop.name` *
+
+The display name of the config item. Expected type: `string`.
+
+#### `prop.value` *
+
+The default value of the config item, can be of any type. Note that you should consider its validity, because this lib will not check default value's validity for you.
+
+#### `prop.input`
+
+> `(prop, orig) => input`
+
+How to get user input. Expected a string (built-in input method) or a function (invoked when user clicks the menu item). It **accepts the name of config item and returns user input**. If not specified by both `prop.input` and `$default.input`, `prompt` will be used, i.e. ask for user input using `prompt()`. Note that "user input value" does not necessarily have to be actually input by user, it can be provided by script. (e.g. built-in input method `current`).
+
+Built-in input methods:
+
+- `prompt`: Ask for user input using `prompt()` (default value)
+- `current`: Current value will be used as user input (Usually used with `prop.processor=not` so as to create a switch, or with custom `processor` to create a generator)
+
+#### `prop.processor`
+
+> `(input) => stored`
+
+How to process user input. Expected a string (built-in processor) or a function. It **accepts user input and returns value to be stored**. **Throw error** if user input is invalid. If not specified by both `prop.formatter` and `$default.formatter`, `same` will be used, i.e. return user input directly. A common use case is to convert user input to integers or floats.
+
+Built-in processors:
+
+- `same`: Return user input directly
+- `not`: Invert boolean value (Usually used with `prop.input=current` so as to create a switch)
+- `int`: Convert to integer
+- `int_range-min-max`: Convert to integer in range `[min, max]`
+    - It is not advisable to omit `-`, because there might be errors.
+    - `<min>` and `<max>` can be any integer. Not provided inferred as no limit on that side.
+- `float`: Convert to float
+- `float_range-min-max`: Convert to float in range `[min, max]`
+    - It is not advisable to omit `-`, because there might be errors.
+    - `<min>` and `<max>` can be any float. Not provided inferred as no limit on that side.
+
+#### `prop.formatter`
+
+> `(name, value) => string`
+
+How to display the menu item. Expected a string (built-in formatter) or a function. It **accepts the name of config item and its current value, and returns the text to be displayed on the menu**. If not specified by both `prop.formatter` and `$default.formatter`, `normal` will be used.
+
+Built-in formatters:
+
+- `normal`: Display in the format of `name: value`
+- `boolean`: Display method aimed for boolean values. `true` will be displayed as `name: ✔`, `false` will be displayed as `name: ✘`.
 
 #### Frequently used combinations
 
@@ -104,55 +153,6 @@ const config_desc = {
     },
 }
 ```
-
-#### `prop.name` *
-
-The display name of the config item. Expected type: `string`.
-
-#### `prop.value` *
-
-The default value of the config item, can be of any type. Note that you should consider its validity, because this lib will not check default value's validity for you.
-
-#### `prop.input`
-
-> `(prop, orig) => input`
-
-How to get user input. Expected a string (built-in input method) or a function (invoked when user clicks the menu item). It **accepts the name of config item and returns user input**. If not specified, the default value will be `prompt`, i.e. ask for user input using `prompt()`. Note that "user input value" does not necessarily have to be actually input by user, it can be provided by script. (e.g. built-in input method `current`).
-
-Built-in input methods:
-
-- `prompt`: Ask for user input using `prompt()` (default value)
-- `current`: Current value will be used as user input (Usually used with `prop.processor=not` so as to create a switch, or with custom `processor` to create a generator)
-
-#### `prop.processor`
-
-> `(input) => stored`
-
-How to process user input. Expected a string (built-in processor) or a function. It **accepts user input and returns value to be stored**. **Throw error** if user input is invalid. If not specified, the default value will be `same`, i.e. return user input directly. A common use case is to convert user input to integers or floats.
-
-Built-in processors:
-
-- `same`: Return user input directly (default value)
-- `not`: Invert boolean value (Usually used with `prop.input=current` so as to create a switch)
-- `int`: Convert to integer
-- `int_range-min-max`: Convert to integer in range `[min, max]`
-    - It is not advisable to omit `-`, because there might be errors.
-    - `<min>` and `<max>` can be any integer. Not provided inferred as no limit on that side.
-- `float`: Convert to float
-- `float_range-min-max`: Convert to float in range `[min, max]`
-    - It is not advisable to omit `-`, because there might be errors.
-    - `<min>` and `<max>` can be any float. Not provided inferred as no limit on that side.
-
-#### `prop.formatter`
-
-> `(name, value) => string`
-
-How to display the menu item. Expected a string (built-in formatter) or a function. It **accepts the name of config item and its current value, and returns the text to be displayed on the menu**. If not specified, the default value will be `default`, i.e. in the format of `name: value`.
-
-Built-in formatters:
-
-- `default`: Display in the format of `name: value` (default value)
-- `boolean`: Display method aimed for boolean values. `true` will be displayed as `name: ✔`, `false` will be displayed as `name: ✘`.
 
 #### Other Tampermonkey provided properties
 
@@ -200,7 +200,7 @@ window.addEventListener(GM_config_event, (e) => { // *Listen for config get/set*
 - `before`: The value of the config item before the operation.
 - `after`: The value of the config item after the operation.
 
-This feature is often used to update your script when config is modified. In this lib, auto-updating menu is implemented by listening for this event.
+This feature is often used to update your script dynamically when config is modified. In this lib, auto-updating menu is implemented by listening for this event.
 
 If an iframe in the page needs to listen for this event, the iframe should use `window.top` instead of `window`.
 
