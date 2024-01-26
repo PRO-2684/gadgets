@@ -15,7 +15,6 @@ Simple config lib for Tampermonkey scripts. ([Greasy Fork](https://greasyfork.or
     - Customizable config value input method (`prop.input`)
     - Customizable processors for user inputs (`prop.processor`)
     - Customizable menu command display (`prop.formatter`)
-- Re-register menu items **on demand**, improving performance
 - Automatically delete user config that is equal to default value, in order to save storage space
 
 ## 🤔 Permission
