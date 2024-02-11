@@ -9,6 +9,7 @@ Some code snippets that's hard to categorize. See READMEs under subfolders for d
 - `hover_card`: Get Github hovercard for given repo.
 - `sanitify_header_id`: Sanitify/Sanitize given string (header id) so that it is (hopefully) free of emojis, with its spaces replaced by `-`.
 - `subnet_helper`: Converts binary subnet mask to human-friendly notation (dot-decimal with length) and vice versa. In addition, it can provide available IP range and count in the given subnet.
+- `url_summary`: Get summary of a given URL, including favicon, title, description and keywords.
 
 ## README template
 ```markdown
