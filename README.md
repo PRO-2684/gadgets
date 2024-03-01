@@ -1,4 +1,6 @@
 # gadgets
+![GitHub license](https://img.shields.io/github/license/PRO-2684/gadgets?style=flat-square)
+
 ## Introduction
 Some code snippets that's hard to categorize. See READMEs under subfolders for detailed description if you're interested in some of them.
 
