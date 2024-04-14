@@ -2,13 +2,15 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @author       PRO
 // @match        *://*/*
 // @run-at       document-start
 // @grant        GM_getResourceText
+// @grant        GM_getValue
+// @grant        GM_setValue
 // @grant        unsafeWindow
 // @require      https://update.greasyfork.org/scripts/492078/pURLfy.js
 // @resource     rules https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy@latest/rules/cn.json
@@ -98,7 +100,12 @@
     // Enable hooks
     const promises = [];
     for (const [name, hook] of hooks) {
-        promises.push(hook.enable().then(() => {
+        let enabled = GM_getValue(`hook.${name}`, null);
+        if (enabled === null) {
+            enabled = true;
+            GM_setValue(`hook.${name}`, enabled);
+        }
+        enabled && promises.push(hook.enable().then(() => {
             log(`Hook "${name}" enabled.`);
         }));
     }

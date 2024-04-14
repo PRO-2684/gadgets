@@ -8,6 +8,19 @@ The ultimate URL purifier - Tampermonkey version. This script uses [pURLfy core]
 
 Simply navigate to [Greasy Fork](https://greasyfork.org/scripts/492480) and click the "Install this script" button.
 
+## Configuration
+
+For advanced users, you can configure which hooks are enabled by modifying this script's external storage in Tampermonkey:
+
+```jsonc
+{
+    "hook.location.href": true, // Check `location.href` (not really a hook, actually)
+    "hook.click": true, // Intercept `click` events
+    "hook.mousedown": true, // Intercept `mousedown` events
+    "hook.window.open": true // Hook `window.open` calls
+}
+```
+
 ## How it works
 
 ### Purifying URLs

@@ -8,6 +8,19 @@
 
 只需前往 [Greasy Fork](https://greasyfork.org/scripts/492480) 并点击 "Install this script" 按钮。
 
+## 配置
+
+对于高级用户，您可以通过修改此脚本在 Tampermonkey 中的外部存储来配置启用哪些 hook:
+
+```jsonc
+{
+    "hook.location.href": true, // 检查 `location.href` (实际上并不是一个 hook)
+    "hook.click": true, // 拦截 `click` 事件
+    "hook.mousedown": true, // 拦截 `mousedown` 事件
+    "hook.window.open": true // Hook `window.open` 调用
+}
+```
+
 ## 工作原理
 
 ### 净化 URL
