@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @author       PRO
@@ -61,8 +61,11 @@
     // Mouse-related hooks
     async function mouseHandler(e) {
         const ele = e.target.closest("a");
-        if (ele && !ele.hasAttribute(tag) && ele.href) {
-            if (!ele.href.startsWith("https://") && !ele.href.startsWith("http://")) return;
+        if (ele && !ele.hasAttribute(tag) && ele.getAttribute("href")) {
+            const href = ele.getAttribute("href");
+            if (!href.startsWith("https://") && !href.startsWith("http://")) return; // Ignore non-HTTP(S) URLs
+            const hrefURL = new URL(ele.href);
+            if (hrefURL.hostname === location.hostname && hrefURL.pathname === location.pathname) return; // Ignore same-page URLs
             this.toast(`Intercepted: "${ele.href}"`);
             e.preventDefault();
             e.stopImmediatePropagation();
