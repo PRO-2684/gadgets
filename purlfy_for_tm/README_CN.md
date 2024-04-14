@@ -6,7 +6,7 @@
 
 ## 安装
 
-只需前往 [Greasy Fork](https://greasyfork.org/en/scripts/424682-purlfy-for-tampermonkey) 并点击 "Install this script" 按钮。
+只需前往 [Greasy Fork](https://greasyfork.org/scripts/492480) 并点击 "Install this script" 按钮。
 
 ## 工作原理
 

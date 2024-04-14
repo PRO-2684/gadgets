@@ -6,7 +6,7 @@ The ultimate URL purifier - Tampermonkey version. This script uses [pURLfy core]
 
 ## Installation
 
-Simply navigate to [Greasy Fork](https://greasyfork.org/en/scripts/424682-purlfy-for-tampermonkey) and click the "Install this script" button.
+Simply navigate to [Greasy Fork](https://greasyfork.org/scripts/492480) and click the "Install this script" button.
 
 ## How it works
 
