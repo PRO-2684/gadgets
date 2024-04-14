@@ -4,6 +4,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1.0
 // @description  The ultimate URL purifier - for Tampermonkey
+// @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @author       PRO
 // @match        *://*/*
 // @run-at       document-start
