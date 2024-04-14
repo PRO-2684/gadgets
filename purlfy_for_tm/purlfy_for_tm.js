@@ -1,5 +1,6 @@
 // ==UserScript==
 // @name         pURLfy for Tampermonkey
+// @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
 // @version      0.1.0
 // @description  The ultimate URL purifier - for Tampermonkey
