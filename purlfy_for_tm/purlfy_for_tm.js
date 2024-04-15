@@ -2,18 +2,19 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.1.3
+// @version      0.1.4
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @author       PRO
 // @match        *://*/*
 // @run-at       document-start
 // @grant        GM_getResourceText
+// @grant        GM_registerMenuCommand
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        unsafeWindow
-// @require      https://update.greasyfork.org/scripts/492078/pURLfy.js
-// @resource     rules https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy@latest/rules/cn.json
+// @require      https://update.greasyfork.org/scripts/492078/1360585/pURLfy.js
+// @resource     rules https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy@0.2.2/rules/cn.json
 // @license      gpl-3.0
 // ==/UserScript==
 
@@ -21,6 +22,13 @@
     const tag = "purlfy-purified";
     const log = console.log.bind(console, "[pURLfy for Tampermonkey]");
     const window = unsafeWindow;
+    const initStatistics = {
+        url: 0,
+        param: 0,
+        decoded: 0,
+        redirected: 0,
+        char: 0
+    };
     // Initialize pURLfy core
     const purifier = new Purlfy({
         redirectEnabled: false,
@@ -28,6 +36,15 @@
     });
     const rules = JSON.parse(GM_getResourceText("rules"));
     purifier.importRules(rules);
+    purifier.addEventListener("statisticschange", e => {
+        log("Statistics increment:", e.detail);
+        const statistics = GM_getValue("statistics", { ...initStatistics });
+        for (const [key, increment] of Object.entries(e.detail)) {
+            statistics[key] += increment;
+        }
+        GM_setValue("statistics", statistics);
+        log("Statistics updated to:", statistics);
+    });
     // Hooks
     const hooks = new Map();
     class Hook { // Dummy class for hooks
@@ -61,8 +78,8 @@
     // Mouse-related hooks
     async function mouseHandler(e) {
         const ele = e.target.closest("a");
-        if (ele && !ele.hasAttribute(tag) && ele.getAttribute("href")) {
-            const href = ele.getAttribute("href");
+        if (ele && !ele.hasAttribute(tag) && ele.href) {
+            const href = ele.href;
             if (!href.startsWith("https://") && !href.startsWith("http://")) return; // Ignore non-HTTP(S) URLs
             const hrefURL = new URL(ele.href);
             if (hrefURL.hostname === location.hostname && hrefURL.pathname === location.pathname) return; // Ignore same-page URLs
@@ -116,4 +133,14 @@
     Promise.all(promises).then(() => {
         log("Initialized successfully! 🎉");
     });
+    // Statistics
+    function showStatistics() {
+        const statistics = GM_getValue("statistics", { ...initStatistics });
+        const text = Object.entries(statistics).map(([key, value]) => `${key}: ${value}`).join(", ");
+        const r = confirm(text + "\nDo you want to reset the statistics?");
+        if (!r) return;
+        GM_setValue("statistics", initStatistics);
+        log("Statistics reset.");
+    };
+    GM_registerMenuCommand("Show Statistics", showStatistics);
 })();

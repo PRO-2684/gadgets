@@ -10,6 +10,8 @@ Simply navigate to [Greasy Fork](https://greasyfork.org/scripts/492480) and clic
 
 ## Configuration
 
+Statistics can be viewed by clicking `Show Statistics` in the menu, and can be cleared by clicking OK.
+
 For advanced users, you can configure which hooks are enabled by modifying this script's external storage in Tampermonkey:
 
 ```jsonc
