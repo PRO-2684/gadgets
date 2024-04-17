@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.1.4
+// @version      0.1.5
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @author       PRO
@@ -12,9 +12,11 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_getValue
 // @grant        GM_setValue
+// @grant        GM.xmlHttpRequest
 // @grant        unsafeWindow
-// @require      https://update.greasyfork.org/scripts/492078/1360585/pURLfy.js
-// @resource     rules https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy@0.2.2/rules/cn.json
+// @connect      *
+// @require      https://update.greasyfork.org/scripts/492078/1361562/pURLfy.js
+// @resource     rules https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy@0.2.3/rules/cn.json
 // @license      gpl-3.0
 // ==/UserScript==
 
@@ -31,8 +33,17 @@
     };
     // Initialize pURLfy core
     const purifier = new Purlfy({
-        redirectEnabled: false,
+        redirectEnabled: true,
         lambdaEnabled: true,
+        getRedirectedUrl: async function (url) {
+            const response = await GM.xmlHttpRequest({
+                method: "HEAD",
+                url: url,
+                anonymous: true,
+                redirect: "follow"
+            });
+            return response.finalUrl;
+        }
     });
     const rules = JSON.parse(GM_getResourceText("rules"));
     purifier.importRules(rules);
