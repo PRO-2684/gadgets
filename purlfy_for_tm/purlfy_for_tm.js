@@ -9,14 +9,15 @@
 // @match        *://*/*
 // @run-at       document-start
 // @grant        GM_getResourceText
+// @grant        GM_setClipboard
 // @grant        GM_registerMenuCommand
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM.xmlHttpRequest
 // @grant        unsafeWindow
 // @connect      *
-// @require      https://update.greasyfork.org/scripts/492078/1361562/pURLfy.js
-// @resource     rules https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy@0.2.3/rules/cn.json
+// @require      https://update.greasyfork.org/scripts/492078/1362626/pURLfy.js
+// @resource     rules https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy@0.2.4/rules/cn.json
 // @license      gpl-3.0
 // ==/UserScript==
 
@@ -35,13 +36,15 @@
     const purifier = new Purlfy({
         redirectEnabled: true,
         lambdaEnabled: true,
-        getRedirectedUrl: async function (url) {
-            const response = await GM.xmlHttpRequest({
+        getRedirectedUrl: async function (url, ua) {
+            const options = {
                 method: "HEAD",
                 url: url,
                 anonymous: true,
                 redirect: "follow"
-            });
+            };
+            if (ua) options.headers = { "User-Agent": ua };
+            const response = await GM.xmlHttpRequest(options);
             return response.finalUrl;
         }
     });
@@ -144,6 +147,19 @@
     Promise.all(promises).then(() => {
         log("Initialized successfully! 🎉");
     });
+    // Manual purify
+    function trim(url) { // Leave at most 100 characters
+        return url.length > 100 ? url.slice(0, 100) + "..." : url;
+    }
+    function showPurify() {
+        const url = prompt("Enter the URL to purify:", location.href);
+        if (!url) return;
+        purifier.purify(url).then(result => {
+            GM_setClipboard(result.url);
+            alert(`Original: ${trim(url)}\nResult (copied): ${trim(result.url)}\nMatched rule: ${result.rule}`);
+        });
+    };
+    GM_registerMenuCommand("Purify URL", showPurify);
     // Statistics
     function showStatistics() {
         const statistics = GM_getValue("statistics", { ...initStatistics });
