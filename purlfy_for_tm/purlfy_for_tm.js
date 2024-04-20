@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.1.6
+// @version      0.1.7
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @author       PRO
@@ -17,7 +17,7 @@
 // @grant        unsafeWindow
 // @connect      *
 // @require      https://update.greasyfork.org/scripts/492078/1362626/pURLfy.js
-// @resource     rules https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy@0.2.4/rules/cn.json
+// @resource     rules https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules/cn.json
 // @license      gpl-3.0
 // ==/UserScript==
 
@@ -90,13 +90,11 @@
     }.bind(locationHook);
     locationHook.disable = async function () { } // Do nothing
     // Mouse-related hooks
-    async function mouseHandler(e) {
-        const ele = e.target.closest("a");
+    async function mouseHandler(e) { // Intercept mouse events
+        const ele = e.target.tagName === "A" ? e.target : e.target.closest("a");
         if (ele && !ele.hasAttribute(tag) && ele.href) {
             const href = ele.href;
             if (!href.startsWith("https://") && !href.startsWith("http://")) return; // Ignore non-HTTP(S) URLs
-            const hrefURL = new URL(ele.href);
-            if (hrefURL.hostname === location.hostname && hrefURL.pathname === location.pathname) return; // Ignore same-page URLs
             this.toast(`Intercepted: "${ele.href}"`);
             e.preventDefault();
             e.stopImmediatePropagation();
