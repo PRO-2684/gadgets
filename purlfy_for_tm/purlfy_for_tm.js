@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.1.8
+// @version      0.1.9
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @author       PRO
@@ -16,8 +16,9 @@
 // @grant        GM.xmlHttpRequest
 // @grant        unsafeWindow
 // @connect      *
-// @require      https://update.greasyfork.org/scripts/492078/1363869/pURLfy.js
-// @resource     rules https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules/cn.json
+// @require      https://update.greasyfork.org/scripts/492078/1367177/pURLfy.js
+// @resource     rules-cn https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules/cn.min.json
+// @resource     rules-alternative https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules/alternative.min.json
 // @license      gpl-3.0
 // ==/UserScript==
 
@@ -31,6 +32,10 @@
         decoded: 0,
         redirected: 0,
         char: 0
+    };
+    const initRulesCfg = {
+        "cn": true,
+        "alternative": false
     };
     // Initialize pURLfy core
     const purifier = new Purlfy({
@@ -48,8 +53,19 @@
             return response.finalUrl;
         }
     });
-    const rules = JSON.parse(GM_getResourceText("rules"));
-    purifier.importRules(rules);
+    // Import rules
+    const rulesCfg = GM_getValue("rules", { ...initRulesCfg });
+    for (const key in initRulesCfg) {
+        const enabled = rulesCfg[key] ?? initRulesCfg[key];
+        rulesCfg[key] = enabled;
+        if (enabled) {
+            log(`Importing rules: ${key}`);
+            const rules = JSON.parse(GM_getResourceText(`rules-${key}`));
+            purifier.importRules(rules);
+        }
+    }
+    GM_setValue("rules", rulesCfg);
+    // Statistics listener
     purifier.addEventListener("statisticschange", e => {
         log("Statistics increment:", e.detail);
         const statistics = GM_getValue("statistics", { ...initStatistics });
@@ -132,16 +148,18 @@
     // Is there more hooks to add?
     // Enable hooks
     const promises = [];
+    const hooksCfg = GM_getValue("hooks", {}); // Load hook configs
     for (const [name, hook] of hooks) {
-        let enabled = GM_getValue(`hook.${name}`, null);
-        if (enabled === null) {
+        let enabled = hooksCfg[name];
+        if (enabled === undefined) {
             enabled = true;
-            GM_setValue(`hook.${name}`, enabled);
+            hooksCfg[name] = enabled;
         }
         enabled && promises.push(hook.enable().then(() => {
             log(`Hook "${name}" enabled.`);
         }));
     }
+    GM_setValue("hooks", hooksCfg); // Save hook configs
     Promise.all(promises).then(() => {
         log("Initialized successfully! 🎉");
     });

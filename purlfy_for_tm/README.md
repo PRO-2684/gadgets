@@ -12,14 +12,20 @@ Simply navigate to [Greasy Fork](https://greasyfork.org/scripts/492480) and clic
 
 Statistics can be viewed by clicking `Show Statistics` in the menu, and can be cleared by clicking OK.
 
-For advanced users, you can configure which hooks are enabled by modifying this script's external storage in Tampermonkey:
+For advanced users, you can configure which hooks and rules are enabled by modifying this script's external storage in Tampermonkey:
 
 ```jsonc
 {
-    "hook.location.href": true, // Check `location.href` (not really a hook, actually)
-    "hook.click": true, // Intercept `click` events
-    "hook.mousedown": true, // Intercept `mousedown` events
-    "hook.window.open": true // Hook `window.open` calls
+    "hooks": {
+        "location.href": true, // Check `location.href` (not really a hook, actually)
+        "click": true, // Intercept `click` events
+        "mousedown": true, // Intercept `mousedown` events
+        "window.open": true // Hook `window.open` calls
+    },
+    "rules": {
+        "cn": true, // Enable Chinese rules
+        "alternative": false // Enable alternative rules (Redirects you from some websites to their better alternatives)
+    }
 }
 ```
 
@@ -28,6 +34,10 @@ For advanced users, you can configure which hooks are enabled by modifying this 
 ### Purifying URLs
 
 See [pURLfy core](https://github.com/PRO-2684/pURLfy) and its source code for more information.
+
+### Rules
+
+Rules files can be fount at [pURLfy rules](https://github.com/PRO-2684/pURLfy-rules).
 
 ### Hooks
 

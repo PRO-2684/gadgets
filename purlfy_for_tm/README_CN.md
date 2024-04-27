@@ -12,14 +12,20 @@
 
 统计数据可以点击菜单中 `Show Statistics` 查看，点击确定后可以清空统计数据。
 
-对于高级用户，您可以通过修改此脚本在 Tampermonkey 中的外部存储来配置启用哪些 hook:
+对于高级用户，您可以通过修改此脚本在 Tampermonkey 中的外部存储来配置启用哪些 hook 和规则:
 
 ```jsonc
 {
-    "hook.location.href": true, // 检查 `location.href` (实际上并不是一个 hook)
-    "hook.click": true, // 拦截 `click` 事件
-    "hook.mousedown": true, // 拦截 `mousedown` 事件
-    "hook.window.open": true // Hook `window.open` 调用
+    "hooks": {
+        "location.href": true, // 检查 `location.href` (实际上并不是一个 hook)
+        "click": true, // 拦截 `click` 事件
+        "mousedown": true, // 拦截 `mousedown` 事件
+        "window.open": true // Hook `window.open` 调用
+    },
+    "rules": {
+        "cn": true, // 启用中国规则
+        "alternative": false // 启用替代规则 (将您从某些网站重定向到更好的替代网站)
+    }
 }
 ```
 
@@ -28,6 +34,10 @@
 ### 净化 URL
 
 请参阅 [pURLfy core](https://github.com/PRO-2684/pURLfy) 及其源代码以获取更多信息。
+
+### 规则
+
+规则文件可以在 [pURLfy rules](https://github.com/PRO-2684/pURLfy-rules) 找到。
 
 ### Hooks
 
