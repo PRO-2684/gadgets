@@ -29,6 +29,10 @@ For advanced users, you can configure which hooks and rules are enabled by modif
 }
 ```
 
+## Updating rules manually
+
+Navigate to Tampermonkey `Dashboard` - `Installed Userscripts` - `pURLfy for Tampermonkey` - `External`, and for each entry under `Resources`, click the `Delete` button. After refreshing the page, the rules will be updated automatically.
+
 ## How it works
 
 ### Purifying URLs

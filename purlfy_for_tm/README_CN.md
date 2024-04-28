@@ -8,6 +8,10 @@
 
 只需前往 [Greasy Fork](https://greasyfork.org/scripts/492480) 并点击 "Install this script" 按钮。
 
+## 手动更新规则
+
+前往 Tampermonkey `管理面板` - `已安装脚本` - `pURLfy for Tampermonkey` - `外部`，对于 `资源` 下的每一个条目，点击 `删除` 按钮。刷新页面后，规则将会自动更新。
+
 ## 配置
 
 统计数据可以点击菜单中 `Show Statistics` 查看，点击确定后可以清空统计数据。
