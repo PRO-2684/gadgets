@@ -29,7 +29,13 @@ For advanced users, you can configure which hooks and rules are enabled by modif
 }
 ```
 
-## Updating rules manually
+## Updating rules
+
+### Configuring the update interval for rules
+
+Navigate to Tampermonkey `Dashboard` - `Settings` - `External`, and choose the update interval you want from the dropdown menu.
+
+### Updating rules manually
 
 Navigate to Tampermonkey `Dashboard` - `Installed Userscripts` - `pURLfy for Tampermonkey` - `External`, and for each entry under `Resources`, click the `Delete` button. After refreshing the page, the rules will be updated automatically.
 

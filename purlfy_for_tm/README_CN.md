@@ -8,7 +8,13 @@
 
 只需前往 [Greasy Fork](https://greasyfork.org/scripts/492480) 并点击 "Install this script" 按钮。
 
-## 手动更新规则
+## 规则更新
+
+### 配置规则的更新间隔
+
+前往 Tampermonkey `管理面板` - `设置` - `外部`，在下拉菜单中选择您希望的更新间隔。
+
+### 手动更新规则
 
 前往 Tampermonkey `管理面板` - `已安装脚本` - `pURLfy for Tampermonkey` - `外部`，对于 `资源` 下的每一个条目，点击 `删除` 按钮。刷新页面后，规则将会自动更新。
 
