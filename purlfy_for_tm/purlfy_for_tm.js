@@ -2,9 +2,10 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.1.9
+// @version      0.2.0
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
+// @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
 // @author       PRO
 // @match        *://*/*
 // @run-at       document-start
@@ -13,17 +14,19 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_getValue
 // @grant        GM_setValue
-// @grant        GM.xmlHttpRequest
+// @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
 // @connect      *
-// @require      https://update.greasyfork.org/scripts/492078/1367177/pURLfy.js
-// @resource     rules-cn https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules/cn.min.json
-// @resource     rules-alternative https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules/alternative.min.json
+// @require      https://update.greasyfork.org/scripts/492078/1369519/pURLfy.js
+// @resource     rules-cn https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/cn.min.json
+// @resource     rules-alternative https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/alternative.min.json
 // @license      gpl-3.0
 // ==/UserScript==
 
 (function () {
-    const tag = "purlfy-purified";
+    const tag1 = "purlfy-purifying";
+    const tag2 = "purlfy-purified";
+    const eventName = "purlfy-purify-done";
     const log = console.log.bind(console, "[pURLfy for Tampermonkey]");
     const window = unsafeWindow;
     const initStatistics = {
@@ -31,6 +34,7 @@
         param: 0,
         decoded: 0,
         redirected: 0,
+        visited: 0,
         char: 0
     };
     const initRulesCfg = {
@@ -39,18 +43,40 @@
     };
     // Initialize pURLfy core
     const purifier = new Purlfy({
-        redirectEnabled: true,
+        fetchEnabled: true,
         lambdaEnabled: true,
-        getRedirectedUrl: async function (url, ua) {
-            const options = {
-                method: "HEAD",
-                url: url,
-                anonymous: true,
-                redirect: "follow"
-            };
-            if (ua) options.headers = { "User-Agent": ua };
-            const response = await GM.xmlHttpRequest(options);
-            return response.finalUrl;
+        fetch: async function (url, options) {
+            // Adapted from https://github.com/AlttiRi/gm_fetch
+            function normalize(gm_response) {
+                const headers = new Headers();
+                for (const line of gm_response.responseHeaders.trim().split("\n")) {
+                    const [key, ...values] = line.split(": ");
+                    headers.append(key, values.join(": "));
+                }
+                const r = new Response(gm_response.response, {
+                    status: gm_response.status,
+                    statusText: gm_response.statusText,
+                    headers: headers,
+                    url: gm_response.finalUrl || url
+                });
+                Object.defineProperty(r, "url", { value: gm_response.finalUrl || url });
+                return r;
+            }
+            return new Promise((resolve, reject) => {
+                // Fetch with GM_xmlhttpRequest
+                GM_xmlhttpRequest({
+                    url: url,
+                    method: "GET",
+                    responseType: "arraybuffer",
+                    onload: function (gm_response) {
+                        resolve(normalize(gm_response));
+                    },
+                    onerror: function (error) {
+                        reject(error);
+                    },
+                    ...options
+                });
+            });
         }
     });
     // Import rules
@@ -70,7 +96,7 @@
         log("Statistics increment:", e.detail);
         const statistics = GM_getValue("statistics", { ...initStatistics });
         for (const [key, increment] of Object.entries(e.detail)) {
-            statistics[key] += increment;
+            statistics[key] = (statistics[key] ?? 0) + increment;
         }
         GM_setValue("statistics", statistics);
         log("Statistics updated to:", statistics);
@@ -106,29 +132,47 @@
     }.bind(locationHook);
     locationHook.disable = async function () { } // Do nothing
     // Mouse-related hooks
+    function cloneAndStop(e, stop=true) { // Clone an event and stop the original
+        const newEvt = new e.constructor(e.type, e);
+        stop && e.preventDefault();
+        stop && e.stopImmediatePropagation();
+        return newEvt;
+    }
     async function mouseHandler(e) { // Intercept mouse events
         const ele = e.target.tagName === "A" ? e.target : e.target.closest("a");
-        if (ele && !ele.hasAttribute(tag) && ele.href) {
-            const href = ele.href;
-            if (!href.startsWith("https://") && !href.startsWith("http://")) return; // Ignore non-HTTP(S) URLs
-            this.toast(`Intercepted: "${ele.href}"`);
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            ele.toggleAttribute(tag);
-            const url = ele.href;
-            const purified = await purifier.purify(url);
-            ele.href = purified.url;
-            ele.dispatchEvent(new MouseEvent(e.type, e));
+        if (ele && !ele.hasAttribute(tag2) && ele.href) {
+            if (!ele.hasAttribute(tag1)) { // The first to intercept
+                ele.toggleAttribute(tag1, true);
+                const href = ele.href;
+                if (!href.startsWith("https://") && !href.startsWith("http://")) return; // Ignore non-HTTP(S) URLs
+                const newEvt = cloneAndStop(e);
+                this.toast(`Intercepted: "${ele.href}"`);
+                const url = ele.href;
+                const purified = await purifier.purify(url);
+                ele.href = purified.url;
+                this.toast(`Processed: "${ele.href}"`);
+                ele.toggleAttribute(tag2, true);
+                ele.removeAttribute(tag1);
+                ele.dispatchEvent(newEvt);
+                ele.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
+            } else { // Someone else has intercepted
+                const newEvt = cloneAndStop(e);
+                this.toast(`Waiting: "${ele.href}"`);
+                ele.addEventListener(eventName, function () {
+                    log(`Waited: "${ele.href}"`);
+                    ele.dispatchEvent(newEvt);
+                }, { once: true });
+            }
         }
     }
-    ["click", "mousedown"].forEach((name) => {
+    ["click", "mousedown", "auxclick"].forEach((name) => {
         const hook = new Hook(name);
         hook.handler = mouseHandler.bind(hook);
         hook.enable = async function () {
-            document.addEventListener(name, this.handler, true);
+            document.addEventListener(name, this.handler, { capture: true });
         }
         hook.disable = async function () {
-            document.removeEventListener(name, this.handler, true);
+            document.removeEventListener(name, this.handler, { capture: true });
         }
     });
     // Intercept window.open
