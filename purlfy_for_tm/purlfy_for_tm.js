@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.2.1
+// @version      0.2.2
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -141,20 +141,20 @@
     async function mouseHandler(e) { // Intercept mouse events
         const ele = e.target.tagName === "A" ? e.target : e.target.closest("a");
         if (ele && !ele.hasAttribute(tag2) && ele.href) {
+            const href = ele.href;
             if (!href.startsWith("https://") && !href.startsWith("http://")) return; // Ignore non-HTTP(S) URLs
             if (!ele.hasAttribute(tag1)) { // The first to intercept
                 ele.toggleAttribute(tag1, true);
-                const href = ele.href;
                 const newEvt = cloneAndStop(e);
-                this.toast(`Intercepted: "${ele.href}"`);
-                const url = ele.href;
-                const purified = await purifier.purify(url);
+                this.toast(`Intercepted: "${href}"`);
+                const purified = await purifier.purify(href);
                 ele.href = purified.url;
                 this.toast(`Processed: "${ele.href}"`);
                 ele.toggleAttribute(tag2, true);
                 ele.removeAttribute(tag1);
                 ele.dispatchEvent(newEvt);
                 ele.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
+                if (ele.textContent === href) ele.textContent = purified.url; // Update the text content
             } else { // Someone else has intercepted
                 const newEvt = cloneAndStop(e);
                 this.toast(`Waiting: "${ele.href}"`);
