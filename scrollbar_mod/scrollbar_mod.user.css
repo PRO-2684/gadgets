@@ -1,0 +1,96 @@
+/* ==UserStyle==
+@name           Scrollbar Mod
+@namespace      github.com/PRO-2684
+@version        0.1.0
+@description    Customize your ScrollBar - Mod version
+@author         PRO-2684
+@license     	MIT License
+@preprocessor   stylus
+@var select Theme "Theme" [
+    "Default",
+    "Deep-Dark",
+    "Green-Plain",
+    "Light-Red",
+    "Desert",
+    "Tradewind",
+    "Hippie-Blue",
+    "Purple",
+    "Custom"
+]
+@var color TrackColor "Track Color" #161616
+@var color HandleColor "Handle Color" #2d2d2d
+@var color HandleHover "Handle Hover" #5b5b5b
+@var text HandleRadius "Handle Radius " 46px
+@var text ScrollbarWidth "ScrollBar Width" 8px
+@var text ScrollbarWidthShrink "ScrollBar Width Shrink" 1px
+@var checkbox TransparentTrack "Transparent Track" 0
+==/UserStyle== */
+
+:root {
+    if Theme == "Default" {
+        --TrackColor: #161616;
+        --HandleColor: #2d2d2d;
+        --HandleHover: #5b5b5b;
+    } else if Theme == "Deep-Dark" {
+        --TrackColor: #232846;
+        --HandleColor: #383779;
+        --HandleHover: #4358a6;
+    } else if Theme == "Green-Plain" {
+        --TrackColor: #345d38;
+        --HandleColor: #5dab6a;
+        --HandleHover: #6eb565;
+    } else if Theme == "Light-Red" {
+        --TrackColor: #5d3434;
+        --HandleColor: #ab5d5d;
+        --HandleHover: #b56565;
+    } else if Theme == "Desert" {
+        --TrackColor: #5d4834;
+        --HandleColor: #ab805d;
+        --HandleHover: #b59165;
+    } else if Theme == "Tradewind" {
+        --TrackColor: #345d4d;
+        --HandleColor: #5dab8a;
+        --HandleHover: #65b5a5;
+    } else if Theme == "Hippie-Blue" {
+        --TrackColor: #344c5d;
+        --HandleColor: #5d7dab;
+        --HandleHover: #658db5;
+    } else if Theme == "Purple" {
+        --TrackColor: #45345d;
+        --HandleColor: #8c5dab;
+        --HandleHover: #9565b5;
+    } else if Theme == "Custom" {
+        --TrackColor: TrackColor;
+        --HandleColor: HandleColor;
+        --HandleHover: HandleHover;
+    }
+}
+
+/* Scrollbar width */
+::-webkit-scrollbar {
+    width: ScrollbarWidth;
+}
+
+/* Scrollbar Handle */
+::-webkit-scrollbar-thumb {
+    background: var(--HandleColor);
+    border-radius: HandleRadius;
+    background-clip: padding-box;
+    border-width: var(--ScrollbarWidthShrink);
+    border-style: solid;
+    border-color: transparent;
+
+    /* Handle on hover */
+    &:hover {
+        background: var(--HandleHover);
+    }
+}
+
+/* Scrollbar Track */
+::-webkit-scrollbar-track {
+    if TransparentTrack {
+        background: transparent;
+    } else {
+        background: var(--TrackColor);
+    }
+}
