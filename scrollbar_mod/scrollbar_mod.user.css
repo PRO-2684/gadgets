@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Scrollbar Mod
 @namespace      github.com/PRO-2684
-@version        0.1.1
+@version        0.1.2
 @description    Customize your ScrollBar - Mod version
 @author         PRO-2684
 @license     	MIT License
@@ -17,9 +17,9 @@
     "Purple",
     "Custom"
 ]
-@var color TrackColor "Track Color" #161616
-@var color HandleColor "Handle Color" #2d2d2d
-@var color HandleHover "Handle Hover" #5b5b5b
+@var color CustomTrackColor "Track Color" #161616
+@var color CustomHandleColor "Handle Color" #2d2d2d
+@var color CustomHandleHover "Handle Hover" #5b5b5b
 @var text HandleRadius "Handle Radius " 46px
 @var text ScrollbarWidth "ScrollBar Width" 8px
 @var text ScrollbarWidthShrink "ScrollBar Width Shrink" 1px
@@ -62,9 +62,9 @@
             --HandleColor: #8c5dab;
             --HandleHover: #9565b5;
         } else if Theme == "Custom" {
-            --TrackColor: TrackColor;
-            --HandleColor: HandleColor;
-            --HandleHover: HandleHover;
+            --TrackColor: CustomTrackColor;
+            --HandleColor: CustomHandleColor;
+            --HandleHover: CustomHandleHover;
         }
     }
 
@@ -78,7 +78,7 @@
         background: var(--HandleColor);
         border-radius: HandleRadius;
         background-clip: padding-box;
-        border-width: var(--ScrollbarWidthShrink);
+        border-width: ScrollbarWidthShrink;
         border-style: solid;
         border-color: transparent;
 
