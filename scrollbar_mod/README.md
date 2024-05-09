@@ -1,6 +1,9 @@
 # Scrollbar Mod
 
-This is a mod version for the [Scrollbar Advanced](https://userstyles.world/style/329/scrollbar-advanced) userstyle.
+This is a mod version for the [Scrollbar Advanced](https://userstyles.world/style/329/scrollbar-advanced) userstyle, available on:
+
+- [UserStyles.World](https://userstyles.world/style/329/scrollbar-advanced) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://userstyles.world/api/style/16203.user.css)
+- [GitHub](https://github.com/PRO-2684/gadgets/raw/main/scrollbar_mod/) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://github.com/PRO-2684/gadgets/raw/main/scrollbar_mod/scrollbar_mod.user.css)
 
 ## Mod Features
 
