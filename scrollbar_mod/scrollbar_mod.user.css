@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Scrollbar Mod
 @namespace      github.com/PRO-2684
-@version        0.1.3
+@version        0.1.4
 @description    Customize your ScrollBar - Mod version
 @author         PRO-2684
 @license     	MIT License
@@ -24,48 +24,47 @@
 @var text ScrollbarWidth "ScrollBar Width" 8px
 @var text ScrollbarHandleShrink "ScrollBar Handle Shrink" 1px
 @var select BackgroundVisibility "Background Visibility" ["Visible-On-Hover", "Always-Visible", "Always-Hidden"]
+@var number Opacity "Opacity" [80, 0, 100, 1]
 ==/UserStyle== */
 
 @-moz-document regexp(".*") {
     /* Colors */
-    :root {
-        if Theme == "Default" {
-            --TrackColor: #161616;
-            --HandleColor: #2d2d2d;
-            --HandleHover: #5b5b5b;
-        } else if Theme == "Deep-Dark" {
-            --TrackColor: #232846;
-            --HandleColor: #383779;
-            --HandleHover: #4358a6;
-        } else if Theme == "Green-Plain" {
-            --TrackColor: #345d38;
-            --HandleColor: #5dab6a;
-            --HandleHover: #6eb565;
-        } else if Theme == "Light-Red" {
-            --TrackColor: #5d3434;
-            --HandleColor: #ab5d5d;
-            --HandleHover: #b56565;
-        } else if Theme == "Desert" {
-            --TrackColor: #5d4834;
-            --HandleColor: #ab805d;
-            --HandleHover: #b59165;
-        } else if Theme == "Tradewind" {
-            --TrackColor: #345d4d;
-            --HandleColor: #5dab8a;
-            --HandleHover: #65b5a5;
-        } else if Theme == "Hippie-Blue" {
-            --TrackColor: #344c5d;
-            --HandleColor: #5d7dab;
-            --HandleHover: #658db5;
-        } else if Theme == "Purple" {
-            --TrackColor: #45345d;
-            --HandleColor: #8c5dab;
-            --HandleHover: #9565b5;
-        } else if Theme == "Custom" {
-            --TrackColor: CustomTrackColor;
-            --HandleColor: CustomHandleColor;
-            --HandleHover: CustomHandleHover;
-        }
+    if Theme == "Default" {
+        TrackColor = #161616;
+        HandleColor = #2d2d2d;
+        HandleHover = #5b5b5b;
+    } else if Theme == "Deep-Dark" {
+        TrackColor = #232846;
+        HandleColor = #383779;
+        HandleHover = #4358a6;
+    } else if Theme == "Green-Plain" {
+        TrackColor = #345d38;
+        HandleColor = #5dab6a;
+        HandleHover = #6eb565;
+    } else if Theme == "Light-Red" {
+        TrackColor = #5d3434;
+        HandleColor = #ab5d5d;
+        HandleHover = #b56565;
+    } else if Theme == "Desert" {
+        TrackColor = #5d4834;
+        HandleColor = #ab805d;
+        HandleHover = #b59165;
+    } else if Theme == "Tradewind" {
+        TrackColor = #345d4d;
+        HandleColor = #5dab8a;
+        HandleHover = #65b5a5;
+    } else if Theme == "Hippie-Blue" {
+        TrackColor = #344c5d;
+        HandleColor = #5d7dab;
+        HandleHover = #658db5;
+    } else if Theme == "Purple" {
+        TrackColor = #45345d;
+        HandleColor = #8c5dab;
+        HandleHover = #9565b5;
+    } else if Theme == "Custom" {
+        TrackColor = CustomTrackColor;
+        HandleColor = CustomHandleColor;
+        HandleHover = CustomHandleHover;
     }
 
     /* Scrollbar width */
@@ -74,28 +73,28 @@
         border-radius: Radius;
 
         if BackgroundVisibility == "Always-Visible" {
-            background: var(--TrackColor);
+            background: alpha(TrackColor, Opacity / 100);
         } else {
             background: transparent;
         }
 
         if BackgroundVisibility == "Visible-On-Hover" {
             &:hover {
-                background: var(--TrackColor);
+                background: alpha(TrackColor, Opacity / 100);
             }
         }
     }
 
     /* Scrollbar Handle */
     ::-webkit-scrollbar-thumb {
-        background: var(--HandleColor);
+        background: alpha(HandleColor, Opacity / 100);
         background-clip: padding-box;
         border-radius: Radius;
         border: ScrollbarHandleShrink solid transparent;
 
         /* Handle on hover */
         &:hover {
-            background: var(--HandleHover);
+            background: alpha(HandleHover, Opacity / 100);
         }
     }
 }

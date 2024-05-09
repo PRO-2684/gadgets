@@ -17,6 +17,7 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
 - `ScrollBar Handle Shrink` feature
 - `Handle Radius` renamed to `Radius`, which now also affects the scrollbar background
 - `Transparent Track` renamed to `Background Visibility`, with an additional option to show only when hovered
+- `Opacity` feature
 
 ## Configuration
 
@@ -34,3 +35,4 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
     - `Visible-On-Hover`: The scrollbar background is only visible when hovered over the scrollbar
     - `Always-Visible`: The scrollbar background is always visible
     - `Always-Hidden`: The scrollbar background is always hidden
+- `Opacity`: Set the opacity of the scrollbar
