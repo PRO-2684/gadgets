@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Scrollbar Mod
 @namespace      github.com/PRO-2684
-@version        0.1.4
+@version        0.1.5
 @description    Customize your ScrollBar - Mod version
 @author         PRO-2684
 @license     	gpl-3.0
@@ -25,6 +25,7 @@
 @var text ScrollbarHandleShrink "ScrollBar Handle Shrink" 1px
 @var select BackgroundVisibility "Background Visibility" ["Visible-On-Hover", "Always-Visible", "Always-Hidden"]
 @var number Opacity "Opacity" [80, 0, 100, 1]
+@var checkbox Force "Force" 0
 ==/UserStyle== */
 
 @-moz-document regexp(".*") {
@@ -67,34 +68,43 @@
         HandleHover = CustomHandleHover;
     }
 
+    /* Force */
+    i = Force ? !important : null;
+    if Force {
+        * {
+            scrollbar-width: initial i;
+            scrollbar-color: initial i;
+        }
+    }
+
     /* Scrollbar width */
     ::-webkit-scrollbar {
-        width: ScrollbarWidth;
-        border-radius: Radius;
+        width: ScrollbarWidth i;
+        border-radius: Radius i;
 
         if BackgroundVisibility == "Always-Visible" {
-            background: alpha(TrackColor, Opacity / 100);
+            background: alpha(TrackColor, Opacity / 100) i;
         } else {
-            background: transparent;
+            background: transparent i;
         }
 
         if BackgroundVisibility == "Visible-On-Hover" {
             &:hover {
-                background: alpha(TrackColor, Opacity / 100);
+                background: alpha(TrackColor, Opacity / 100) i;
             }
         }
     }
 
     /* Scrollbar Handle */
     ::-webkit-scrollbar-thumb {
-        background: alpha(HandleColor, Opacity / 100);
-        background-clip: padding-box;
-        border-radius: Radius;
-        border: ScrollbarHandleShrink solid transparent;
+        background: alpha(HandleColor, Opacity / 100) i;
+        background-clip: padding-box i;
+        border-radius: Radius i;
+        border: ScrollbarHandleShrink solid transparent i;
 
         /* Handle on hover */
         &:hover {
-            background: alpha(HandleHover, Opacity / 100);
+            background: alpha(HandleHover, Opacity / 100) i;
         }
     }
 }

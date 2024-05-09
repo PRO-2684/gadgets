@@ -18,6 +18,7 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
 - `Handle Radius` renamed to `Radius`, which now also affects the scrollbar background
 - `Transparent Track` renamed to `Background Visibility`, with an additional option to show only when hovered
 - `Opacity` feature
+- `Force` feature
 
 ## Configuration
 
@@ -36,3 +37,4 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
     - `Always-Visible`: The scrollbar background is always visible
     - `Always-Hidden`: The scrollbar background is always hidden
 - `Opacity`: Set the opacity of the scrollbar
+- `Force`: Use `!important` on all properties, so as to override website styles (not recommended)
