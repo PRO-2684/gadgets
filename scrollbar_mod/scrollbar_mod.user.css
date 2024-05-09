@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Scrollbar Mod
 @namespace      github.com/PRO-2684
-@version        0.1.2
+@version        0.1.3
 @description    Customize your ScrollBar - Mod version
 @author         PRO-2684
 @license     	MIT License
@@ -20,10 +20,10 @@
 @var color CustomTrackColor "Track Color" #161616
 @var color CustomHandleColor "Handle Color" #2d2d2d
 @var color CustomHandleHover "Handle Hover" #5b5b5b
-@var text HandleRadius "Handle Radius " 46px
+@var text Radius "Radius " 46px
 @var text ScrollbarWidth "ScrollBar Width" 8px
 @var text ScrollbarWidthShrink "ScrollBar Width Shrink" 1px
-@var checkbox TransparentTrack "Transparent Track" 0
+@var select BackgroundVisibility "Background Visibility" ["Visible-On-Hover", "Always-Visible", "Always-Hidden"]
 ==/UserStyle== */
 
 @-moz-document regexp(".*") {
@@ -71,29 +71,31 @@
     /* Scrollbar width */
     ::-webkit-scrollbar {
         width: ScrollbarWidth;
+        border-radius: Radius;
+
+        if BackgroundVisibility == "Always-Visible" {
+            background: var(--TrackColor);
+        } else {
+            background: transparent;
+        }
+
+        if BackgroundVisibility == "Visible-On-Hover" {
+            &:hover {
+                background: var(--TrackColor);
+            }
+        }
     }
 
     /* Scrollbar Handle */
     ::-webkit-scrollbar-thumb {
         background: var(--HandleColor);
-        border-radius: HandleRadius;
         background-clip: padding-box;
-        border-width: ScrollbarWidthShrink;
-        border-style: solid;
-        border-color: transparent;
+        border-radius: Radius;
+        border: ScrollbarWidthShrink solid transparent;
 
         /* Handle on hover */
         &:hover {
             background: var(--HandleHover);
-        }
-    }
-
-    /* Scrollbar Track */
-    ::-webkit-scrollbar-track {
-        if TransparentTrack {
-            background: transparent;
-        } else {
-            background: var(--TrackColor);
         }
     }
 }

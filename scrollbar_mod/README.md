@@ -9,9 +9,11 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
     - Consistent variable naming
     - Using nested CSS
     - ...More
+- Detailed documentation
 - Changing default scrollbar width from 7px to 8px
 - `ScrollBar Width Shrink` feature
-- `Transparent Track` now uses checkbox instead of select
+- `Handle Radius` renamed to `Radius`, which now also affects the scrollbar background
+- `Transparent Track` renamed to `Background Visibility`, with an additional option to show only when hovered
 
 ## Configuration
 
@@ -19,10 +21,13 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
 > Options marked with an asterisk (\*) are only available when `Theme` is set to `Custom`.
 
 - `Theme`: Choose a *color scheme* for the scrollbar
-- `Track Color` \*: Customize the track color of the scrollbar
-- `Handle Color` \*: Customize the handle color of the scrollbar
-- `Handle Hover` \*: Customize the handle color of the scrollbar when hovered
-- `Handle Radius`: Customize the radius of the scrollbar handle
+- \* `Track Color`: Customize the track color of the scrollbar
+- \* `Handle Color`: Customize the handle color of the scrollbar
+- \* `Handle Hover`: Customize the handle color of the scrollbar when hovered
+- `Radius`: Customize the radius of the scrollbar handle and background
 - `Scrollbar Width`: Customize the width of the scrollbar *when hovered*
 - `Scrollbar Width Shrink`: Set how much the scrollbar width should shrink on both sides when not hovered
-- `Transparent Track`: Make the scrollbar track transparent
+- `Background Visibility`: Control the visibility of the scrollbar background
+    - `Visible-On-Hover`: The scrollbar background is only visible when hovered over the scrollbar
+    - `Always-Visible`: The scrollbar background is always visible
+    - `Always-Hidden`: The scrollbar background is always hidden
