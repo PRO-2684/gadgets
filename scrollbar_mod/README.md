@@ -11,7 +11,7 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
     - ...More
 - Detailed documentation
 - Changing default scrollbar width from 7px to 8px
-- `ScrollBar Width Shrink` feature
+- `ScrollBar Handle Shrink` feature
 - `Handle Radius` renamed to `Radius`, which now also affects the scrollbar background
 - `Transparent Track` renamed to `Background Visibility`, with an additional option to show only when hovered
 
@@ -26,7 +26,7 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
 - \* `Handle Hover`: Customize the handle color of the scrollbar when hovered
 - `Radius`: Customize the radius of the scrollbar handle and background
 - `Scrollbar Width`: Customize the width of the scrollbar *when hovered*
-- `Scrollbar Width Shrink`: Set how much the scrollbar width should shrink on both sides when not hovered
+- `Scrollbar Handle Shrink`: Set how much the scrollbar handle should shrink on both sides when not hovered
 - `Background Visibility`: Control the visibility of the scrollbar background
     - `Visible-On-Hover`: The scrollbar background is only visible when hovered over the scrollbar
     - `Always-Visible`: The scrollbar background is always visible

@@ -22,7 +22,7 @@
 @var color CustomHandleHover "Handle Hover" #5b5b5b
 @var text Radius "Radius " 46px
 @var text ScrollbarWidth "ScrollBar Width" 8px
-@var text ScrollbarWidthShrink "ScrollBar Width Shrink" 1px
+@var text ScrollbarHandleShrink "ScrollBar Handle Shrink" 1px
 @var select BackgroundVisibility "Background Visibility" ["Visible-On-Hover", "Always-Visible", "Always-Hidden"]
 ==/UserStyle== */
 
@@ -91,7 +91,7 @@
         background: var(--HandleColor);
         background-clip: padding-box;
         border-radius: Radius;
-        border: ScrollbarWidthShrink solid transparent;
+        border: ScrollbarHandleShrink solid transparent;
 
         /* Handle on hover */
         &:hover {
