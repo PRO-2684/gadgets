@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Scrollbar Mod
 @namespace      github.com/PRO-2684
-@version        0.1.7
+@version        0.1.8
 @description    Customize your ScrollBar - Mod version
 @author         PRO-2684
 @license     	gpl-3.0
@@ -101,6 +101,7 @@
     /* Scrollbar width */
     ::-webkit-scrollbar {
         width: ScrollbarWidth i;
+        height: ScrollbarWidth i;
         border-radius: Radius i;
 
         if BackgroundVisibility == "Always-Visible" {

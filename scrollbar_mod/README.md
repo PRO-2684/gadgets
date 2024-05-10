@@ -41,5 +41,6 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
     - Using nested CSS
     - Changing default scrollbar width from 7px to 8px
     - Use hash object to replace `if-else`s
+    - Also set `height` property so as to apply the style to horizontal scrollbars as well
     - ...More
 - Detailed documentation
