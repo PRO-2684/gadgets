@@ -8,7 +8,7 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
 ## Features & Configuration
 
 > [!NOTE]
-> Options marked with an asterisk (\*) are only available when `Theme` is set to `Custom`.
+> Options marked with an asterisk (\*) only take effect when `Theme` is set to `Custom`.
 
 - `Theme`: Choose a *color scheme* for the scrollbar
 - \* `Track Color`: Customize the track color of the scrollbar
@@ -17,13 +17,13 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
 - \* `Handle Active`: Customize the handle color of the scrollbar when activated
 - `Radius`: Customize the radius of the scrollbar handle and background
 - `Scrollbar Width`: Customize the width of the scrollbar *when hovered*
-- `Scrollbar Handle Shrink`: Set how much the scrollbar handle should shrink on both sides when not hovered
+- `Scrollbar Handle Shrink`: Set how much the scrollbar handle should shrink on both sides when *not hovered*
 - `Background Visibility`: Control the visibility of the scrollbar background
-    - `Visible-On-Hover`: The scrollbar background is only visible when hovered over the scrollbar
+    - `Visible-On-Hover`: The scrollbar background is only visible when hovering over the scrollbar
     - `Always-Visible`: The scrollbar background is always visible
     - `Always-Hidden`: The scrollbar background is always hidden
 - `Opacity`: Set the opacity of the scrollbar
-- `Force`: Use `!important` on all properties, so as to override website styles (not recommended)
+- `Force`: Try to override site-defined scrollbar styles (not recommended)
 
 ## Mod Features
 
