@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Scrollbar Mod
 @namespace      github.com/PRO-2684
-@version        0.1.5
+@version        0.1.6
 @description    Customize your ScrollBar - Mod version
 @author         PRO-2684
 @license     	gpl-3.0
@@ -20,6 +20,7 @@
 @var color CustomTrackColor "Track Color" #161616
 @var color CustomHandleColor "Handle Color" #2d2d2d
 @var color CustomHandleHover "Handle Hover" #5b5b5b
+@var color CustomHandleActive "Handle Active" #7b7b7b
 @var text Radius "Radius " 46px
 @var text ScrollbarWidth "ScrollBar Width" 8px
 @var text ScrollbarHandleShrink "ScrollBar Handle Shrink" 1px
@@ -34,38 +35,47 @@
         TrackColor = #161616;
         HandleColor = #2d2d2d;
         HandleHover = #5b5b5b;
+        HandleActive = #7b7b7b;
     } else if Theme == "Deep-Dark" {
         TrackColor = #232846;
         HandleColor = #383779;
         HandleHover = #4358a6;
+        HandleActive = #4f6fc2;
     } else if Theme == "Green-Plain" {
         TrackColor = #345d38;
         HandleColor = #5dab6a;
         HandleHover = #6eb565;
+        HandleActive = #7db565;
     } else if Theme == "Light-Red" {
         TrackColor = #5d3434;
         HandleColor = #ab5d5d;
         HandleHover = #b56565;
+        HandleActive = #c27b7b;
     } else if Theme == "Desert" {
         TrackColor = #5d4834;
         HandleColor = #ab805d;
         HandleHover = #b59165;
+        HandleActive = #c2a07b;
     } else if Theme == "Tradewind" {
         TrackColor = #345d4d;
         HandleColor = #5dab8a;
         HandleHover = #65b5a5;
+        HandleActive = #7bb5b5;
     } else if Theme == "Hippie-Blue" {
         TrackColor = #344c5d;
         HandleColor = #5d7dab;
         HandleHover = #658db5;
+        HandleActive = #7b9cb5;
     } else if Theme == "Purple" {
         TrackColor = #45345d;
         HandleColor = #8c5dab;
         HandleHover = #9565b5;
+        HandleActive = #a07bc2;
     } else if Theme == "Custom" {
         TrackColor = CustomTrackColor;
         HandleColor = CustomHandleColor;
         HandleHover = CustomHandleHover;
+        HandleActive = CustomHandleActive;
     }
 
     /* Force */
@@ -105,6 +115,11 @@
         /* Handle on hover */
         &:hover {
             background: alpha(HandleHover, Opacity / 100) i;
+        }
+
+        /* Handle on active */
+        &:active {
+            background: alpha(HandleActive, Opacity / 100) i;
         }
     }
 }
