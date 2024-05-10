@@ -40,5 +40,6 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
     - Consistent variable naming
     - Using nested CSS
     - Changing default scrollbar width from 7px to 8px
+    - Use hash object to replace `if-else`s
     - ...More
 - Detailed documentation
