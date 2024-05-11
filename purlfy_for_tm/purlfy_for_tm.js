@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.2.2
+// @version      0.2.3
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -17,7 +17,7 @@
 // @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
 // @connect      *
-// @require      https://update.greasyfork.org/scripts/492078/1369519/pURLfy.js
+// @require      https://update.greasyfork.org/scripts/492078/1374854/pURLfy.js
 // @resource     rules-cn https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/cn.min.json
 // @resource     rules-alternative https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/alternative.min.json
 // @license      gpl-3.0
@@ -205,7 +205,7 @@
     }
     GM_setValue("hooks", hooksCfg); // Save hook configs
     Promise.all(promises).then(() => {
-        log("Initialized successfully! 🎉");
+        log(`[core ${Purlfy.version}] Initialized successfully! 🎉`);
     });
     // Manual purify
     function trim(url) { // Leave at most 100 characters
@@ -223,7 +223,7 @@
     // Statistics
     function showStatistics() {
         const statistics = GM_getValue("statistics", { ...initStatistics });
-        const text = Object.entries(statistics).map(([key, value]) => `${key}: ${value}`).join(", ");
+        const text = Object.entries(statistics).map(([key, value]) => `${key}: ${value}`).join(", ") + `\npURLfy core version: ${Purlfy.version}`;
         const r = confirm(text + "\nDo you want to reset the statistics?");
         if (!r) return;
         GM_setValue("statistics", initStatistics);
