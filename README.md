@@ -9,7 +9,9 @@ Some code snippets that's hard to categorize. See READMEs under subfolders for d
 - `checkbox_patch`: Patches the property `checked` of a certain checkbox, so that a `change` event will be issued when the `checked` value is modified by other scripts.
 - `GM_config`: Simple config lib for Tampermonkey scripts.
 - `hover_card`: Get Github hovercard for given repo.
+- `purlfy_for_tm`: The ultimate URL purifier - Tampermonkey version.
 - `sanitify_header_id`: Sanitify/Sanitize given string (header id) so that it is (hopefully) free of emojis, with its spaces replaced by `-`.
+- `scrollbar_mod`: Customize your scrollbar easily.
 - `subnet_helper`: Converts binary subnet mask to human-friendly notation (dot-decimal with length) and vice versa. In addition, it can provide available IP range and count in the given subnet.
 - `url_summary`: Get summary of a given URL, including favicon, title, description and keywords.
 
