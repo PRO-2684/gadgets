@@ -1,32 +1,24 @@
 /* ==UserStyle==
 @name           Scrollbar Mod
 @namespace      github.com/PRO-2684
-@version        0.1.8
+@version        0.1.9
 @description    Customize your ScrollBar - Mod version
 @author         PRO-2684
 @license     	gpl-3.0
 @preprocessor   stylus
-@var select Theme "Theme" [
-    "Default",
-    "Deep-Dark",
-    "Green-Plain",
-    "Light-Red",
-    "Desert",
-    "Tradewind",
-    "Hippie-Blue",
-    "Purple",
-    "Custom"
+@var select   Theme                 "Theme" [
+    "Default", "Deep-Dark", "Green-Plain", "Light-Red", "Desert", "Tradewind", "Hippie-Blue", "Purple", "Custom"
 ]
-@var color CustomTrackColor "Track Color" #161616
-@var color CustomHandleColor "Handle Color" #2d2d2d
-@var color CustomHandleHover "Handle Hover" #5b5b5b
-@var color CustomHandleActive "Handle Active" #7b7b7b
-@var text Radius "Radius " 46px
-@var text ScrollbarWidth "ScrollBar Width" 8px
-@var text ScrollbarHandleShrink "ScrollBar Handle Shrink" 1px
-@var select BackgroundVisibility "Background Visibility" ["Visible-On-Hover", "Always-Visible", "Always-Hidden"]
-@var number Opacity "Opacity" [80, 0, 100, 1]
-@var checkbox Force "Force" 0
+@var color    CustomTrackColor      "Track Color"             #161616
+@var color    CustomHandleColor     "Handle Color"            #2d2d2d
+@var color    CustomHandleHover     "Handle Hover"            #5b5b5b
+@var color    CustomHandleActive    "Handle Active"           #7b7b7b
+@var text     Radius                "Radius"                  46px
+@var text     ScrollbarWidth        "ScrollBar Width"         8px
+@var text     ScrollbarHandleShrink "ScrollBar Handle Shrink" 1px
+@var select   BackgroundVisibility  "Background Visibility"   ["Visible-On-Hover", "Always-Visible", "Always-Hidden"]
+@var number   Opacity               "Opacity"                 [80, 0, 100, 1]
+@var checkbox Force                 "Force"                   0
 ==/UserStyle== */
 
 @-moz-document regexp(".*") {
