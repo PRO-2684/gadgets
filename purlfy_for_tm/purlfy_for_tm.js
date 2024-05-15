@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.2.3
+// @version      0.2.4
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -175,6 +175,39 @@
             document.removeEventListener(name, this.handler, { capture: true });
         }
     });
+    // Hook form submit
+    async function submitHandler(e) {
+        const form = e.submitter.form;
+        if (!form || form.hasAttribute(tag2)) return;
+        const url = new URL(form.action, location.href);
+        if (url.protocol !== "http:" && url.protocol !== "https:") return; // Ignore non-HTTP(S) URLs
+        const newEvt = cloneAndStop(e);
+        if (!form.hasAttribute(tag1)) { // The first to intercept
+            form.toggleAttribute(tag1, true);
+            this.toast(`Intercepted: "${url.href}"`);
+            const purified = await purifier.purify(url.href);
+            form.action = purified.url;
+            this.toast(`Processed: "${form.action}"`);
+            form.toggleAttribute(tag2, true);
+            form.removeAttribute(tag1);
+            form.dispatchEvent(newEvt);
+            form.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
+        } else { // Someone else has intercepted
+            this.toast(`Waiting: "${url.href}"`);
+            form.addEventListener(eventName, function () {
+                log(`Waited: "${url.href}"`);
+                form.dispatchEvent(newEvt);
+            }, { once: true });
+        }
+    }
+    const submitHook = new Hook("submit");
+    submitHook.handler = submitHandler.bind(submitHook);
+    submitHook.enable = async function () {
+        document.addEventListener("submit", this.handler, { capture: true });
+    }
+    submitHook.disable = async function () {
+        document.removeEventListener("submit", this.handler, { capture: true });
+    }
     // Intercept window.open
     const openHook = new Hook("window.open");
     openHook.original = window.open.bind(window);
