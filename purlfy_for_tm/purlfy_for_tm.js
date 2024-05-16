@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.2.7
+// @version      0.2.8
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -160,7 +160,7 @@
                 ele.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
                 if (ele.textContent === href) ele.textContent = purified.url; // Update the text content
             } else { // Someone else has intercepted
-                if (senseless) {
+                if (!senseless) {
                     const newEvt = cloneAndStop(e);
                     this.toast(`Waiting: "${ele.href}"`);
                     ele.addEventListener(eventName, function () {
