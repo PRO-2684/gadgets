@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.2.6
+// @version      0.2.7
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -91,6 +91,10 @@
         }
     }
     GM_setValue("rules", rulesCfg);
+    // Senseless mode
+    const senseless = GM_getValue("senseless", true);
+    log(`Senseless mode is ${senseless ? "enabled" : "disabled"}.`);
+    GM_setValue("senseless", senseless);
     // Statistics listener
     purifier.addEventListener("statisticschange", e => {
         log("Statistics increment:", e.detail);
@@ -132,10 +136,10 @@
     }.bind(locationHook);
     locationHook.disable = async function () { } // Do nothing
     // Mouse-related hooks
-    function cloneAndStop(e, stop=true) { // Clone an event and stop the original
+    function cloneAndStop(e) { // Clone an event and stop the original
         const newEvt = new e.constructor(e.type, e);
-        stop && e.preventDefault();
-        stop && e.stopImmediatePropagation();
+        e.preventDefault();
+        e.stopImmediatePropagation();
         return newEvt;
     }
     async function mouseHandler(e) { // Intercept mouse events
@@ -145,23 +149,25 @@
             if (!href.startsWith("https://") && !href.startsWith("http://")) return; // Ignore non-HTTP(S) URLs
             if (!ele.hasAttribute(tag1)) { // The first to intercept
                 ele.toggleAttribute(tag1, true);
-                const newEvt = cloneAndStop(e);
+                const newEvt = senseless ? null : cloneAndStop(e);
                 this.toast(`Intercepted: "${href}"`);
                 const purified = await purifier.purify(href);
                 ele.href = purified.url;
                 this.toast(`Processed: "${ele.href}"`);
                 ele.toggleAttribute(tag2, true);
                 ele.removeAttribute(tag1);
-                ele.dispatchEvent(newEvt);
+                senseless || ele.dispatchEvent(newEvt);
                 ele.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
                 if (ele.textContent === href) ele.textContent = purified.url; // Update the text content
             } else { // Someone else has intercepted
-                const newEvt = cloneAndStop(e);
-                this.toast(`Waiting: "${ele.href}"`);
-                ele.addEventListener(eventName, function () {
-                    log(`Waited: "${ele.href}"`);
-                    ele.dispatchEvent(newEvt);
-                }, { once: true });
+                if (senseless) {
+                    const newEvt = cloneAndStop(e);
+                    this.toast(`Waiting: "${ele.href}"`);
+                    ele.addEventListener(eventName, function () {
+                        log(`Waited: "${ele.href}"`);
+                        ele.dispatchEvent(newEvt);
+                    }, { once: true });
+                }
             }
         }
     }
@@ -175,8 +181,33 @@
             document.removeEventListener(name, this.handler, { capture: true });
         }
     });
+    // Hook `touchstart` event
+    async function touchstartHandler(e) { // Always "senseless"
+        const ele = e.target.tagName === "A" ? e.target : e.target.closest("a");
+        if (ele && !ele.hasAttribute(tag1) && !ele.hasAttribute(tag2) && ele.href) {
+            const href = ele.href;
+            if (!href.startsWith("https://") && !href.startsWith("http://")) return; // Ignore non-HTTP(S) URLs
+            ele.toggleAttribute(tag1, true);
+            this.toast(`Intercepted: "${href}"`);
+            const purified = await purifier.purify(href);
+            ele.href = purified.url;
+            this.toast(`Processed: "${ele.href}"`);
+            ele.toggleAttribute(tag2, true);
+            ele.removeAttribute(tag1);
+            ele.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
+            if (ele.textContent === href) ele.textContent = purified.url; // Update the text content
+        }
+    }
+    const touchstartHook = new Hook("touchstart");
+    touchstartHook.handler = touchstartHandler.bind(touchstartHook);
+    touchstartHook.enable = async function () {
+        document.addEventListener("touchstart", this.handler, { capture: true });
+    }
+    touchstartHook.disable = async function () {
+        document.removeEventListener("touchstart", this.handler, { capture: true });
+    }
     // Hook form submit
-    async function submitHandler(e) {
+    async function submitHandler(e) { // Always "senseless"
         const form = e.submitter.form;
         if (!form || form.hasAttribute(tag2)) return;
         const url = new URL(form.action, location.href);

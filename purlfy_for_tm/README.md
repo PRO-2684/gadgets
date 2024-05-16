@@ -27,7 +27,8 @@ For advanced users, you can configure which hooks and rules are enabled by modif
     "rules": {
         "cn": true, // Enable Chinese rules
         "alternative": false // Enable alternative rules (Redirects you from some websites to their better alternatives)
-    }
+    },
+    "senseless": true // Enable senseless mode (Less intrusive, but less effective)
 }
 ```
 
