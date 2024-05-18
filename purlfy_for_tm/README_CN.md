@@ -32,6 +32,9 @@
         "location.href": true, // 检查 `location.href` (实际上并不是一个 hook)
         "click": true, // 拦截 `click` 事件
         "mousedown": true, // 拦截 `mousedown` 事件
+        "auxclick": true, // 拦截 `auxclick` 事件
+        "touchstart": true, // 拦截 `touchstart` 事件
+        "submit": true, // 拦截 `submit` 事件
         "window.open": true // Hook `window.open` 调用
     },
     "rules": {
