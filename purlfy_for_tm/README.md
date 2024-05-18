@@ -22,6 +22,9 @@ For advanced users, you can configure which hooks and rules are enabled by modif
         "location.href": true, // Check `location.href` (not really a hook, actually)
         "click": true, // Intercept `click` events
         "mousedown": true, // Intercept `mousedown` events
+        "auxclick": true, // Intercept `auxclick` events
+        "touchstart": true, // Intercept `touchstart` events
+        "submit": true, // Intercept `submit` events
         "window.open": true // Hook `window.open` calls
     },
     "rules": {
