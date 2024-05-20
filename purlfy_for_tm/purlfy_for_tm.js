@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.3.0
+// @version      0.3.1
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -184,7 +184,7 @@
     // Hook `touchstart` event
     async function touchstartHandler(e) { // Always "senseless"
         const ele = e.target.tagName === "A" ? e.target : e.target.closest("a");
-        if (ele && !ele.hasAttribute(tag1) && !ele.hasAttribute(tag2) && ele.href) {
+        if (ele && !ele.hasAttribute(tag1) && !ele.hasAttribute(tag2) && ele.href && !ele.getAttribute("href").startsWith("#")) {
             const href = ele.href;
             if (!href.startsWith("https://") && !href.startsWith("http://")) return; // Ignore non-HTTP(S) URLs
             ele.toggleAttribute(tag1, true);
