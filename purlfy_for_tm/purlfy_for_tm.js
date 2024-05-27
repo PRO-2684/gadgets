@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.3.1
+// @version      0.3.2
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -152,8 +152,12 @@
                 const newEvt = senseless ? null : cloneAndStop(e);
                 this.toast(`Intercepted: "${href}"`);
                 const purified = await purifier.purify(href);
-                ele.href = purified.url;
-                this.toast(`Processed: "${ele.href}"`);
+                if (purified.url !== href) {
+                    ele.href = purified.url;
+                    this.toast(`Processed: "${ele.href}"`);
+                } else {
+                    this.toast(`Same: "${ele.href}"`);
+                }
                 ele.toggleAttribute(tag2, true);
                 ele.removeAttribute(tag1);
                 senseless || ele.dispatchEvent(newEvt);
@@ -190,8 +194,12 @@
             ele.toggleAttribute(tag1, true);
             this.toast(`Intercepted: "${href}"`);
             const purified = await purifier.purify(href);
-            ele.href = purified.url;
-            this.toast(`Processed: "${ele.href}"`);
+            if (purified.url !== href) {
+                ele.href = purified.url;
+                this.toast(`Processed: "${ele.href}"`);
+            } else {
+                this.toast(`Same: "${ele.href}"`);
+            }
             ele.toggleAttribute(tag2, true);
             ele.removeAttribute(tag1);
             ele.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
@@ -216,8 +224,12 @@
             form.toggleAttribute(tag1, true);
             this.toast(`Intercepted: "${url.href}"`);
             const purified = await purifier.purify(url.href);
-            form.action = purified.url;
-            this.toast(`Processed: "${form.action}"`);
+            if (purified.url !== url.href) {
+                form.action = purified.url;
+                this.toast(`Processed: "${form.action}"`);
+            } else {
+                this.toast(`Same: "${form.action}"`);
+            }
             form.toggleAttribute(tag2, true);
             form.removeAttribute(tag1);
             form.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
