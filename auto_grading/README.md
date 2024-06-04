@@ -29,4 +29,13 @@
 - 按下退格 (`Backspace`)：忽略并转到下一个
 - `Shift` + `Enter`：全自动评教（实验性功能）
 
+## 更新“参考答案”
+
+由于 Tampermonkey 默认不会自动更新依赖，故你可以选择如下两种方式：
+
+1. 配置答案的更新间隔：前往 Tampermonkey `管理面板` - `设置` - `外部`，在下拉菜单中选择您希望的更新间隔。
+2. 手动更新：前往 Tampermonkey `管理面板` - `已安装脚本` - `Auto grading` - `外部`，对于 `资源` 下的每一个条目，点击 `删除` 按钮。刷新页面后，参考答案将会自动更新。
+
+## 其他
+
 更多 USTC 相关的实用脚本可以查看脚本集 [USTC collection](https://greasyfork.org/zh-CN/scripts?set=586574)。

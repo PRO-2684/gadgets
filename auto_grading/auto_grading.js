@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Auto grading
 // @namespace    http://tampermonkey.net/
-// @version      0.7.1
+// @version      0.7.2
 // @description  USTC 自动评价 tqm.ustc.edu.cn
 // @author       PRO_2684
 // @match        https://tqm.ustc.edu.cn/index.html*
 // @icon         https://tqm.ustc.edu.cn/favicon.ico
-// @grant        none
+// @grant        GM_getResourceText
 // @license      gpl-3.0
-// @require      https://update.greasyfork.org/scripts/468177/%E6%95%99%E5%AD%A6%E8%B4%A8%E9%87%8F%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0%E6%A0%87%E5%87%86%E7%AD%94%E6%A1%88.js
+// @resource     answers https://cdn.jsdelivr.net/gh/PRO-2684/gadgets/auto_grading/answers.json
 // ==/UserScript==
 
 (function () {
@@ -16,6 +16,7 @@
     if (location.hash.startsWith("#/user/login-zkd/")) return; // Don't run in login page
     const INTERVAL = 500; // ms
     const log = console.log.bind(console, "[Auto grading]");
+    const standard_answers = JSON.parse(GM_getResourceText("answers"));
     let bypass_timer = false;
     let menu_root;
     function clean(str) {
