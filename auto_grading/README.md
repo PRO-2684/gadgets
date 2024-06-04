@@ -4,6 +4,8 @@
 
 ![Greasy Fork](https://img.shields.io/greasyfork/dt/457282) [![](https://img.shields.io/badge/Crazy%20Thur.-V%20me%2050-red?logo=kfc)](https://greasyfork.org/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaWZvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10e04ed7ed56ae18d22cec6d675b34fd579cecab/wechat.jpeg?locale=zh-CN)
 
+此脚本可以帮助你在 USTC 教学质量管理平台自动评教，节省时间，解放双手。
+
 ## 适用网站
 
 `tqm.ustc.edu.cn/index.html*`
