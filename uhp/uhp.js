@@ -3,7 +3,7 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.1.7
+// @version      1.1.8
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
@@ -1018,7 +1018,8 @@
                 "css": `div#dropdown-menu-filter { display: none; } div#dropdown-menu-bg { backdrop-filter: blur(3px); } div.second-menu-wrap div.menu-area { width: 100%; }
                     li.home div.dropdown-menu { width: 25vw !important; min-width: 400px !important; } .primary .item li.primaryLi.hover { transition: transform 0.25s ease; }
                     .primaryLi .subMenus { cursor: initial; opacity: 0.8; } div#shortcut { width: 27em; } .shortcut-panel .shortcut-item { width: 25%; }
-                    .primary-container .primaryLi .subMenus { width: 400px; border-radius: inherit; overflow: auto; } #e-content-area #e-op-area div.e-toolbarTab { padding: 0 !important; }`,
+                    .primary-container .primaryLi .subMenus { width: 400px; border-radius: inherit; overflow: auto; } #e-content-area #e-op-area div.e-toolbarTab { padding: 0 !important; }
+                    .dropdown.path-li .path-dropdown.second-menu-wrap.dropdown-menu { width: auto; padding: 10px; } .dropdown.path-li .path-dropdown.second-menu-wrap.dropdown-menu .menu-area { padding: 0; }`,
                 "privacy": `#accountLoginInfo, #home-page .info-username, body > div.container div.top-bar > h2.info-title, .list-group-item > span:not(.pull-left) { filter: blur(0.2em); }
                     img[src='/my/avatar'] { filter: blur(1em); }`
             };
@@ -1472,7 +1473,7 @@
                     } else if (e.key == "Escape") {
                         this.value = ""; // Escape to clear comment
                     }
-                    
+
                 }
             }
             const css = "html { scroll-behavior: smooth; } img { max-width: 100%; }";
