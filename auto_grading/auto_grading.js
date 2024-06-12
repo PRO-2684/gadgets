@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Auto grading
 // @namespace    http://tampermonkey.net/
-// @version      0.7.2
-// @description  USTC 自动评价 tqm.ustc.edu.cn
+// @version      0.7.3
+// @description  USTC 自动评教 tqm.ustc.edu.cn
 // @author       PRO_2684
 // @match        https://tqm.ustc.edu.cn/index.html*
 // @icon         https://tqm.ustc.edu.cn/favicon.ico
@@ -13,7 +13,6 @@
 
 (function () {
     'use strict';
-    if (location.hash.startsWith("#/user/login-zkd/")) return; // Don't run in login page
     const INTERVAL = 500; // ms
     const log = console.log.bind(console, "[Auto grading]");
     const standard_answers = JSON.parse(GM_getResourceText("answers"));
@@ -33,7 +32,7 @@
     }
     function on_bypass_click() {
         bypass_timer = !bypass_timer;
-        this.textContent = `绕过倒计时 [${bypass_timer ? "已启用" : "已禁用"}]`;
+        this.textContent = `绕过倒计时 [${bypass_timer ? "✔" : "✘"}]`;
     }
     function add_item(display_name, hint, callback) {
         const new_item = menu_root.appendChild(document.createElement("li"));
@@ -200,7 +199,7 @@
         if (menu_root) {
             observer.disconnect();
             add_item("使用说明", "自动评教脚本使用说明", help);
-            add_item("绕过倒计时 [已禁用]", "（实验性功能）在 Enter 以及全自动评教时绕过 5 秒倒计时", on_bypass_click);
+            add_item("绕过倒计时 [✘]", "（实验性功能）在 Enter 以及全自动评教时绕过 5 秒倒计时", on_bypass_click);
             add_item("自动评价", "自动选择标准答案", grade);
             add_item("忽略并转到下一个", "（若可能）忽略当前助教并转到下一个助教", ignore);
             add_item("全自动评教", "（实验性功能）彻底解放双手", full_auto);
