@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.7.2
+// @version      0.7.3
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @author       PRO
@@ -490,23 +490,105 @@
         }
     });
     // Search syntax
+    const types = {
+        "script": "scripts",
+        "lib": "scripts/libraries",
+        "library": "scripts/libraries",
+        // "code": "scripts/code-search", // It uses a different search parameter `c` instead of `q`
+        "user": "users"
+    };
+    const langs = {
+        "js": "",
+        "javascript": "",
+        "css": "css",
+        "any": "all",
+        "all": "all"
+    };
+    const sorts = {
+        "rel": "",
+        "relevant": "",
+        "relevance": "",
+        "day": "daily_installs",
+        "daily": "daily_installs",
+        "daily_install": "daily_installs",
+        "daily_installs": "daily_installs",
+        "total": "total_installs",
+        "total_install": "total_installs",
+        "total_installs": "total_installs",
+        "score": "ratings",
+        "rate": "ratings",
+        "rating": "ratings",
+        "ratings": "ratings",
+        "created": "created",
+        "created_at": "created",
+        "updated": "updated",
+        "updated_at": "updated",
+        "name": "name",
+        "title": "name",
+    };
     if (config["search-syntax"]) {
-        const search = $("input[type=search][name=q]");
-        const submit = $("input[type=submit]");
-        if (search && submit) {
-            const form = search.parentElement;
-            // site:site-name
-            function parseSite(s) {
-                const m = s.match(/\bsite:(\S*)/);
-                return m?.[1] || null;
+        function parseString(input) {
+            // Regular expression to match key:value pairs, allowing for non-word characters in values
+            const regex = /\b(\w+:[^\s]+)\b/g;
+            // Extract all key:value pairs
+            const pairs = input.match(regex) || [];
+            // Remove the pairs from the input string
+            const cleanedString = input.replace(regex, '').replace(/\s{2,}/g, ' ').trim();
+
+            // Convert pairs to an object
+            const parsedPairs = pairs.reduce((acc, pair) => {
+                const [key, value] = pair.split(':');
+                acc[key] = value;
+                return acc;
+            }, {});
+
+            return { cleanedString, parsedPairs };
+        }
+        function processSearch(search) {
+            const form = search.form;
+            if (form.method !== "get") {
+                return;
             }
             form.addEventListener("submit", (e) => {
-                const site = parseSite(search.value);
-                if (site) {
-                    search.value = search.value.replace(/\s*\bsite:\S*/, "");
-                    form.action = `/scripts/by-site/${site}?site=${site}`;
+                const { cleanedString, parsedPairs } = parseString(search.value);
+                if (cleanedString === search.value) return;
+                search.value = cleanedString;
+                if (!parsedPairs) return;
+                e.preventDefault();
+                const url = new URL(form.action, window.location.href);
+                url.searchParams.set("q", cleanedString);
+                if (parsedPairs["site"]) { // site:site-name
+                    url.pathname = `/scripts/by-site/${parsedPairs["site"]}`;
+                } else if (parsedPairs["type"]) { // type:type, including "script", "lib"/"library", "code", "user"
+                    const typeUrl = types[parsedPairs["type"]];
+                    if (typeUrl) {
+                        url.pathname = `/${typeUrl}`;
+                    }
                 }
+                if (url.pathname.endsWith("/scripts") || url.pathname.endsWith("/scripts/")) {
+                    if (parsedPairs["lang"]) { // lang:language
+                        const lang = langs[parsedPairs["lang"]];
+                        if (lang === "") {
+                            url.searchParams.delete("language");
+                        } else if (lang) {
+                            url.searchParams.set("language", lang);
+                        }
+                    }
+                    if (parsedPairs["sort"]) { // sort:sort-by
+                        const sort = sorts[parsedPairs["sort"]];
+                        if (sort === "" || sort === "daily_installs" && cleanedString === "") {
+                            url.searchParams.delete("sort");
+                        } else if (sort) {
+                            url.searchParams.set("sort", sort);
+                        }
+                    }
+                }
+                window.location.href = url.href;
             });
+        }
+        const searches = $$("input[type=search][name=q]");
+        for (const search of searches) {
+            processSearch(search);
         }
     }
     // Image proxy

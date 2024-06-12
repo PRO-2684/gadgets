@@ -14,6 +14,24 @@
 - 更易于辨识的表格
 - 扁平布局
 - 高级搜索语法
+  - `site:`: 将结果限定在支持指定网站的脚本，例如查询 `ad site:youtube.com`，会将你导航至 `https://greasyfork.org/scripts/by-site/youtube.com?q=ad`
+  - `type:`: 在指定类型中搜索，包括如下类型：
+    - `script`: 脚本搜索 (默认)
+    - `lib`, `library`: 库搜索
+    - ~~`code`: 代码搜索~~
+    - `user`: 用户搜索
+  - `lang:`: 指定编程语言 (仅支持脚本搜索)
+    - `js`, `javascript`: JavaScript (默认)
+    - `css`: CSS
+    - `any`, `all`: 所有语言
+  - `sort:`: 指定排序方式 (仅支持脚本搜索)
+    - `rel`, `relevant`, `relevance`: 按相关性排序 (指定搜索词时默认)
+    - `day`, `daily`, `daily_install`, `daily_installs`: 按日安装量排序 (未指定搜索词时默认)
+    - `total`, `total_install`, `total_installs`: 按总安装量排序
+    - `score`, `rate`, `rating`, `ratings`: 按评分排序
+    - `created`, `created_at`: 按创建时间排序
+    - `updated`, `updated_at`: 按更新时间排序
+    - `name`, `title`: 按名称排序
 - 展示库的其他可用网址
 - 展示当前脚本的短链
 - 快捷键
@@ -32,5 +50,4 @@
 - **Short link**: 展示当前脚本的短链
 - **Shortcut**: 启用快捷键
 - \***Search syntax**: 启用搜索语法
-  - `site:`: 将结果限定在支持指定网站的脚本，例如查询 `ad site:youtube.com`，会将你导航至 `https://greasyfork.org/scripts/by-site/youtube.com?q=ad`
 - \***Image proxy**: 使用 `wsrv.nl` 作为用户上传图像的代理
