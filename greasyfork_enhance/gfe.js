@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.7.3
+// @version      0.7.4
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @author       PRO
@@ -538,7 +538,7 @@
             // Convert pairs to an object
             const parsedPairs = pairs.reduce((acc, pair) => {
                 const [key, value] = pair.split(':');
-                acc[key] = value;
+                acc[key.toLowerCase()] = value.toLowerCase(); // Case-insensitive
                 return acc;
             }, {});
 

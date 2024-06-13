@@ -15,7 +15,7 @@
   - 自动隐藏大于指定行数的代码
 - 更易于辨识的表格
 - 扁平布局
-- 高级搜索语法
+- 高级搜索语法 (**不区分大小写**)
   - `site:`: 将结果限定在支持指定网站的脚本，例如查询 `ad site:youtube.com`，会将你导航至 `https://greasyfork.org/scripts/by-site/youtube.com?q=ad`
   - `type:`: 在指定类型中搜索，包括如下类型：
     - `script`: 脚本搜索 (默认)

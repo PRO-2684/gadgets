@@ -15,7 +15,7 @@
   - Auto hide code that has larger line number than given value
 - More recognizable tables
 - Flat layout
-- Advanced search syntax
+- Advanced search syntax (**Case-insensitive**)
   - `site:`: Only display scripts for given site, e.g. query `ad site:youtube.com` will navigate you to `https://greasyfork.org/scripts/by-site/youtube.com?q=ad`
   - `type:`: Search in specified type, including:
     - `script`: Script search (default)
