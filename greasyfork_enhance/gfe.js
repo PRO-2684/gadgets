@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.7.5
+// @version      0.7.6
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @author       PRO
@@ -594,22 +594,20 @@
                         url.pathname = `/${typeUrl}`;
                     }
                 }
-                if (url.pathname.endsWith("/scripts") || url.pathname.endsWith("/scripts/")) {
-                    if (parsedPairs["lang"]) { // lang:language
-                        const lang = langs[parsedPairs["lang"]];
-                        if (lang === "") {
-                            url.searchParams.delete("language");
-                        } else if (lang) {
-                            url.searchParams.set("language", lang);
-                        }
+                if (parsedPairs["lang"]) { // lang:language
+                    const lang = langs[parsedPairs["lang"]];
+                    if (lang === "") {
+                        url.searchParams.delete("language");
+                    } else if (lang) {
+                        url.searchParams.set("language", lang);
                     }
-                    if (parsedPairs["sort"]) { // sort:sort-by
-                        const sort = sorts[parsedPairs["sort"]];
-                        if (sort === "" || sort === "daily_installs" && cleanedString === "") {
-                            url.searchParams.delete("sort");
-                        } else if (sort) {
-                            url.searchParams.set("sort", sort);
-                        }
+                }
+                if (parsedPairs["sort"]) { // sort:sort-by
+                    const sort = sorts[parsedPairs["sort"]];
+                    if (sort === "" || sort === "daily_installs" && cleanedString === "") {
+                        url.searchParams.delete("sort");
+                    } else if (sort) {
+                        url.searchParams.set("sort", sort);
                     }
                 }
                 window.location.href = url.href;
