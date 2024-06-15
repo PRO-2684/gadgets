@@ -3,7 +3,7 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.1.8
+// @version      1.1.9
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
@@ -24,7 +24,7 @@
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
-// @require      https://update.greasyfork.org/scripts/462234/1307862/Message.js
+// @require      https://update.greasyfork.org/scripts/462234/1391948/Message.js
 // @require      https://update.greasyfork.org/scripts/470224/1317473/Tampermonkey%20Config.js
 // ==/UserScript==
 
@@ -116,12 +116,10 @@
             "icourse/shortcut": boolDesc("Shortcut", "Enable shortcut support"),
         }
     };
-    window.QMSG_GLOBALS = {
-        DEFAULTS: {
-            showClose:true,
-            timeout: 2000
-        }
-    }
+    Qmsg.config({
+        showClose: true,
+        timeout: 2000
+    });
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
     async function timer(callback, interval = 500, times = 16) {
@@ -232,6 +230,7 @@
                     input.value = code;
                 }
                 img.addEventListener('load', recognize);
+                if (img.complete) recognize();
             }
             const form = $('.loginForm');
             if (!form) {
