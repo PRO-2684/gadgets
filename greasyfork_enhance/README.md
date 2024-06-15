@@ -38,6 +38,8 @@
 - Display a short link to current script
 - Keyboard shortcuts
     - `Ctrl+Enter` inside a textarea to submit forms
+    - `Enter` to focus on first search box / textarea
+    - `Escape` to unfocus
 - Image proxy using `wsrv.nl`
 
 ## ⚙️ Configuation

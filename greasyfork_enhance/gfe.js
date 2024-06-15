@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.7.4
+// @version      0.7.5
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @author       PRO
@@ -431,27 +431,55 @@
     }
     shortLink(config["short-link"]);
     // Shortcut
-    function shortcut(enable) {
-        const textAreas = $$("textarea");
-        let enabled = false;
-        function onKeyup(e) {
-            const form = this.form;
-            if (!form) return;
-            // Ctrl + Enter to submit
-            if (e.ctrlKey && e.key === "Enter") {
-                form.submit();
+    function submitOnCtrlEnter(e) {
+        const form = this.form;
+        if (!form) return;
+        // Ctrl + Enter to submit
+        if (e.ctrlKey && e.key === "Enter") {
+            form.submit();
+        }
+    }
+    function handleInputFocus(e) {
+        const ele = document.activeElement;
+        // Ignore key combinations
+        if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) {
+            return;
+        }
+        // Do not interfere with input elements
+        if (ele.tagName === "INPUT" || ele.tagName === "TEXTAREA" || ele.getAttribute("contenteditable") === "true") {
+            if (e.key === "Escape") {
+                e.preventDefault();
+                ele.blur(); // Escape to blur
+            }
+            return;
+        }
+        // Do not interfere with input methods
+        if (e.isComposing || e.keyCode === 229) {
+            return;
+        }
+        if (e.key === "Enter") {
+            const input = $("input[type=search]") || $("input[type=text]") || $("textarea");
+            if (input) {
+                e.preventDefault();
+                input.focus();
             }
         }
-        if (!enabled && enable) {
+    }
+    let shortcutEnabled = false;
+    function shortcut(enable) {
+        const textAreas = $$("textarea");
+        if (!shortcutEnabled && enable) {
             for (const textarea of textAreas) {
-                textarea.addEventListener("keyup", onKeyup);
+                textarea.addEventListener("keyup", submitOnCtrlEnter);
             }
-            enabled = true;
-        } else if (enabled && !enable) {
+            document.addEventListener("keydown", handleInputFocus);
+            shortcutEnabled = true;
+        } else if (shortcutEnabled && !enable) {
             for (const textarea of textAreas) {
-                textarea.removeEventListener("keyup", onKeyup);
+                textarea.removeEventListener("keyup", submitOnCtrlEnter);
             }
-            enabled = false;
+            document.removeEventListener("keydown", handleInputFocus);
+            shortcutEnabled = false;
         }
     }
     shortcut(config["shortcut"]);
@@ -475,7 +503,8 @@
             }
         },
         "lib-alternative-url": alternativeURLs,
-        "short-link": shortLink
+        "short-link": shortLink,
+        "shortcut": shortcut,
     };
     callbacks["flat-layout"](config["flat-layout"]);
     window.addEventListener(GM_config_event, e => {
