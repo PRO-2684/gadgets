@@ -11,6 +11,7 @@
 2. [USTC 邮箱](https://mail.ustc.edu.cn/)
     - 将焦点置于登录按钮
     - 移除水印
+    - 移除背景图片
 
 3. [睿客网](https://rec.ustc.edu.cn/)
     - 自动点入统一身份认证系统以便登录

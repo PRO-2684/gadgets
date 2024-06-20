@@ -3,7 +3,7 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.1.9
+// @version      1.2.0
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
@@ -62,6 +62,7 @@
             "mail/enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
             "mail/focus": boolDesc("Focus", "Automatically focuses on \"Login\" button"),
             "mail/remove_watermark": boolDesc("Remove watermark", "Remove the annoying watermark"),
+            "mail/remove_background": boolDesc("Remove background", "Remove the background image"),
         },
         rec: {
             "rec/enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
@@ -120,6 +121,7 @@
         showClose: true,
         timeout: 2000
     });
+
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
     async function timer(callback, interval = 500, times = 16) {
@@ -135,6 +137,33 @@
             }, interval);
         });
     }
+    function setupDynamicStyles(host, config, styles) {
+        function injectCSS(name) {
+            const css = document.head.appendChild(document.createElement("style"));
+            css.id = `ustc-helper-${host}-${name}`;
+            css.textContent = styles[name];
+        }
+        function toggleCSS(name, enabled) {
+            const css = $(`#ustc-helper-${host}-${name}`);
+            if (css) {
+                css.disabled = !enabled;
+            } else if (enabled) {
+                injectCSS(name);
+            }
+        }
+        for (const name in styles) {
+            toggleCSS(name, config[`${host}/${name}`]);
+        }
+        window.top.addEventListener(GM_config_event, e => {
+            if (e.detail.type == "set" && e.detail.prop.startsWith(`${host}/`)) {
+                const name = e.detail.prop.split("/")[1];
+                if (name in styles) {
+                    toggleCSS(name, e.detail.after);
+                }
+            }
+        });
+    }
+
     switch (window.location.host) {
         case 'mail.ustc.edu.cn': {
             const config_desc = config_descs.mail;
@@ -156,10 +185,11 @@
                     console.info(result ? "[USTC Helper] Login button focused." : "[USTC Helper] Login button not found!");
                 });
             }
-            if (config["mail/remove_watermark"]) {
-                const css = document.head.appendChild(document.createElement("style"));
-                css.textContent = "div.watermark-wrap { display: none; }";
+            const mail_css = {
+                "remove_watermark": "div.watermark-wrap { display: none; }",
+                "remove_background": ".lymain .lybg { display: none; }"
             }
+            setupDynamicStyles("mail", config, mail_css);
             break;
         }
         case 'passport.ustc.edu.cn': {
@@ -1022,30 +1052,7 @@
                 "privacy": `#accountLoginInfo, #home-page .info-username, body > div.container div.top-bar > h2.info-title, .list-group-item > span:not(.pull-left) { filter: blur(0.2em); }
                     img[src='/my/avatar'] { filter: blur(1em); }`
             };
-            function injectCSS(name) {
-                const css = document.head.appendChild(document.createElement("style"));
-                css.id = `ustc-helper-jw-${name}`;
-                css.textContent = jw_css[name];
-            }
-            function toggleCSS(name, enabled) {
-                const css = $("#ustc-helper-jw-" + name);
-                if (css) {
-                    css.disabled = !enabled;
-                } else if (enabled) {
-                    injectCSS(name);
-                }
-            }
-            for (const name in jw_css) {
-                toggleCSS(name, config["jw/" + name]);
-            }
-            window.top.addEventListener(GM_config_event, e => {
-                if (e.detail.type == "set" && e.detail.prop.startsWith("jw/")) {
-                    const name = e.detail.prop.split("/")[1];
-                    if (name in jw_css) {
-                        toggleCSS(name, e.detail.after);
-                    }
-                }
-            });
+            setupDynamicStyles("jw", config, jw_css);
             if (window.location.pathname.startsWith("/for-std/course-table")) {
                 if (config["jw/sum"]) {
                     const table = $("#lessons");
@@ -1475,15 +1482,10 @@
 
                 }
             }
-            const css = "html { scroll-behavior: smooth; } img { max-width: 100%; }";
-            const style = document.head.appendChild(document.createElement("style"));
-            style.textContent = css;
-            style.disabled = !config["icourse/css"];
-            window.top.addEventListener(GM_config_event, e => {
-                if (e.detail.type == "set" && e.detail.prop == "icourse/css") {
-                    style.disabled = !e.detail.after;
-                }
-            });
+            const icourse_css = {
+                "css": `html { scroll-behavior: smooth; } img { max-width: 100%; }`
+            };
+            setupDynamicStyles("icourse", config, icourse_css);
             break;
         }
         default:

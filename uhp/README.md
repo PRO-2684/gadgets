@@ -9,6 +9,7 @@
 2. [USTC Mail](https://mail.ustc.edu.cn/)
     - Focus on the login button
     - Remove watermarks
+    - Remove background image
 
 3. [Rec](https://rec.ustc.edu.cn/)
     - Auto clicking into USTC CAS login page
