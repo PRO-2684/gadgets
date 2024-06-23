@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.3.4
+// @version      0.3.5
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -154,6 +154,7 @@
                 const purified = await purifier.purify(href);
                 if (purified.url !== href) {
                     ele.href = purified.url;
+                    if (ele.innerHTML === href) ele.innerHTML = purified.url; // Update the text
                     this.toast(`Processed: "${ele.href}"`);
                 } else {
                     this.toast(`Same: "${ele.href}"`);
@@ -162,7 +163,6 @@
                 ele.removeAttribute(tag1);
                 senseless || ele.dispatchEvent(newEvt);
                 ele.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
-                if (ele.textContent === href) ele.textContent = purified.url; // Update the text content
             } else { // Someone else has intercepted
                 if (!senseless) {
                     const newEvt = cloneAndStop(e);
@@ -196,6 +196,7 @@
             const purified = await purifier.purify(href);
             if (purified.url !== href) {
                 ele.href = purified.url;
+                if (ele.innerHTML === href) ele.innerHTML = purified.url; // Update the text
                 this.toast(`Processed: "${ele.href}"`);
             } else {
                 this.toast(`Same: "${ele.href}"`);
@@ -203,7 +204,6 @@
             ele.toggleAttribute(tag2, true);
             ele.removeAttribute(tag1);
             ele.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
-            if (ele.textContent === href) ele.textContent = purified.url; // Update the text content
         }
     }
     const touchstartHook = new Hook("touchstart");
