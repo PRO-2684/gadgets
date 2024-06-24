@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.3.5
+// @version      0.3.6
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -246,11 +246,14 @@
     // Intercept window.open
     const openHook = new Hook("window.open");
     openHook.original = window.open.bind(window);
-    openHook.patched = async function (url, target, features) { // Intercept window.open
-        if (url) {
+    openHook.patched = function (url, target, features) { // Intercept window.open
+        if (url && url !== "about:blank" && !url.startsWith("http://") && !url.startsWith("https://")) {
             this.toast(`Intercepted: "${url}"`);
-            const purified = await purifier.purify(url);
-            return this.original(purified.url, target, features);
+            purifier.purify(url).then(purified => {
+                this.toast(`Processed: "${purified.url}"`);
+                this.original(purified.url, target, features);
+            });
+            return null;
         } else {
             return this.original(url, target, features);
         }
