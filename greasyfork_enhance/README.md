@@ -48,6 +48,7 @@
 
 - **Auto hide code**: whether to hide long code snippets
 - **Min rows to hide**: minimum number of rows to hide that piece of code
+- **Hide buttons**: whether to hide floating buttons
 - **Flat layout**: whether to enable flat layout
 - **Animation**: Enable animation
 - **Alternative URLs for library**: Display alternative URLs for libraries

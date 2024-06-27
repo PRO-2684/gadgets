@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.7.6
+// @version      0.7.7
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @author       PRO
@@ -48,6 +48,7 @@
             formatter: "normal",
             title: "Minimum number of rows to hide"
         },
+        "hide-buttons": { name: "Hide buttons", title: "Hide floating buttons added by this script", value: false },
         "flat-layout": { name: "Flat layout", title: "Use flat layout for script list and descriptions", value: false },
         "animation": { name: "Animation", title: "Enable animation for toggling code blocks" },
         "lib-alternative-url": { name: "Alternative URLs for library", title: "Show a list of alternative URLs for a given library", value: false },
@@ -59,45 +60,65 @@
     const config = GM_config(config_desc);
     // CSS
     const dynamicStyle = {
+        "hide-buttons": `div#float-buttons { display: none; }`,
         "flat-layout": `
-        .script-list li:not(.ad-entry) { padding-right: 0; } ol.script-list > li > article { display: flex; flex-direction: row; justify-content: space-between; align-items: center; }
-        ol.script-list > li > article > h2 { width: 60%; overflow: hidden; text-overflow: ellipsis; margin-right: 0.5em; padding-right: 0.5em; border-right: 1px solid #DDDDDD; }
-        .showing-all-languages .badge-js, .showing-all-languages .badge-css, .script-type { display: none; }
-        ol.script-list > li > article > h2 > a.script-link { white-space: nowrap; }
-        ol.script-list > li > article > h2 > span.script-description { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        ol.script-list > li > article > div.script-meta-block { width: 40%; column-gap: 0; }
-        ol.script-list > li[data-script-type="library"] > article > h2 { width: 80%; }
-        ol.script-list > li[data-script-type="library"] > article > div.script-meta-block { width: 20%; column-count: 1; }
-        ol.script-list > li > article > div.script-meta-block > dl.inline-script-stats { margin: 0; }
-        ol.script-list > li > article > div.script-meta-block > dl.inline-script-stats > dd { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        #script-info div.script-meta-block { float: right; column-count: 1; max-width: 300px; border-left: 1px solid #DDDDDD; margin-left: 1em; padding-left: 1em; }
-        #additional-info { width: calc(100% - 2em - 2px); }
-        @media (max-width: 600px) {
-            ol.script-list > li:not([data-script-type="library"]) > article { display: block; }
-            ol.script-list > li:not([data-script-type="library"]) > article > h2 { width: unset; border-right: none; }
-            ol.script-list > li:not([data-script-type="library"]) > article > div.script-meta-block { column-count: 2; }
-            ol.script-list > li > article > div.script-meta-block { width: unset; column-gap: 0; }
-            ol.script-list > li[data-script-type="library"] > article > div.script-meta-block { width: 40%; }
-        }`,
+            .script-list > li {
+                &:not(.ad-entry) { padding-right: 0; }
+                article {
+                    display: flex; flex-direction: row; justify-content: space-between; align-items: center;
+                    > .script-meta-block {
+                        width: 40%; column-gap: 0;
+                        > .inline-script-stats {
+                            margin: 0;
+                            > dd { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+                        }
+                    }
+                    > h2 {
+                        width: 60%; overflow: hidden; text-overflow: ellipsis; margin-right: 0.5em; padding-right: 0.5em; border-right: 1px solid #88888888;
+                        > .script-link { white-space: nowrap; }
+                        > .script-description { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+                    }
+                }
+                &[data-script-type="library"] > article {
+                    > h2 { width: 80%; }
+                    > .script-meta-block { width: 20%; column-count: 1; }
+                }
+            }
+            @media (max-width: 600px) {
+                .script-list > li {
+                    &[data-script-type="library"] > article > div.script-meta-block { width: 40%; }
+                    &:not([data-script-type="library"]) > article {
+                        display: block;
+                        > h2 { width: unset; border-right: none; }
+                        > .script-meta-block { column-count: 2; }
+                    }
+                    > article > div.script-meta-block { width: unset; column-gap: 0; }
+                }
+            }
+            .showing-all-languages .badge-js, .showing-all-languages .badge-css, .script-type { display: none; }
+            #script-info .script-meta-block { float: right; column-count: 1; max-width: 300px; border-left: 1px solid #DDDDDD; margin-left: 1em; padding-left: 1em; }
+            #additional-info { width: calc(100% - 2em - 2px); }
+        `,
         "animation": `
-        /* Toggle code animation */
-        pre > code { transition: height 0.5s ease-in-out 0s; }
-        /* Adapted from animate.css - https://animate.style/ */
-        :root { --animate-duration: 1s; --animate-delay: 1s; --animate-repeat: 1; }
-        .animate__animated { animation-duration: var(--animate-duration); animation-fill-mode: both; }
-        .animate__animated.animate__fastest { animation-duration: calc(var(--animate-duration) / 3); }
-        @keyframes tada {
-            from { transform: scale3d(1, 1, 1); }
-            10%, 20% { transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg); }
-            30%, 50%, 70%, 90% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg); }
-            40%, 60%, 80% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg); }
-            to { transform: scale3d(1, 1, 1); }
-        }
-        .animate__tada { animation-name: tada; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .animate__fadeIn { animation-name: fadeIn; }
-        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-        .animate__fadeOut { -webkit-animation-name: fadeOut; animation-name: fadeOut; }`
+            /* Toggle code animation */
+            pre > code { transition: height 0.5s ease-in-out 0s; }
+            /* Adapted from animate.css - https://animate.style/ */
+            :root { --animate-duration: 1s; --animate-delay: 1s; --animate-repeat: 1; }
+            .animate__animated { animation-duration: var(--animate-duration); animation-fill-mode: both; }
+            .animate__animated.animate__fastest { animation-duration: calc(var(--animate-duration) / 3); }
+            @keyframes tada {
+                from { transform: scale3d(1, 1, 1); }
+                10%, 20% { transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg); }
+                30%, 50%, 70%, 90% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg); }
+                40%, 60%, 80% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg); }
+                to { transform: scale3d(1, 1, 1); }
+            }
+            .animate__tada { animation-name: tada; }
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            .animate__fadeIn { animation-name: fadeIn; }
+            @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+            .animate__fadeOut { -webkit-animation-name: fadeOut; animation-name: fadeOut; }
+        `
     };
     // Functions
     const $ = document.querySelector.bind(document);
@@ -237,7 +258,7 @@
     div.code-toolbar { display: flex; gap: 1em; }
     a.code-operation { cursor: pointer; font-style: italic; }
     div.lum-lightbox { z-index: 2; }
-    div#float-buttons { position: fixed; bottom: 1em; right: 1em; display: flex; flex-direction: column; user-select: none; z-index: 1; }
+    #float-buttons { position: fixed; bottom: 1em; right: 1em; display: flex; flex-direction: column; user-select: none; z-index: 1; }
     aside.panel { display: none; }
     .dynamic-opacity { transition: opacity 0.2s ease-in-out; opacity: 0.2; }
     .dynamic-opacity:hover { opacity: 0.8; }

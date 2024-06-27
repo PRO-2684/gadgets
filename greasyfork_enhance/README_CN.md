@@ -48,6 +48,7 @@
 
 - **Auto hide code**: 是否自动隐藏长代码片段
 - **Min rows to hide**: 自动隐藏的最小行数
+- **Hide buttons**: 是否隐藏悬浮按钮
 - **Flat layout**: 是否启用扁平布局
 - **Animation**: 启用动画
 - **Alternative URLs for library**: 展示库的其他可用网址
