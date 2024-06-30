@@ -25,7 +25,8 @@ For advanced users, you can configure which hooks and rules are enabled by modif
         "auxclick": true, // Intercept `auxclick` events
         "touchstart": true, // Intercept `touchstart` events
         "submit": true, // Intercept `submit` events
-        "window.open": true // Hook `window.open` calls
+        "window.open": true, // Hook `window.open` calls
+        "cn.bing.com": true // Intercept a series of events in `cn.bing.com`
     },
     "rules": {
         "cn": true, // Enable Chinese rules

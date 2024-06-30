@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.3.7
+// @version      0.3.8
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -269,20 +269,19 @@
         case "cn.bing.com": { // Bing CN
             // Hook `addEventListener`
             const bingHook = new Hook("cn.bing.com");
-            bingHook.blacklist = new Set(["mouseenter", "mouseleave", "mousedown"]);
-            bingHook.original = window.EventTarget.prototype.addEventListener;
+            bingHook.blacklist = { "A": new Set(["mouseenter", "mouseleave", "mousedown"]), "P": new Set(["mouseover", "mouseout", "click"]) }
+            bingHook.original = HTMLElement.prototype.addEventListener;
             bingHook.patched = function (type, listener, options) {
-                if (this.blacklist.has(type)) { // Block events
-                    this.toast(`Blocked: "${type}"`);
+                if (bingHook.blacklist[this.tagName] && bingHook.blacklist[this.tagName].has(type)) { // Block events
                     return;
                 }
-                return this.original(type, listener, options);
-            }.bind(bingHook);
+                return bingHook.original.call(this, type, listener, options);
+            };
             bingHook.enable = async function () {
-                window.EventTarget.prototype.addEventListener = this.patched;
+                HTMLElement.prototype.addEventListener = bingHook.patched;
             }
             bingHook.disable = async function () {
-                window.EventTarget.prototype.addEventListener = this.original;
+                HTMLElement.prototype.addEventListener = bingHook.original;
             }
             break;
         }

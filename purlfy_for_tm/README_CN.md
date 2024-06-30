@@ -35,7 +35,8 @@
         "auxclick": true, // 拦截 `auxclick` 事件
         "touchstart": true, // 拦截 `touchstart` 事件
         "submit": true, // 拦截 `submit` 事件
-        "window.open": true // Hook `window.open` 调用
+        "window.open": true, // Hook `window.open` 调用
+        "cn.bing.com": true // 拦截 `cn.bing.com` 中一系列的事件
     },
     "rules": {
         "cn": true, // 启用中国规则
