@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.3.6
+// @version      0.3.7
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -263,6 +263,32 @@
     }
     openHook.disable = async function () {
         window.open = this.original;
+    }
+    // Site-specific hooks
+    switch (location.hostname) {
+        case "cn.bing.com": { // Bing CN
+            // Hook `addEventListener`
+            const bingHook = new Hook("cn.bing.com");
+            bingHook.blacklist = new Set(["mouseenter", "mouseleave", "mousedown"]);
+            bingHook.original = window.EventTarget.prototype.addEventListener;
+            bingHook.patched = function (type, listener, options) {
+                if (this.blacklist.has(type)) { // Block events
+                    this.toast(`Blocked: "${type}"`);
+                    return;
+                }
+                return this.original(type, listener, options);
+            }.bind(bingHook);
+            bingHook.enable = async function () {
+                window.EventTarget.prototype.addEventListener = this.patched;
+            }
+            bingHook.disable = async function () {
+                window.EventTarget.prototype.addEventListener = this.original;
+            }
+            break;
+        }
+        default: {
+            break;
+        }
     }
     // Is there more hooks to add?
     // Enable hooks
