@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.3.8
+// @version      0.3.9
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -266,7 +266,8 @@
     }
     // Site-specific hooks
     switch (location.hostname) {
-        case "cn.bing.com": { // Bing CN
+        case "www.bing.com":
+        case "cn.bing.com": { // Bing
             // Hook `addEventListener`
             const bingHook = new Hook("cn.bing.com");
             bingHook.blacklist = { "A": new Set(["mouseenter", "mouseleave", "mousedown"]), "P": new Set(["mouseover", "mouseout", "click"]) }
