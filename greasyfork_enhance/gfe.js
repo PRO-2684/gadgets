@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.7.7
+// @version      0.7.8
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @author       PRO
@@ -47,6 +47,14 @@
             processor: "int_range-1-",
             formatter: "normal",
             title: "Minimum number of rows to hide"
+        },
+        "tab-size": {
+            name: "Tab size",
+            value: 4,
+            input: "prompt",
+            processor: "int_range-0-",
+            formatter: "normal",
+            title: "Set Tab indentation size"
         },
         "hide-buttons": { name: "Hide buttons", title: "Hide floating buttons added by this script", value: false },
         "flat-layout": { name: "Flat layout", title: "Use flat layout for script list and descriptions", value: false },
@@ -359,6 +367,7 @@
         if (!config["auto-hide-code"]) {
             for (const code_block of code_blocks) {
                 const toggle = code_block.firstChild.lastChild;
+                if (!toggle) continue;
                 if (toggle.textContent === "Show code") {
                     toggle.click(); // Click the toggle button
                 }
@@ -368,6 +377,7 @@
                 const m = code_block.lastChild.textContent.match(/\n/g);
                 const rows = m ? m.length : 0;
                 const toggle = code_block.firstChild.lastChild;
+                if (!toggle) continue;
                 const hidden = toggle.textContent === "Show code";
                 if (rows >= config["auto-hide-rows"] && !hidden || rows < config["auto-hide-rows"] && hidden) {
                     code_block.firstChild.lastChild.click(); // Click the toggle button
@@ -380,6 +390,14 @@
             autoHide();
         }
     }, { once: true });
+    // Tab size
+    function tabSize() {
+        const size = config["tab-size"];
+        const style = $("style#" + idPrefix + "tab-size") ?? document.head.appendChild(document.createElement("style"));
+        style.id = idPrefix + "tab-size";
+        style.textContent = `pre { tab-size: ${size}; }`;
+    }
+    tabSize();
     // Alternative URLs for library
     function alternativeURLs(enable) {
         if ($(".remove-attachments") || !$("div#script-content") || $("div#script-content > div#install-area")) return; // Not a library
@@ -512,6 +530,7 @@
     const callbacks = {
         "auto-hide-code": autoHide,
         "auto-hide-rows": autoHide,
+        "tab-size": tabSize,
         "flat-layout": (after) => {
             const meta_orig = $("#script-info > #script-content > .script-meta-block");
             const meta_mod = $("#script-info > .script-meta-block");

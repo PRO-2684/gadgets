@@ -41,6 +41,7 @@
     - `Enter` to focus on first search box / textarea
     - `Escape` to unfocus
 - Image proxy using `wsrv.nl`
+- Customize Tab indentation size
 
 ## ⚙️ Configuation
 
@@ -48,6 +49,7 @@
 
 - **Auto hide code**: whether to hide long code snippets
 - **Min rows to hide**: minimum number of rows to hide that piece of code
+- **Tab size**: Tab indentation size
 - **Hide buttons**: whether to hide floating buttons
 - **Flat layout**: whether to enable flat layout
 - **Animation**: Enable animation

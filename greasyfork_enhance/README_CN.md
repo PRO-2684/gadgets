@@ -41,6 +41,7 @@
     - `Enter` 聚焦至第一个搜索框/文本框
     - `Escape` 取消聚焦
 - 使用 `wsrv.nl` 作为图像代理
+- 控制 Tab 缩进大小
 
 ## ⚙️ 配置
 
@@ -48,6 +49,7 @@
 
 - **Auto hide code**: 是否自动隐藏长代码片段
 - **Min rows to hide**: 自动隐藏的最小行数
+- **Tab size**: Tab 缩进大小
 - **Hide buttons**: 是否隐藏悬浮按钮
 - **Flat layout**: 是否启用扁平布局
 - **Animation**: 启用动画
