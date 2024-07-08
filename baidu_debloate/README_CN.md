@@ -2,6 +2,7 @@
 
 隐藏百度百科、百度经验的一些垃圾玩意儿。
 
+- [UserStyles.World](https://userstyles.world/style/17133/debloat) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://userstyles.world/api/style/17133.user.css)
 - [GitHub](https://github.com/PRO-2684/gadgets/raw/main/baidu_debloate/) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://github.com/PRO-2684/gadgets/raw/main/baidu_debloate/baidu_debloate.user.css)
 
 ## 功能 & 配置
