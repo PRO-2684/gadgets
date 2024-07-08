@@ -1,0 +1,102 @@
+/* ==UserStyle==
+@name           百度系 Debloat
+@namespace      github.com/openstyles/stylus
+@version        0.1.0
+@description    隐藏百度百科、百度经验的一些垃圾玩意儿
+@author         PRO-2684
+@license     	gpl-3.0
+@preprocessor   stylus
+@var checkbox hideFuckingVideo  "[通用] 隐藏秒懂百科" 0
+@var checkbox hideTopBar "[通用] 隐藏顶栏" 1
+@var checkbox hideNavBar "[通用] 隐藏导航栏" 0
+@var checkbox hideAd "[通用] 隐藏活动/广告" 1
+@var checkbox hideRecommend "[通用] 隐藏相关推荐" 0
+@var checkbox hideAside "[经验] 完全隐藏侧栏" 0
+@var checkbox hideFloat "[经验] 隐藏浮动工具条" 0
+@var checkbox hideAria "[经验] 隐藏辅助模式" 1
+==/UserStyle== */
+
+@-moz-document domain("baike.baidu.com") {
+    if (hideFuckingVideo) {
+        [class*="contentBottom_"] {
+            display: none;
+        }
+    }
+    if (hideTopBar) {
+        [class^="index-module_topbar"] {
+            display: none;
+        }
+    }
+    if (hideNavBar) {
+        [class^="index-module_navBarWrapper"] {
+            display: none;
+        }
+        .lemmaSearchBar {
+            padding-top: unset;
+        }
+    }
+    if (hideAd) {
+        [class^="index-module_drawerHand__"] {
+            display: none;
+        }
+    }
+    if (hideRecommend) {
+        #J-related-search {
+            display: none;
+        }
+    }
+}
+@-moz-document domain("jingyan.baidu.com") {
+    if (hideFuckingVideo) {
+        .feeds-video-box, .feeds-video-one-view {
+            display: none;
+        }
+    }
+    if (hideTopBar) {
+        .search-box ul.channel {
+            display: none;
+        }
+        .article-header {
+            height: unset;
+        }
+    }
+    if (hideNavBar) {
+        nav.nav, #breadcrumb {
+            display: none;
+        }
+    }
+    if (hideAd && hideRecommend) {
+        #fresh-share-exp-e, #task-panel-wrap, .wgt-cms-banner, .wgt-income-money, .main-content-bottom {
+            display: none;
+        }
+    } else {
+        if (hideAd) {
+            #fresh-share-exp-e, #task-panel-wrap, .wgt-cms-banner, .wgt-income-money, #bottom-ads-container, #bottom-pic-ads-wrap {
+                display: none;
+            }
+        }
+        if (hideRecommend) {
+            #relate-explist {
+                display: none;
+            }
+        }
+    }
+    if (hideAside) {
+        #aside {
+            display: none;
+        }
+        .content-container .main-content {
+            width: unset;
+        }
+    }
+    if (hideFloat) {
+        #wgt-like, #wgt-exp-share {
+            display: none !important;
+        }
+    }
+    if (hideAria) {
+        #wgt-barrier-free {
+            display: none !important;
+        }
+    }
+}

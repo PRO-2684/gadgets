@@ -1,11 +1,12 @@
 # gadgets
-![GitHub license](https://img.shields.io/github/license/PRO-2684/gadgets?style=flat-square)
+![GitHub license](https://img.shields.io/github/license/PRO-2684/gadgets?style=flat-square) English | [简体中文](./README_CN.md)
 
 ## Introduction
 Some code snippets that's hard to categorize. See READMEs under subfolders for detailed description if you're interested in some of them.
 
 ## List
 - `auto_grading`: Auto grading for `tqm.ustc.edu.cn`.
+- `baidu_debloate`: Hides some gibberish on Baidu sites, including `baike.baidu.com` and `jingyan.baidu.com`.
 - `bb_batch_reconcile`: Batch reconcile student grades in [Blackboard](https://www.blackboard.com/) system.
 - `checkbox_patch`: Patches the property `checked` of a certain checkbox, so that a `change` event will be issued when the `checked` value is modified by other scripts.
 - `GM_config`: Simple config lib for Tampermonkey scripts.
@@ -36,5 +37,4 @@ Some errors or consequences that the snippet might bring about.
 
 ## 🌐 Reference
 What I have found useful/enlightening related to the snippet.
-
 ```
