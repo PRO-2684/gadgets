@@ -1,6 +1,6 @@
 # Scrollbar Mod
 
-This is a mod version for the [Scrollbar Advanced](https://userstyles.world/style/329/scrollbar-advanced) userstyle, available on:
+This is a mod version for the [Scrollbar Advanced](https://userstyles.world/style/329/scrollbar-advanced) userstyle with additional features, available on:
 
 - [UserStyles.World](https://userstyles.world/style/329/scrollbar-advanced) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://userstyles.world/api/style/16203.user.css)
 - [GitHub](https://github.com/PRO-2684/gadgets/raw/main/scrollbar_mod/) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://github.com/PRO-2684/gadgets/raw/main/scrollbar_mod/scrollbar_mod.user.css)
@@ -23,7 +23,8 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
     - `Always-Visible`: The scrollbar background is always visible
     - `Always-Hidden`: The scrollbar background is always hidden
 - `Opacity`: Set the opacity of the scrollbar
-- `Force`: Try to override site-defined scrollbar styles (not recommended)
+- `Smooth Scroll`: Enable smooth scrolling behavior (when you click on anchors)
+- `Force`: Try to override site-defined scrollbar styles and scroll behavior
 
 ## Mod Features
 
@@ -31,6 +32,7 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
     - `Handle Active` feature
     - `ScrollBar Handle Shrink` feature
     - `Opacity` feature
+    - `Smooth Scroll` feature
     - `Force` feature
 - Renamed & improved features
     - `Handle Radius` renamed to `Radius`, which now also affects the scrollbar background
