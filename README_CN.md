@@ -5,6 +5,7 @@
 一些难以分类的代码片段。如果你对其中某些感兴趣，可以查看子文件夹下的 README 以获取详细描述。
 
 ## 列表
+- `arxiv_html_debloate`: 隐藏 `arxiv.org/html/*` 上的不必要元素，让你拥有一个干净的阅读体验。
 - `auto_grading`: 自动评教 `tqm.ustc.edu.cn`。
 - `baidu_debloate`: 隐藏百度站点上的一些垃圾玩意儿，包括 `baike.baidu.com` 和 `jingyan.baidu.com`。
 - `bb_batch_reconcile`: 批量核对 [Blackboard](https://www.blackboard.com/) 系统中的学生成绩。
