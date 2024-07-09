@@ -12,3 +12,5 @@
 - `Hide Beta banner`: 隐藏页面左上角的 beta 横幅。
 - `Hide License and Watermark`: 隐藏正文前的许可证和水印。
 - `Hide Header`: 隐藏页面顶部的大型红色标题。
+
+![Before & After](arxiv.jpg)

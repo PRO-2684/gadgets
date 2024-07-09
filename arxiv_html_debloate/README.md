@@ -12,3 +12,5 @@ Hides unnecessary elements on `arxiv.org/html/*`, giving you a clean view.
 - `Hide Beta banner`: Hides the beta banner on the top left corner of the page.
 - `Hide License and Watermark`: Hides the license and watermark before the actual content.
 - `Hide Header`: Hides the big red header of the page.
+
+![Before & After](arxiv.jpg)
