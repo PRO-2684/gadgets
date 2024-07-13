@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           arXiv HTML Debloat
 @namespace      github.com/openstyles/stylus
-@version        1.0.1
+@version        1.0.2
 @description    Hides unnecessary elements on `arxiv.org/html/*`, giving you a clean view.
 @author         PRO-2684
 @license     	gpl-3.0
@@ -11,6 +11,7 @@
 @var checkbox hideBeta      'Hide Beta banner' 1
 @var checkbox hideTargetSec   'Hide License and Watermark' 0
 @var checkbox hideHeader     'Hide Header' 0
+@var checkbox hideAlerts     'Hide Alerts of Conversion Errors' 0
 ==/UserStyle== */
 @-moz-document url-prefix("https://arxiv.org/html/") {
     if hideReportIssue {
@@ -48,6 +49,12 @@
         }
         .ltx_page_main >.ltx_TOC {
             padding-top: 1em;
+        }
+    }
+
+    if hideAlerts {
+        .package-alerts {
+            display: none;
         }
     }
 }
