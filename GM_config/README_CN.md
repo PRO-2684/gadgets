@@ -156,7 +156,7 @@ const config_desc = {
 
 #### 其它 Tampermonkey 提供的属性
 
-支持 `prop.accessKey`, `prop.autoClose`, `prop.title`。后两者仅在支持的 TM 版本中被传给 TM (>=4.20.0)。详细信息请参考 [Tampermonkey 文档](https://www.tampermonkey.net/documentation.php#api:GM_registerMenuCommand)。
+支持 `prop.accessKey`, `prop.autoClose`, `prop.title` (要求 TM >=4.20.0)。详细信息请参考 [Tampermonkey 文档](https://www.tampermonkey.net/documentation.php#api:GM_registerMenuCommand)。
 
 ### 注册配置菜单
 

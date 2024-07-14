@@ -155,7 +155,7 @@ const config_desc = {
 
 #### Other Tampermonkey provided properties
 
-Supports `prop.accessKey`, `prop.autoClose`, `prop.title`. The latter two only passed to TM on supported TM versions (>=4.20.0). See [Tampermonkey docs](https://www.tampermonkey.net/documentation.php#api:GM_registerMenuCommand) for details.
+Supports `prop.accessKey`, `prop.autoClose`, `prop.title` (Require TM >=4.20.0). See [Tampermonkey docs](https://www.tampermonkey.net/documentation.php#api:GM_registerMenuCommand) for details.
 
 ### Register menu
 
