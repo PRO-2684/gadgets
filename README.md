@@ -5,6 +5,7 @@
 Some code snippets that's hard to categorize. See READMEs under subfolders for detailed description if you're interested in some of them.
 
 ## List
+- `52_enhance`: 52 forum enhancement script.
 - `arxiv_html_debloate`: Hides unnecessary elements on `arxiv.org/html/*`, giving you a clean view.
 - `auto_grading`: Auto grading for `tqm.ustc.edu.cn`.
 - `baidu_debloate`: Hides some gibberish on Baidu sites, including `baike.baidu.com` and `jingyan.baidu.com`.

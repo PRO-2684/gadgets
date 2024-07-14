@@ -5,6 +5,7 @@
 一些难以分类的代码片段。如果你对其中某些感兴趣，可以查看子文件夹下的 README 以获取详细描述。
 
 ## 列表
+- `52_enhance`: 52 破解论坛增强脚本。
 - `arxiv_html_debloate`: 隐藏 `arxiv.org/html/*` 上的不必要元素，让你拥有一个干净的阅读体验。
 - `auto_grading`: 自动评教 `tqm.ustc.edu.cn`。
 - `baidu_debloate`: 隐藏百度站点上的一些垃圾玩意儿，包括 `baike.baidu.com` 和 `jingyan.baidu.com`。
