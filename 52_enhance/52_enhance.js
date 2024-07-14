@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         52 Enhance
 // @namespace    http://tampermonkey.net/
-// @version      0.6.7
+// @version      0.6.8
 // @description  52 破解论坛增强脚本
 // @author       PRO
 // @match        https://www.52pojie.cn/*
@@ -41,6 +41,7 @@
         "hide-comment": { name: "隐藏点评", title: "隐藏所有点评", value: false },
         "hide-serial": { name: "隐藏序号", title: "隐藏主页帖子列表的序号" },
         "hide-background": { name: "隐藏背景", title: "隐藏部分背景图片" },
+        "hide-top": { name: "隐藏顶栏", title: "隐藏顶栏和导航栏", value: false },
         "image-max-height": { name: "限制图片最大高度", title: "将帖子图片的最大高度限制为 70vh", value: false },
         "auto-sign": { name: "自动签到", title: "进入论坛时自动后台签到" },
         "shortcut": { name: "快捷键", title: "Enter: 快速跳到回复栏" },
@@ -65,6 +66,7 @@
         "hide-comment": "div.pcb > div.cm { display: none; }",
         "hide-serial": "div.boxbg_7ree { background-image: none; padding-left: 0; }",
         "hide-background": "body, textarea#fastpostmessage { background: none !important; }",
+        "hide-top": "#toptb, #nv_ph, .comiis_nav { display: none; }",
         "image-max-height": "#postlist .plc .t_f img, #postlist .plc .tattl img { max-height: 70vh; }"
     };
     // Helper function for css
