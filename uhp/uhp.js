@@ -3,7 +3,7 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.2.0
+// @version      1.2.1
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
@@ -297,7 +297,8 @@
                 }, 4000);
             }
             function hint() {
-                const notice = document.createElement('p');
+                const notice = document.createElement('span');
+                notice.classList.add("inline-block");
                 const params = new URL(window.location.href).searchParams;
                 let service_url = params.get('service');
                 if (!service_url) {
@@ -343,7 +344,7 @@
                 } else {
                     notice.innerHTML = `<span style="color: ${color};">${status}</span> service: <span style="color: grey;" title="${service_url}">${domain}</span>`;
                 }
-                form.after(notice);
+                $("#footer")?.appendChild(notice);
             }
             function main() {
                 if (config["passport/focus"]) focus();
