@@ -5,6 +5,7 @@
     - Focus on the captcha input / login button (so you only need to hit `Enter` to login)
     - Prompt service domain, url and its credibility (If the service is provided by a student or teacher, you may contact him/her via email by clicking "Student" or "Staff")
     - Auto login (require previous one checked; official services only; clicks "login" after 5s)
+    - View/fake browser fingerprint to bypass device check
 
 2. [USTC Mail](https://mail.ustc.edu.cn/)
     - Focus on the login button
@@ -65,6 +66,9 @@ Open the Tampermonkey menu when the script is running.
     - **Code recognition**: Enable auto recognizing verification code
     - **Focus**: Whether to focus on "Login" button
     - **Service**: Hint service domain and its credibility
+    - **Auto login**: Whether automatically clicks login button
+    - **Show fingerprint**: Whether to display browser fingerprint
+    - **Fake fingerprint**: Fake browser fingerprint
 - USTC Mail
     - **Enabled**: If false, all features will be disabled for mail.ustc.edu.cn
     - **Focus**: Whether to focus on "Login" button

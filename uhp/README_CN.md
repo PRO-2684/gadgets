@@ -7,6 +7,7 @@
     - 将焦点置于验证码输入框/登录按钮（以便按下回车直接登录）
     - 提示服务域名、网址及其可信度（若为学生/老师的服务，点击 "Student" 或 "Staff" 即可邮件联系）
     - 自动登录 (要求上一条打开，仅限官方服务，五秒后点击登录按钮)
+    - 查看/伪造浏览器指纹，从而绕过设备检验
 
 2. [USTC 邮箱](https://mail.ustc.edu.cn/)
     - 将焦点置于登录按钮
@@ -67,6 +68,9 @@
     - **Code recognition**: 启用自动识别验证码
     - **Focus**: 是否聚焦到登录按钮
     - **Service**: 提示服务域名及其可信度
+    - **Auto login**: 是否自动点击登录按钮
+    - **Show fingerprint**: 是否显示浏览器指纹
+    - **Fake fingerprint**: 伪造浏览器指纹
 - USTC 邮箱
     - **Enabled**: 若为 false, 将禁用针对 mail.ustc.edu.cn 的所有功能
     - **Focus**: 是否聚焦到登录按钮

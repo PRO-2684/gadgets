@@ -3,7 +3,7 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.2.1
+// @version      1.3.0
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
@@ -57,6 +57,13 @@
             "passport/focus": boolDesc("Focus", "Automatically focuses on verification code or \"Login\" button"),
             "passport/service": boolDesc("Service", "Hint service domain and its credibility"),
             "passport/auto_login": boolDesc("Auto login", "Automatically clicks \"Login\" button (Official services only)"),
+            "passport/show_fingerprint": boolDesc("Show fingerprint", "Show current browser's fingerprint (DO NOT share this with others)", false),
+            "passport/fake_fingerprint": {
+                name: "Fake fingerprint",
+                value: "",
+                autoClose: false,
+                title: "Fake browser fingerprint to bypass device verification (Leave empty to disable)"
+            }
         },
         mail: {
             "mail/enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
@@ -296,17 +303,17 @@
                     else console.error("[USTC Helper] Username or password not found!");
                 }, 4000);
             }
-            function hint() {
-                const notice = document.createElement('span');
+            function hint_service() {
+                const notice = document.createElement("span");
                 notice.classList.add("inline-block");
                 const params = new URL(window.location.href).searchParams;
-                let service_url = params.get('service');
+                let service_url = params.get("service");
                 if (!service_url) {
                     is_official = true; // No service URL, simply login to CAS
                     return;
                 }
                 service_url = decodeURIComponent(service_url);
-                const domain = service_url.split('/')[2];
+                const domain = service_url.split("/")[2];
                 let color;
                 let status; // Official Student/Staff Third-party
                 let suffix;
@@ -336,23 +343,72 @@
                         const name = match[2];
                         const email = name + suffix;
                         log("Contact email: " + email);
-                        notice.innerHTML = `<a style="color: #d0d01b;" title="Contact" href="mailto:${email}">${status}</a> service: <span style="color: grey;" title="${service_url}">${domain}</span>`;
+                        notice.innerHTML = `<a style="color: #d0d01b;" title="Contact" href="mailto:${email}">${status}</a> service: <span style="color: grey;" title="${service_url}">${domain}</span>&nbsp;`;
                     } else {
                         log("Unable to determine contact email!");
-                        notice.innerHTML = `<a style="color: #d0d01b;" title="Unrecognized">${status}</a> service: <span style="color: grey;" title="${service_url}">${domain}</span>`;
+                        notice.innerHTML = `<a style="color: #d0d01b;" title="Unrecognized">${status}</a> service: <span style="color: grey;" title="${service_url}">${domain}</span>&nbsp;`;
                     }
                 } else {
-                    notice.innerHTML = `<span style="color: ${color};">${status}</span> service: <span style="color: grey;" title="${service_url}">${domain}</span>`;
+                    notice.innerHTML = `<span style="color: ${color};">${status}</span> service: <span style="color: grey;" title="${service_url}">${domain}</span>&nbsp;`;
                 }
                 $("#footer")?.appendChild(notice);
             }
+            function do_fingerprint() {
+                if (config["passport/show_fingerprint"]) {
+                    const fingerprint = $("#resultInput").value;
+                    log("Original fingerprint: " + fingerprint);
+                    document.head.appendChild(document.createElement("style")).textContent = `
+                    #footer {
+                        padding-top: 0;
+                        height: auto;
+                    }
+                    .hover-to-show {
+                        filter: blur(0.2em);
+                        transition: filter 0.2s ease-in-out;
+                        &:hover {
+                            filter: blur(0);
+                        }
+                    }`;
+                    const notice = document.createElement("span");
+                    notice.classList.add("inline-block");
+                    notice.id = "ustc-helper-fingerprint";
+                    notice.innerHTML = `<span class="hover-to-show" title="Original fingerprint">${fingerprint}</span>`;
+                    $("#footer")?.appendChild(notice);
+                }
+                if (config["passport/fake_fingerprint"]) {
+                    const fingerprint = config["passport/fake_fingerprint"];
+                    // Check if the fingerprint is valid (64 characters, consisting of 0-9 and a-f)
+                    if (fingerprint.length !== 64 || !/^[0-9a-f]+$/.test(fingerprint)) {
+                        log("Invalid fingerprint, ignored.");
+                        return;
+                    }
+                    $("#resultInput").value = fingerprint;
+                    log("Fingerprint set to: " + fingerprint);
+                    const notice = $("#ustc-helper-fingerprint");
+                    if (notice) {
+                        notice.innerHTML += `<br><span class="hover-to-show" title="Faked fingerprint">${fingerprint}</span>`;
+                    }
+                }
+            }
             function main() {
                 if (config["passport/focus"]) focus();
-                if (config["passport/service"]) hint();
+                if (config["passport/service"]) hint_service();
                 if (config["passport/auto_login"] && is_official) {
                     window.setTimeout(() => {
                         login();
                     }, 1000);
+                }
+                const resultInput = $("#resultInput");
+                if (resultInput && resultInput.value) {
+                    do_fingerprint();
+                } else {
+                    const fingerprintObserver = new MutationObserver(() => {
+                        if (resultInput && resultInput.value) {
+                            fingerprintObserver.disconnect();
+                            do_fingerprint();
+                        }
+                    });
+                    fingerprintObserver.observe(resultInput, { childList: false, subtree: false, attributes: true });
                 }
                 observer.disconnect();
             }
