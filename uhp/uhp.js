@@ -3,7 +3,7 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.3.0
+// @version      1.3.1
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
@@ -365,14 +365,14 @@
                     .hover-to-show {
                         filter: blur(0.2em);
                         transition: filter 0.2s ease-in-out;
-                        &:hover {
+                        &:hover, &:focus {
                             filter: blur(0);
                         }
                     }`;
                     const notice = document.createElement("span");
                     notice.classList.add("inline-block");
                     notice.id = "ustc-helper-fingerprint";
-                    notice.innerHTML = `<span class="hover-to-show" title="Original fingerprint">${fingerprint}</span>`;
+                    notice.innerHTML = `Original fingerprint: <span class="hover-to-show" title="Original fingerprint">${fingerprint}</span>`;
                     $("#footer")?.appendChild(notice);
                 }
                 if (config["passport/fake_fingerprint"]) {
@@ -386,7 +386,7 @@
                     log("Fingerprint set to: " + fingerprint);
                     const notice = $("#ustc-helper-fingerprint");
                     if (notice) {
-                        notice.innerHTML += `<br><span class="hover-to-show" title="Faked fingerprint">${fingerprint}</span>`;
+                        notice.innerHTML += `<br>Faked fingerprint: <span class="hover-to-show" title="Faked fingerprint">${fingerprint}</span>`;
                     }
                 }
             }
