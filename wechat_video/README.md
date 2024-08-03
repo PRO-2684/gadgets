@@ -4,6 +4,11 @@
 Download videos from video posts by WeChat Official Accounts.
 
 ## 📖 Usage
+Install the required packages by running:
+```shell
+pip install -r requirements.txt
+```
+
 ```text
 usage: wechat_video.py [-h] [--output OUTPUT] url
 

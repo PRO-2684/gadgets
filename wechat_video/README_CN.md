@@ -4,6 +4,11 @@
 从微信公众号视频推送中下载视频。
 
 ## 📖 使用
+通过运行以下命令安装所需的包：
+```shell
+pip install -r requirements.txt
+```
+
 ```text
 usage: wechat_video.py [-h] [--output OUTPUT] url
 

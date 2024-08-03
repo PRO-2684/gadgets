@@ -1,14 +1,13 @@
+from argparse import ArgumentParser
 from math import log10
 from os import chdir, path
 from re import DOTALL, search, sub
-from sys import argv
+from shutil import move
 from time import sleep
 from urllib import parse
-from shutil import move
-from argparse import ArgumentParser
 
 from json5 import loads
-from requests import Session, RequestException
+from requests import RequestException, Session
 
 INTERVAL = 5
 CHUNK_SIZE = 1024
