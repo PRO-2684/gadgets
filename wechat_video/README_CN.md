@@ -10,17 +10,19 @@ pip install -r requirements.txt
 ```
 
 ```text
-usage: wechat_video.py [-h] [--output OUTPUT] url
+usage: wechat_video.py [-h] [--output-dir OUTPUT_DIR] [--output OUTPUT] url
 
 Download videos from video posts by WeChat Official Accounts.
 
 positional arguments:
-  url                   URL of the article or album
+  url                   URL of the post or album
 
 options:
   -h, --help            show this help message and exit
-  --output OUTPUT, -o OUTPUT
+  --output-dir OUTPUT_DIR, -O OUTPUT_DIR
                         Output directory
+  --output OUTPUT, -o OUTPUT
+                        Output file name (in the case of a single file)
 ```
 
 ## 🍻 示例

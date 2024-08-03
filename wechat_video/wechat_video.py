@@ -110,11 +110,14 @@ def download_video(video_url: str, filename: str):
                     move(tmp_file_path, filename)
                     print("✅ Downloaded {filename} successfully.")
                     return True
+                elif tmp_size > total_size:
+                    print("❌ The downloaded .tmp file is larger than the remote file. It is likely corrupted.")
+                    return False
             else:
                 tmp_size = 0
                 print(f"  File is {total_size} Bytes, downloading...")
 
-            res_left = get_retry(video_url, headers={"Range": f"bytes={tmp_size}-", **VIDEO_HEADERS}, stream=True)
+            res_left = get_retry(video_url, headers={**VIDEO_HEADERS, "Range": f"bytes={tmp_size}-"}, stream=True)
 
             with open(tmp_file_path, "ab") as f:
                 for chunk in res_left.iter_content(chunk_size=CHUNK_SIZE):
@@ -202,15 +205,16 @@ def download_album(album_url: str):
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.description = "Download videos from video posts by WeChat Official Accounts."
-    parser.add_argument("url", help="URL of the article or album")
-    parser.add_argument("--output", "-o", help="Output directory", default=".")
+    parser.add_argument("url", help="URL of the post or album")
+    parser.add_argument("--output-dir", "-O", help="Output directory", default=".")
+    parser.add_argument("--output", "-o", help="Output file name (without extension; in the case of a single post)", default="video")
     args = parser.parse_args()
     url = args.url
-    chdir(args.output)
+    chdir(args.output_dir)
     if url.startswith("https://mp.weixin.qq.com/mp/appmsgalbum?"):
         download_album(url)
     elif url.startswith("https://mp.weixin.qq.com/s?"):
-        download_single(url, "video")
+        download_single(url, args.output)
     elif url:
         print("Invalid URL")
     else:
