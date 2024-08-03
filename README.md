@@ -20,6 +20,7 @@ Some code snippets that's hard to categorize. See READMEs under subfolders for d
 - `subnet_helper`: Converts binary subnet mask to human-friendly notation (dot-decimal with length) and vice versa. In addition, it can provide available IP range and count in the given subnet.
 - `uhp`: USTC Helper - Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 - `url_summary`: Get summary of a given URL, including favicon, title, description and keywords.
+- `wechat_video`: Download videos from video posts by WeChat Official Accounts.
 
 ## README template
 ```markdown
