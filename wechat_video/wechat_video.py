@@ -10,6 +10,7 @@ from json5 import loads
 from requests import RequestException, Session
 
 INTERVAL = 5
+RETRIES = 8
 CHUNK_SIZE = 1024
 HEADERS = {
     "Accept-Language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
@@ -32,18 +33,6 @@ VIDEO_HEADERS = {
 }
 x = Session()
 x.headers.update(HEADERS)
-
-
-def get_retry(url, headers={}, stream=False, retries=3):
-    for i in range(retries):
-        try:
-            r = x.get(url, headers=headers, timeout=60, stream=stream)
-            return r
-        except Exception as e:
-            print(f"  Error: {e}")
-            print(f"  Retrying {i + 1}/{retries}...")
-            sleep(INTERVAL)
-    raise Exception("  Failed to fetch the URL:", url)
 
 
 def format_article_url(article_url: str) -> str:
@@ -100,7 +89,7 @@ def download_video(video_url: str, filename: str):
     tmp_file_path = filename + ".tmp"
     if not path.exists(filename) or path.exists(tmp_file_path):
         try:
-            r = get_retry(video_url, headers=VIDEO_HEADERS, stream=True)
+            r = x.get(video_url, headers=VIDEO_HEADERS, stream=True)
             r.raise_for_status() # Raise an exception if the response is not 200 OK
             total_size = int(r.headers["Content-Length"])
             if path.exists(tmp_file_path):
@@ -117,16 +106,26 @@ def download_video(video_url: str, filename: str):
                 tmp_size = 0
                 print(f"  File is {total_size} Bytes, downloading...")
 
-            res_left = get_retry(video_url, headers={**VIDEO_HEADERS, "Range": f"bytes={tmp_size}-"}, stream=True)
-
             with open(tmp_file_path, "ab") as f:
-                for chunk in res_left.iter_content(chunk_size=CHUNK_SIZE):
-                    tmp_size += len(chunk)
-                    f.write(chunk)
-                    f.flush()
+                retries = 0
+                while retries < RETRIES:
+                    try:
+                        res = x.get(video_url, headers={**VIDEO_HEADERS, "Range": f"bytes={tmp_size}-"}, stream=True)
+                        for chunk in res.iter_content(chunk_size=CHUNK_SIZE):
+                            tmp_size += len(chunk)
+                            f.write(chunk)
+                            f.flush()
 
-                    done = int(50 * tmp_size / total_size)
-                    print(f"\r  [{'█' * done}{' ' * (50 - done)}] {100 * tmp_size / total_size:.0f}%", end="")
+                            done = int(50 * tmp_size / total_size)
+                            print(f"\r  [{'█' * done}{' ' * (50 - done)}] {100 * tmp_size / total_size:.0f}%", end="")
+                        break
+                    except RequestException as e:
+                        retries += 1
+                        print(f"\n⚠️ Retrying... ({retries}/{RETRIES})")
+                        sleep(INTERVAL)
+                else:
+                    print(f"\n❌ Failed to download {filename} after {RETRIES} retries.")
+                    return False
 
             if tmp_size == total_size:
                 move(tmp_file_path, filename)
