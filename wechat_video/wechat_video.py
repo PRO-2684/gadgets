@@ -127,7 +127,7 @@ def download_video(video_url: str, filename: str):
 
             if tmp_size == total_size:
                 move(tmp_file_path, filename)
-                print(f"✅ Downloaded {filename} successfully.")
+                print(f"\n✅ Downloaded {filename} successfully.")
 
         except RequestException as e:
             # Log the error
