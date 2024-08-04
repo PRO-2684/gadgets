@@ -40,7 +40,7 @@ def format_article_url(article_url: str) -> str:
     # 1. https://mp.weixin.qq.com/s?__biz=Mzg5ODU0MjM2NA==&amp;amp;mid=2247483677&amp;amp;idx=1&amp;amp;sn=e299cc8de66a97041cb0832c282f94d4&amp;amp;chksm=c061bf6ef7163678ca9a04f8a3dcdeffaaeb8abe55772fbbdb53fa1dd665c72df807acf8613f#rd
     #   => https://mp.weixin.qq.com/s?__biz=Mzg5ODU0MjM2NA==&mid=2247483677&idx=1&sn=e299cc8de66a97041cb0832c282f94d4
     decoded = article_url.replace("&amp;amp;", "&")
-    # 2. Only preserve `__biz`, `mid`, `idx`, `sn` query parameters
+    # 2. Only preserve `__biz`, `mid`, `idx`, `sn` query parameters (not a necessary procedure)
     url = parse.urlparse(decoded)
     query = parse.parse_qs(url.query)
     query = {k: v for k, v in query.items() if k in {"__biz", "mid", "idx", "sn"}}
@@ -84,8 +84,7 @@ def best_quality(data: list) -> dict:
 
 def download_video(video_url: str, filename: str):
     """Download the video given the video URL."""
-    # Chunked download
-    print(f"🔍 Downloading {filename}...", end="\r")
+    print(f"  🔍 Downloading {filename}...", end="\r")
     tmp_file_path = filename + ".tmp"
     if not path.exists(filename) or path.exists(tmp_file_path):
         try:
@@ -97,10 +96,10 @@ def download_video(video_url: str, filename: str):
                 print(f"  Already downloaded {tmp_size} Bytes out of {total_size} Bytes ({100 * tmp_size / total_size:.2f}%)")
                 if tmp_size == total_size:
                     move(tmp_file_path, filename)
-                    print("✅ Downloaded {filename} successfully.")
+                    print("  ✅ Downloaded {filename} successfully.")
                     return True
                 elif tmp_size > total_size:
-                    print("❌ The downloaded .tmp file is larger than the remote file. It is likely corrupted.")
+                    print("  ❌ The downloaded .tmp file is larger than the remote file. It is likely corrupted.")
                     return False
             else:
                 tmp_size = 0
@@ -121,24 +120,24 @@ def download_video(video_url: str, filename: str):
                         break
                     except RequestException as e:
                         retries += 1
-                        print(f"\n⚠️ Retrying... ({retries}/{RETRIES})")
+                        print(f"\n  ⚠️ Retrying... ({retries}/{RETRIES})")
                         sleep(INTERVAL)
                 else:
-                    print(f"\n❌ Failed to download {filename} after {RETRIES} retries.")
+                    print(f"\n  ❌ Failed to download {filename} after {RETRIES} retries.")
                     return False
 
             if tmp_size == total_size:
                 move(tmp_file_path, filename)
-                print(f"\n✅ Downloaded {filename} successfully.")
+                print(f"\n  ✅ Downloaded {filename} successfully.")
 
         except RequestException as e:
             # Log the error
             print(e)
             with open(filename + '_log.txt', 'a+', encoding = 'UTF-8') as f:
                 f.write('%s, %s\n' % (video_url, e))
-            print(f"❌ Failed to download {filename}.")
+            print(f"  ❌ Failed to download {filename}.")
     else:
-        print(f"✅ Downloaded {filename} successfully.")
+        print(f"  ✅ Downloaded {filename} successfully.")
 
 def download_single(article_url: str, filename: str):
     """Download a single video from the given `article_url`."""
