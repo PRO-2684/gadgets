@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.4.2
+// @version      0.4.3
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -17,9 +17,12 @@
 // @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
 // @connect      *
-// @require      https://update.greasyfork.org/scripts/492078/1424658/pURLfy.js
-// @resource     rules-cn https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/cn.min.json
+// @require      https://update.greasyfork.org/scripts/492078/1425153/pURLfy.js
+// @resource     rules-tracking https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/tracking.min.json
+// @resource     rules-outgoing https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/outgoing.min.json
+// @resource     rules-shortener https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/shortener.min.json
 // @resource     rules-alternative https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/alternative.min.json
+// @resource     rules-other https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/other.min.json
 // @license      gpl-3.0
 // ==/UserScript==
 
@@ -38,8 +41,11 @@
         char: 0
     };
     const initRulesCfg = {
-        "cn": true,
-        "alternative": false
+        "tracking": true,
+        "outgoing": true,
+        "shortener": true,
+        "alternative": false,
+        "other": false
     };
     // Initialize pURLfy core
     const purifier = new Purlfy({
@@ -190,7 +196,7 @@
             document.removeEventListener(name, this.handler, { capture: true });
         }
     });
-    // Hook `touchstart` event
+    // Listen to `touchstart` event
     async function touchstartHandler(e) { // Always "senseless"
         const ele = e.composedPath().find(ele => ele.tagName === "A");
         if (ele && !ele.hasAttribute(tag1) && !ele.hasAttribute(tag2) && ele.href && !ele.getAttribute("href").startsWith("#")) {
@@ -252,13 +258,13 @@
     const openHook = new Hook("window.open");
     openHook.original = window.open.bind(window);
     openHook.patched = function (url, target, features) { // Intercept window.open
-        if (url && url !== "about:blank" && !url.startsWith("http://") && !url.startsWith("https://")) {
+        if (url && url !== "about:blank" && (url.startsWith("http://") || url.startsWith("https://"))) {
             this.toast(`Intercepted: "${url}"`);
             purifier.purify(url).then(purified => {
                 this.toast(`Processed: "${purified.url}"`);
                 this.original(purified.url, target, features);
             });
-            return null;
+            return true; // Ideally, return a window object; however, it's impossible to do so
         } else {
             return this.original(url, target, features);
         }
@@ -268,6 +274,42 @@
     }
     openHook.disable = async function () {
         window.open = this.original;
+    }
+    // Feature detection
+    async function onUrlChange(e) {
+        const dest = e.destination.url;
+        if (dest.startsWith("http://") || dest.startsWith("https://")) {
+            this.toast(`Intercepted: "${dest}"`);
+            purifier.purify(dest).then(purified => {
+                this.toast(`Processed: "${purified.url}"`);
+                if (purified.url !== dest) { // Prevent infinite loop
+                    history.replaceState(null, "", purified.url);
+                }
+            });
+        }
+    }
+    if (window?.navigation) { // Listen to `navigation` events
+        const navigationHook = new Hook("navigation");
+        navigationHook.handler = function (e) {
+            if (e.canIntercept) { // Only process if it can be intercepted (same-origin)
+                onUrlChange.call(navigationHook, e);
+            }
+        }
+        navigationHook.enable = async function () {
+            window.navigation.addEventListener("navigate", this.handler);
+        }
+        navigationHook.disable = async function () {
+            window.navigation.removeEventListener("navigate", this.handler);
+        }
+    } else { // Listen to `popstate` events
+        const popstateHook = new Hook("popstate");
+        popstateHook.handler = onUrlChange.bind(popstateHook);
+        popstateHook.enable = async function () {
+            window.addEventListener("popstate", this.handler);
+        }
+        popstateHook.disable = async function () {
+            window.removeEventListener("popstate", this.handler);
+        }
     }
     // Site-specific hooks
     switch (location.hostname) {
