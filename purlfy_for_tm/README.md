@@ -29,8 +29,7 @@ For advanced users, you can configure which hooks and rules are enabled by modif
         "cn.bing.com": true // Intercept a series of events in `cn.bing.com`
     },
     "rules": {
-        "cn": true, // Enable Chinese rules
-        "alternative": false // Enable alternative rules (Redirects you from some websites to their better alternatives)
+        // Visit https://github.com/PRO-2684/pURLfy-rules/ for related instructions
     },
     "senseless": true // Enable senseless mode (better compatibility, Less intrusive, but less effective)
 }

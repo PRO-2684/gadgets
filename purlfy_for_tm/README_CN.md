@@ -39,8 +39,7 @@
         "cn.bing.com": true // 拦截 `cn.bing.com` 中一系列的事件
     },
     "rules": {
-        "cn": true, // 启用中国规则
-        "alternative": false // 启用替代规则 (将您从某些网站重定向到更好的替代网站)
+        // 前往 https://github.com/PRO-2684/pURLfy-rules/ 查看相关说明
     },
     "senseless": true // 启用无感模式 (兼容性更好，干扰较少，但效果较差)
 }
