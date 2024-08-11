@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         52 Enhance
 // @namespace    http://tampermonkey.net/
-// @version      0.6.8
+// @version      0.6.9
 // @description  52 破解论坛增强脚本
 // @author       PRO
+// @run-at       document-start
 // @match        https://www.52pojie.cn/*
 // @icon         http://52pojie.cn/favicon.ico
 // @license      gpl-3.0
@@ -34,7 +35,8 @@
         "emoji-fix": { name: "* 修复 Emoji", title: "修复 Emoji 显示" },
         "native-tip": { name: "* 原生提示", title: "使用原生提示框", value: false },
         "hide-signature": { name: "隐藏签名档", title: "隐藏所有签名档", value: false },
-        "allow-tiny-signature": { name: "允许小签名", title: "允许小型签名档 (clientHeight <= 41)" },
+        "allow-tiny-signature": { name: "允许小签名", title: "允许小型签名档 (不含图片)" },
+        "lazy-signature-image": { name: "* 懒加载签名图片", title: "延迟加载签名档中的图片" },
         "hide-warning": { name: "隐藏提醒", title: "隐藏所有提醒", value: false },
         "hide-avatar-detail": { name: "隐藏头像详情", title: "隐藏头像下的详情 (统计信息、各类奖章、收听按钮)", value: false },
         "hide-rating": { name: "隐藏评分", title: "隐藏所有评分", value: false },
@@ -59,7 +61,7 @@
             }
             html { scroll-behavior: smooth; }`,
         "hide-signature": "div.sign { display: none; }",
-        "allow-tiny-signature": "div.sign.tiny-sign { display: block; }",
+        "allow-tiny-signature": "div.sign:not(:has(img)) { display: block; }",
         "hide-warning": "div[class^=vw50_kfc_p] { display: none; }",
         "hide-avatar-detail": "div.tns.xg2, dl.credit-list, p.md_ctrl, p.xg1, ul.xl.xl2.o.cl { display: none; }",
         "hide-rating": "div.pcb > h3.psth.xs1, dl.rate { display: none; }",
@@ -84,7 +86,7 @@
         }
     }
     // Hide
-    if (config["hide"]) {
+    function hide() {
         // Basic CSS
         const css = `div.hidden, tr.hidden { display: none; }
         td.hidden { cursor: help; background: repeating-linear-gradient(135deg, transparent 0, transparent 6px, #e7e7e7 6px, #e7e7e7 12px, transparent 12px) no-repeat 0 0, #eee; }
@@ -176,7 +178,7 @@
         });
     }
     // Get to top
-    if (config["get-to-top"]) {
+    function getToTop() {
         // Double click navbar to get to top
         const nv = document.getElementById("nv");
         if (nv) nv.addEventListener("dblclick", e => {
@@ -189,7 +191,7 @@
         };
     }
     // Emoji fix
-    if (config["emoji-fix"]) {
+    function emojiFix() {
         const temp = document.createElement("span");
         function fixEmoji(html) { // Replace patterns like `&amp;#128077;` with represented emoji
             return html.replace(/&(amp;)*#(\d+);/g, (match, p1, p2) => {
@@ -212,7 +214,7 @@
         signatures.forEach(fix);
     }
     // Native tip
-    if (config["native-tip"]) {
+    function nativeTip() {
         function format(s) {
             // Remove HTML tags
             s = s.replace(/(<([^>]+)>)/ig, '');
@@ -226,6 +228,12 @@
             ele.tips = null;
         });
         document.getElementById("mjs:tip")?.remove();
+    }
+    // Lazy load signature images
+    function lazySignatureImage() {
+        $$("div.sign img").forEach(ele => {
+            ele.setAttribute("loading", "lazy"); // https://developer.mozilla.org/en-US/docs/Web/Performance/Lazy_loading#images_and_iframes
+        });
     }
     // Auto sign
     function autoSign(enable) {
@@ -278,26 +286,6 @@
             }, 500); // Peoredically check if we are done
         }
     }
-    autoSign(config["auto-sign"]);
-    // CSS injection
-    const delayedCSS = ["hide-signature", "allow-tiny-signature"];
-    for (const prop in dynamicStyle) {
-        if (delayedCSS.includes(prop)) continue;
-        cssHelper(prop, config[prop]);
-    }
-    // Tag tiny signatures as `tiny-sign`; Delayed CSS injection
-    document.addEventListener("readystatechange", e => {
-        if (document.readyState == "complete") {
-            $$("div.sign").forEach(ele => {
-                if (ele.clientHeight <= 41) {
-                    ele.classList.add("tiny-sign");
-                }
-            });
-            for (const prop of delayedCSS) {
-                cssHelper(prop, config[prop]);
-            }
-        }
-    });
     // Shortcut
     function handleShortcut(e) {
         if (e.target.tagName == "TEXTAREA" || e.target.tagName == "INPUT") return;
@@ -317,22 +305,35 @@
             document.removeEventListener("keydown", handleShortcut);
         }
     }
-    shortcut(config["shortcut"]);
     // Infinite scroll
-    const next = $("a#autopbn");
-    const observer = new IntersectionObserver((entries, observer) => {
-        if (entries[0].isIntersecting) {
-            next?.click();
-        }
-    });
     function infiniteScroll(enable) {
+        const next = $("a#autopbn");
+        const observer = new IntersectionObserver((entries, observer) => {
+            if (entries[0].isIntersecting) {
+                next?.click();
+            }
+        });
         if (enable && next) {
             observer.observe(next);
         } else if (!enable && next) {
             observer.unobserve(next);
         }
     }
-    infiniteScroll(config["infinite-scroll"]);
+    // CSS injection
+    for (const prop in dynamicStyle) {
+        cssHelper(prop, config[prop]);
+    }
+    // Run on DOMContentLoaded
+    document.addEventListener("DOMContentLoaded", () => {
+        config["hide"] && hide();
+        config["get-to-top"] && getToTop();
+        config["emoji-fix"] && emojiFix();
+        config["native-tip"] && nativeTip();
+        config["lazy-signature-image"] && lazySignatureImage();
+        autoSign(config["auto-sign"]);
+        shortcut(config["shortcut"]);
+        infiniteScroll(config["infinite-scroll"]);
+    });
     // Listen to config changes
     const callbacks = {
         "auto-sign": autoSign,
