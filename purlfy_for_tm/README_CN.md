@@ -30,13 +30,15 @@
 {
     "hooks": {
         "location.href": true, // 检查 `location.href` (实际上并不是一个 hook)
-        "click": true, // 拦截 `click` 事件
-        "mousedown": true, // 拦截 `mousedown` 事件
-        "auxclick": true, // 拦截 `auxclick` 事件
-        "touchstart": true, // 拦截 `touchstart` 事件
-        "submit": true, // 拦截 `submit` 事件
+        "click": true, // 监听 `click` 事件
+        "mousedown": true, // 监听 `mousedown` 事件
+        "auxclick": true, // 监听 `auxclick` 事件
+        "touchstart": true, // 监听 `touchstart` 事件
+        "submit": true, // 监听 `submit` 事件
         "window.open": true, // Hook `window.open` 调用
-        "cn.bing.com": true // 拦截 `cn.bing.com` 中一系列的事件
+        "cn.bing.com": true, // 拦截 `cn.bing.com` 中一系列的事件
+        "www.google.com": true, // 拦截 `www.google.com` 中一系列的事件
+        "navigation": true // 监听 `navigate` 事件，或者 `popstate` 事件
     },
     "rules": {
         // 前往 https://github.com/PRO-2684/pURLfy-rules/ 查看相关说明

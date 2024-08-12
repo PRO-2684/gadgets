@@ -26,7 +26,9 @@ For advanced users, you can configure which hooks and rules are enabled by modif
         "touchstart": true, // Intercept `touchstart` events
         "submit": true, // Intercept `submit` events
         "window.open": true, // Hook `window.open` calls
-        "cn.bing.com": true // Intercept a series of events in `cn.bing.com`
+        "cn.bing.com": true, // Intercept a series of events in `cn.bing.com`
+        "www.google.com": true, // Intercept a series of events in `www.google.com`
+        "navigation": true // Intercept `navigate` events, or `popstate` events
     },
     "rules": {
         // Visit https://github.com/PRO-2684/pURLfy-rules/ for related instructions
