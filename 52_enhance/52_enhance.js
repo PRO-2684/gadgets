@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         52 Enhance
 // @namespace    http://tampermonkey.net/
-// @version      0.6.9
+// @version      0.7.0
 // @description  52 破解论坛增强脚本
 // @author       PRO
 // @run-at       document-start
@@ -306,18 +306,21 @@
         }
     }
     // Infinite scroll
-    function infiniteScroll(enable) {
-        const next = $("a#autopbn");
-        const observer = new IntersectionObserver((entries, observer) => {
-            if (entries[0].isIntersecting) {
-                next?.click();
-            }
-        });
-        if (enable && next) {
-            observer.observe(next);
-        } else if (!enable && next) {
-            observer.unobserve(next);
+    let infiniteScrollEnabled = false;
+    const infiniteScrollObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+            entries[0].target.click();
         }
+    });
+    function infiniteScroll(enable) {
+        const next = $("a#autopbn") ?? $("a#darkroommore");
+        if (!next) return;
+        if (enable && !infiniteScrollEnabled) {
+            infiniteScrollObserver.observe(next);
+        } else if (!enable && infiniteScrollEnabled) {
+            infiniteScrollObserver.unobserve(next);
+        }
+        infiniteScrollEnabled = enable;
     }
     // CSS injection
     for (const prop in dynamicStyle) {
