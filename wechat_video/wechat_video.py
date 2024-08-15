@@ -91,6 +91,7 @@ def download_video(video_url: str, filename: str):
             r = x.get(video_url, headers=VIDEO_HEADERS, stream=True)
             r.raise_for_status() # Raise an exception if the response is not 200 OK
             total_size = int(r.headers["Content-Length"])
+            # r.close() # Stop the connection to the server
             if path.exists(tmp_file_path):
                 tmp_size = path.getsize(tmp_file_path)
                 print(f"  Already downloaded {tmp_size} Bytes out of {total_size} Bytes ({100 * tmp_size / total_size:.2f}%)")
@@ -142,7 +143,7 @@ def download_video(video_url: str, filename: str):
 def download_single(article_url: str, filename: str):
     """Download a single video from the given `article_url`."""
     # `article_url` be like: https://mp.weixin.qq.com/s?__biz=Mzg5ODU0MjM2NA%3D%3D&mid=2247483677&idx=1&sn=e299cc8de66a97041cb0832c282f94d4#rd
-    assert article_url.startswith("https://mp.weixin.qq.com/s?"), "Invalid article URL"
+    assert article_url.startswith("https://mp.weixin.qq.com/s"), "Invalid article URL"
     print(f"Extracting video from {article_url}...")
     r = x.get(article_url)
     if "环境异常" in r.text:
@@ -211,7 +212,7 @@ if __name__ == "__main__":
     chdir(args.output_dir)
     if url.startswith("https://mp.weixin.qq.com/mp/appmsgalbum?"):
         download_album(url)
-    elif url.startswith("https://mp.weixin.qq.com/s?"):
+    elif url.startswith("https://mp.weixin.qq.com/s"):
         download_single(url, args.output)
     elif url:
         print("Invalid URL")
