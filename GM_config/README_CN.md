@@ -33,6 +33,12 @@
 
 ## 📖 使用
 
+### 确认版本
+
+```javascript
+console.log(GM_config.version); // *输出版本*
+```
+
 ### 配置描述
 
 使用这个库的第一步是创建一个配置描述。配置描述是一个字典，它的每个属性 (除了可能的 `$default` 外) 都是一个配置项的 id。
@@ -160,16 +166,18 @@ const config_desc = {
 
 ### 注册配置菜单
 
-当你创建了一个配置描述后，你需要将它注册为一个配置菜单。你可以使用 `GM_config` 函数来注册配置菜单。它接受两个参数：
+当你创建了一个配置描述后，你可以使用 `GM_config` 构造函数来将其注册为配置菜单。它接受如下两个参数：
 
 - `config_desc`：配置描述
-- `menu`：是否自动显示菜单
-    - 若为 `true`，则会自动显示菜单（默认）
-    - 若为 `false`，需要用户点击 `Show configuration` 后才会显示配置菜单
+- `options`：选项（可选）
+    - `immediate`：是否立即注册菜单
+        - 若为 `true`，则会立即注册菜单（默认）
+        - 若为 `false`，需要用户点击 `Show configuration` 后才会注册配置菜单
+    - `debug`：是否开启调试模式。若为 `true`，会输出调试信息。默认为 `false`。（随时可以通过 `config.debug` 来修改）
 
 ```javascript
-const config = GM_config(config_desc, false); // *注册配置菜单*
-console.log(config.price); // *可以开始使用了 🎉*
+const config = new GM_config(config_desc, { immediate: false }); // *注册配置菜单*
+console.log(config.get("price")); // *可以开始使用了 🎉*
 ```
 
 ### 查询/修改配置
@@ -177,19 +185,39 @@ console.log(config.price); // *可以开始使用了 🎉*
 当你注册了一个配置菜单后，你就可以使用 `GM_config` 返回的对象来查询/修改配置了。例如：
 
 ```javascript
-console.log(config.price); // *查询配置*
-config.price = 100; // *修改配置* (菜单项会自动更新)
+console.log(config.get("price")); // *查询配置*
+config.set("price", 100); // *修改配置* (菜单项会自动更新)
+```
+
+或者，你也可以通过 `config.proxy` 来查询/修改配置。例如：
+
+```javascript
+console.log(config.proxy.price); // *查询配置*
+config.proxy.price = 100; // *修改配置* (菜单项会自动更新)
 ```
 
 ### 监听配置的查询/修改
 
-这个库提供了一个 `GM_config_event` 字符串，它的值表示配置项被查询/修改时会触发的事件。你可以使用 `window.addEventListener` 来监听这个事件。它的 `detail` 属性是一个对象，包含了配置变更的详情。例如：
+你可以通过调用 `config.addListener(callback)` 来监听配置的查询/修改：
 
 ```javascript
-window.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
+config.addListener((e) => {
+    console.log(e.detail);
+});
+```
+
+正如你所想，你可以通过 `config.removeListener(callback)` 来移除监听器。
+
+<details>
+<summary>传统方式</summary>
+或者，这个库提供了一个 `GM_config_event` 字符串，它的值表示配置项被查询/修改时会触发的事件。你可以使用 `window.addEventListener` 来监听这个事件。它的 `detail` 属性是一个对象，包含了配置变更的详情。例如：
+
+```javascript
+window.top.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
     console.log(config, e.detail);
 });
 ```
+</details>
 
 `e.detail` 对象的属性如下：
 
@@ -200,9 +228,7 @@ window.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
 - `before`：变更前的值
 - `after`：变更后的值
 
-这个功能常用于在配置变化时实时更新脚本的功能。在库内部，自动更新菜单项的功能就是通过监听这个事件来实现的。
-
-若页面内的 iframe 需要监听此事件，则 iframe 内需要使用 `window.top` 代替 `window`。
+这个功能常用于在配置变化时实时更新脚本的功能。在库内部，自动更新菜单项的功能就是通过这个功能来实现的。
 
 ### 总结：修改配置项过程
 
@@ -210,8 +236,8 @@ window.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
 2. 将 `prop.name` 和当前值作为参数传入 `prop.input`，获取用户输入值
 3. 将用户输入值作为参数传入 `prop.processor`，获取处理后的值
 4. 保存处理后的值
-5. 发出对应 `detail` 的 `GM_config_event` 事件
-6. 更新菜单项（被 `GM_config_event` 事件触发）
+5. 发出对应 `detail` 的事件
+6. 更新菜单项（被上述事件触发）
 
 ## 👀 完整的例子
 
@@ -221,7 +247,7 @@ window.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
 // ==UserScript==
 // @name         Test Config
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.4
 // @description  This is an example to demostrate the usage of greasyfork.org/scripts/470224.
 // @author       PRO
 // @match        https://greasyfork.org/*
@@ -278,12 +304,12 @@ window.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
             processor: "float_range-0-" // Convert to float in range [0, +∞)
         }
     }
-    const config = GM_config(config_desc, false); // Register menu commands
-    window.addEventListener(GM_config_event, (e) => { // Listen to config changes
+    const config = new GM_config(config_desc, { immediate: false, debug: true }); // Register menu commands
+    config.addListener((e) => { // Listen to config changes
         console.log(e.detail);
     });
     window.setTimeout(() => { // Change config values, and menu commands will be updated automatically
-        config.val += 1; // Remember to validate the value before setting it
+        config.proxy.val += 1; // Remember to validate the value before setting it
     }, 5000);
 })();
 ```

@@ -33,13 +33,19 @@ This library needs the following permissions to work:
 
 ## 📖 Usage
 
+### Determine version
+
+```javascript
+console.log(GM_config.version); // *Print version*
+```
+
 ### Config description
 
 The first step is to define your config description, which is a dictionary and each of its key (apart from possible `$default`) represents the id of a config item.
 
 #### `$default`
 
-If `$default` is not specified in config description, following values will be used to fill unspecified fields in a config item:
+By using `$default`, you can easily create a lot of config items of the same type. If `$default` is not specified in config description, following values will be used to fill unspecified fields in a config item:
 
 ```javascript
 {
@@ -69,11 +75,11 @@ const config_desc = {
 }
 ```
 
-#### `prop.name` *
+#### `prop.name`
 
 The display name of the config item. Expected type: `string`.
 
-#### `prop.value` *
+#### `prop.value`
 
 The default value of the config item, can be of any type. Note that you should consider its validity, because this lib will not check default value's validity for you.
 
@@ -159,36 +165,58 @@ Supports `prop.accessKey`, `prop.autoClose`, `prop.title` (Require TM >=4.20.0).
 
 ### Register menu
 
-After defining your config description, you can register the menu item by calling `GM_config`. It accepts the following two arguments:
+After defining your config description, you can register the menu item by constructing a `GM_config` instance. The constructor accepts the following two arguments:
 
 - `config_desc`: Your config description
-- `menu`: Whether to display the menu item automatically.
-    - If set to `true`, the menu item will be displayed automatically. (default value)
-    - If set to `false`, the user need to click "Show configuration" to show it.
+- `options`: Options (optional)
+    - `immediate`: Whether to register the menu items immediately.
+        - If set to `true`, the menu item will be registered immediately. (default value)
+        - If set to `false`, the user need to click "Show configuration" to register it.
+    - `debug`: Whether to enable debug mode. If set to `true`, debug information will be printed to console. Default value is `false`. (Can be modified by `config.debug` at any time)
 
 ```javascript
-const config = GM_config(config_desc, false); // *Register menu*
-console.log(config.price); // *You may now start using the config 🎉*
+const config = new GM_config(config_desc, { immediate: false }); // *Register menu*
+console.log(config.get("price")); // *You may now start using the config 🎉*
 ```
 
 ### Get/set config
 
-After registering the menu, you can get/set config by accessing the object returned by `GM_config`. e.g:
+After registering the menu, you can get/set config by accessing the `GM_config` instance. e.g:
 
 ```javascript
-console.log(config.price); // *Get config*
-config.price = 100; // *Modify config* (The menu will be updated automatically)
+console.log(config.get("price")); // *Get config*
+config.set("price", 100); // *Modify config* (The menu will be updated automatically)
+```
+
+Alternatively, operate on `config.proxy` to get/set config. e.g:
+
+```javascript
+console.log(config.proxy.price); // *Get config*
+config.proxy.price = 100; // *Modify config* (The menu will be updated automatically)
 ```
 
 ### Listen for config get/set
 
-This lib provides a string `GM_config_event`, whose value represents the event that will be triggered when config is get/set. You can listen for this event by calling `window.addEventListener`. Its `detail` property is an object containing the detail. e.g:
+You can listen for config get/set by calling `config.addListener(callback)`:
 
 ```javascript
-window.addEventListener(GM_config_event, (e) => { // *Listen for config get/set*
-    console.log(config, e.detail);
+config.addListener((e) => {
+    console.log(e.detail);
 });
 ```
+
+As you might have expected, you can remove the listener by calling `config.removeListener(callback)`.
+
+<details>
+<summary>The legacy way</summary>
+Alternatively, this lib provides a string `GM_config_event`, whose value represents the event that will be triggered when config is get/set. You can listen for this event by calling `window.top.addEventListener`. Its `detail` property is an object containing the detail. e.g:
+
+```javascript
+window.top.addEventListener(GM_config_event, (e) => { // *Listen for config get/set*
+    console.log(e.detail);
+});
+```
+</details>
 
 `e.detail` is a dictionary with the following properties:
 
@@ -199,9 +227,7 @@ window.addEventListener(GM_config_event, (e) => { // *Listen for config get/set*
 - `before`: The value of the config item before the operation.
 - `after`: The value of the config item after the operation.
 
-This feature is often used to update your script dynamically when config is modified. In this lib, auto-updating menu is implemented by listening for this event.
-
-If an iframe in the page needs to listen for this event, the iframe should use `window.top` instead of `window`.
+This feature is often used to update your script dynamically when config is modified. In this lib, auto-updating menu is implemented by this feature.
 
 ### To sum up: the process of modifying config
 
@@ -209,8 +235,8 @@ If an iframe in the page needs to listen for this event, the iframe should use `
 2. Pass `prop.name` and current value to `prop.input` to get user input
 3. Pass user input to `prop.processor` to get processed value
 4. Save processed value
-5. Dispatch `GM_config_event` with corresponding detail
-6. Update menu command (triggered by `GM_config_event`)
+5. Dispatch event with corresponding detail
+6. Update menu command (triggered by the event)
 
 ## 👀 Working example
 
@@ -220,7 +246,7 @@ Install below code as a script, and see how does it work:
 // ==UserScript==
 // @name         Test Config
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.4
 // @description  This is an example to demostrate the usage of greasyfork.org/scripts/470224.
 // @author       PRO
 // @match        https://greasyfork.org/*
@@ -277,12 +303,12 @@ Install below code as a script, and see how does it work:
             processor: "float_range-0-" // Convert to float in range [0, +∞)
         }
     }
-    const config = GM_config(config_desc, false); // Register menu commands
-    window.addEventListener(GM_config_event, (e) => { // Listen to config changes
+    const config = new GM_config(config_desc, { immediate: false, debug: true }); // Register menu commands
+    config.addListener((e) => { // Listen to config changes
         console.log(e.detail);
     });
     window.setTimeout(() => { // Change config values, and menu commands will be updated automatically
-        config.val += 1; // Remember to validate the value before setting it
+        config.proxy.val += 1; // Remember to validate the value before setting it
     }, 5000);
 })();
 ```
