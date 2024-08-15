@@ -533,13 +533,13 @@
         "auto-hide-rows": autoHide,
         "tab-size": tabSize,
         "flat-layout": (after) => {
-            const meta_orig = $("#script-info > #script-content > .script-meta-block");
+            const meta_orig = $("#script-info > #script-content .script-meta-block");
             const meta_mod = $("#script-info > .script-meta-block");
             if (after && meta_orig) {
-                const links = $("#script-info > #script-links");
-                links.after(meta_orig);
+                const header = $("#script-info > header");
+                header.before(meta_orig);
             } else if (!after && meta_mod) {
-                const additional = $("#script-info > #script-content > #additional-info");
+                const additional = $("#script-info > #script-content #additional-info");
                 additional.before(meta_mod);
             }
         },
