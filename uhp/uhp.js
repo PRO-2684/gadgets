@@ -3,7 +3,7 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.3.1
+// @version      1.3.2
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
@@ -25,7 +25,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @require      https://update.greasyfork.org/scripts/462234/1391948/Message.js
-// @require      https://update.greasyfork.org/scripts/470224/1317473/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1428466/Tampermonkey%20Config.js
 // ==/UserScript==
 
 (function () {
@@ -144,7 +144,7 @@
             }, interval);
         });
     }
-    function setupDynamicStyles(host, config, styles) {
+    function setupDynamicStyles(host, configProxy, styles) {
         function injectCSS(name) {
             const css = document.head.appendChild(document.createElement("style"));
             css.id = `ustc-helper-${host}-${name}`;
@@ -159,7 +159,7 @@
             }
         }
         for (const name in styles) {
-            toggleCSS(name, config[`${host}/${name}`]);
+            toggleCSS(name, configProxy[`${host}/${name}`]);
         }
         window.top.addEventListener(GM_config_event, e => {
             if (e.detail.type == "set" && e.detail.prop.startsWith(`${host}/`)) {
@@ -174,12 +174,12 @@
     switch (window.location.host) {
         case 'mail.ustc.edu.cn': {
             const config_desc = config_descs.mail;
-            const config = GM_config(config_desc);
-            if (!config["mail/enabled"]) {
+            const configProxy = new GM_config(config_desc).proxy;
+            if (!configProxy["mail/enabled"]) {
                 console.info("[USTC Helper] 'mail' feature disabled.");
                 break;
             }
-            if (config["mail/focus"]) {
+            if (configProxy["mail/focus"]) {
                 timer(() => {
                     const btn = $(".formLogin .submit");
                     if (btn) {
@@ -196,20 +196,20 @@
                 "remove_watermark": "div.watermark-wrap { display: none; }",
                 "remove_background": ".lymain .lybg { display: none; }"
             }
-            setupDynamicStyles("mail", config, mail_css);
+            setupDynamicStyles("mail", configProxy, mail_css);
             break;
         }
         case 'passport.ustc.edu.cn': {
             const config_desc = config_descs.passport;
-            const config = GM_config(config_desc);
+            const configProxy = new GM_config(config_desc).proxy;
             let is_official = false;
-            if (!config["passport/enabled"]) {
+            if (!configProxy["passport/enabled"]) {
                 console.info("[USTC Helper] 'passport' feature disabled.");
                 break;
             }
             // Code recognition
             const img = $('img.validate-img');
-            if (config["passport/recog_code"] && img) {
+            if (configProxy["passport/recog_code"] && img) {
                 // Adapted from https://greasyfork.org/scripts/431681 - Great thanks to the author @J-Paven!
                 const dim = [128, 32];
                 [img.style.width, img.style.height] = dim.map(x => x + 'px');
@@ -354,7 +354,7 @@
                 $("#footer")?.appendChild(notice);
             }
             function do_fingerprint() {
-                if (config["passport/show_fingerprint"]) {
+                if (configProxy["passport/show_fingerprint"]) {
                     const fingerprint = $("#resultInput").value;
                     log("Original fingerprint: " + fingerprint);
                     document.head.appendChild(document.createElement("style")).textContent = `
@@ -375,8 +375,8 @@
                     notice.innerHTML = `Original fingerprint: <span class="hover-to-show" title="Original fingerprint">${fingerprint}</span>`;
                     $("#footer")?.appendChild(notice);
                 }
-                if (config["passport/fake_fingerprint"]) {
-                    const fingerprint = config["passport/fake_fingerprint"];
+                if (configProxy["passport/fake_fingerprint"]) {
+                    const fingerprint = configProxy["passport/fake_fingerprint"];
                     // Check if the fingerprint is valid (64 characters, consisting of 0-9 and a-f)
                     if (fingerprint.length !== 64 || !/^[0-9a-f]+$/.test(fingerprint)) {
                         log("Invalid fingerprint, ignored.");
@@ -391,9 +391,9 @@
                 }
             }
             function main() {
-                if (config["passport/focus"]) focus();
-                if (config["passport/service"]) hint_service();
-                if (config["passport/auto_login"] && is_official) {
+                if (configProxy["passport/focus"]) focus();
+                if (configProxy["passport/service"]) hint_service();
+                if (configProxy["passport/auto_login"] && is_official) {
                     window.setTimeout(() => {
                         login();
                     }, 1000);
@@ -418,12 +418,12 @@
         }
         case 'rec.ustc.edu.cn': {
             const config_desc = config_descs.rec;
-            const config = GM_config(config_desc);
-            if (!config["rec/enabled"]) {
+            const configProxy = new GM_config(config_desc).proxy;
+            if (!configProxy["rec/enabled"]) {
                 console.info("[USTC Helper] 'rec' feature disabled.");
                 break;
             }
-            if (config["rec/opencurrent"]) {
+            if (configProxy["rec/opencurrent"]) {
                 window.webpackJsonp.push_ = window.webpackJsonp.push;
                 window.webpackJsonp.push = (val) => {
                     if (val[0][0] !== "chunk-5ae262a1")
@@ -772,7 +772,7 @@
                     }
                 };
             }
-            if (config["rec/autologin"] && document.location.pathname == '/') {
+            if (configProxy["rec/autologin"] && document.location.pathname == '/') {
                 const app = $("#app");
                 const options = {
                     childList: true,
@@ -787,7 +787,7 @@
                     }
                 });
                 observer.observe(app, options);
-            } else if (config["rec/opencurrent"]) {
+            } else if (configProxy["rec/opencurrent"]) {
                 const app = $("#app");
                 const options = {
                     childList: true,
@@ -809,12 +809,12 @@
         }
         case 'recapi.ustc.edu.cn': {
             const config_desc = config_descs.rec;
-            const config = GM_config(config_desc);
-            if (!config["rec/enabled"]) {
+            const configProxy = new GM_config(config_desc).proxy;
+            if (!configProxy["rec/enabled"]) {
                 console.info("[USTC Helper] 'rec' feature disabled.");
                 break;
             }
-            if (config["rec/autologin"]) {
+            if (configProxy["rec/autologin"]) {
                 const btn = $("#ltwo > div > button");
                 if (!btn) {
                     console.error("[USTC Helper] Login button not found!");
@@ -826,16 +826,16 @@
         }
         case 'www.bb.ustc.edu.cn': {
             const config_desc = config_descs.bb;
-            const config = GM_config(config_desc);
-            if (!config["bb/enabled"]) {
+            const configProxy = new GM_config(config_desc).proxy;
+            if (!configProxy["bb/enabled"]) {
                 console.info("[USTC Helper] 'bb' feature disabled.");
                 break;
             }
-            if (window.location.pathname == '/nginx_auth/' && config["bb/autoauth"]) {
+            if (window.location.pathname == '/nginx_auth/' && configProxy["bb/autoauth"]) {
                 $('a')?.click();
-            } else if ((window.location.pathname == '/' || window.location.pathname == '/webapps/login/') && config["bb/autologin"]) {
+            } else if ((window.location.pathname == '/' || window.location.pathname == '/webapps/login/') && configProxy["bb/autologin"]) {
                 $('#login > table > tbody > tr > td:nth-child(2) > span > a')?.click();
-            } else if (config["bb/showhwstatus"] && window.location.pathname == '/webapps/blackboard/content/listContent.jsp' && document.getElementById('pageTitleText').children[0].textContent == '作业区') {
+            } else if (configProxy["bb/showhwstatus"] && window.location.pathname == '/webapps/blackboard/content/listContent.jsp' && document.getElementById('pageTitleText').children[0].textContent == '作业区') {
                 const css = document.createElement('style');
                 css.textContent = ".ustc-helper-bb-ignored { opacity: 0.4; } .ustc-helper-bb-ignored > .details { display: none; }";
                 document.head.appendChild(css);
@@ -936,22 +936,22 @@
         }
         case 'jw.ustc.edu.cn': {
             const config_desc = config_descs.jw;
-            const config = GM_config(config_desc, false);
-            if (!config["jw/enabled"]) {
+            const configProxy = new GM_config(config_desc, { immediate: false }).proxy;
+            if (!configProxy["jw/enabled"]) {
                 console.info("[USTC Helper] 'jw' feature disabled.");
                 break;
             }
-            if (config["jw/login"] && window.location.pathname == "/login") {
+            if (configProxy["jw/login"] && window.location.pathname == "/login") {
                 const btn = document.getElementById('login-unified-wrapper');
-                if (config["jw/login"] == 'focus') {
+                if (configProxy["jw/login"] == 'focus') {
                     btn.focus();
-                } else if (config["jw/login"] == 'click') {
+                } else if (configProxy["jw/login"] == 'click') {
                     btn.click();
                 } else {
-                    console.error(`[USTC Helper] Unknown option for jw.login: ${config["jw/login"]}`);
+                    console.error(`[USTC Helper] Unknown option for jw.login: ${configProxy["jw/login"]}`);
                 }
             }
-            if (config["jw/shortcut"] && window.top.location.pathname == "/home") {
+            if (configProxy["jw/shortcut"] && window.top.location.pathname == "/home") {
                 const shortcuts = ["ArrowLeft", "ArrowRight", "x", '`', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
                 function tryClick(tab) {
                     const ele = tab?.querySelector("span.tabTitle");
@@ -997,7 +997,7 @@
                     }
                 });
             }
-            if (config["jw/score_mask"] && window.location.pathname == "/for-std/grade/sheet") {
+            if (configProxy["jw/score_mask"] && window.location.pathname == "/for-std/grade/sheet") {
                 function get_status(entry) {
                     // Status:
                     // false: Normal display
@@ -1109,9 +1109,9 @@
                 "privacy": `#accountLoginInfo, #home-page .info-username, body > div.container div.top-bar > h2.info-title, .list-group-item > span:not(.pull-left) { filter: blur(0.2em); }
                     img[src='/my/avatar'] { filter: blur(1em); }`
             };
-            setupDynamicStyles("jw", config, jw_css);
+            setupDynamicStyles("jw", configProxy, jw_css);
             if (window.location.pathname.startsWith("/for-std/course-table")) {
-                if (config["jw/sum"]) {
+                if (configProxy["jw/sum"]) {
                     const table = $("#lessons");
                     if (table) {
                         const rows = table.querySelectorAll("tbody > tr");
@@ -1133,12 +1133,12 @@
         }
         case 'young.ustc.edu.cn': {
             const config_desc = config_descs.young;
-            const config = GM_config(config_desc, false);
-            if (!config["young/enabled"]) {
+            const configProxy = new GM_config(config_desc, { immediate: false });
+            if (!configProxy["young/enabled"]) {
                 console.info("[USTC Helper] 'young' feature disabled.");
                 break;
             }
-            if (window.location.pathname == '/nginx_auth/' && config["young/auto_auth"]) {
+            if (window.location.pathname == '/nginx_auth/' && configProxy["young/auto_auth"]) {
                 document.getElementsByTagName('a')[0].click();
                 return;
             }
@@ -1147,13 +1147,13 @@
             function main(mutations, observer) {
                 const menu = app.querySelector(".ant-menu-root");
                 if (!menu) return;
-                const default_tab = config["young/default_tab"];
+                const default_tab = configProxy["young/default_tab"];
                 if (default_tab.length)
                     router.push(default_tab);
                 const submenus = menu.querySelectorAll("li.ant-menu-submenu-horizontal:not(.ant-menu-overflowed-submenu) > div");
                 if (!submenus.length) return;
                 observer.disconnect();
-                if (config["young/no_datascreen"]) {
+                if (configProxy["young/no_datascreen"]) {
                     app.querySelector("div.header-index-wide > a").remove();
                     function getCloseBtn() {
                         return app.querySelector("span[pagekey='/dataAnalysis/visual']").nextElementSibling;
@@ -1176,7 +1176,7 @@
                         }
                     }, 500);
                 }
-                if (config["young/auto_tab"]) {
+                if (configProxy["young/auto_tab"]) {
                     submenus[0].onclick = (e) => {
                         router.push('/dataAnalysis/studentAnalysis');
                         e.stopImmediatePropagation();
@@ -1208,7 +1208,7 @@
                     //     }
                     // });
                 }
-                if (config["young/shortcut"]) {
+                if (configProxy["young/shortcut"]) {
                     document.addEventListener("keydown", (e) => {
                         if (document.activeElement.nodeName == "INPUT" || document.activeElement.nodeName == "TEXTAREA") {
                             return;
@@ -1255,12 +1255,12 @@
         }
         case 'wvpn.ustc.edu.cn': {
             const config_desc = config_descs.wvpn;
-            const config = GM_config(config_desc);
-            if (!config["wvpn/enabled"]) {
+            const configProxy = new GM_config(config_desc).proxy;
+            if (!configProxy["wvpn/enabled"]) {
                 console.info("[USTC Helper] 'wvpn' feature disabled.");
                 break;
             }
-            if (config["wvpn/custom_collection"]) {
+            if (configProxy["wvpn/custom_collection"]) {
                 // let element = $("div.portal-search-input-wrap");
                 const options = {
                     childList: true,
@@ -1458,8 +1458,8 @@
         }
         case 'icourse.club': {
             const config_desc = config_descs.icourse;
-            const config = GM_config(config_desc);
-            if (!config["icourse/enabled"]) {
+            const configProxy = new GM_config(config_desc).proxy;
+            if (!configProxy["icourse/enabled"]) {
                 console.info("[USTC Helper] 'icourse' feature disabled.");
                 break;
             }
@@ -1509,20 +1509,20 @@
                 }
                 items.forEach(addItem);
             }
-            if (config["icourse/filelist"]) {
+            if (configProxy["icourse/filelist"]) {
                 generateList("文件列表", "div.review-content a[href^='/uploads/files/']", true);
             }
-            if (config["icourse/linklist"]) {
+            if (configProxy["icourse/linklist"]) {
                 generateList("链接列表", "div.review-content a:not([href^='/uploads/files/'])", false);
             }
-            if (config["icourse/native_top"]) {
+            if (configProxy["icourse/native_top"]) {
                 const goTop = $("#gotop");
                 goTop?.addEventListener("click", (e) => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                     e.stopPropagation();
                 }, { capture: true });
             }
-            if (config["icourse/shortcut"]) {
+            if (configProxy["icourse/shortcut"]) {
                 for (const textArea of $$("textarea")) { // Comment section
                     const submit = textArea.nextElementSibling.firstElementChild;
                     if (submit && submit.tagName == "BUTTON") {
@@ -1542,7 +1542,7 @@
             const icourse_css = {
                 "css": `html { scroll-behavior: smooth; } img { max-width: 100%; }`
             };
-            setupDynamicStyles("icourse", config, icourse_css);
+            setupDynamicStyles("icourse", configProxy, icourse_css);
             break;
         }
         default:

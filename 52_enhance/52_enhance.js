@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         52 Enhance
 // @namespace    http://tampermonkey.net/
-// @version      0.7.0
+// @version      0.7.1
 // @description  52 破解论坛增强脚本
 // @author       PRO
 // @run-at       document-start
@@ -13,7 +13,7 @@
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
-// @require      https://update.greasyfork.org/scripts/470224/1317473/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1428466/Tampermonkey%20Config.js
 // ==/UserScript==
 
 (function() {
@@ -49,7 +49,8 @@
         "shortcut": { name: "快捷键", title: "Enter: 快速跳到回复栏" },
         "infinite-scroll": { name: "无限滚动", title: "滚动到末尾时自动加载下一页" }
     };
-    const config = GM_config(config_desc, false);
+    const config = new GM_config(config_desc, { immediate: false });
+    const configProxy = config.proxy;
     // Styles
     const dynamicStyle = {
         "css-fix": `#jz52top { opacity: 0.2; transition: opacity 0.2s ease-in-out; }
@@ -324,18 +325,18 @@
     }
     // CSS injection
     for (const prop in dynamicStyle) {
-        cssHelper(prop, config[prop]);
+        cssHelper(prop, configProxy[prop]);
     }
     // Run on DOMContentLoaded
     document.addEventListener("DOMContentLoaded", () => {
-        config["hide"] && hide();
-        config["get-to-top"] && getToTop();
-        config["emoji-fix"] && emojiFix();
-        config["native-tip"] && nativeTip();
-        config["lazy-signature-image"] && lazySignatureImage();
-        autoSign(config["auto-sign"]);
-        shortcut(config["shortcut"]);
-        infiniteScroll(config["infinite-scroll"]);
+        configProxy["hide"] && hide();
+        configProxy["get-to-top"] && getToTop();
+        configProxy["emoji-fix"] && emojiFix();
+        configProxy["native-tip"] && nativeTip();
+        configProxy["lazy-signature-image"] && lazySignatureImage();
+        autoSign(configProxy["auto-sign"]);
+        shortcut(configProxy["shortcut"]);
+        infiniteScroll(configProxy["infinite-scroll"]);
     });
     // Listen to config changes
     const callbacks = {
@@ -343,7 +344,7 @@
         "shortcut": shortcut,
         "infinite-scroll": infiniteScroll
     };
-    window.addEventListener(GM_config_event, e => {
+    config.addListener(e => {
         if (e.detail.type == "set") {
             const callback = callbacks[e.detail.prop];
             if (callback && (e.detail.before !== e.detail.after)) {

@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.7.8
+// @version      0.7.9
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @author       PRO
@@ -12,7 +12,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @match        https://greasyfork.org/*
-// @require      https://update.greasyfork.org/scripts/470224/1317473/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1428466/Tampermonkey%20Config.js
 // @icon         https://raw.githubusercontent.com/greasyfork-org/greasyfork/main/public/images/blacklogo16.png
 // @icon64       https://raw.githubusercontent.com/greasyfork-org/greasyfork/main/public/images/blacklogo96.png
 // @license      gpl-3.0
@@ -65,7 +65,8 @@
         "search-syntax": { name: "*Search syntax", title: "Enable partial search syntax for Greasy Fork search bar" },
         "image-proxy": { name: "*Image proxy", title: "Use `wsrv.nl` as proxy for user-uploaded images", value: false },
     };
-    const config = GM_config(config_desc);
+    const config = new GM_config(config_desc);
+    const configProxy = config.proxy;
     // CSS
     const dynamicStyle = {
         "hide-buttons": `div#float-buttons { display: none; }`,
@@ -364,7 +365,7 @@
     }
     // Auto hide code blocks
     function autoHide() {
-        if (!config["auto-hide-code"]) {
+        if (!configProxy["auto-hide-code"]) {
             for (const code_block of code_blocks) {
                 const toggle = code_block.firstChild.lastChild;
                 if (!toggle) continue;
@@ -379,7 +380,7 @@
                 const toggle = code_block.firstChild.lastChild;
                 if (!toggle) continue;
                 const hidden = toggle.textContent === "Show code";
-                if (rows >= config["auto-hide-rows"] && !hidden || rows < config["auto-hide-rows"] && hidden) {
+                if (rows >= configProxy["auto-hide-rows"] && !hidden || rows < configProxy["auto-hide-rows"] && hidden) {
                     code_block.firstChild.lastChild.click(); // Click the toggle button
                 }
             }
@@ -392,7 +393,7 @@
     }, { once: true });
     // Tab size
     function tabSize() {
-        const size = config["tab-size"];
+        const size = configProxy["tab-size"];
         const style = $("style#" + idPrefix + "tab-size") ?? document.head.appendChild(document.createElement("style"));
         style.id = idPrefix + "tab-size";
         style.textContent = `pre { tab-size: ${size}; }`;
@@ -433,7 +434,7 @@
             }
         }
     }
-    alternativeURLs(config["lib-alternative-url"]);
+    alternativeURLs(configProxy["lib-alternative-url"]);
     // Short link
     function shortLink(enable) {
         const description = $("div#script-content");
@@ -468,7 +469,7 @@
             });
         }
     }
-    shortLink(config["short-link"]);
+    shortLink(configProxy["short-link"]);
     // Shortcut
     function submitOnCtrlEnter(e) {
         const form = this.form;
@@ -521,10 +522,10 @@
             shortcutEnabled = false;
         }
     }
-    shortcut(config["shortcut"]);
+    shortcut(configProxy["shortcut"]);
     // Initialize css
     for (const prop in dynamicStyle) {
-        cssHelper(prop, config[prop]);
+        cssHelper(prop, configProxy[prop]);
     }
     // Dynamically respond to config changes
     const callbacks = {
@@ -546,8 +547,8 @@
         "short-link": shortLink,
         "shortcut": shortcut,
     };
-    callbacks["flat-layout"](config["flat-layout"]);
-    window.addEventListener(GM_config_event, e => {
+    callbacks["flat-layout"](configProxy["flat-layout"]);
+    config.addListener(e => {
         if (e.detail.type === "set") {
             const callback = callbacks[e.detail.prop];
             if (callback && (e.detail.before !== e.detail.after)) {
@@ -595,7 +596,7 @@
         "name": "name",
         "title": "name",
     };
-    if (config["search-syntax"]) {
+    if (configProxy["search-syntax"]) {
         function parseString(input) {
             // Regular expression to match key:value pairs, allowing for non-word characters in values
             const regex = /\b(\w+:[^\s]+)\b/g;
@@ -659,7 +660,7 @@
         }
     }
     // Image proxy
-    if (config["image-proxy"]) {
+    if (configProxy["image-proxy"]) {
         const PROXY = "https://wsrv.nl/?url=";
         const images = $$("a[href^='/rails/active_storage/blobs/redirect/'] > img[src^='https://greasyfork.']");
         for (const img of images) {
