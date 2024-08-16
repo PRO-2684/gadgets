@@ -197,7 +197,7 @@ config.proxy.price = 100; // *Modify config* (The menu will be updated automatic
 
 ### Listen for config get/set
 
-You can listen for config get/set by calling `config.addListener(callback)`:
+You can listen for config get/set by calling `config.addListener(listener, options?)`:
 
 ```javascript
 config.addListener((e) => {
@@ -205,7 +205,7 @@ config.addListener((e) => {
 });
 ```
 
-As you might have expected, you can remove the listener by calling `config.removeListener(callback)`.
+As you might have expected, you can remove the listener by calling `config.removeListener(listener, options?)`. These two methods are almost identical to [`EventTarget.addEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) and [`EventTarget.removeEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener), except that they don't accept the parameter `type`.
 
 <details>
 <summary>The legacy way</summary>

@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.8.0
+// @version      0.8.1
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -22,7 +22,7 @@ class GM_config {
      * The version of the GM_config library
      */
     static get version() {
-        return GM_info.script.version;
+        return "0.8.1";
     }
     /**
      * Built-in processors for user input
@@ -165,15 +165,12 @@ class GM_config {
         // Return stored value, else default value
         const value = this.#get(prop);
         // Dispatch get event
-        const event = new CustomEvent(GM_config_event, {
-            detail: {
-                type: "get",
-                prop: prop,
-                before: value,
-                after: value
-            }
+        this.#dispatch({
+            type: "get",
+            prop: prop,
+            before: value,
+            after: value
         });
-        window.top.dispatchEvent(event);
         return value;
     }
     /**
@@ -193,30 +190,37 @@ class GM_config {
             GM_setValue(prop, value);
         }
         // Dispatch set event
-        const event = new CustomEvent(GM_config_event, {
-            detail: {
-                type: "set",
-                prop: prop,
-                before: before,
-                after: value
-            }
+        this.#dispatch({
+            type: "set",
+            prop: prop,
+            before: before,
+            after: value
         });
-        window.top.dispatchEvent(event);
         return true;
     }
     /**
-     * Add an listener for config get/set
-     * @param {Function} callback The callback function
+     * Sets up a function that will be called whenever config is accessed or modified
+     * @param {null | Object | Function} listener The object that receives a notification (an object that implements the `Event` interface) when an event of the specified type occurs. This must be `null`, an object with a `handleEvent()` method, or a JavaScript function
+     * @param {Object} [options] An object that specifies characteristics about the event listener
+     * @param {boolean} [options.capture=false] A boolean value indicating that events of this type will be dispatched to the registered `listener` before being dispatched to any `EventTarget` beneath it in the DOM tree
+     * @param {boolean} [options.once=false] A boolean value indicating that the `listener` should be invoked at most once after being added. If `true`, the `listener` would be automatically removed when invoked
+     * @param {boolean} [options.passive=false] A boolean value that, if `true`, indicates that the function specified by listener will never call `preventDefault()`. If a passive listener does call preventDefault(), the user agent will do nothing other than generate a console warning
+     * @param {AbortSignal} [options.signal] An `AbortSignal`. The listener will be removed when the given `AbortSignal` object's `abort()` method is called
      */
-    addListener(callback) {
-        window.top.addEventListener(GM_config_event, callback);
+    addListener(listener, options) {
+        window.top.addEventListener(GM_config_event, listener, options);
     }
     /**
-     * Remove an listener for config get/set
-     * @param {Function} callback The callback function
+     * Removes an event listener previously registered with `addListener()`
+     * @param {null | Object | Function} listener The object that receives a notification (an object that implements the `Event` interface) when an event of the specified type occurs. This must be `null`, an object with a `handleEvent()` method, or a JavaScript function
+     * @param {Object} [options] An object that specifies characteristics about the event listener
+     * @param {boolean} [options.capture=false] A boolean value indicating that events of this type will be dispatched to the registered `listener` before being dispatched to any `EventTarget` beneath it in the DOM tree
+     * @param {boolean} [options.once=false] A boolean value indicating that the `listener` should be invoked at most once after being added. If `true`, the `listener` would be automatically removed when invoked
+     * @param {boolean} [options.passive=false] A boolean value that, if `true`, indicates that the function specified by listener will never call `preventDefault()`. If a passive listener does call preventDefault(), the user agent will do nothing other than generate a console warning
+     * @param {AbortSignal} [options.signal] An `AbortSignal`. The listener will be removed when the given `AbortSignal` object's `abort()` method is called
      */
-    removeListener(callback) {
-        window.top.removeEventListener(GM_config_event, callback);
+    removeListener(listener, options) {
+        window.top.removeEventListener(GM_config_event, listener, options);
     }
     /**
      * Get the value of a property (only for internal use; won't trigger events)
@@ -234,6 +238,17 @@ class GM_config {
         if (this.debug) {
             console.log("[GM_config]", ...args);
         }
+    }
+    /**
+     * Dispatches the `GM_config_event` event
+     * @param {Object} detail The detail object
+     * @returns {boolean} Always `true`
+     */
+    #dispatch(detail) {
+        const event = new CustomEvent(GM_config_event, {
+            detail: detail
+        });
+        return window.top.dispatchEvent(event);
     }
     /**
      * Register menu items

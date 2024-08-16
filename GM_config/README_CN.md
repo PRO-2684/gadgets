@@ -198,7 +198,7 @@ config.proxy.price = 100; // *修改配置* (菜单项会自动更新)
 
 ### 监听配置的查询/修改
 
-你可以通过调用 `config.addListener(callback)` 来监听配置的查询/修改：
+你可以通过调用 `config.addListener(listener, options?)` 来监听配置的查询/修改：
 
 ```javascript
 config.addListener((e) => {
@@ -206,11 +206,11 @@ config.addListener((e) => {
 });
 ```
 
-正如你所想，你可以通过 `config.removeListener(callback)` 来移除监听器。
+正如你所想，你可以通过 `config.removeListener(listener, options?)` 来移除监听器。这两个接口与 [`EventTarget.addEventListener`](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/addEventListener) 和 [`EventTarget.removeEventListener`](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/removeEventListener) 的用法几乎一致，除了它们不接受参数 `type`。
 
 <details>
 <summary>传统方式</summary>
-或者，这个库提供了一个 `GM_config_event` 字符串，它的值表示配置项被查询/修改时会触发的事件。你可以使用 `window.addEventListener` 来监听这个事件。它的 `detail` 属性是一个对象，包含了配置变更的详情。例如：
+或者，这个库提供了一个 `GM_config_event` 字符串，它的值表示配置项被查询/修改时会触发的事件。你可以使用 `window.top.addEventListener` 来监听这个事件。它的 `detail` 属性是一个对象，包含了配置变更的详情。例如：
 
 ```javascript
 window.top.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
