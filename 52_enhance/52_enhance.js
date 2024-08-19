@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         52 Enhance
 // @namespace    http://tampermonkey.net/
-// @version      0.7.1
+// @version      0.7.2
 // @description  52 破解论坛增强脚本
 // @author       PRO
 // @run-at       document-start
@@ -29,6 +29,7 @@
             formatter: "boolean",
             autoClose: false
         },
+        "regex-filter": { name: "正则过滤", title: "使用正则表达式过滤帖子", value: "", input: "prompt", processor: "same", formatter: "normal" },
         "css-fix": { name: "CSS 修复", title: "动态透明度；图标上光标不显示为 pointer" },
         "hide": { name: "* 一键隐藏", title: "为旧版代码块添加“隐藏代码”的按钮；一键隐藏所有置顶帖；添加隐藏回复的按钮" },
         "get-to-top": { name: "* 回到顶部", title: "双击导航栏回到顶部；修改回到顶部按钮行为为原生" },
@@ -47,7 +48,7 @@
         "image-max-height": { name: "限制图片最大高度", title: "将帖子图片的最大高度限制为 70vh", value: false },
         "auto-sign": { name: "自动签到", title: "进入论坛时自动后台签到" },
         "shortcut": { name: "快捷键", title: "Enter: 快速跳到回复栏" },
-        "infinite-scroll": { name: "无限滚动", title: "滚动到末尾时自动加载下一页" }
+        "infinite-scroll": { name: "无限滚动", title: "滚动到末尾时自动加载下一页" },
     };
     const config = new GM_config(config_desc, { immediate: false });
     const configProxy = config.proxy;
@@ -63,13 +64,13 @@
             html { scroll-behavior: smooth; }`,
         "hide-signature": "div.sign { display: none; }",
         "allow-tiny-signature": "div.sign:not(:has(img)) { display: block; }",
-        "hide-warning": "div[class^=vw50_kfc_p] { display: none; }",
+        "hide-warning": ".vw50_kfc_pb, .vw50_kfc_pt, .vw50_kfc_f { display: none; }",
         "hide-avatar-detail": "div.tns.xg2, dl.credit-list, p.md_ctrl, p.xg1, ul.xl.xl2.o.cl { display: none; }",
         "hide-rating": "div.pcb > h3.psth.xs1, dl.rate { display: none; }",
         "hide-comment": "div.pcb > div.cm { display: none; }",
         "hide-serial": "div.boxbg_7ree { background-image: none; padding-left: 0; }",
         "hide-background": "body, textarea#fastpostmessage { background: none !important; }",
-        "hide-top": "#toptb, #nv_ph, .comiis_nav { display: none; }",
+        "hide-top": "#toptb, #nv_ph, #nv, .comiis_nav { display: none; }",
         "image-max-height": "#postlist .plc .t_f img, #postlist .plc .tattl img { max-height: 70vh; }"
     };
     // Helper function for css
@@ -77,6 +78,7 @@
         const style = document.head.appendChild(document.createElement("style"));
         style.id = idPrefix + id;
         style.textContent = css;
+        return style;
     }
     function cssHelper(id, enable) {
         const current = document.getElementById(idPrefix + id);
@@ -86,6 +88,45 @@
             injectCSS(id, dynamicStyle[id]);
         }
     }
+    // Regex filter
+    injectCSS("regex-filter", "#threadlisttableid > .regex-filtered { display: none; }");
+    function regexFilterOne(regex, thread) {
+        const main = thread.querySelector("tr > th.common");
+        if (!main) return;
+        const category = main.querySelector("em")?.textContent ?? "[未知分类]";
+        const title = main.querySelector("a.s.xst")?.textContent ?? "未知标题";
+        const summary = `${category} ${title}`;
+        thread.classList.toggle("regex-filtered", regex.test(summary));
+    }
+    function regexFilter(regexStr) {
+        const threads = $$("#threadlisttableid > [id^='normalthread_']");
+        if (regexStr == "") {
+            threads.forEach(thread => thread.classList.remove("regex-filtered"));
+            return;
+        }
+        const regex = new RegExp(regexStr, "i");
+        threads.forEach(thread => {
+            regexFilterOne(regex, thread);
+        });
+    }
+    document.addEventListener("DOMContentLoaded", () => {
+        const threadsContainer = $("#threadlisttableid");
+        if (threadsContainer) {
+            const observer = new MutationObserver(mutations => {
+                const regex = new RegExp(configProxy["regex-filter"], "i");
+                mutations.forEach(mutation => {
+                    if (mutation.addedNodes.length) {
+                        mutation.addedNodes.forEach(node => {
+                            if (node.id && node.id.startsWith("normalthread_")) {
+                                regexFilterOne(regex, node);
+                            }
+                        });
+                    }
+                });
+            });
+            observer.observe(threadsContainer, { childList: true });
+        }
+    });
     // Hide
     function hide() {
         // Basic CSS
@@ -334,12 +375,14 @@
         configProxy["emoji-fix"] && emojiFix();
         configProxy["native-tip"] && nativeTip();
         configProxy["lazy-signature-image"] && lazySignatureImage();
+        regexFilter(configProxy["regex-filter"]);
         autoSign(configProxy["auto-sign"]);
         shortcut(configProxy["shortcut"]);
         infiniteScroll(configProxy["infinite-scroll"]);
     });
     // Listen to config changes
     const callbacks = {
+        "regex-filter": regexFilter,
         "auto-sign": autoSign,
         "shortcut": shortcut,
         "infinite-scroll": infiniteScroll
