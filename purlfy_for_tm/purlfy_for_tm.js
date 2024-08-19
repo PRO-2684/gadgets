@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.4.3
+// @version      0.4.4
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -283,7 +283,7 @@
             purifier.purify(dest).then(purified => {
                 this.toast(`Processed: "${purified.url}"`);
                 if (purified.url !== dest) { // Prevent infinite loop
-                    history.replaceState(null, "", purified.url);
+                    location.replace(purified.url);
                 }
             });
         }

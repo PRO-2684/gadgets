@@ -60,3 +60,7 @@ Rules files can be fount at [pURLfy rules](https://github.com/PRO-2684/pURLfy-ru
 ### Hooks
 
 This script hooks certain methods, intercepts calls to them, purifies the URLs, and then calls the original methods with the purified URLs. For more information, see the source code.
+
+## Related scripts
+
+[去除链接重定向](https://greasyfork.org/scripts/483475)
