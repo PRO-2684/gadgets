@@ -4,6 +4,10 @@
 
 ## 🪄 Functions
 
+- Filter out (hides) scripts whose name matches the given regular expression, disabled when left empty (examples listed below)
+  - `.{30,}`: Hide scripts whose name length is greater than 30
+  - `网盘|网课|网购`: Hide scripts containing `网盘`, `网课`, or `网购`
+  - `[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDEFF]|\uFE0F`: Hide scripts containing emojis
 - Add anchors for headers (`h1~h6`) at Greasyfork pages, so you can navigate easily
 - Quickly goes back to top
   - Double click white space at either sides
@@ -47,6 +51,7 @@
 
 > Config marked with `*` requires refreshing to take effect
 
+- **Regex Filter**: Use regex to filter out matching scripts
 - **Auto hide code**: whether to hide long code snippets
 - **Min rows to hide**: minimum number of rows to hide that piece of code
 - **Tab size**: Tab indentation size

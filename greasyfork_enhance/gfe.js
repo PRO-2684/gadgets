@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.7.9
+// @version      0.8.0
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @author       PRO
@@ -24,6 +24,7 @@
     const no_run = [".json", ".js"];
     let is_run = true;
     const idPrefix = "greasyfork-enhance-";
+    const name = GM_info.script.name;
     no_run.forEach((suffix) => {
         if (window.location.pathname.endsWith(suffix)) {
             is_run = false;
@@ -39,6 +40,7 @@
             formatter: "boolean",
             autoClose: false
         },
+        "regex-filter": { name: "Regex filter", title: "Use regex to filter out matching scripts", value: "", input: "prompt", processor: "same", formatter: "normal" },
         "auto-hide-code": { name: "Auto hide code", title: "Hide long code blocks by default" },
         "auto-hide-rows": {
             name: "Min rows to hide",
@@ -132,6 +134,7 @@
     // Functions
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
+    const log = console.log.bind(console, `[${name}]`);
     const body = $("body");
     function sanitify(s) {
         // Remove emojis (such a headache)
@@ -145,7 +148,7 @@
         s = s.replaceAll(/-+/g, "-");
         return s;
     }
-    function process(node) { // Add anchor and assign id to given node; Add to outline. Return true if node is actually processed.
+    function process(outline, node) { // Add anchor and assign id to given node; Add to outline. Return true if node is actually processed.
         if (node.childElementCount > 1 || node.classList.length > 0) return false; // Ignore complex nodes
         const text = node.textContent;
         if (!node.id) { // If the node has no id
@@ -227,7 +230,7 @@
             });
         }
     }
-    function create_toolbar() {
+    function createToolbar() {
         const toolbar = document.createElement("div");
         const copy = toolbar.appendChild(document.createElement("a"));
         const toggle = toolbar.appendChild(document.createElement("a"));
@@ -285,9 +288,11 @@
         ul.outline > li > a { color: gray; white-space: nowrap; text-decoration: none; }
     }
     pre > code { overflow: hidden; display: block; }
-    ul { padding-left: 1.5em; }`);
+    ul { padding-left: 1.5em; }
+    .script-list > .regex-filtered { display: none; }
+    #greasyfork-enhance-regex-filter-tip { float: right; color: grey; }
+    @media screen and (max-width: 800px) { #greasyfork-enhance-regex-filter-tip { display: none; } }`);
     // Aside panel & Anchors
-    let outline;
     const is_script = /^\/[^\/]+\/scripts/;
     const is_specific_script = /^\/[^\/]+\/scripts\/\d+/;
     const is_disccussion = /^\/[^\/]+\/discussions/;
@@ -296,14 +301,14 @@
         const panel = body.insertBefore(document.createElement("aside"), $("body > div.width-constraint"));
         panel.className = "panel";
         const reference_node = $("body > div.width-constraint > section");
-        outline = panel.appendChild(document.createElement("ul"));
+        const outline = panel.appendChild(document.createElement("ul"));
         outline.classList.add("outline");
         outline.classList.add("dynamic-opacity");
         outline.style.top = reference_node ? getComputedStyle(reference_node).marginTop : "1em";
         outline.style.marginTop = outline.style.top;
         let flag = false;
         $$("body > div.width-constraint h1, h2, h3, h4, h5, h6").forEach((node) => {
-            flag = process(node) || flag; // Not `flag || process(node)`!
+            flag = process(outline, node) || flag; // Not `flag || process(node)`!
         });
         if (!flag) {
             panel.remove();
@@ -360,9 +365,51 @@
             const height = getComputedStyle(code_block.firstChild).getPropertyValue("height");
             code_block.firstChild.style.height = height;
             code_block.firstChild.setAttribute("data-height", height);
-            code_block.insertAdjacentElement("afterbegin", create_toolbar());
+            code_block.insertAdjacentElement("afterbegin", createToolbar());
         }
     }
+    // Regex filter
+    const regexFilterTip = $(".sidebarred > .sidebarred-main-content > .script-list#browse-script-list")
+        ?.previousElementSibling?.appendChild?.(document.createElement("span"));
+    if (regexFilterTip) {
+        regexFilterTip.id = idPrefix + "regex-filter-tip";
+        regexFilterTip.title = `[${name}] Number of scripts filtered by regex`;
+    }
+    function setRegexFilterTip(content) {
+        if (regexFilterTip) {
+            regexFilterTip.textContent = content;
+        }
+    }
+    function regexFilterOne(regex, script) {
+        const info = script.querySelector("article > h2");
+        if (!info) return;
+        const name = info.querySelector(".script-link").textContent;
+        const result = regex.test(name);
+        script.classList.toggle("regex-filtered", result);
+        if (result) {
+            log("Filtered:", name);
+        }
+        return result;
+    }
+    function regexFilter(regexStr) {
+        const scripts = $$(".script-list > li");
+        if (regexStr === "" || scripts.length === 0) {
+            scripts.forEach(script => script.classList.remove("regex-filtered"));
+            setRegexFilterTip("");
+            return;
+        }
+        const regex = new RegExp(regexStr, "i");
+        let count = 0;
+        console.groupCollapsed(`[${name}] Regex filtered scripts`);
+        scripts.forEach(script => {
+            if (regexFilterOne(regex, script)) {
+                count++;
+            }
+        });
+        setRegexFilterTip(`Filtered: ${count}/${scripts.length}`);
+        console.groupEnd();
+    }
+    regexFilter(configProxy["regex-filter"]);
     // Auto hide code blocks
     function autoHide() {
         if (!configProxy["auto-hide-code"]) {
@@ -529,6 +576,7 @@
     }
     // Dynamically respond to config changes
     const callbacks = {
+        "regex-filter": regexFilter,
         "auto-hide-code": autoHide,
         "auto-hide-rows": autoHide,
         "tab-size": tabSize,
