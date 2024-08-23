@@ -156,6 +156,16 @@ const config_desc = {
         value: "Crazy Thur."
         // Omitted default values: input="prompt", processor="same", formatter="normal"
     },
+    // Just invokes a function when clicked
+    action: {
+        name: "Some action",
+        value: "",
+        input: () => {
+            // Do something
+            return "";
+        },
+        formatter: (name) => name
+    },
 }
 ```
 

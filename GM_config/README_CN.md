@@ -157,6 +157,16 @@ const config_desc = {
         value: "Crazy Thur."
         // 省略的默认值：input="prompt", processor="same", formatter="normal"
     },
+    // 点击时仅调用一个函数
+    action: {
+        name: "Some action",
+        value: "",
+        input: () => {
+            // Do something
+            return "";
+        },
+        formatter: (name) => name
+    },
 }
 ```
 
