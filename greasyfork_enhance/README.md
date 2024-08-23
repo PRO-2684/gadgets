@@ -19,6 +19,7 @@
   - Auto hide code that has larger line number than given value
 - More recognizable tables
 - Flat layout
+- Show version number in script list
 - Advanced search syntax (**Case-insensitive**)
   - `site:`: Only display scripts for given site, e.g. query `ad site:youtube.com` will navigate you to `https://greasyfork.org/scripts/by-site/youtube.com?q=ad`
   - `type:`: Search in specified type, including:
@@ -52,11 +53,12 @@
 > Config marked with `*` requires refreshing to take effect
 
 - **Regex Filter**: Use regex to filter out matching scripts
-- **Auto hide code**: whether to hide long code snippets
-- **Min rows to hide**: minimum number of rows to hide that piece of code
+- **Auto hide code**: Whether to hide long code snippets
+- **Min rows to hide**: Minimum number of rows to hide that piece of code
 - **Tab size**: Tab indentation size
-- **Hide buttons**: whether to hide floating buttons
-- **Flat layout**: whether to enable flat layout
+- **Hide buttons**: Whether to hide floating buttons
+- **Flat layout**: Whether to enable flat layout
+- **Show version**: Show version number in script list
 - **Animation**: Enable animation
 - **Alternative URLs for library**: Display alternative URLs for libraries
 - **Short link**: Display a short link to current script

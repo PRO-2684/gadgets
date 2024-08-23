@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.8.0
+// @version      0.8.1
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @author       PRO
@@ -60,6 +60,7 @@
         },
         "hide-buttons": { name: "Hide buttons", title: "Hide floating buttons added by this script", value: false },
         "flat-layout": { name: "Flat layout", title: "Use flat layout for script list and descriptions", value: false },
+        "show-version": { name: "Show version", title: "Show version number in script list", value: false },
         "animation": { name: "Animation", title: "Enable animation for toggling code blocks" },
         "lib-alternative-url": { name: "Alternative URLs for library", title: "Show a list of alternative URLs for a given library", value: false },
         "short-link": { name: "Short link", title: "Display a shortened link to current script" },
@@ -110,6 +111,7 @@
             #script-info .script-meta-block { float: right; column-count: 1; max-width: 300px; border-left: 1px solid #DDDDDD; margin-left: 1em; padding-left: 1em; }
             #additional-info { width: calc(100% - 2em - 2px); }
         `,
+        "show-version": `.script-list > li[data-script-version]::before { content: "@" attr(data-script-version); position: absolute; translate: 0 -1em; color: grey; font-size: smaller; }`,
         "animation": `
             /* Toggle code animation */
             pre > code { transition: height 0.5s ease-in-out 0s; }
