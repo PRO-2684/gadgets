@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.4.4
+// @version      0.4.5
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -226,34 +226,63 @@
         document.removeEventListener("touchstart", this.handler, { capture: true });
     }
     // Hook form submit
-    async function submitHandler(e) { // Always "senseless"
-        const form = e.submitter.form;
-        if (!form || form.hasAttribute(tag2)) return;
-        const url = new URL(form.action, location.href);
-        if (url.protocol !== "http:" && url.protocol !== "https:") return; // Ignore non-HTTP(S) URLs
-        if (!form.hasAttribute(tag1)) { // The first to intercept
-            form.toggleAttribute(tag1, true);
-            this.toast(`Intercepted: "${url.href}"`);
-            const purified = await purifier.purify(url.href);
-            if (purified.url !== url.href) {
-                form.action = purified.url;
-                this.toast(`Processed: "${form.action}"`);
-            } else {
-                this.toast(`Same: "${form.action}"`);
-            }
-            form.toggleAttribute(tag2, true);
-            form.removeAttribute(tag1);
-            form.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
-        }
-    }
-    const submitHook = new Hook("submit");
-    submitHook.handler = submitHandler.bind(submitHook);
-    submitHook.enable = async function () {
-        document.addEventListener("submit", this.handler, { capture: true });
-    }
-    submitHook.disable = async function () {
-        document.removeEventListener("submit", this.handler, { capture: true });
-    }
+    // function submitHandler(e) { // Always "senseless"
+    //     let submitter = e.submitter;
+    //     const form = submitter.form;
+    //     if (!form || form.method !== "get" || form.hasAttribute(tag2)) return;
+    //     const url = new URL(form.action, location.href);
+    //     if (url.protocol !== "http:" && url.protocol !== "https:") return; // Ignore non-HTTP(S) URLs
+    //     if (!form.hasAttribute(tag1)) { // The first to intercept
+    //         e.preventDefault();
+    //         e.stopImmediatePropagation();
+    //         form.toggleAttribute(tag1, true);
+    //         for (const input of form.elements) {
+    //             url.searchParams.set(input.name, input.value);
+    //         }
+    //         this.toast(`Intercepted: "${url.href}"`);
+    //         purifier.purify(url.href).then(result => {
+    //             this.toast(`Processed: "${result.url}"`);
+    //             const purified = new URL(result.url);
+    //             if (purified.href !== url.href) {
+    //                 form.action = purified.origin + purified.pathname;
+    //                 for (const input of form.elements) {
+    //                     if (input.name) {
+    //                         if (purified.searchParams.has(input.name)) {
+    //                             input.value = purified.searchParams.get(input.name);
+    //                             purified.searchParams.delete(input.name);
+    //                             input.toggleAttribute("disabled", false);
+    //                         } else {
+    //                             input.value = "";
+    //                             input.toggleAttribute("disabled", true);
+    //                             if (submitter === input) submitter = undefined;
+    //                         }
+    //                     }
+    //                 }
+    //                 for (const [key, value] of purified.searchParams) {
+    //                     const input = document.createElement("input");
+    //                     input.type = "hidden";
+    //                     input.name = key;
+    //                     input.value = value;
+    //                     form.appendChild(input);
+    //                 }
+    //             } else {
+    //                 this.toast(`Same: "${form.action}"`);
+    //             }
+    //             form.toggleAttribute(tag2, true);
+    //             form.removeAttribute(tag1);
+    //             form.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
+    //             form.requestSubmit(submitter);
+    //         });
+    //     }
+    // }
+    // const submitHook = new Hook("submit");
+    // submitHook.handler = submitHandler.bind(submitHook);
+    // submitHook.enable = async function () {
+    //     document.addEventListener("submit", this.handler, { capture: true });
+    // }
+    // submitHook.disable = async function () {
+    //     document.removeEventListener("submit", this.handler, { capture: true });
+    // }
     // Intercept window.open
     const openHook = new Hook("window.open");
     openHook.original = window.open.bind(window);
@@ -275,41 +304,40 @@
     openHook.disable = async function () {
         window.open = this.original;
     }
-    // Feature detection
-    async function onUrlChange(e) {
-        const dest = e.destination.url;
-        if (dest.startsWith("http://") || dest.startsWith("https://")) {
-            this.toast(`Intercepted: "${dest}"`);
-            purifier.purify(dest).then(purified => {
-                this.toast(`Processed: "${purified.url}"`);
-                if (purified.url !== dest) { // Prevent infinite loop
-                    location.replace(purified.url);
-                }
-            });
-        }
-    }
-    if (window?.navigation) { // Listen to `navigation` events
-        const navigationHook = new Hook("navigation");
-        navigationHook.handler = function (e) {
-            if (e.canIntercept) { // Only process if it can be intercepted (same-origin)
-                onUrlChange.call(navigationHook, e);
+    function patch(orig) { // Patch history functions
+        function patched(...args) {
+            const url = args[2];
+            if (url && (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("//") || url.startsWith("/") || url.startsWith("?"))) {
+                this.toast(`Intercepted: "${url}"`);
+                const resolved = new URL(url, location.href).href;
+                purifier.purify(resolved).then(purified => {
+                    this.toast(`Processed: "${purified.url}"`);
+                    args[2] = purified.url;
+                    orig.apply(history, args);
+                });
+            } else {
+                orig.apply(history, args);
             }
         }
-        navigationHook.enable = async function () {
-            window.navigation.addEventListener("navigate", this.handler);
-        }
-        navigationHook.disable = async function () {
-            window.navigation.removeEventListener("navigate", this.handler);
-        }
-    } else { // Listen to `popstate` events
-        const popstateHook = new Hook("popstate");
-        popstateHook.handler = onUrlChange.bind(popstateHook);
-        popstateHook.enable = async function () {
-            window.addEventListener("popstate", this.handler);
-        }
-        popstateHook.disable = async function () {
-            window.removeEventListener("popstate", this.handler);
-        }
+        return patched;
+    }
+    const pushStateHook = new Hook("pushState");
+    pushStateHook.original = history.pushState;
+    pushStateHook.patched = patch(pushStateHook.original).bind(pushStateHook);
+    pushStateHook.enable = async function () {
+        history.pushState = pushStateHook.patched;
+    }
+    pushStateHook.disable = async function () {
+        history.pushState = pushStateHook.original;
+    }
+    const replaceStateHook = new Hook("replaceState");
+    replaceStateHook.original = history.replaceState;
+    replaceStateHook.patched = patch(replaceStateHook.original).bind(pushStateHook);
+    replaceStateHook.enable = async function () {
+        history.replaceState = replaceStateHook.patched;
+    }
+    replaceStateHook.disable = async function () {
+        history.replaceState = replaceStateHook.original;
     }
     // Site-specific hooks
     switch (location.hostname) {
