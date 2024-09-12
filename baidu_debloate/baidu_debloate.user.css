@@ -11,9 +11,11 @@
 @var checkbox hideNavBar "[通用] 隐藏导航栏" 0
 @var checkbox hideAd "[通用] 隐藏活动/广告" 1
 @var checkbox hideRecommend "[通用] 隐藏相关推荐" 0
+@var checkbox hideAria "[通用] 隐藏辅助模式" 1
+@var checkbox hideFloat "[通用] 隐藏浮动工具条" 0
 @var checkbox hideAside "[经验] 完全隐藏侧栏" 0
-@var checkbox hideFloat "[经验] 隐藏浮动工具条" 0
-@var checkbox hideAria "[经验] 隐藏辅助模式" 1
+@var checkbox hideBubble "[贴吧] 隐藏气泡" 1
+@var checkbox hideShortcutTip "[贴吧] 隐藏快捷键提示" 0
 ==/UserStyle== */
 
 @-moz-document domain("baike.baidu.com") {
@@ -89,14 +91,74 @@
             width: unset;
         }
     }
+    if (hideAria) {
+        #wgt-barrier-free {
+            display: none !important;
+        }
+    }
     if (hideFloat) {
         #wgt-like, #wgt-exp-share {
             display: none !important;
         }
     }
+}
+@-moz-document domain("tieba.baidu.com") {
+    if (hideTopBar) {
+        #head > .head_inner {
+            margin-top: 2em; // 留下部分空间
+            > .search_top {
+                display: none;
+            }
+        }
+    }
+    if (hideNavBar) {
+        #tb_nav {
+            display: none;
+        }
+    }
+    if (hideAd) {
+        #branding_ads, ul.p_author > li.d_icons, #com_userbar > ul > li.u_member {
+            display: none; // 品牌广告、层主徽章、会员
+        }
+        .right_section {
+            > #celebrity, .app_download_box {
+                display: none; // VIP 广告、APP下载
+            }
+        }
+        ul.tbui_aside_float_bar > .tbui_aside_fbar_button {
+            &.tbui_fbar_down, &.tbui_fbar_props, &.tbui_fbar_tsukkomi {
+                display: none; // 浮动工具条的 APP 下载、魔法道具、神来一句
+            }
+        }
+    }
+    if (hideRecommend) {
+        .right_section > div:has(> .topic_list_box) {
+            display: none; // 贴吧热议
+        }
+    }
     if (hideAria) {
-        #wgt-barrier-free {
-            display: none !important;
+        ul.tbui_aside_float_bar > .tbui_aside_fbar_button.tbui_fbar_auxiliaryCare {
+            display: none; // 辅助模式
+        }
+    }
+    if (hideFloat) {
+        ul.tbui_aside_float_bar {
+            display: none;
+        }
+    }
+    if (hideBubble) {
+        cc > .d_post_content.j_d_post_content {
+            .post_bubble_top, .post_bubble_middle, .post_bubble_bottom {
+                background: none !important;
+            }
+            .post_bubble_top, .post_bubble_bottom {
+                display: none;
+            }
+        }
+    }
+    if (hideShortcutTip) {
+        .creative-shortcut-tip-container {
+            display: none;
         }
     }
 }
