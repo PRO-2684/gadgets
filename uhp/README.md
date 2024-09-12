@@ -56,6 +56,7 @@ If you need a certain feature, leave a comment and I might add it as far as I ca
 - Left/Right arrow: Switching tabs
 - Numbers (1-9): Switch to given tab
 - x: Close current tab
+- Scroll wheel: Switch tabs
 
 # ⚙️ Configuation
 

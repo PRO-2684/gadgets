@@ -3,7 +3,7 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.3.2
+// @version      1.3.3
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
@@ -170,6 +170,69 @@
             }
         });
     }
+    /**
+     * Setup shortcuts for switching tabs and closing tabs
+     * @param {Element} el The element to receive scroll wheel events
+     * @param {Object} actions The actions for switching & closing tabs
+     * @param {Function} actions.select The function to switch to a tab at given index, starting from 0
+     * @param {Function} actions.close The function to close a tab at given index, starting from 0
+     * @param {Function} actions.count The funtion to determine total number of tabs
+     * @param {Function} actions.current The funtion to determine current index of the tab
+     * @param {Function} [actions.special] The funtion to handle key ``` ` ```
+     */
+    function setupShortcuts(el, actions) {
+        function delta(n) {
+            const count = actions.count();
+            const current = actions.current();
+            actions.select((current + n + count) % count);
+        }
+        document.addEventListener("keydown", (e) => {
+            const active = document.activeElement;
+            if (active.nodeName == "INPUT" || active.nodeName == "TEXTAREA") {
+                return;
+            }
+            const count = actions.count();
+            const current = actions.current();
+            switch (e.key) {
+                case "ArrowLeft":
+                    delta(-1);
+                    break;
+                case "ArrowRight":
+                    delta(1);
+                    break;
+                case "x":
+                    actions.close(current);
+                    break;
+                case "`":
+                    actions?.special?.(); // Optional
+                default:
+                    if (e.key.length == 1) {
+                        const idx = Number(e.key);
+                        if (!isNaN(idx) && 0 < idx && idx <= count) {
+                            actions.select(idx - 1);
+                        }
+                    }
+                    break;
+            }
+        });
+        setupScroll(el, delta);
+    }
+    /**
+     * Setup shortcuts for scroll wheel
+     * @param {Element} el The element to be scrolled
+     * @param {Function} delta The delta function
+    */
+    function setupScroll(el, delta) {
+        el.addEventListener("wheel", (e) => {
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                delta(-1);
+            } else if (e.deltaY > 0) {
+                delta(1);
+            }
+        });
+    }
+
 
     switch (window.location.host) {
         case 'mail.ustc.edu.cn': {
@@ -951,51 +1014,39 @@
                     console.error(`[USTC Helper] Unknown option for jw.login: ${configProxy["jw/login"]}`);
                 }
             }
-            if (configProxy["jw/shortcut"] && window.top.location.pathname == "/home") {
-                const shortcuts = ["ArrowLeft", "ArrowRight", "x", '`', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-                function tryClick(tab) {
-                    const ele = tab?.querySelector("span.tabTitle");
-                    ele?.click();
-                }
-                document.addEventListener("keydown", (e) => {
-                    if (document.activeElement.nodeName != "INPUT" &&
-                        shortcuts.includes(e.key)) {
-                        const menu = window.top.document.getElementById("e-home-tab-list");
-                        const tabs = Array.from(menu.children);
-                        const home = window.top.document.querySelector("#e-top-home-page > li > a > div.home-logo");
-                        const count = tabs.length;
-                        let current = 0;
-                        for (const tab of tabs) {
-                            if (tab.classList.contains('active')) {
-                                break;
+            if (configProxy["jw/shortcut"] && window.location.pathname == "/home") {
+                timer(() => {
+                    const tabList = $("#e-home-tab-list");
+                    if (!tabList) return false;
+                    const tabs = tabList?.children;
+                    const home = $("#e-top-home-page > li > a > div.home-logo");
+                    const header = tabList.parentElement;
+                    const actions = {
+                        select: (index) => tabs[index]?.querySelector("span.tabTitle")?.click(),
+                        close: (index) => tabs[index]?.querySelector("a > i.fa-times")?.click(),
+                        count: () => tabs.length,
+                        current: () => {
+                            for (let i = 0; i < tabs.length; i++) {
+                                if (tabs[i].classList.contains('active')) return i;
                             }
-                            current++;
-                        }
-                        if (current == count) current--;
-                        switch (e.key) {
-                            case "ArrowLeft":
-                                tryClick(tabs[(current - 1 + count) % count]);
-                                break;
-                            case "ArrowRight":
-                                tryClick(tabs[(current + 1) % count]);
-                                break;
-                            case "x":
-                                const close = tabs[current].querySelector("a > i.fa-times");
-                                close?.click();
-                                break;
-                            case "`":
-                                home?.click();
-                                break;
-                            default:
-                                const idx = Number(e.key) - 1;
-                                if (isNaN(idx)) break;
-                                if (0 <= idx && idx < count) {
-                                    tryClick(tabs[idx]);
-                                }
-                                break;
-                        }
-                    }
+                            return -1;
+                        },
+                        special: () => home?.click()
+                    };
+                    setupShortcuts(header, actions);
+                    return true;
+                }).then((success) => {
+                    log(success ? "Shortcuts have been setup." : "Failed to setup shortcuts.");
                 });
+                const list = $("#primaryCarousel > .carousel-inner");
+                if (list) {
+                    const left = $("#primaryCarousel > a.left[data-slide='prev']");
+                    const right = $("#primaryCarousel > a.right[data-slide='next']");
+                    setupScroll(list, (delta) => {
+                        if (delta < 0) left.click();
+                        else right.click();
+                    });
+                }
             }
             if (configProxy["jw/score_mask"] && window.location.pathname == "/for-std/grade/sheet") {
                 function get_status(entry) {
@@ -1133,7 +1184,7 @@
         }
         case 'young.ustc.edu.cn': {
             const config_desc = config_descs.young;
-            const configProxy = new GM_config(config_desc, { immediate: false });
+            const configProxy = new GM_config(config_desc, { immediate: false }).proxy;
             if (!configProxy["young/enabled"]) {
                 console.info("[USTC Helper] 'young' feature disabled.");
                 break;
@@ -1148,15 +1199,14 @@
                 const menu = app.querySelector(".ant-menu-root");
                 if (!menu) return;
                 const default_tab = configProxy["young/default_tab"];
-                if (default_tab.length)
-                    router.push(default_tab);
+                if (default_tab.length) router.push(default_tab);
                 const submenus = menu.querySelectorAll("li.ant-menu-submenu-horizontal:not(.ant-menu-overflowed-submenu) > div");
                 if (!submenus.length) return;
                 observer.disconnect();
                 if (configProxy["young/no_datascreen"]) {
                     app.querySelector("div.header-index-wide > a").remove();
                     function getCloseBtn() {
-                        return app.querySelector("span[pagekey='/dataAnalysis/visual']").nextElementSibling;
+                        return app.querySelector("span[pagekey='/dataAnalysis/visual']")?.nextElementSibling;
                     }
                     function close() {
                         const tabs = $(".ant-tabs-nav-animated > div").children;
@@ -1169,12 +1219,9 @@
                             return false;
                         }
                     }
-                    let retryLeft = 15;
-                    const interval = setInterval(() => {
-                        if (close() || retryLeft-- <= 0) {
-                            clearInterval(interval);
-                        }
-                    }, 500);
+                    timer(() => close()).then((success) => {
+                        log(success ? "Data screen closed." : "Failed to close data screen.");
+                    });
                 }
                 if (configProxy["young/auto_tab"]) {
                     submenus[0].onclick = (e) => {
@@ -1209,39 +1256,30 @@
                     // });
                 }
                 if (configProxy["young/shortcut"]) {
-                    document.addEventListener("keydown", (e) => {
-                        if (document.activeElement.nodeName == "INPUT" || document.activeElement.nodeName == "TEXTAREA") {
-                            return;
-                        }
-                        const tabs = $(".ant-tabs-nav-animated > div").children;
-                        const count = tabs.length;
-                        let current = 0;
-                        for (const tab of tabs) {
-                            if (tab.attributes["aria-selected"].value == "true") {
-                                break;
-                            }
-                            current++;
-                        }
-                        switch (e.key) {
-                            case "ArrowLeft":
-                                tabs[(current - 1 + count) % count].click();
-                                break;
-                            case "ArrowRight":
-                                tabs[(current + 1) % count].click();
-                                break;
-                            case "x":
-                                tabs[current].querySelector("div > i").click();
-                                break;
-                            default:
-                                if (e.key.length == 1) {
-                                    const idx = Number(e.key);
-                                    if (idx && 0 < idx && idx <= count) {
-                                        tabs[idx - 1].click();
-                                    }
+                    const tabList = $(".ant-tabs-nav-animated > div")
+                    const tabs = tabList.children;
+                    const nav = tabList.parentElement.parentElement;
+                    const actions = {
+                        select: (index) => {
+                            tabs[index].click();
+                        },
+                        close: (index) => {
+                            const closeBtn = tabs[index].querySelector("div > i");
+                            if (closeBtn) closeBtn.click();
+                        },
+                        count: () => tabs.length,
+                        current: () => {
+                            let current = 0;
+                            for (const tab of tabs) {
+                                if (tab.attributes["aria-selected"].value == "true") {
+                                    break;
                                 }
-                                break;
+                                current++;
+                            }
+                            return current;
                         }
-                    })
+                    };
+                    setupShortcuts(nav, actions);
                 }
             }
             const options = {
