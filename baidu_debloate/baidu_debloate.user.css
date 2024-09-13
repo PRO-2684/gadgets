@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           百度系 Debloat
 @namespace      github.com/openstyles/stylus
-@version        0.1.1
+@version        0.1.2
 @description    隐藏百度百科、百度经验的一些垃圾玩意儿
 @author         PRO-2684
 @license     	gpl-3.0
@@ -13,7 +13,7 @@
 @var checkbox hideRecommend "[通用] 隐藏相关推荐" 0
 @var checkbox hideAria "[通用] 隐藏辅助模式" 1
 @var checkbox hideFloat "[通用] 隐藏浮动工具条" 0
-@var checkbox hideAside "[经验] 完全隐藏侧栏" 0
+@var checkbox hideAside "[通用] 完全隐藏侧栏" 0
 @var checkbox hideBubble "[贴吧] 隐藏气泡" 1
 @var checkbox hideShortcutTip "[贴吧] 隐藏快捷键提示" 0
 ==/UserStyle== */
