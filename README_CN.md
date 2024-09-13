@@ -2,7 +2,7 @@
 ![GitHub license](https://img.shields.io/github/license/PRO-2684/gadgets?style=flat-square) [English](./README.md) | 简体中文
 
 ## 介绍
-一些难以分类的代码片段。如果你对其中某些感兴趣，可以查看子文件夹下的 README 以获取详细描述。
+一些难以分类的代码片段。如果你对其中某些感兴趣，可以查看子文件夹下的 README 以获取详细描述。代码目录中未在下方列出的代码片段并未正式发布，并且没有相关文档，仅供测试。
 
 ## 列表
 - `52_enhance`: 52 破解论坛增强脚本。

@@ -2,7 +2,7 @@
 ![GitHub license](https://img.shields.io/github/license/PRO-2684/gadgets?style=flat-square) English | [简体中文](./README_CN.md)
 
 ## Introduction
-Some code snippets that's hard to categorize. See READMEs under subfolders for detailed description if you're interested in some of them.
+Some code snippets that's hard to categorize. See READMEs under subfolders for detailed description if you're interested in some of them. Snippets not listed below that are in the directory are not officially released and have no related documentation, and are only for testing.
 
 ## List
 - `52_enhance`: 52 forum enhancement script.
