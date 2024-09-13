@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.4.6
+// @version      0.4.7
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -332,7 +332,7 @@
     }
     const replaceStateHook = new Hook("replaceState");
     replaceStateHook.original = history.replaceState;
-    replaceStateHook.patched = patch(replaceStateHook.original).bind(pushStateHook);
+    replaceStateHook.patched = patch(replaceStateHook.original).bind(replaceStateHook);
     replaceStateHook.enable = async function () {
         history.replaceState = replaceStateHook.patched;
     }
@@ -368,7 +368,17 @@
     // Is there more hooks to add?
     // Enable hooks
     const promises = [];
-    const hooksCfg = GM_getValue("hooks", {}); // Load hook configs
+    const hooksCfg = GM_getValue("hooks", {
+        "location.href": true,
+        "click": true,
+        "mousedown": true,
+        "auxclick": true,
+        "touchstart": true,
+        "window.open": true,
+        "pushState": false,
+        "replaceState": false,
+        "cn.bing.com": true
+    }); // Load hook configs
     for (const [name, hook] of hooks) {
         let enabled = hooksCfg[name];
         if (enabled === undefined) {

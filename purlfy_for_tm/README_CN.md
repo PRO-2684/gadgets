@@ -35,8 +35,8 @@
         "auxclick": true, // 监听 `auxclick` 事件
         "touchstart": true, // 监听 `touchstart` 事件
         "window.open": true, // Hook `window.open` 调用
-        "pushState": true, // Hook `pushState` 调用
-        "replaceState": true, // Hook `replaceState` 调用
+        "pushState": false, // Hook `pushState` 调用
+        "replaceState": false, // Hook `replaceState` 调用
         "cn.bing.com": true // 拦截 `cn.bing.com` 中一系列的事件
     },
     "rules": {
