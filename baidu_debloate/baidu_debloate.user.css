@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           百度系 Debloat
 @namespace      github.com/openstyles/stylus
-@version        0.1.0
+@version        0.1.1
 @description    隐藏百度百科、百度经验的一些垃圾玩意儿
 @author         PRO-2684
 @license     	gpl-3.0
@@ -117,11 +117,11 @@
         }
     }
     if (hideAd) {
-        #branding_ads, ul.p_author > li.d_icons, #com_userbar > ul > li.u_member {
-            display: none; // 品牌广告、层主徽章、会员
+        #branding_ads, ul.p_author > li.d_icons, #com_userbar > ul > li.u_member, .p_content > .save_face_bg {
+            display: none; // 品牌广告、层主徽章、会员、挽尊卡
         }
         .right_section {
-            > #celebrity, .app_download_box {
+            > #celebrity, > .app_download_box {
                 display: none; // VIP 广告、APP下载
             }
         }
@@ -144,6 +144,29 @@
     if (hideFloat) {
         ul.tbui_aside_float_bar {
             display: none;
+        }
+    }
+    if (hideAside) {
+        #container #pb_content {
+            background-image: none;
+            > .left_section {
+                width: 980px;
+                #j_core_title_wrap {
+                    width: 980px;
+                }
+                #j_p_postlist > .l_post.l_post_bright {
+                    width: unset;
+                    > .d_post_content_main {
+                        width: 828px;
+                        > .core_reply > .core_reply_wrapper {
+                            width: 813px;
+                        }
+                    }
+                }
+            }
+            > .right_section {
+                display: none;
+            }
         }
     }
     if (hideBubble) {
