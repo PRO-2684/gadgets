@@ -10,6 +10,7 @@
 
 - 配置修改后**自动更新菜单**（无论由用户或脚本修改）
 - 支持**监听配置获取/修改事件**
+- 支持**多标签页同步**
 - 自动/手动注册菜单
 - **自定义**程度高
     - 自定义配置输入方式 (`prop.input`)
@@ -27,6 +28,7 @@
 // @grant        GM_deleteValue // 自动删除配置 (可选，给予后库会自动删除与默认值相同的用户配置)
 // @grant        GM_registerMenuCommand // 注册菜单
 // @grant        GM_unregisterMenuCommand // 更新菜单
+// @grant        GM_addValueChangeListener // 监听配置变化
 ```
 
 若你复制粘贴了上述代码，记得**删去注释**，否则可能报错。若有，你需要删去 `@grant none`。如果你代码内使用了 `window` 对象，你可能需要 `@grant unsafeWindow` 然后 `let window = unsafeWindow`。
@@ -208,35 +210,27 @@ config.proxy.price = 100; // *修改配置* (菜单项会自动更新)
 
 ### 监听配置的查询/修改
 
-你可以通过调用 `config.addListener(listener, options?)` 来监听配置的查询/修改：
+你可以通过调用 `config.addEventListener(type, listener, options?)` 来监听配置的查询/修改：
 
 ```javascript
-config.addListener((e) => {
-    console.log(e.detail);
+config.addEventListener("set", (e) => {
+    console.log(e.detail); // *配置被修改*
+});
+config.addEventListener("get", (e) => {
+    console.log(e.detail); // *配置被查询*
 });
 ```
 
-正如你所想，你可以通过 `config.removeListener(listener, options?)` 来移除监听器。这两个接口与 [`EventTarget.addEventListener`](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/addEventListener) 和 [`EventTarget.removeEventListener`](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/removeEventListener) 的用法几乎一致，除了它们不接受参数 `type`。
+需要注意的是，`get` 事件仅在当前窗口的脚本获取配置时触发，而 `set` 事件会在所有窗口的脚本修改配置时触发。`set` 的这一特性使得多标签页同步成为可能。
 
-<details>
-<summary>传统方式</summary>
-或者，这个库提供了一个 `GM_config_event` 字符串，它的值表示配置项被查询/修改时会触发的事件。你可以使用 `window.top.addEventListener` 来监听这个事件。它的 `detail` 属性是一个对象，包含了配置变更的详情。例如：
-
-```javascript
-window.top.addEventListener(GM_config_event, (e) => { // *监听配置查询/修改*
-    console.log(config, e.detail);
-});
-```
-</details>
+正如你所想，你可以通过 `config.removeEventListener(type, listener, options?)` 来移除监听器。这两个接口与 [`EventTarget.addEventListener`](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/addEventListener) 和 [`EventTarget.removeEventListener`](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/removeEventListener) 的用法完全一致。
 
 `e.detail` 对象的属性如下：
 
 - `prop`：被查询/修改的配置项的 id
-- `type`：变更类型，可能的值有：
-    - `get`：查询配置
-    - `set`：修改配置
 - `before`：变更前的值
 - `after`：变更后的值
+- `remote`：表名此修改是否由其它标签页的脚本示例造成的，`get` 事件中此属性总为 `false`
 
 这个功能常用于在配置变化时实时更新脚本的功能。在库内部，自动更新菜单项的功能就是通过这个功能来实现的。
 
@@ -257,7 +251,7 @@ window.top.addEventListener(GM_config_event, (e) => { // *监听配置查询/修
 // ==UserScript==
 // @name         Test Config
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      1.0.0
 // @description  This is an example to demostrate the usage of greasyfork.org/scripts/470224.
 // @author       PRO
 // @match        https://greasyfork.org/*
@@ -315,7 +309,7 @@ window.top.addEventListener(GM_config_event, (e) => { // *监听配置查询/修
         }
     }
     const config = new GM_config(config_desc, { immediate: false, debug: true }); // Register menu commands
-    config.addListener((e) => { // Listen to config changes
+    config.addEventListener("set", (e) => { // Listen to config changes
         console.log(e.detail);
     });
     window.setTimeout(() => { // Change config values, and menu commands will be updated automatically

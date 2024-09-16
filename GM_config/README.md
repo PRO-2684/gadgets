@@ -10,6 +10,7 @@ Simple config lib for Tampermonkey scripts. ([Greasy Fork](https://greasyfork.or
 
 - **Automatically update the menu** when config is modified (by either user or script)
 - Support **listeners for config get/set**
+- Support **multi-tab synchronization**
 - Support either auto or manual menu registration
 - Highly **customizable**
     - Customizable config value input method (`prop.input`)
@@ -27,6 +28,7 @@ This library needs the following permissions to work:
 // @grant        GM_deleteValue // Automatically delete your config (Optional. If granted, this lib will delete user config that is equal to default value)
 // @grant        GM_registerMenuCommand // Register menu
 // @grant        GM_unregisterMenuCommand // Update menu
+// @grant        GM_addValueChangeListener // Listen for config changes
 ```
 
 **Delete the comment** if you copied and pasted the code, or there might be errors. You may want to delete `@grant none` (if present). If you used `window` object in your script, try `@grant unsafeWindow` and then `let window = unsafeWindow`.
@@ -207,35 +209,27 @@ config.proxy.price = 100; // *Modify config* (The menu will be updated automatic
 
 ### Listen for config get/set
 
-You can listen for config get/set by calling `config.addListener(listener, options?)`:
+You can listen for config get/set by calling `config.addEventListener(type, listener, options?)`:
 
 ```javascript
-config.addListener((e) => {
-    console.log(e.detail);
+config.addEventListener("set", (e) => {
+    console.log(e.detail); // *Config is modified*
+});
+config.addEventListener("get", (e) => {
+    console.log(e.detail); // *Config is accessed*
 });
 ```
 
-As you might have expected, you can remove the listener by calling `config.removeListener(listener, options?)`. These two methods are almost identical to [`EventTarget.addEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) and [`EventTarget.removeEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener), except that they don't accept the parameter `type`.
+It should be noted that `get` event is only triggered when the config is accessed by the script in the current window, while `set` event is triggered when the config is modified by the script in any window. This feature of `set` makes multi-tab synchronization possible.
 
-<details>
-<summary>The legacy way</summary>
-Alternatively, this lib provides a string `GM_config_event`, whose value represents the event that will be triggered when config is get/set. You can listen for this event by calling `window.top.addEventListener`. Its `detail` property is an object containing the detail. e.g:
-
-```javascript
-window.top.addEventListener(GM_config_event, (e) => { // *Listen for config get/set*
-    console.log(e.detail);
-});
-```
-</details>
+As you might have expected, you can remove the listener by calling `config.removeEventListener(type, listener, options?)`. These two methods are identical to [`EventTarget.addEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) and [`EventTarget.removeEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener).
 
 `e.detail` is a dictionary with the following properties:
 
 - `prop`: The id of the config item accessed/modified.
-- `type`: The type of the operation. Might be one of the following:
-    - `get`: the config item is accessed
-    - `set`: the config item is modified
 - `before`: The value of the config item before the operation.
 - `after`: The value of the config item after the operation.
+- `remote`: Indicating whether this modification is caused by the script instance in another tab. Always `false` for `get` event.
 
 This feature is often used to update your script dynamically when config is modified. In this lib, auto-updating menu is implemented by this feature.
 
@@ -314,7 +308,7 @@ Install below code as a script, and see how does it work:
         }
     }
     const config = new GM_config(config_desc, { immediate: false, debug: true }); // Register menu commands
-    config.addListener((e) => { // Listen to config changes
+    config.addEventListener("set", (e) => { // Listen to config changes
         console.log(e.detail);
     });
     window.setTimeout(() => { // Change config values, and menu commands will be updated automatically

@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      0.8.1
+// @version      1.0.0
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -13,16 +13,15 @@
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
+// @grant        GM_addValueChangeListener
 // ==/UserScript==
 
-const GM_config_event = "GM_config_event"; // Compatibility with old versions
-
-class GM_config {
+class GM_config extends EventTarget {
     /**
      * The version of the GM_config library
      */
     static get version() {
-        return "0.8.1";
+        return "1.0.0";
     }
     /**
      * Built-in processors for user input
@@ -104,6 +103,7 @@ class GM_config {
      * @param {boolean} [options.debug=false] Whether to show debug information
      */
     constructor(desc, options) { // Register menu items based on given config description
+        super();
         // Calc true default value
         const $default = Object.assign({
             input: "prompt",
@@ -112,9 +112,18 @@ class GM_config {
         }, desc["$default"] ?? {});
         Object.assign(this.#desc, desc);
         delete this.#desc.$default;
-        // Complete desc
+        // Handle value change events
+        function onValueChange(prop, before, after, remote) {
+            const defaultValue = this.#desc[prop].value;
+            // If `before` or `after` is `undefined`, replace it with default value
+            if (before === undefined) before = defaultValue;
+            if (after === undefined) after = defaultValue;
+            this.#dispatch(true, { prop, before, after, remote });
+        }
+        // Complete desc & setup value change listeners
         for (const key in this.#desc) {
             this.#desc[key] = Object.assign({}, $default, this.#desc[key]);
+            GM_addValueChangeListener(key, onValueChange.bind(this));
         }
         // Proxied config
         this.proxy = new Proxy(this.#desc, {
@@ -140,18 +149,19 @@ class GM_config {
                 this.#log(`+ Registered menu command: prop="Show configuration", id=${id}`);
                 this.#registered[null] = id;
             }
-            this.addListener((e) => { // Auto update menu items
-                if (e.detail.type === "set" && e.detail.before !== e.detail.after) {
-                    this.#log(`🔧 "${e.detail.prop}" changed from ${e.detail.before} to ${e.detail.after}`);
+            this.addEventListener("set", (e) => { // Auto update menu items
+                if (e.detail.before !== e.detail.after) {
+                    this.#log(`🔧 "${e.detail.prop}" changed from ${e.detail.before} to ${e.detail.after}, remote: ${e.detail.remote}`);
                     const id = this.#registered[e.detail.prop];
                     if (id !== undefined) {
                         this.#register_item(e.detail.prop);
                     } else {
                         this.#log(`+ Skipped updating menu since it's not registered: prop="${e.detail.prop}"`);
                     }
-                } else if (e.detail.type === "get") {
-                    this.#log(`🔍 "${e.detail.prop}" requested, value is ${e.detail.after}`);
                 }
+            });
+            this.addEventListener("get", (e) => {
+                this.#log(`🔍 "${e.detail.prop}" requested, value is ${e.detail.after}`);
             });
         }
         this.debug = options?.debug ?? this.debug;
@@ -165,11 +175,11 @@ class GM_config {
         // Return stored value, else default value
         const value = this.#get(prop);
         // Dispatch get event
-        this.#dispatch({
-            type: "get",
-            prop: prop,
+        this.#dispatch(false, {
+            prop,
             before: value,
-            after: value
+            after: value,
+            remote: false
         });
         return value;
     }
@@ -180,7 +190,6 @@ class GM_config {
      * @returns {boolean} Whether the value is set successfully
      */
     set(prop, value) {
-        const before = this.#get(prop);
         // Store value
         const default_value = this.#desc[prop].value;
         if (value === default_value && typeof GM_deleteValue === "function") {
@@ -189,38 +198,8 @@ class GM_config {
         } else {
             GM_setValue(prop, value);
         }
-        // Dispatch set event
-        this.#dispatch({
-            type: "set",
-            prop: prop,
-            before: before,
-            after: value
-        });
+        // Dispatch set event (will be handled by value change listeners)
         return true;
-    }
-    /**
-     * Sets up a function that will be called whenever config is accessed or modified
-     * @param {null | Object | Function} listener The object that receives a notification (an object that implements the `Event` interface) when an event of the specified type occurs. This must be `null`, an object with a `handleEvent()` method, or a JavaScript function
-     * @param {Object} [options] An object that specifies characteristics about the event listener
-     * @param {boolean} [options.capture=false] A boolean value indicating that events of this type will be dispatched to the registered `listener` before being dispatched to any `EventTarget` beneath it in the DOM tree
-     * @param {boolean} [options.once=false] A boolean value indicating that the `listener` should be invoked at most once after being added. If `true`, the `listener` would be automatically removed when invoked
-     * @param {boolean} [options.passive=false] A boolean value that, if `true`, indicates that the function specified by listener will never call `preventDefault()`. If a passive listener does call preventDefault(), the user agent will do nothing other than generate a console warning
-     * @param {AbortSignal} [options.signal] An `AbortSignal`. The listener will be removed when the given `AbortSignal` object's `abort()` method is called
-     */
-    addListener(listener, options) {
-        window.top.addEventListener(GM_config_event, listener, options);
-    }
-    /**
-     * Removes an event listener previously registered with `addListener()`
-     * @param {null | Object | Function} listener The object that receives a notification (an object that implements the `Event` interface) when an event of the specified type occurs. This must be `null`, an object with a `handleEvent()` method, or a JavaScript function
-     * @param {Object} [options] An object that specifies characteristics about the event listener
-     * @param {boolean} [options.capture=false] A boolean value indicating that events of this type will be dispatched to the registered `listener` before being dispatched to any `EventTarget` beneath it in the DOM tree
-     * @param {boolean} [options.once=false] A boolean value indicating that the `listener` should be invoked at most once after being added. If `true`, the `listener` would be automatically removed when invoked
-     * @param {boolean} [options.passive=false] A boolean value that, if `true`, indicates that the function specified by listener will never call `preventDefault()`. If a passive listener does call preventDefault(), the user agent will do nothing other than generate a console warning
-     * @param {AbortSignal} [options.signal] An `AbortSignal`. The listener will be removed when the given `AbortSignal` object's `abort()` method is called
-     */
-    removeListener(listener, options) {
-        window.top.removeEventListener(GM_config_event, listener, options);
     }
     /**
      * Get the value of a property (only for internal use; won't trigger events)
@@ -241,14 +220,19 @@ class GM_config {
     }
     /**
      * Dispatches the `GM_config_event` event
+     * @param {string} isSet Whether the event is a set event (`true` for set, `false` for get)
      * @param {Object} detail The detail object
+     * @param {string} detail.prop The property name
+     * @param {any} detail.before The value before the operation
+     * @param {any} detail.after The value after the operation
+     * @param {boolean} detail.remote Whether the operation is remote (always `false` for `get`)
      * @returns {boolean} Always `true`
      */
-    #dispatch(detail) {
-        const event = new CustomEvent(GM_config_event, {
+    #dispatch(isSet, detail) {
+        const event = new CustomEvent(isSet ? "set" : "get", {
             detail: detail
         });
-        return window.top.dispatchEvent(event);
+        return this.dispatchEvent(event);
     }
     /**
      * Register menu items
