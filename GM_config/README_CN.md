@@ -260,7 +260,8 @@ config.addEventListener("get", (e) => {
 // @grant        GM_getValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
-// @require      https://update.greasyfork.org/scripts/470224/1303666/Tampermonkey%20Config.js
+// @grant        GM_addValueChangeListener
+// @require      https://update.greasyfork.org/scripts/470224/1448594/Tampermonkey%20Config.js
 // @license      gpl-3.0
 // ==/UserScript==
 

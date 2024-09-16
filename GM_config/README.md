@@ -250,7 +250,7 @@ Install below code as a script, and see how does it work:
 // ==UserScript==
 // @name         Test Config
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      1.0.0
 // @description  This is an example to demostrate the usage of greasyfork.org/scripts/470224.
 // @author       PRO
 // @match        https://greasyfork.org/*
@@ -259,7 +259,8 @@ Install below code as a script, and see how does it work:
 // @grant        GM_getValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
-// @require      https://update.greasyfork.org/scripts/470224/1303666/Tampermonkey%20Config.js
+// @grant        GM_addValueChangeListener
+// @require      https://update.greasyfork.org/scripts/470224/1448594/Tampermonkey%20Config.js
 // @license      gpl-3.0
 // ==/UserScript==
 
