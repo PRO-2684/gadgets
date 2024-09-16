@@ -11,6 +11,7 @@ Some code snippets that's hard to categorize. See READMEs under subfolders for d
 - `baidu_debloate`: Hides some gibberish on Baidu sites, including `baike.baidu.com` and `jingyan.baidu.com`.
 - `bb_batch_reconcile`: Batch reconcile student grades in [Blackboard](https://www.blackboard.com/) system.
 - `checkbox_patch`: Patches the property `checked` of a certain checkbox, so that a `change` event will be issued when the `checked` value is modified by other scripts.
+- `CORS_helper`: A simple, customizable script that helps you to bypass CORS restrictions.
 - `etag_server`： Simple HTTP server that serves files, but using `ETag` instead of `Last-Modified` for caching.
 - `GM_config`: Simple config lib for Tampermonkey scripts.
 - `greasyfork_enhance`: Enhance your experience at Greasyfork.
