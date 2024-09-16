@@ -2,17 +2,18 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.8.1
+// @version      0.8.2
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
+// @match        https://greasyfork.org/*
 // @author       PRO
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
-// @match        https://greasyfork.org/*
-// @require      https://update.greasyfork.org/scripts/470224/1428466/Tampermonkey%20Config.js
+// @grant        GM_addValueChangeListener
+// @require      https://update.greasyfork.org/scripts/470224/1448594/Tampermonkey%20Config.js
 // @icon         https://raw.githubusercontent.com/greasyfork-org/greasyfork/main/public/images/blacklogo16.png
 // @icon64       https://raw.githubusercontent.com/greasyfork-org/greasyfork/main/public/images/blacklogo96.png
 // @license      gpl-3.0
@@ -32,7 +33,7 @@
     });
     if (!is_run) return;
     // Config
-    const config_desc = {
+    const configDesc = {
         "$default": {
             value: true,
             input: "current",
@@ -68,7 +69,7 @@
         "search-syntax": { name: "*Search syntax", title: "Enable partial search syntax for Greasy Fork search bar" },
         "image-proxy": { name: "*Image proxy", title: "Use `wsrv.nl` as proxy for user-uploaded images", value: false },
     };
-    const config = new GM_config(config_desc);
+    const config = new GM_config(configDesc);
     const configProxy = config.proxy;
     // CSS
     const dynamicStyle = {
@@ -598,15 +599,13 @@
         "shortcut": shortcut,
     };
     callbacks["flat-layout"](configProxy["flat-layout"]);
-    config.addListener(e => {
-        if (e.detail.type === "set") {
-            const callback = callbacks[e.detail.prop];
-            if (callback && (e.detail.before !== e.detail.after)) {
-                callback(e.detail.after);
-            }
-            if (e.detail.prop in dynamicStyle) {
-                cssHelper(e.detail.prop, e.detail.after);
-            }
+    config.addEventListener("set", e => {
+        const callback = callbacks[e.detail.prop];
+        if (callback && (e.detail.before !== e.detail.after)) {
+            callback(e.detail.after);
+        }
+        if (e.detail.prop in dynamicStyle) {
+            cssHelper(e.detail.prop, e.detail.after);
         }
     });
     // Search syntax

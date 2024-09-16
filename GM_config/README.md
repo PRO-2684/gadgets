@@ -266,7 +266,7 @@ Install below code as a script, and see how does it work:
 
 (function() {
     'use strict';
-    const config_desc = { // Config description
+    const configDesc = { // Config description
         password: {
             name: "Password", // Display name
             value: "tmp", // Default value
@@ -308,7 +308,7 @@ Install below code as a script, and see how does it work:
             processor: "float_range-0-" // Convert to float in range [0, +∞)
         }
     }
-    const config = new GM_config(config_desc, { immediate: false, debug: true }); // Register menu commands
+    const config = new GM_config(configDesc, { immediate: false, debug: true }); // Register menu commands
     config.addEventListener("set", (e) => { // Listen to config changes
         console.log(e.detail);
     });

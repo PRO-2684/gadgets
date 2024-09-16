@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         52 Enhance
 // @namespace    http://tampermonkey.net/
-// @version      0.7.2
+// @version      0.7.3
 // @description  52 破解论坛增强脚本
 // @author       PRO
 // @run-at       document-start
@@ -13,7 +13,8 @@
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
-// @require      https://update.greasyfork.org/scripts/470224/1428466/Tampermonkey%20Config.js
+// @grant        GM_addValueChangeListener
+// @require      https://update.greasyfork.org/scripts/470224/1448594/Tampermonkey%20Config.js
 // ==/UserScript==
 
 (function() {
@@ -91,7 +92,7 @@
     // Regex filter
     injectCSS("regex-filter", "#threadlisttableid > .regex-filtered { display: none; }");
     function regexFilterOne(regex, thread) {
-        const main = thread.querySelector("tr > th.common");
+        const main = thread.querySelector("tr > th");
         if (!main) return;
         const category = main.querySelector("em")?.textContent ?? "[未知分类]";
         const title = main.querySelector("a.s.xst")?.textContent ?? "未知标题";
@@ -387,14 +388,12 @@
         "shortcut": shortcut,
         "infinite-scroll": infiniteScroll
     };
-    config.addListener(e => {
-        if (e.detail.type == "set") {
-            const callback = callbacks[e.detail.prop];
-            if (callback && (e.detail.before !== e.detail.after)) {
-                callback(e.detail.after);
-            } else if (e.detail.prop in dynamicStyle) {
-                cssHelper(e.detail.prop, e.detail.after);
-            }
+    config.addEventListener("set", e => {
+        const callback = callbacks[e.detail.prop];
+        if (callback && (e.detail.before !== e.detail.after)) {
+            callback(e.detail.after);
+        } else if (e.detail.prop in dynamicStyle) {
+            cssHelper(e.detail.prop, e.detail.after);
         }
     });
 })();

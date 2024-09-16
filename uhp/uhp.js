@@ -3,7 +3,7 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.3.3
+// @version      1.3.4
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
@@ -24,8 +24,9 @@
 // @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
+// @grant        GM_addValueChangeListener
+// @require      https://update.greasyfork.org/scripts/470224/1448594/Tampermonkey%20Config.js
 // @require      https://update.greasyfork.org/scripts/462234/1391948/Message.js
-// @require      https://update.greasyfork.org/scripts/470224/1428466/Tampermonkey%20Config.js
 // ==/UserScript==
 
 (function () {
@@ -50,7 +51,7 @@
             return list[(idx + 1) % list.length];
         }
     }
-    const config_descs = {
+    const configDescs = {
         passport: {
             "passport/enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
             "passport/recog_code": boolDesc("Code recognition", "Enable auto recognizing verification code"),
@@ -144,7 +145,7 @@
             }, interval);
         });
     }
-    function setupDynamicStyles(host, configProxy, styles) {
+    function setupDynamicStyles(host, config, styles) {
         function injectCSS(name) {
             const css = document.head.appendChild(document.createElement("style"));
             css.id = `ustc-helper-${host}-${name}`;
@@ -159,10 +160,10 @@
             }
         }
         for (const name in styles) {
-            toggleCSS(name, configProxy[`${host}/${name}`]);
+            toggleCSS(name, config.proxy[`${host}/${name}`]);
         }
-        window.top.addEventListener(GM_config_event, e => {
-            if (e.detail.type == "set" && e.detail.prop.startsWith(`${host}/`)) {
+        config.addEventListener("set", e => {
+            if (e.detail.prop.startsWith(`${host}/`)) {
                 const name = e.detail.prop.split("/")[1];
                 if (name in styles) {
                     toggleCSS(name, e.detail.after);
@@ -188,7 +189,7 @@
         }
         document.addEventListener("keydown", (e) => {
             const active = document.activeElement;
-            if (active.nodeName == "INPUT" || active.nodeName == "TEXTAREA") {
+            if (active.nodeName === "INPUT" || active.nodeName === "TEXTAREA") {
                 return;
             }
             const count = actions.count();
@@ -236,8 +237,9 @@
 
     switch (window.location.host) {
         case 'mail.ustc.edu.cn': {
-            const config_desc = config_descs.mail;
-            const configProxy = new GM_config(config_desc).proxy;
+            const configDesc = configDescs.mail;
+            const config = new GM_config(configDesc);
+            const configProxy = config.proxy;
             if (!configProxy["mail/enabled"]) {
                 console.info("[USTC Helper] 'mail' feature disabled.");
                 break;
@@ -259,12 +261,12 @@
                 "remove_watermark": "div.watermark-wrap { display: none; }",
                 "remove_background": ".lymain .lybg { display: none; }"
             }
-            setupDynamicStyles("mail", configProxy, mail_css);
+            setupDynamicStyles("mail", config, mail_css);
             break;
         }
         case 'passport.ustc.edu.cn': {
-            const config_desc = config_descs.passport;
-            const configProxy = new GM_config(config_desc).proxy;
+            const configDesc = configDescs.passport;
+            const configProxy = new GM_config(configDesc).proxy;
             let is_official = false;
             if (!configProxy["passport/enabled"]) {
                 console.info("[USTC Helper] 'passport' feature disabled.");
@@ -480,8 +482,8 @@
             break;
         }
         case 'rec.ustc.edu.cn': {
-            const config_desc = config_descs.rec;
-            const configProxy = new GM_config(config_desc).proxy;
+            const configDesc = configDescs.rec;
+            const configProxy = new GM_config(configDesc).proxy;
             if (!configProxy["rec/enabled"]) {
                 console.info("[USTC Helper] 'rec' feature disabled.");
                 break;
@@ -871,8 +873,8 @@
             break;
         }
         case 'recapi.ustc.edu.cn': {
-            const config_desc = config_descs.rec;
-            const configProxy = new GM_config(config_desc).proxy;
+            const configDesc = configDescs.rec;
+            const configProxy = new GM_config(configDesc).proxy;
             if (!configProxy["rec/enabled"]) {
                 console.info("[USTC Helper] 'rec' feature disabled.");
                 break;
@@ -888,8 +890,8 @@
             break;
         }
         case 'www.bb.ustc.edu.cn': {
-            const config_desc = config_descs.bb;
-            const configProxy = new GM_config(config_desc).proxy;
+            const configDesc = configDescs.bb;
+            const configProxy = new GM_config(configDesc).proxy;
             if (!configProxy["bb/enabled"]) {
                 console.info("[USTC Helper] 'bb' feature disabled.");
                 break;
@@ -998,8 +1000,9 @@
             break;
         }
         case 'jw.ustc.edu.cn': {
-            const config_desc = config_descs.jw;
-            const configProxy = new GM_config(config_desc, { immediate: false }).proxy;
+            const configDesc = configDescs.jw;
+            const config = new GM_config(configDesc, { immediate: false });
+            const configProxy = config.proxy;
             if (!configProxy["jw/enabled"]) {
                 console.info("[USTC Helper] 'jw' feature disabled.");
                 break;
@@ -1160,7 +1163,7 @@
                 "privacy": `#accountLoginInfo, #home-page .info-username, body > div.container div.top-bar > h2.info-title, .list-group-item > span:not(.pull-left) { filter: blur(0.2em); }
                     img[src='/my/avatar'] { filter: blur(1em); }`
             };
-            setupDynamicStyles("jw", configProxy, jw_css);
+            setupDynamicStyles("jw", config, jw_css);
             if (window.location.pathname.startsWith("/for-std/course-table")) {
                 if (configProxy["jw/sum"]) {
                     const table = $("#lessons");
@@ -1183,8 +1186,8 @@
             break;
         }
         case 'young.ustc.edu.cn': {
-            const config_desc = config_descs.young;
-            const configProxy = new GM_config(config_desc, { immediate: false }).proxy;
+            const configDesc = configDescs.young;
+            const configProxy = new GM_config(configDesc, { immediate: false }).proxy;
             if (!configProxy["young/enabled"]) {
                 console.info("[USTC Helper] 'young' feature disabled.");
                 break;
@@ -1292,8 +1295,8 @@
             break;
         }
         case 'wvpn.ustc.edu.cn': {
-            const config_desc = config_descs.wvpn;
-            const configProxy = new GM_config(config_desc).proxy;
+            const configDesc = configDescs.wvpn;
+            const configProxy = new GM_config(configDesc).proxy;
             if (!configProxy["wvpn/enabled"]) {
                 console.info("[USTC Helper] 'wvpn' feature disabled.");
                 break;
@@ -1495,8 +1498,9 @@
             break;
         }
         case 'icourse.club': {
-            const config_desc = config_descs.icourse;
-            const configProxy = new GM_config(config_desc).proxy;
+            const configDesc = configDescs.icourse;
+            const config = new GM_config(configDesc);
+            const configProxy = config.proxy;
             if (!configProxy["icourse/enabled"]) {
                 console.info("[USTC Helper] 'icourse' feature disabled.");
                 break;
@@ -1580,7 +1584,7 @@
             const icourse_css = {
                 "css": `html { scroll-behavior: smooth; } img { max-width: 100%; }`
             };
-            setupDynamicStyles("icourse", configProxy, icourse_css);
+            setupDynamicStyles("icourse", config, icourse_css);
             break;
         }
         default:
