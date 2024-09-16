@@ -4,7 +4,7 @@ A simple script that helps bypass CORS restrictions.
 
 ## Installation
 
-Simply navigate to Greasy Fork and click the "Install this script" button.
+Simply [Click me](https://github.com/PRO-2684/gadgets/raw/main/CORS_helper/cors.js) to install this script.
 
 ## Usage
 

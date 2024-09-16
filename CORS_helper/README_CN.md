@@ -4,7 +4,7 @@
 
 ## 安装
 
-只需前往 Greasy Fork 并点击“安装此脚本”按钮。
+只需 [点此](https://github.com/PRO-2684/gadgets/raw/main/CORS_helper/cors.js) 即可安装脚本。
 
 ## 使用
 
