@@ -16,7 +16,7 @@ After this, refresh the page and you'll have access to `GM_fetch` function under
 
 ```javascript
 // ...
-// @require      https://cdn.jsdelivr.net/npm/@trim21/gm-fetch
+// @require      https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.1.15
 // ...
 unsafeWindow.GM_fetch = GM_fetch;
 ```
