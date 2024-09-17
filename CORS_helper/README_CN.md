@@ -4,7 +4,8 @@
 
 ## 安装
 
-只需 [点此](https://github.com/PRO-2684/gadgets/raw/main/CORS_helper/cors.js) 即可安装脚本。
+- [GitHub](https://github.com/PRO-2684/gadgets/raw/main/CORS_helper/cors.js)
+- [Greasy Fork](https://update.greasyfork.org/scripts/508769/CORS%20Helper.user.js)
 
 ## 使用
 

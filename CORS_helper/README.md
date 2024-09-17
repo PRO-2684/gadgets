@@ -4,7 +4,8 @@ A simple script that helps bypass CORS restrictions.
 
 ## Installation
 
-Simply [Click me](https://github.com/PRO-2684/gadgets/raw/main/CORS_helper/cors.js) to install this script.
+- [GitHub](https://github.com/PRO-2684/gadgets/raw/main/CORS_helper/cors.js)
+- [Greasy Fork](https://update.greasyfork.org/scripts/508769/CORS%20Helper.user.js)
 
 ## Usage
 
