@@ -60,7 +60,7 @@ console.log(GM_config.version); // *输出版本*
 若你想要修改默认值，你可以在配置描述中提供 `$default` 从而覆盖上述默认值。例如：
 
 ```javascript
-const config_desc = {
+const configDesc = {
     "$default": {
         value: true,
         input: "current",
@@ -129,7 +129,7 @@ const config_desc = {
 #### 常用组合
 
 ```javascript
-const config_desc = {
+const configDesc = {
     // 开关
     enabled: {
         name: "Enabled",
@@ -180,7 +180,7 @@ const config_desc = {
 
 当你创建了一个配置描述后，你可以使用 `GM_config` 构造函数来将其注册为配置菜单。它接受如下两个参数：
 
-- `config_desc`：配置描述
+- `configDesc`：配置描述
 - `options`：选项（可选）
     - `immediate`：是否立即注册菜单
         - 若为 `true`，则会立即注册菜单（默认）
@@ -188,7 +188,7 @@ const config_desc = {
     - `debug`：是否开启调试模式。若为 `true`，会输出调试信息。默认为 `false`。（随时可以通过 `config.debug` 来修改）
 
 ```javascript
-const config = new GM_config(config_desc, { immediate: false }); // *注册配置菜单*
+const config = new GM_config(configDesc, { immediate: false }); // *注册配置菜单*
 console.log(config.get("price")); // *可以开始使用了 🎉*
 ```
 

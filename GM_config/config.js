@@ -219,7 +219,7 @@ class GM_config extends EventTarget {
         }
     }
     /**
-     * Dispatches the `GM_config_event` event
+     * Dispatches the event
      * @param {string} isSet Whether the event is a set event (`true` for set, `false` for get)
      * @param {Object} detail The detail object
      * @param {string} detail.prop The property name

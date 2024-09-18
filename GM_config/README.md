@@ -60,7 +60,7 @@ By using `$default`, you can easily create a lot of config items of the same typ
 If you'd like to modify the default value, you may provide `$default` in your config description to override the above default values. e.g.:
 
 ```javascript
-const config_desc = {
+const configDesc = {
     "$default": {
         value: true,
         input: "current",
@@ -129,7 +129,7 @@ Built-in formatters:
 #### Frequently used combinations
 
 ```javascript
-const config_desc = {
+const configDesc = {
     // Switch
     enabled: {
         name: "Enabled",
@@ -179,7 +179,7 @@ Supports `prop.accessKey`, `prop.autoClose`, `prop.title` (Require TM >=4.20.0).
 
 After defining your config description, you can register the menu item by constructing a `GM_config` instance. The constructor accepts the following two arguments:
 
-- `config_desc`: Your config description
+- `configDesc`: Your config description
 - `options`: Options (optional)
     - `immediate`: Whether to register the menu items immediately.
         - If set to `true`, the menu item will be registered immediately. (default value)
@@ -187,7 +187,7 @@ After defining your config description, you can register the menu item by constr
     - `debug`: Whether to enable debug mode. If set to `true`, debug information will be printed to console. Default value is `false`. (Can be modified by `config.debug` at any time)
 
 ```javascript
-const config = new GM_config(config_desc, { immediate: false }); // *Register menu*
+const config = new GM_config(configDesc, { immediate: false }); // *Register menu*
 console.log(config.get("price")); // *You may now start using the config 🎉*
 ```
 
