@@ -44,7 +44,7 @@ Navigate to Tampermonkey `Dashboard` - `Settings` - `External`, and choose the u
 
 ### Updating rules manually
 
-Navigate to Tampermonkey `Dashboard` - `Installed Userscripts` - `pURLfy for Tampermonkey` - `External`, and for each entry under `Resources`, click the `Delete` button. After refreshing the page, the rules will be updated automatically.
+Navigate to Tampermonkey `Dashboard` - `Installed Userscripts` - `pURLfy for Tampermonkey` - `External`, and for each entry under `Resources`, click the `Update` or `Delete` button. After refreshing the page, the rules will be updated automatically.
 
 ## How it works
 
