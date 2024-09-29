@@ -18,6 +18,10 @@ GitHub 上 [一个 Release](https://github.com/microsoft/terminal/releases/tag/v
 
 ![](./assets.png)
 
+针对个人访问令牌的示例设置：
+
+![](./token.jpeg)
+
 ## 🤔 已知问题
 
 - 添加的信息可能不对齐。
