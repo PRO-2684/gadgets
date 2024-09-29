@@ -13,6 +13,7 @@ Some code snippets that's hard to categorize. See READMEs under subfolders for d
 - `checkbox_patch`: Patches the property `checked` of a certain checkbox, so that a `change` event will be issued when the `checked` value is modified by other scripts.
 - `CORS_helper`: A simple, customizable script that helps you to bypass CORS restrictions.
 - `etag_server`： Simple HTTP server that serves files, but using `ETag` instead of `Last-Modified` for caching.
+- `github_plus`: Enhance GitHub with additional features.
 - `GM_config`: Simple config lib for Tampermonkey scripts.
 - `greasyfork_enhance`: Enhance your experience at Greasyfork.
 - `hover_card`: Get Github hovercard for given repo.
