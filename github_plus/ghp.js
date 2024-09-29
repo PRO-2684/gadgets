@@ -1,8 +1,10 @@
 // ==UserScript==
 // @name         GitHub Plus
+// @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  Enhance GitHub with additional features.
+// @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
 // @match        https://github.com/*
 // @run-at       document-start
@@ -20,13 +22,30 @@
 (function() {
     'use strict';
     /**
+     * The color used for logging. Matches the color of the GitHub.
+     * @type {string}
+     */
+    const themeColor = "#f78166";
+    /**
      * Regular expression to match the expanded assets URL. (https://github.com/<username>/<repo>/releases/expanded_assets/<version>)
      */
     const expandedAssetsRegex = /https:\/\/github\.com\/([^/]+)\/([^/]+)\/releases\/expanded_assets\/([^/]+)/;
     /**
-     * Data about the release. Maps `owner` and `repo` to details. Details are `Promise` objects if exist.
+     * Data about the release. Maps `owner`, `repo` and `version` to the details of a release. Details are `Promise` objects if exist.
      */
     let releaseData = {};
+    /**
+     * Rate limit data for the GitHub API.
+     * @type {Object}
+     * @property {number} limit The maximum number of requests that the consumer is permitted to make per hour.
+     * @property {number} remaining The number of requests remaining in the current rate limit window.
+     * @property {number} reset The time at which the current rate limit window resets in UTC epoch seconds.
+     */
+    let rateLimit = {
+        limit: -1,
+        remaining: -1,
+        reset: -1
+    };
 
     const configDesc = {
         $default: {
@@ -36,18 +55,18 @@
             formatter: "boolean",
             autoClose: false
         },
+        token: {
+            name: "Personal Access Token",
+            title: "Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit)",
+            value: "",
+            input: "prompt",
+            processor: "same",
+            formatter: "normal"
+        },
         debug: {
             name: "Debug",
             title: "Enable debug mode",
             value: false
-        },
-        releaseCount: {
-            name: "Release Count",
-            title: "Maximum number of releases to query (starting from the latest)",
-            value: 50,
-            input: "prompt",
-            processor: "int_range-1-",
-            formatter: "normal"
         },
         releaseDownloads: {
             name: "Release Downloads",
@@ -60,40 +79,80 @@
     };
     const config = new GM_config(configDesc);
 
+    /**
+     * Log the given arguments if debug mode is enabled.
+     * @param {...any} args The arguments to log.
+     */
     function log(...args) {
-        if (config.get("debug")) console.log("%c[GitHub Plus]%c", "color:#f78166;", "color: unset;", ...args);
+        if (config.get("debug")) console.log("%c[GitHub Plus]%c", `color:${themeColor};`, "color: unset;", ...args);
     }
     /**
-     * Get the release data for the given owner and repo.
+     * Warn the given arguments.
+     * @param {...any} args The arguments to warn.
+     */
+    function warn(...args) {
+        console.warn("%c[GitHub Plus]%c", `color:${themeColor};`, "color: unset;", ...args);
+    }
+    /**
+     * Fetch the given URL with the personal access token, if given. Also updates rate limit.
+     * @param {string} url The URL to fetch.
+     * @param {RequestInit} options The options to pass to `fetch`.
+     * @returns {Promise<Response>} The response from the fetch.
+     */
+    async function fetchWithToken(url, options) {
+        const token = config.get("token");
+        if (token) {
+            if (!options) options = {};
+            if (!options.headers) options.headers = {};
+            options.headers.accept = "application/vnd.github+json";
+            options.headers["X-GitHub-Api-Version"] = "2022-11-28";
+            options.headers.Authorization = `Bearer ${token}`;
+        }
+        const r = await fetch(url, options);
+        // Update rate limit
+        rateLimit.limit = parseInt(r.headers.get("X-RateLimit-Limit"));
+        rateLimit.remaining = parseInt(r.headers.get("X-RateLimit-Remaining"));
+        rateLimit.reset = parseInt(r.headers.get("X-RateLimit-Reset"));
+        const resetDate = new Date(rateLimit.reset * 1000).toLocaleString();
+        log(`Rate limit: remaining ${rateLimit.remaining}/${rateLimit.limit}, resets at ${resetDate}`);
+        if (r.status === 403 || r.status === 429) { // If we get 403 or 429, we've hit the rate limit.
+            throw new Error(`Rate limit exceeded! Will reset at ${resetDate}`);
+        } else if (rateLimit.remaining === 0) {
+            warn(`Rate limit has been exhausted! Will reset at ${resetDate}`);
+        }
+        return r;
+    }
+    /**
+     * Get the release data for the given owner, repo and version.
      * @param {string} owner The owner of the repository.
      * @param {string} repo The repository name.
-     * @returns {Promise<Object>} The release data, which resolves to an object mapping version tag, download link to details.
+     * @param {string} version The version tag of the release.
+     * @returns {Promise<Object>} The release data, which resolves to an object mapping download link to details.
      */
-    async function getReleaseData(owner, repo) {
+    async function getReleaseData(owner, repo, version) {
         if (!releaseData[owner]) releaseData[owner] = {};
-        if (!releaseData[owner][repo]) {
-            const promise = fetch(`https://api.github.com/repos/${owner}/${repo}/releases?page=1&per_page=${config.get("releaseCount")}`).then(
+        if (!releaseData[owner][repo]) releaseData[owner][repo] = {};
+        if (!releaseData[owner][repo][version]) {
+            const promise = fetchWithToken(`https://api.github.com/repos/${owner}/${repo}/releases/tags/${version}`).then(
                 response => response.json()
             ).then(data => {
-                const finalData = {};
-                for (const release of data) {
-                    const assets = {};
-                    for (const asset of release.assets) {
-                        assets[asset.browser_download_url] = {
-                            downloads: asset.download_count,
-                            uploader: {
-                                name: asset.uploader.login,
-                                url: asset.uploader.html_url
-                            }
-                        };
-                    }
-                    finalData[release.tag_name] = assets;
+                log(`Fetched release data for ${owner}/${repo}@${version}:`, data);
+                const assets = {};
+                for (const asset of data.assets) {
+                    assets[asset.browser_download_url] = {
+                        downloads: asset.download_count,
+                        uploader: {
+                            name: asset.uploader.login,
+                            url: asset.uploader.html_url
+                        }
+                    };
                 }
-                return finalData;
+                log(`Processed release data for ${owner}/${repo}@${version}:`, assets);
+                return assets;
             });
-            releaseData[owner][repo] = promise;
+            releaseData[owner][repo][version] = promise;
         }
-        return releaseData[owner][repo];
+        return releaseData[owner][repo][version];
     }
     /**
      * Create a link to the uploader's profile.
@@ -135,7 +194,7 @@
             if (!icon) return; // Not a release entry
             const downloadLink = entry.children[0].querySelector("a")?.href;
             const statistics = entry.children[1];
-            const assetInfo = (await getReleaseData(info.owner, info.repo))?.[info.version]?.[downloadLink];
+            const assetInfo = (await getReleaseData(info.owner, info.repo, info.version))?.[downloadLink];
             if (!assetInfo) return;
             const size = statistics.querySelector("span.flex-auto");
             size.classList.remove("flex-auto");
