@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.4.7
+// @version      0.4.8
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -17,6 +17,7 @@
 // @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
 // @connect      *
+// @require      https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.1.15
 // @require      https://update.greasyfork.org/scripts/492078/1443165/pURLfy.js
 // @resource     rules-tracking https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/tracking.min.json
 // @resource     rules-outgoing https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/outgoing.min.json
@@ -51,39 +52,7 @@
     const purifier = new Purlfy({
         fetchEnabled: true,
         lambdaEnabled: true,
-        fetch: async function (url, options) {
-            // Adapted from https://github.com/AlttiRi/gm_fetch
-            function normalize(gm_response) {
-                const headers = new Headers();
-                for (const line of gm_response.responseHeaders.trim().split("\n")) {
-                    const [key, ...values] = line.split(": ");
-                    headers.append(key, values.join(": "));
-                }
-                const r = new Response(gm_response.response, {
-                    status: gm_response.status,
-                    statusText: gm_response.statusText,
-                    headers: headers,
-                    url: gm_response.finalUrl || url
-                });
-                Object.defineProperty(r, "url", { value: gm_response.finalUrl || url });
-                return r;
-            }
-            return new Promise((resolve, reject) => {
-                // Fetch with GM_xmlhttpRequest
-                GM_xmlhttpRequest({
-                    url: url,
-                    method: "GET",
-                    responseType: "arraybuffer",
-                    onload: function (gm_response) {
-                        resolve(normalize(gm_response));
-                    },
-                    onerror: function (error) {
-                        reject(error);
-                    },
-                    ...options
-                });
-            });
-        }
+        fetch: GM_fetch,
     });
     // Import rules
     const rulesCfg = GM_getValue("rules", { ...initRulesCfg });
