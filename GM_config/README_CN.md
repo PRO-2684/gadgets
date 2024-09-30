@@ -93,7 +93,7 @@ const configDesc = {
 配置项的类型，用于快速设置常见的属性集。当前支持的类型有：
 
 ```javascript
-static #builtin_types = {
+#builtin_types = {
     str: { // 字符串
         value: "",
         input: "prompt",
@@ -120,10 +120,10 @@ static #builtin_types = {
     },
     action: { // 动作
         value: null,
-        input: (prop, orig) => {...}, // 使用 `config.addEventListener` 监听此属性的 `get` 事件来实现回调
-        formatter: (name) => name,
+        input: (prop, orig) => {...}, // 请勿覆盖。为实现回调，请使用 `config.addEventListener` 监听此属性的 `get` 事件
+        formatter: "name_only",
         autoClose: true,
-    }
+    },
 };
 ```
 
@@ -161,6 +161,7 @@ const configDesc = {
 
 - `prompt`：弹出对话框询问输入（默认）
 - `current`：使用当前值作为输入（常与 `prop.processor=not` 配合使用，用于开关；或与自定义的 `processor` 配合使用，构成生成器）
+- `name_only`: 仅显示名称，不显示值（内部用于 `action` 类型）
 
 #### `prop.processor`
 
@@ -256,10 +257,10 @@ config.addEventListener("get", (e) => {
 
 `e.detail` 对象的属性如下：
 
-- `prop`：被查询/修改的配置项的 id
-- `before`：变更前的值
-- `after`：变更后的值
-- `remote`：表名此修改是否由其它标签页的脚本示例造成的，`get` 事件中此属性总为 `false`
+- `prop`：被查询/修改的配置项的 id。
+- `before`：变更前的值。
+- `after`：变更后的值。
+- `remote`：表名此修改是否由其它脚本实例造成的，`get` 事件中此属性总为 `false` (无法检测其它脚本实例获取配置)。
 
 这个功能常用于在配置变化时实时更新脚本的功能。在库内部，自动更新菜单项的功能就是通过这个功能来实现的。
 

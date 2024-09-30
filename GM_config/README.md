@@ -94,7 +94,7 @@ const configDesc = {
 The type of the config item, used for quickly setting up common properties. Currently supported types are:
 
 ```javascript
-static #builtin_types = {
+#builtin_types = {
     str: { // String
         value: "",
         input: "prompt",
@@ -121,11 +121,11 @@ static #builtin_types = {
     },
     action: { // Action
         value: null,
-        input: (prop, orig) => {...}, // Listen for this attribute's `get` events using `config.addEventListener` to setup callback
+        input: (prop, orig) => {...}, // Do not override. To setup callback(s), listen for this attribute's `get` events using `config.addEventListener`
         processor: "same",
-        formatter: (name) => name,
+        formatter: "name_only",
         autoClose: true,
-    }
+    },
 };
 ```
 
@@ -163,6 +163,7 @@ Built-in input methods:
 
 - `prompt`: Ask for user input using `prompt()` (default value)
 - `current`: Current value will be used as user input (Usually used with `prop.processor=not` so as to create a switch, or with custom `processor` to create a generator)
+- `name_only`: Only show the name of the config item (Used internally by `action` type)
 
 #### `prop.processor`
 
@@ -261,7 +262,7 @@ As you might have expected, you can remove the listener by calling `config.remov
 - `prop`: The id of the config item accessed/modified.
 - `before`: The value of the config item before the operation.
 - `after`: The value of the config item after the operation.
-- `remote`: Indicating whether this modification is caused by the script instance in another tab. Always `false` for `get` event.
+- `remote`: Indicating whether this modification is caused by other script instances. Always `false` for `get` event (cannot detect other instances' accesses).
 
 This feature is often used to update your script dynamically when config is modified. In this lib, auto-updating menu is implemented by this feature.
 

@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.0.1
+// @version      1.0.2
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -21,7 +21,7 @@ class GM_config extends EventTarget {
      * The version of the GM_config library
      */
     static get version() {
-        return "1.0.1";
+        return "1.0.2";
     }
     /**
      * Built-in processors for user input
@@ -66,6 +66,7 @@ class GM_config extends EventTarget {
     static #builtin_formatters = {
         normal: (name, value) => `${name}: ${value}`,
         boolean: (name, value) => `${name}: ${value ? "✔" : "✘"}`,
+        name_only: (name, value) => name,
     };
     /**
      * The proxied config object, to be initialized in the constructor
@@ -126,7 +127,7 @@ class GM_config extends EventTarget {
                 return orig;
             },
             processor: "same",
-            formatter: (name) => name,
+            formatter: "name_only",
             autoClose: true,
         },
     };
