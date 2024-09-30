@@ -2,7 +2,12 @@
 
 > 如果你在 Greasy Fork 上查看自述文件时遇到问题，请访问 [GitHub 上的自述文件](https://github.com/PRO-2684/gadgets/blob/main/github_plus/README_CN.md) 以获得更好的体验。
 
-## 🪄 功能与配置
+## 🪄 特点
+
+- 不使用 `MutationObserver` 或 `setInterval`，纯粹基于事件驱动，比类似功能的脚本更高效
+- 没有危险的动态修补，确保兼容性
+
+## ⚙️ 配置
 
 - **Personal Access Token**: GitHub API 的个人访问令牌，以 `github_pat_` 开头（用于提升速率限制）。详见 [个人访问令牌 (PAT)](#-个人访问令牌-pat) 部分。
 - **Debug**: 启用调试模式。

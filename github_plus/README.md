@@ -2,7 +2,12 @@
 
 > If you encounter issues reading Greasy Fork's README, please visit the [README on GitHub](https://github.com/PRO-2684/gadgets/blob/main/github_plus/README.md) for a better experience.
 
-## 🪄 Features & Configuation
+## 🪄 Features
+
+- No use of `MutationObserver` or `setInterval`, purely event-driven, making it more efficient than scripts of similar functionality
+- No dangerous monkey patching, ensuring compatibility
+
+## ⚙️ Configuation
 
 - **Personal Access Token**: Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit). For more information, see the [Personal Access Token (PAT)](#-personal-access-token-pat) section.
 - **Debug**: Enable debug mode.
