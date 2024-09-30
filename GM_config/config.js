@@ -21,7 +21,7 @@ class GM_config extends EventTarget {
      * The version of the GM_config library
      */
     static get version() {
-        return "1.0.0";
+        return "1.0.1";
     }
     /**
      * Built-in processors for user input
