@@ -16,6 +16,7 @@
 - **Release Histogram**: Show a histogram of download counts for each release asset.
     - Does not show up if there is only zero or one release asset.
     - Does not show up if none of the release assets have been downloaded.
+- **Tracking Prevention**: Prevents some tracking by GitHub.
 
 ## 🖼️ Showcase
 
@@ -46,6 +47,10 @@ Example setup for personal access token:
 - Search GitHub and we can find [the repo for `include-fragment`](https://github.com/github/include-fragment-element/) with documentation. We can learn from the documentation that a `include-fragment` element will dispatch a `include-fragment-replace` event, just after the content has been fetched and parsed, and before it's inserted into the DOM. Better still, it comes with a handy `detail.fragment` property of type [`DocumentFragment`](https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment), which is the parsed content.
 - So, for each `include-fragment` element, we listen for the `include-fragment-replace` event and then process the `detail.fragment` to add our additional information (`onFragmentReplace`).
 - In order to query additional information for a given release, we simply call the ["Get a release by tag name" API](https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#get-a-release-by-tag-name). We can then extract the information we need and add it to the `DocumentFragment`.
+
+### `Tracking Prevention` Feature
+
+By investigating source code (thanks for the source mapping) and setting breakpoints, we can find out that GitHub initializes tracking endpoints from certain `<meta>` tags. By removing these tags, we can prevent some tracking. More details can be found in the source code.
 
 ## 🤔 Known Issues
 

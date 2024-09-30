@@ -16,6 +16,7 @@
 - **Release Histogram**: 显示每个 Release 文件的下载次数直方图。
     - 如果只有零个或一个 Release 文件，则不会显示。
     - 如果没有任何 Release 文件被下载，则不会显示。
+- **Tracking Prevention**: 阻止 GitHub 的一些跟踪。
 
 ## 🖼️ 效果展示
 
@@ -46,6 +47,10 @@ GitHub 上 [一个 Release](https://github.com/microsoft/terminal/releases/tag/v
 - 搜索 GitHub，我们可以找到 [`include-fragment` 的仓库](https://github.com/github/include-fragment-element/)，其中包含文档。我们可以从文档中了解到，`include-fragment` 元素将在内容被获取并解析后、插入到 DOM 之前派发一个 `include-fragment-replace` 事件。更好的是，它带有一个方便的类型为 [`DocumentFragment`](https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment) 的属性 `detail.fragment`，亦即解析后的内容。
 - 因此，对于每个 `include-fragment` 元素，我们监听 `include-fragment-replace` 事件，然后处理 `detail.fragment` 以添加我们的额外信息（`onFragmentReplace`）。
 - 为了查询给定 Release 的额外信息，我们只需调用 ["Get a release by tag name" API](https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#get-a-release-by-tag-name)。然后，我们可以提取我们需要的信息并将其添加到 `DocumentFragment` 中。
+
+### `Tracking Prevention` 功能
+
+通过调查源代码（感谢源代码映射）并设置断点，我们可以发现 GitHub 从某些 `<meta>` 标签初始化跟踪端点。通过移除这些标签，我们可以阻止一些跟踪。更多细节可以在源代码中找到。
 
 ## 🤔 已知问题
 

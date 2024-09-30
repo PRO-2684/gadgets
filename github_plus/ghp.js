@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -47,6 +47,7 @@
         reset: -1
     };
 
+    // Configuration
     const configDesc = {
         $default: {
             autoClose: false
@@ -78,9 +79,18 @@
             title: "Show a histogram of download counts for each release asset",
             type: "bool",
         },
+        trackingPrevention: {
+            name: "Tracking Prevention",
+            title: "Prevent some tracking by GitHub",
+            type: "bool",
+            value: true,
+        }
     };
     const config = new GM_config(configDesc);
 
+    // General functions
+    const $ = document.querySelector.bind(document);
+    const $$ = document.querySelectorAll.bind(document);
     /**
      * Log the given arguments if debug mode is enabled.
      * @param {...any} args The arguments to log.
@@ -124,6 +134,8 @@
         }
         return r;
     }
+
+    // Release-* features
     /**
      * Get the release data for the given owner, repo and version.
      * @param {string} owner The owner of the repository.
@@ -247,7 +259,8 @@
      * Find all release entries and setup listeners to show the download count.
      */
     function setupListeners() {
-        if (!config.get("releaseDownloads") && !config.get("releaseUploader")) return; // No need to run
+        log("Calling setupListeners");
+        if (!config.get("releaseDownloads") && !config.get("releaseUploader") && !config.get("releaseHistogram")) return; // No need to run
         // IncludeFragmentElement: https://github.com/github/include-fragment-element/blob/main/src/include-fragment-element.ts
         const fragments = document.querySelectorAll('[data-hpc] details[data-view-component="true"] include-fragment');
         fragments.forEach(fragment => {
@@ -259,24 +272,53 @@
     document.addEventListener("turbo:load", setupListeners);
     // Other possible approaches and reasons against them:
     // - Use `MutationObserver` - Not efficient
+    // - Hook `CustomEvent` to make `include-fragment-replace` events bubble - Monkey-patching
     // - Patch `IncludeFragmentElement.prototype.fetch`, just like GitHub itself did at `https://github.githubassets.com/assets/app/assets/modules/github/include-fragment-element-hacks.ts`
     //   - Monkey-patching
     //   - If using regex to modify the response, it would be tedious to maintain
     //   - If using `DOMParser`, the same HTML would be parsed twice
     document.head.appendChild(document.createElement("style")).textContent = `
-        /* Making more room for the additional info */
-        @media (min-width: 1012px) {
+        @media (min-width: 1012px) { /* Making more room for the additional info */
             .ghp-release-asset .col-lg-9 {
                 width: 60%; /* Originally ~75% */
             }
         }
-        .nowrap {
+        .nowrap { /* Preventing text wrapping */
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            }
-        .ghp-release-asset {
+        }
+        .ghp-release-asset { /* Styling the histogram */
             background: linear-gradient(to right, var(--bgColor-accent-muted) var(--percent, 0%), transparent 0);
         }
     `;
+
+    // Tracking prevention
+    function preventTracking() {
+        log("Calling preventTracking");
+        // Prevents tracking data from being sent to `https://collector.github.com/github/collect`
+        // https://github.githubassets.com/assets/ui/packages/hydro-analytics/hydro-analytics.ts
+        $("meta[name=visitor-payload]")?.remove(); // const visitorMeta = document.querySelector<HTMLMetaElement>('meta[name=visitor-payload]')
+        // https://github.githubassets.com/assets/node_modules/@github/hydro-analytics-client/dist/meta-helpers.js
+        // Breakpoint on function `getOptionsFromMeta` to see the argument `prefix`, which is `octolytics`
+        // Or investigate `hydro-analytics.ts` mentioned above, you may find: `const options = getOptionsFromMeta('octolytics')`
+        // Later, this script gathers information from `meta[name^="${prefix}-"]` elements, so we can remove them.
+        $$("meta[name^=octolytics-]").forEach(meta => meta.remove());
+        // If `collectorUrl` is not set, the script will throw an error, thus preventing tracking.
+
+        // Prevents tracking data from being sent to `https://api.github.com/_private/browser/stats`
+        // From "Network" tab, we can find that this request is sent by `https://github.githubassets.com/assets/ui/packages/stats/stats.ts` at function `safeSend`, who accepts two arguments: `url` and `data`
+        // Search for this function in the current script, and you will find that it is only called once by function `flushStats`
+        // `url` parameter is set in this function, by: `const url = ssrSafeDocument?.head?.querySelector<HTMLMetaElement>('meta[name="browser-stats-url"]')?.content`
+        // So, we can remove this meta tag to prevent tracking.
+        $("meta[name=browser-stats-url]")?.remove();
+        // After removing the meta tag, the script will return
+    }
+    if (config.get("trackingPrevention")) {
+        // document.addEventListener("DOMContentLoaded", preventTracking);
+        // All we need to remove is in the `head` element, so we can run it immediately.
+        preventTracking();
+    }
+
+    log("GitHub Plus has been loaded.");
 })();
