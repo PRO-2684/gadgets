@@ -280,7 +280,7 @@ config.addEventListener("get", (e) => {
 // ==UserScript==
 // @name         Test Config
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  This is an example to demostrate the usage of greasyfork.org/scripts/470224.
 // @author       PRO
 // @match        https://greasyfork.org/*
@@ -290,13 +290,37 @@ config.addEventListener("get", (e) => {
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1448594/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1456701/Tampermonkey%20Config.js
 // @license      gpl-3.0
 // ==/UserScript==
 
 (function() {
     'use strict';
     const configDesc = { // Config description
+        $default: {
+            autoClose: false
+        },
+        anyString: {
+            name: "Any String",
+            type: "str"
+        },
+        anyBoolean: {
+            name: "Any boolean",
+            type: "bool"
+        },
+        anyInteger:{
+            name: "Any integer",
+            type: "int"
+        },
+        anyFloat: {
+            name: "Any float",
+            type: "float"
+        },
+        someAction: {
+            name: "Some action",
+            title: "Click me!",
+            type: "action"
+        },
         password: {
             name: "Password", // Display name
             value: "tmp", // Default value
@@ -310,10 +334,12 @@ config.addEventListener("get", (e) => {
                 if (v.length < 3) throw "Too short!";
                 return v;
             }
+            //
         },
         enabled: {
             name: "Enabled",
             value: true,
+            // The following can be replaced by `type: "bool"`
             input: "current",
             processor: "not", // Process user inputs, throw error if invalid
             // Built-in processors:
@@ -333,12 +359,20 @@ config.addEventListener("get", (e) => {
             //     (name, value) => string
         },
         val: {
-            name: "Float",
+            name: "Positive float",
             value: 11.4,
             processor: "float_range-0-" // Convert to float in range [0, +∞)
         }
     }
     const config = new GM_config(configDesc, { immediate: false, debug: true }); // Register menu commands
+    function someAction() {
+        console.log("Action is invoked!");
+    }
+    config.addEventListener("get", (e) => { // Listen to `get` events for `someAction`
+        if (e.detail.prop === "someAction") {
+            someAction();
+        }
+    });
     config.addEventListener("set", (e) => { // Listen to config changes
         console.log(e.detail);
     });
