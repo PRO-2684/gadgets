@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -16,7 +16,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1449525/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1456932/Tampermonkey%20Config.js
 // ==/UserScript==
 
 (function() {
@@ -49,33 +49,35 @@
 
     const configDesc = {
         $default: {
-            value: true,
-            input: "current",
-            processor: "not",
-            formatter: "boolean",
             autoClose: false
         },
         token: {
             name: "Personal Access Token",
             title: "Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit)",
-            value: "",
-            input: "prompt",
-            processor: "same",
-            formatter: "normal"
+            type: "str",
         },
         debug: {
             name: "Debug",
             title: "Enable debug mode",
-            value: false
-        },
-        releaseDownloads: {
-            name: "Release Downloads",
-            title: "Show how many times a release asset has been downloaded"
+            type: "bool",
         },
         releaseUploader: {
             name: "Release Uploader",
-            title: "Show who uploaded a release asset"
-        }
+            title: "Show who uploaded a release asset",
+            type: "bool",
+            value: true,
+        },
+        releaseDownloads: {
+            name: "Release Downloads",
+            title: "Show how many times a release asset has been downloaded",
+            type: "bool",
+            value: true,
+        },
+        releaseHistogram: {
+            name: "Release Histogram",
+            title: "Show a histogram of download counts for each release asset",
+            type: "bool",
+        },
     };
     const config = new GM_config(configDesc);
 
@@ -180,6 +182,15 @@
         return downloadCount;
     }
     /**
+     * Show a histogram of the download counts for the given release entry.
+     * @param {HTMLElement} asset One of the release assets.
+     * @param {number} value The download count of the asset.
+     * @param {number} max The maximum download count of all assets.
+     */
+    function showHistogram(asset, value, max) {
+        asset.style.setProperty("--percent", `${value / max * 100}%`);
+    }
+    /**
      * Adding additional info (download count) to the release entries under the given element.
      * @param {HTMLElement} el The element to search for release entries.
      * @param {Object} info Additional information about the release (owner, repo, version).
@@ -187,15 +198,18 @@
      * @param {string} info.repo The repository name.
      * @param {string} info.version The version of the release.
      */
-    function addAdditionalInfoToRelease(el, info) {
+    async function addAdditionalInfoToRelease(el, info) {
         const entries = el.querySelectorAll("ul > li");
-        entries.forEach(async entry => {
-            const icon = entry.children[0].querySelector("svg.octicon-package");
-            if (!icon) return; // Not a release entry
-            const downloadLink = entry.children[0].querySelector("a")?.href;
-            const statistics = entry.children[1];
-            const assetInfo = (await getReleaseData(info.owner, info.repo, info.version))?.[downloadLink];
+        const assets = Array.from(entries).filter(asset => asset.querySelector("svg.octicon-package"));
+        const releaseData = await getReleaseData(info.owner, info.repo, info.version);
+        if (!releaseData) return;
+        const maxDownloads = Math.max(0, ...Object.values(releaseData).map(asset => asset.downloads));
+        assets.forEach(asset => {
+            const downloadLink = asset.children[0].querySelector("a")?.href;
+            const statistics = asset.children[1];
+            const assetInfo = releaseData[downloadLink];
             if (!assetInfo) return;
+            asset.classList.add("ghp-release-asset");
             const size = statistics.querySelector("span.flex-auto");
             size.classList.remove("flex-auto");
             size.classList.add("flex-shrink-0", "flex-grow-0");
@@ -206,6 +220,9 @@
             if (config.get("releaseUploader")) {
                 const uploaderLink = createUploaderLink(assetInfo.uploader);
                 statistics.prepend(uploaderLink);
+            }
+            if (config.get("releaseHistogram") && maxDownloads > 0 && assets.length > 1) {
+                showHistogram(asset, assetInfo.downloads, maxDownloads);
             }
         });
     }
@@ -246,11 +263,10 @@
     //   - Monkey-patching
     //   - If using regex to modify the response, it would be tedious to maintain
     //   - If using `DOMParser`, the same HTML would be parsed twice
-    if (!config.get("releaseDownloads") && !config.get("releaseUploader")) return; // No need to run
     document.head.appendChild(document.createElement("style")).textContent = `
         /* Making more room for the additional info */
         @media (min-width: 1012px) {
-            .col-lg-9 {
+            .ghp-release-asset .col-lg-9 {
                 width: 60%; /* Originally ~75% */
             }
         }
@@ -258,6 +274,9 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            }
+        .ghp-release-asset {
+            background: linear-gradient(to right, var(--bgColor-accent-muted) var(--percent, 0%), transparent 0);
         }
     `;
 })();
