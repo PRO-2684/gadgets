@@ -120,8 +120,7 @@ static #builtin_types = {
     },
     action: { // 动作
         value: null,
-        input: () => null, // 使用你的函数覆盖此值，记得返回 `null`
-        processor: "same",
+        input: (prop, orig) => {...}, // 使用 `config.addEventListener` 监听此属性的 `get` 事件来实现回调
         formatter: (name) => name,
         autoClose: true,
     }

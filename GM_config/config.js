@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -68,9 +68,33 @@ class GM_config extends EventTarget {
         boolean: (name, value) => `${name}: ${value ? "✔" : "✘"}`,
     };
     /**
+     * The proxied config object, to be initialized in the constructor
+     */
+    proxy = {};
+    /**
+     * Whether to show debug information
+     * @type {boolean}
+     */
+    debug = false;
+    /**
+     * The config description object, to be initialized in the constructor
+     */
+    #desc = {};
+    /**
+     * The built-in input functions
+     * @type {Object<string, Function>}
+     */
+    #builtin_inputs = {
+        current: (prop, orig) => orig,
+        prompt: (prop, orig) => {
+            const s = prompt(`🤔 New value for ${this.#desc[prop].name}:`, orig);
+            return s === null ? orig : s;
+        },
+    };
+    /**
      * The built-in types
      */
-    static #builtin_types = {
+    #builtin_types = {
         str: { // String
             value: "",
             input: "prompt",
@@ -97,34 +121,13 @@ class GM_config extends EventTarget {
         },
         action: { // Action
             value: null,
-            input: () => null, // Override this to set custom action, remember to return `null`
+            input: (prop, orig) => {
+                this.#dispatch(false, { prop, before: orig, after: orig, remote: false });
+                return orig;
+            },
             processor: "same",
             formatter: (name) => name,
             autoClose: true,
-        }
-    };
-    /**
-     * The proxied config object, to be initialized in the constructor
-     */
-    proxy = {};
-    /**
-     * Whether to show debug information
-     * @type {boolean}
-     */
-    debug = false;
-    /**
-     * The config description object, to be initialized in the constructor
-     */
-    #desc = {};
-    /**
-     * The built-in input functions
-     * @type {Object<string, Function>}
-     */
-    #builtin_inputs = {
-        current: (prop, orig) => orig,
-        prompt: (prop, orig) => {
-            const s = prompt(`🤔 New value for ${this.#desc[prop].name}:`, orig);
-            return s === null ? orig : s;
         },
     };
     /**
@@ -158,7 +161,7 @@ class GM_config extends EventTarget {
         }
         // Complete desc & setup value change listeners
         for (const key in this.#desc) {
-            this.#desc[key] = Object.assign({}, $default, GM_config.#builtin_types[this.#desc[key].type] ?? {}, this.#desc[key]);
+            this.#desc[key] = Object.assign({}, $default, this.#builtin_types[this.#desc[key].type] ?? {}, this.#desc[key]);
             GM_addValueChangeListener(key, onValueChange.bind(this));
         }
         // Proxied config

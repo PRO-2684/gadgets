@@ -121,7 +121,7 @@ static #builtin_types = {
     },
     action: { // Action
         value: null,
-        input: () => null, // Override this to set custom action, remember to return `null`
+        input: (prop, orig) => {...}, // Listen for this attribute's `get` events using `config.addEventListener` to setup callback
         processor: "same",
         formatter: (name) => name,
         autoClose: true,
