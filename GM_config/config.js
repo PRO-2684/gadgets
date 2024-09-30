@@ -68,6 +68,42 @@ class GM_config extends EventTarget {
         boolean: (name, value) => `${name}: ${value ? "✔" : "✘"}`,
     };
     /**
+     * The built-in types
+     */
+    static #builtin_types = {
+        str: { // String
+            value: "",
+            input: "prompt",
+            processor: "same",
+            formatter: "normal",
+        },
+        bool: { // Boolean
+            value: false,
+            input: "current",
+            processor: "not",
+            formatter: "boolean",
+        },
+        int: { // Integer
+            value: 0,
+            input: "prompt",
+            processor: "int",
+            formatter: "normal",
+        },
+        float: { // Float
+            value: 0.0,
+            input: "prompt",
+            processor: "float",
+            formatter: "normal",
+        },
+        action: { // Action
+            value: null,
+            input: () => null, // Override this to set custom action, remember to return `null`
+            processor: "same",
+            formatter: (name) => name,
+            autoClose: true,
+        }
+    };
+    /**
      * The proxied config object, to be initialized in the constructor
      */
     proxy = {};
@@ -122,7 +158,7 @@ class GM_config extends EventTarget {
         }
         // Complete desc & setup value change listeners
         for (const key in this.#desc) {
-            this.#desc[key] = Object.assign({}, $default, this.#desc[key]);
+            this.#desc[key] = Object.assign({}, $default, GM_config.#builtin_types[this.#desc[key].type] ?? {}, this.#desc[key]);
             GM_addValueChangeListener(key, onValueChange.bind(this));
         }
         // Proxied config

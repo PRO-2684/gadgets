@@ -50,7 +50,8 @@ The first step is to define your config description, which is a dictionary and e
 By using `$default`, you can easily create a lot of config items of the same type. If `$default` is not specified in config description, following values will be used to fill unspecified fields in a config item:
 
 ```javascript
-{
+{ // Priority: Lowest
+    type: "string",
     input: "prompt",
     processor: "same",
     formatter: "normal"
@@ -61,7 +62,7 @@ If you'd like to modify the default value, you may provide `$default` in your co
 
 ```javascript
 const configDesc = {
-    "$default": {
+    "$default": { // Priority: Low
         value: true,
         input: "current",
         processor: "not",
@@ -72,7 +73,74 @@ const configDesc = {
     },
     switch_false: {
         name: "Switch false",
-        value: false
+        value: false // Priority: Highest
+    }
+}
+```
+
+Usually, however, the following `prop.type` is the best choice to quickly set up similar config items, and `$default` is solely used for setting `autoClose` to `false`:
+
+```javascript
+const configDesc = {
+    "$default": {
+        autoClose: false
+    },
+    // ...
+}
+```
+
+#### `prop.type`
+
+The type of the config item, used for quickly setting up common properties. Currently supported types are:
+
+```javascript
+static #builtin_types = {
+    str: { // String
+        value: "",
+        input: "prompt",
+        processor: "same",
+        formatter: "normal",
+    },
+    bool: { // Boolean
+        value: false,
+        input: "current",
+        processor: "not",
+        formatter: "boolean",
+    },
+    int: { // Integer
+        value: 0,
+        input: "prompt",
+        processor: "int",
+        formatter: "normal",
+    },
+    float: { // Float
+        value: 0.0,
+        input: "prompt",
+        processor: "float",
+        formatter: "normal",
+    },
+    action: { // Action
+        value: null,
+        input: () => null, // Override this to set custom action, remember to return `null`
+        processor: "same",
+        formatter: (name) => name,
+        autoClose: true,
+    }
+};
+```
+
+You may use it like this:
+
+```javascript
+const configDesc = {
+    switch_true: {
+        name: "Switch true",
+        type: "bool" // Priority: High
+    },
+    switch_false: {
+        name: "Switch false",
+        type: "bool", // Priority: High
+        value: false // Priority: Highest
     }
 }
 ```
@@ -126,54 +194,18 @@ Built-in formatters:
 - `normal`: Display in the format of `name: value`
 - `boolean`: Display method aimed for boolean values. `true` will be displayed as `name: ✔`, `false` will be displayed as `name: ✘`.
 
-#### Frequently used combinations
-
-```javascript
-const configDesc = {
-    // Switch
-    enabled: {
-        name: "Enabled",
-        value: true,
-        input: "current",
-        processor: "not",
-        formatter: "boolean"
-    },
-    // Integer
-    value: {
-        name: "Value",
-        value: -10,
-        processor: "int"
-        // Omitted default values: input="prompt", formatter="normal"
-    },
-    // Natural number
-    price: {
-        name: "Price",
-        value: 114,
-        processor: "int_range-1-",
-    },
-    // Float and positive number is basically the same as above. Use `float` and `float_range-0-`
-    // String
-    name: {
-        name: "Name",
-        value: "Crazy Thur."
-        // Omitted default values: input="prompt", processor="same", formatter="normal"
-    },
-    // Just invokes a function when clicked
-    action: {
-        name: "Some action",
-        value: "",
-        input: () => {
-            // Do something
-            return "";
-        },
-        formatter: (name) => name
-    },
-}
-```
-
 #### Other Tampermonkey provided properties
 
 Supports `prop.accessKey`, `prop.autoClose`, `prop.title` (Require TM >=4.20.0). See [Tampermonkey docs](https://www.tampermonkey.net/documentation.php#api:GM_registerMenuCommand) for details.
+
+#### Priorities
+
+The priority of the properties is as follows (from highest to lowest):
+
+1. The properties you explicitly set for each config item
+2. The properties implied by the `type` of the config item
+3. The properties you set for `$default`
+4. The default values for `$default`
 
 ### Register menu
 

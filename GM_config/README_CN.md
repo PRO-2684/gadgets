@@ -50,7 +50,7 @@ console.log(GM_config.version); // *输出版本*
 通过使用 `$default`，你可以方便地创建大量相同类型的配置项。若未在配置描述中提供 `$default`，则会对配置项中未指定的属性使用如下值：
 
 ```javascript
-{
+{ // 优先级：最低
     input: "prompt",
     processor: "same",
     formatter: "normal"
@@ -61,7 +61,7 @@ console.log(GM_config.version); // *输出版本*
 
 ```javascript
 const configDesc = {
-    "$default": {
+    "$default": { // 优先级：低
         value: true,
         input: "current",
         processor: "not",
@@ -72,7 +72,74 @@ const configDesc = {
     },
     switch_false: {
         name: "Switch false",
-        value: false
+        value: false // 优先级：最高
+    }
+}
+```
+
+但是，通常来说，后续提到的 `prop.type` 才是用于创建相似配置项的最佳选择，而 `$default` 只被用于将 `autoClose` 设置为 `false`：
+
+```javascript
+const configDesc = {
+    "$default": {
+        autoClose: false
+    },
+    // ...
+}
+```
+
+#### `prop.type`
+
+配置项的类型，用于快速设置常见的属性集。当前支持的类型有：
+
+```javascript
+static #builtin_types = {
+    str: { // 字符串
+        value: "",
+        input: "prompt",
+        processor: "same",
+        formatter: "normal",
+    },
+    bool: { // 布尔值
+        value: false,
+        input: "current",
+        processor: "not",
+        formatter: "boolean",
+    },
+    int: { // 整数
+        value: 0,
+        input: "prompt",
+        processor: "int",
+        formatter: "normal",
+    },
+    float: { // 浮点数
+        value: 0.0,
+        input: "prompt",
+        processor: "float",
+        formatter: "normal",
+    },
+    action: { // 动作
+        value: null,
+        input: () => null, // 使用你的函数覆盖此值，记得返回 `null`
+        processor: "same",
+        formatter: (name) => name,
+        autoClose: true,
+    }
+};
+```
+
+你可以像这样使用它们：
+
+```javascript
+const configDesc = {
+    switch_true: {
+        name: "Switch true",
+        type: "bool" // 优先级：高
+    },
+    switch_false: {
+        name: "Switch false",
+        type: "bool", // 优先级：高
+        value: false // 优先级：最高
     }
 }
 ```
@@ -126,55 +193,18 @@ const configDesc = {
 - `normal`：`name: value` 的形式
 - `boolean`：针对布尔值的展现方式。`true` 显示为 `name: ✔`，`false` 显示为 `name: ✘`
 
-#### 常用组合
-
-```javascript
-const configDesc = {
-    // 开关
-    enabled: {
-        name: "Enabled",
-        value: true,
-        input: "current",
-        processor: "not",
-        formatter: "boolean"
-    },
-    // 整数
-    value: {
-        name: "Value",
-        value: -10,
-        processor: "int"
-        input: "prompt",
-        formatter: "normal"
-    },
-    // 自然数
-    price: {
-        name: "Price",
-        value: 114,
-        processor: "int_range-1-",
-    },
-    // 浮点数以及正数基本一致，分别为 `float` 和 `float_range-0-`
-    // 字符串
-    name: {
-        name: "Name",
-        value: "Crazy Thur."
-        // 省略的默认值：input="prompt", processor="same", formatter="normal"
-    },
-    // 点击时仅调用一个函数
-    action: {
-        name: "Some action",
-        value: "",
-        input: () => {
-            // Do something
-            return "";
-        },
-        formatter: (name) => name
-    },
-}
-```
-
 #### 其它 Tampermonkey 提供的属性
 
 支持 `prop.accessKey`, `prop.autoClose`, `prop.title` (要求 TM >=4.20.0)。详细信息请参考 [Tampermonkey 文档](https://www.tampermonkey.net/documentation.php#api:GM_registerMenuCommand)。
+
+#### 优先级
+
+属性的优先级如下（从高到低）：
+
+1. 你为配置项明确设置的属性
+2. `type` 隐含的属性
+3. 你为 `$default` 设置的属性
+4. `$default` 的默认值
 
 ### 注册配置菜单
 
