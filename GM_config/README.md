@@ -197,7 +197,7 @@ Built-in formatters:
 
 #### Other Tampermonkey provided properties
 
-Supports `prop.accessKey`, `prop.autoClose`, `prop.title` (Require TM >=4.20.0). See [Tampermonkey docs](https://www.tampermonkey.net/documentation.php#api:GM_registerMenuCommand) for details.
+Supports `prop.accessKey`, `prop.autoClose`, `prop.title` (Require TM >=4.20.0). If a function is provided, it will be called with argument `prop`, `name` and `value`, and the returned string will be passed to Tampermonkey. See [Tampermonkey docs](https://www.tampermonkey.net/documentation.php#api:GM_registerMenuCommand) for details.
 
 #### Priorities
 
@@ -341,6 +341,7 @@ Install below code as a script, and see how does it work:
         },
         enabled: {
             name: "Enabled",
+            title: (prop, name, value) => value ? "Disable some feature" : "Enable some feature",
             value: true,
             // The following can be replaced by `type: "bool"`
             input: "current",

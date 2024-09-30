@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.0.2
+// @version      1.0.3
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -21,7 +21,7 @@ class GM_config extends EventTarget {
      * The version of the GM_config library
      */
     static get version() {
-        return "1.0.2";
+        return "1.0.3";
     }
     /**
      * Built-in processors for user input
@@ -207,6 +207,14 @@ class GM_config extends EventTarget {
         this.debug = options?.debug ?? this.debug;
     }
     /**
+     * If given a function, calls it with following arguments; otherwise, returns the given value
+     * @param {Function|any} value The value or function to be called
+     * @param  {...any} args The arguments to be passed to the function
+     */
+    static #call(value, ...args) {
+        return typeof value === "function" ? value(...args) : value;
+    }
+    /**
      * Get the value of a property
      * @param {string} prop The property name
      * @returns {any} The value of the property
@@ -294,16 +302,14 @@ class GM_config extends EventTarget {
      * @param {string} prop The property
      */
     #register_item(prop) {
-        const name = this.#desc[prop].name;
+        const { name, input, formatter, accessKey, autoClose, title } = this.#desc[prop];
         const orig = this.#get(prop);
-        const input = this.#desc[prop].input;
         const input_func = typeof input === "function" ? input : this.#builtin_inputs[input];
-        const formatter = this.#desc[prop].formatter;
         const formatter_func = typeof formatter === "function" ? formatter : GM_config.#builtin_formatters[formatter];
         const option = {
-            accessKey: this.#desc[prop].accessKey,
-            autoClose: this.#desc[prop].autoClose,
-            title: this.#desc[prop].title,
+            accessKey: GM_config.#call(accessKey, prop, name, orig),
+            autoClose: GM_config.#call(autoClose, prop, name, orig),
+            title: GM_config.#call(title, prop, name, orig),
             id: this.#registered[prop],
         };
         const id = GM_registerMenuCommand(formatter_func(name, orig), () => {
