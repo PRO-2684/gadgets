@@ -17,23 +17,35 @@
     - Does not show up if there is only zero or one release asset.
     - Does not show up if none of the release assets have been downloaded.
 
-## 🖼️ Screenshots
+## 🖼️ Showcase
 
 Example "Assets" section of [a release](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0) on GitHub, with `Release Downloads`, `Release Uploader` and `Release Histogram` enabled:
 
 ![](./assets.jpg)
 
-Example setup for personal access token:
-
-![](./token.jpeg)
-
 ## 🔑 Personal Access Token (PAT)
 
 - Without a PAT, only $60$ requests per hour are allowed; with a PAT, $5000$ requests per hour are allowed, which suffices for most users.
 - Find out how to create a fine-grained personal access token [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token).
-- Simply select `Public Repositories (read-only)` under `Repository access` tab, which is the default setup. An example image will be shown on the [Screenshots](#-screenshots) section.
+- Simply select `Public Repositories (read-only)` under `Repository access` tab, which is the default setup. An example image is shown below for reference.
 - Do note that this script won't be able to add additional information on private repositories.
 - Remember to *generate a new token when it expires*.
+
+Example setup for personal access token:
+
+![](./token.jpeg)
+
+## 💡 Mechanism
+
+> For more detailed information, please refer to the source code. It is (hopefully) well-commented and contains other explanations and insights that may not be covered here.
+
+### `Release *` Features
+
+- First, we need to listen for `DOMContentLoaded` and `turbo:load` events to know when DOM is ready or there has been a content change. In both cases, we need to re-check the page (`setupListeners`).
+- Then, we should find all release-related `include-fragment` elements. By using devtools, we learn that they will be dynamically replaced with the actual content, so it's vital to investigate them.
+- Search GitHub and we can find [the repo for `include-fragment`](https://github.com/github/include-fragment-element/) with documentation. We can learn from the documentation that a `include-fragment` element will dispatch a `include-fragment-replace` event, just after the content has been fetched and parsed, and before it's inserted into the DOM. Better still, it comes with a handy `detail.fragment` property of type [`DocumentFragment`](https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment), which is the parsed content.
+- So, for each `include-fragment` element, we listen for the `include-fragment-replace` event and then process the `detail.fragment` to add our additional information (`onFragmentReplace`).
+- In order to query additional information for a given release, we simply call the ["Get a release by tag name" API](https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#get-a-release-by-tag-name). We can then extract the information we need and add it to the `DocumentFragment`.
 
 ## 🤔 Known Issues
 
