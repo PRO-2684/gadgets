@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.1.5
+// @version      0.1.6
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -317,10 +317,10 @@
             // After removing the meta tag, the script will return, so we can remove this meta tag to prevent tracking.
             $("meta[name=browser-stats-url]")
         ];
+        elements.forEach(el => el?.remove());
         if (elements.some(el => el)) {
             GM_setValue("trackingPrevented", GM_getValue("trackingPrevented", 0) + 1);
         }
-        elements.forEach(el => el?.remove());
     }
     if (config.get("trackingPrevention")) {
         // document.addEventListener("DOMContentLoaded", preventTracking);
