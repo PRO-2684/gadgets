@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.1.4
+// @version      0.1.5
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -300,24 +300,27 @@
     // Tracking prevention
     function preventTracking() {
         log("Calling preventTracking");
-        // Prevents tracking data from being sent to `https://collector.github.com/github/collect`
-        // https://github.githubassets.com/assets/ui/packages/hydro-analytics/hydro-analytics.ts
-        $("meta[name=visitor-payload]")?.remove(); // const visitorMeta = document.querySelector<HTMLMetaElement>('meta[name=visitor-payload]')
-        // https://github.githubassets.com/assets/node_modules/@github/hydro-analytics-client/dist/meta-helpers.js
-        // Breakpoint on function `getOptionsFromMeta` to see the argument `prefix`, which is `octolytics`
-        // Or investigate `hydro-analytics.ts` mentioned above, you may find: `const options = getOptionsFromMeta('octolytics')`
-        // Later, this script gathers information from `meta[name^="${prefix}-"]` elements, so we can remove them.
-        $$("meta[name^=octolytics-]").forEach(meta => meta.remove());
-        // If `collectorUrl` is not set, the script will throw an error, thus preventing tracking.
-
-        // Prevents tracking data from being sent to `https://api.github.com/_private/browser/stats`
-        // From "Network" tab, we can find that this request is sent by `https://github.githubassets.com/assets/ui/packages/stats/stats.ts` at function `safeSend`, who accepts two arguments: `url` and `data`
-        // Search for this function in the current script, and you will find that it is only called once by function `flushStats`
-        // `url` parameter is set in this function, by: `const url = ssrSafeDocument?.head?.querySelector<HTMLMetaElement>('meta[name="browser-stats-url"]')?.content`
-        // So, we can remove this meta tag to prevent tracking.
-        $("meta[name=browser-stats-url]")?.remove();
-        // After removing the meta tag, the script will return
-        GM_setValue("trackingPrevented", GM_getValue("trackingPrevented", 0) + 1);
+        const elements = [
+            // Prevents tracking data from being sent to https://collector.github.com/github/collect
+            // https://github.githubassets.com/assets/ui/packages/hydro-analytics/hydro-analytics.ts, `const visitorMeta = document.querySelector<HTMLMetaElement>('meta[name=visitor-payload]')`
+            $("meta[name=visitor-payload]"),
+            // https://github.githubassets.com/assets/node_modules/@github/hydro-analytics-client/dist/meta-helpers.js
+            // Breakpoint on function `getOptionsFromMeta` to see the argument `prefix`, which is `octolytics`
+            // Or investigate `hydro-analytics.ts` mentioned above, you may find: `const options = getOptionsFromMeta('octolytics')`
+            // Later, this script gathers information from `meta[name^="${prefix}-"]` elements, so we can remove them.
+            // If `collectorUrl` is not set, the script will throw an error, thus preventing tracking.
+            ...$$("meta[name^=octolytics-]"),
+            // Prevents tracking data from being sent to `https://api.github.com/_private/browser/stats`
+            // From "Network" tab, we can find that this request is sent by `https://github.githubassets.com/assets/ui/packages/stats/stats.ts` at function `safeSend`, who accepts two arguments: `url` and `data`
+            // Search for this function in the current script, and you will find that it is only called once by function `flushStats`
+            // `url` parameter is set in this function, by: `const url = ssrSafeDocument?.head?.querySelector<HTMLMetaElement>('meta[name="browser-stats-url"]')?.content`
+            // After removing the meta tag, the script will return, so we can remove this meta tag to prevent tracking.
+            $("meta[name=browser-stats-url]")
+        ];
+        if (elements.some(el => el)) {
+            GM_setValue("trackingPrevented", GM_getValue("trackingPrevented", 0) + 1);
+        }
+        elements.forEach(el => el?.remove());
     }
     if (config.get("trackingPrevention")) {
         // document.addEventListener("DOMContentLoaded", preventTracking);
