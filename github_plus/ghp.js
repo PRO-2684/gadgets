@@ -2,11 +2,12 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.1.3
+// @version      0.1.4
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
 // @match        https://github.com/*
+// @match        https://*.github.com/*
 // @run-at       document-start
 // @icon         http://github.com/favicon.ico
 // @license      gpl-3.0
@@ -21,6 +22,7 @@
 
 (function() {
     'use strict';
+    const { name, version } = GM_info.script;
     /**
      * The color used for logging. Matches the color of the GitHub.
      * @type {string}
@@ -81,7 +83,7 @@
         },
         trackingPrevention: {
             name: "Tracking Prevention",
-            title: "Prevent some tracking by GitHub",
+            title: () => { return `Prevent some tracking by GitHub (${name} has prevented tracking ${GM_getValue("trackingPrevented", 0)} time(s))`; },
             type: "bool",
             value: true,
         }
@@ -96,14 +98,14 @@
      * @param {...any} args The arguments to log.
      */
     function log(...args) {
-        if (config.get("debug")) console.log("%c[GitHub Plus]%c", `color:${themeColor};`, "color: unset;", ...args);
+        if (config.get("debug")) console.log(`%c[${name}]%c`, `color:${themeColor};`, "color: unset;", ...args);
     }
     /**
      * Warn the given arguments.
      * @param {...any} args The arguments to warn.
      */
     function warn(...args) {
-        console.warn("%c[GitHub Plus]%c", `color:${themeColor};`, "color: unset;", ...args);
+        console.warn(`%c[${name}]%c`, `color:${themeColor};`, "color: unset;", ...args);
     }
     /**
      * Fetch the given URL with the personal access token, if given. Also updates rate limit.
@@ -267,31 +269,33 @@
             fragment.addEventListener("include-fragment-replace", onFragmentReplace, { once: true });
         });
     }
-    document.addEventListener("DOMContentLoaded", setupListeners);
-    // Examine event listeners on `document`, and you can see the event listeners for the `turbo:*` events. (Remember to check `Framework Listeners`)
-    document.addEventListener("turbo:load", setupListeners);
-    // Other possible approaches and reasons against them:
-    // - Use `MutationObserver` - Not efficient
-    // - Hook `CustomEvent` to make `include-fragment-replace` events bubble - Monkey-patching
-    // - Patch `IncludeFragmentElement.prototype.fetch`, just like GitHub itself did at `https://github.githubassets.com/assets/app/assets/modules/github/include-fragment-element-hacks.ts`
-    //   - Monkey-patching
-    //   - If using regex to modify the response, it would be tedious to maintain
-    //   - If using `DOMParser`, the same HTML would be parsed twice
-    document.head.appendChild(document.createElement("style")).textContent = `
-        @media (min-width: 1012px) { /* Making more room for the additional info */
-            .ghp-release-asset .col-lg-9 {
-                width: 60%; /* Originally ~75% */
+    if (location.hostname === "github.com") { // Only run on GitHub main site
+        document.addEventListener("DOMContentLoaded", setupListeners);
+        // Examine event listeners on `document`, and you can see the event listeners for the `turbo:*` events. (Remember to check `Framework Listeners`)
+        document.addEventListener("turbo:load", setupListeners);
+        // Other possible approaches and reasons against them:
+        // - Use `MutationObserver` - Not efficient
+        // - Hook `CustomEvent` to make `include-fragment-replace` events bubble - Monkey-patching
+        // - Patch `IncludeFragmentElement.prototype.fetch`, just like GitHub itself did at `https://github.githubassets.com/assets/app/assets/modules/github/include-fragment-element-hacks.ts`
+        //   - Monkey-patching
+        //   - If using regex to modify the response, it would be tedious to maintain
+        //   - If using `DOMParser`, the same HTML would be parsed twice
+        document.head.appendChild(document.createElement("style")).textContent = `
+            @media (min-width: 1012px) { /* Making more room for the additional info */
+                .ghp-release-asset .col-lg-9 {
+                    width: 60%; /* Originally ~75% */
+                }
             }
-        }
-        .nowrap { /* Preventing text wrapping */
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .ghp-release-asset { /* Styling the histogram */
-            background: linear-gradient(to right, var(--bgColor-accent-muted) var(--percent, 0%), transparent 0);
-        }
-    `;
+            .nowrap { /* Preventing text wrapping */
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .ghp-release-asset { /* Styling the histogram */
+                background: linear-gradient(to right, var(--bgColor-accent-muted) var(--percent, 0%), transparent 0);
+            }
+        `;
+    }
 
     // Tracking prevention
     function preventTracking() {
@@ -313,6 +317,7 @@
         // So, we can remove this meta tag to prevent tracking.
         $("meta[name=browser-stats-url]")?.remove();
         // After removing the meta tag, the script will return
+        GM_setValue("trackingPrevented", GM_getValue("trackingPrevented", 0) + 1);
     }
     if (config.get("trackingPrevention")) {
         // document.addEventListener("DOMContentLoaded", preventTracking);
@@ -320,5 +325,5 @@
         preventTracking();
     }
 
-    log("GitHub Plus has been loaded.");
+    log(`${name} v${version} has been loaded 🎉`);
 })();
