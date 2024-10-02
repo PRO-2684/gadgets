@@ -12,6 +12,7 @@
 - `bb_batch_reconcile`: 批量核对 [Blackboard](https://www.blackboard.com/) 系统中的学生成绩。
 - `checkbox_patch`: 修补某个复选框的 `checked` 属性，使得当 `checked` 值被其他脚本修改时会发出 `change` 事件。
 - `CORS_helper`: 一个简单的、可自定义的脚本，帮助你绕过 CORS 限制。
+- `draggy`: 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 - `etag_server`: 简易的提供文件服务的 HTTP 服务器，但使用 `ETag` 而不是 `Last-Modified` 进行缓存。
 - `github_plus`: 为 GitHub 增加额外的功能。
 - `GM_config`: 简易的 Tampermonkey 脚本配置库。

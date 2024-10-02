@@ -12,6 +12,7 @@ Some code snippets that's hard to categorize. See READMEs under subfolders for d
 - `bb_batch_reconcile`: Batch reconcile student grades in [Blackboard](https://www.blackboard.com/) system.
 - `checkbox_patch`: Patches the property `checked` of a certain checkbox, so that a `change` event will be issued when the `checked` value is modified by other scripts.
 - `CORS_helper`: A simple, customizable script that helps you to bypass CORS restrictions.
+- `draggy`: Drag a link to open in a new tab, drag a piece of text to search in a new tab.
 - `etag_server`： Simple HTTP server that serves files, but using `ETag` instead of `Last-Modified` for caching.
 - `github_plus`: Enhance GitHub with additional features.
 - `GM_config`: Simple config lib for Tampermonkey scripts.
