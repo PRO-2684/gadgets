@@ -12,8 +12,8 @@
 - **Personal Access Token**: GitHub API 的个人访问令牌，以 `github_pat_` 开头（用于提升速率限制）。详见 [个人访问令牌 (PAT)](#-个人访问令牌-pat) 部分。
 - **Debug**: 启用调试模式。
 - **Release Downloads**: 显示 Release 中文件的下载次数。
-- **Release Uploader**: 显示上传 Release 中文件的用户。
-- **Release Histogram**: 显示每个 Release 文件的下载次数直方图。
+- **Release Uploader**: 显示 Release 中文件的上传者。
+- **Release Histogram**: 显示 Release 中文件的下载次数直方图。
     - 如果只有零个或一个 Release 文件，则不会显示。
     - 如果没有任何 Release 文件被下载，则不会显示。
 - **Tracking Prevention**: 阻止 GitHub 的一些跟踪。
