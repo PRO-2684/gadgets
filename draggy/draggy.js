@@ -1,8 +1,10 @@
 // ==UserScript==
 // @name         Draggy
+// @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
+// @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 // @author       PRO-2684
 // @match        *://*/*
 // @run-at       document-start
@@ -35,6 +37,12 @@
             type: "string",
             value: "https://www.google.com/search?q={}",
         },
+        maxLength: {
+            name: "Maximum text length",
+            title: "Maximum length of the search term. If the length of the search term exceeds this value, it will be truncated. Set to 0 to disable this feature.",
+            type: "int_range-0-1000",
+            value: 100,
+        },
         maxTimeDelta: {
             name: "Maximum time delta",
             title: "Maximum time difference between esc/drop and dragend events to consider them as separate user gesture. Usually there's no need to change this value.",
@@ -64,8 +72,10 @@
      */
     function search(keyword) {
         const searchEngine = config.get("searchEngine");
-        const url = searchEngine.replace("{}", encodeURIComponent(keyword));
-        log(`Searching for "${keyword}" using "${url}"`);
+        const maxLength = config.get("maxLength");
+        const truncated = maxLength > 0 ? keyword.slice(0, maxLength) : keyword;
+        const url = searchEngine.replace("{}", encodeURIComponent(truncated));
+        log(`Searching for "${truncated}" using "${url}"`);
         window.open(url, "_blank");
     }
     document.addEventListener("drop", (e) => {
@@ -89,7 +99,11 @@
             return;
         }
         const link = e.target.closest("a[href]");
-        if (!link?.href) return;
+        const href = link?.getAttribute("href");
+        if (!href || href.startsWith("javascript:") || href === "#") {
+            log("Draggy can't find selected text or a valid link");
+            return;
+        }
         window.open(link.href, "_blank");
     }, { passive: false });
     log(`${version} initialized successfully 🎉`);
