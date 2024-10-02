@@ -19,3 +19,7 @@
 - **Minimum drag distance**: Minimum distance to trigger draggy.
 - **Maximum time delta**: Maximum time difference between esc/drop and dragend events to consider them as separate user gesture. *Usually there's no need to change this value.*
 - **Debug mode**: Enables debug mode.
+
+## 📃 Notes
+
+If you're using Microsoft Edge, you might find that "Super Drag Drop" is what you're looking for. In that case, enable the flag at `edge://flags/#edge-super-drag-drop` and then enable the feature at `edge://settings/superDragDrop`.
