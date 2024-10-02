@@ -26,13 +26,16 @@ If you're using Microsoft Edge, you might find that "Super Drag Drop" is what yo
 
 | Feature | Draggy | Super Drag Drop |
 | --- | --- | --- |
-| Drag link | ✔️ | ✔️ |
-| Drag text | ✔️ | ✔️ |
-| Drag image | ❌ (coming soon) | ✔️ |
-| Open in background | ❌ | ✔️ |
-| Custom search engine | ✔️ | ✔️ (limited to Bing and default search engine) |
-| Maximum search term length | ✔️ | ❌ |
-| Minimum drag distance | ✔️ | ❌ |
-| Cancel drag | Move mouse back into the circle | Press Esc key |
-| Prompt | Circle overlay | Top toast |
-| Website block list | ✔️ (configure in Tampermonkey) | ✔️ |
+| Drag link | 🟢 | 🟢 |
+| Drag text | 🟢 | 🟢 |
+| Drag image | <span title="coming soon">🔴*</span> | 🟢 |
+| Open in background | <span title="browser's design makes this feature impossible">🔴*</span> | 🟢 |
+| Compatibility | 🟡 | 🟢 |
+| Custom search engine | 🟢 | <span title="limited to Bing and default search engine">🟡*</span> |
+| Maximum search term length | 🟢 | 🔴 |
+| Minimum drag distance | 🟢 | 🔴 |
+| Cancel drag | <span title="Move mouse back into the circle (browser's design makes cancelling with Esc impossible)">🟢*</span> | <span title="Press Esc key">🟢*</span> |
+| Prompt | <span title="Circle overlay">🟢*</span> | <span title="Top toast">🟢*</span> |
+| Website exclude list | <span title="configure in Tampermonkey">🟢*</span> | 🟢 |
+| Hackability | 🟢 | 🔴 |
+| Privacy | 🟢 | <span title="adds tracking parameters when searching">🔴*</span> |
