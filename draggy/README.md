@@ -22,4 +22,17 @@
 
 ## 📃 Notes
 
-If you're using Microsoft Edge, you might find that "Super Drag Drop" is what you're looking for. In that case, enable the flag at `edge://flags/#edge-super-drag-drop` and then enable the feature at `edge://settings/superDragDrop`.
+If you're using Microsoft Edge, you might find that "Super Drag Drop" is what you're looking for, which has its own pros and cons compared to Draggy. Below is a comparison table between the two, and if you prefer Super Drag Drop, enable the flag at `edge://flags/#edge-super-drag-drop`, then enable the feature at `edge://settings/superDragDrop`.
+
+| Feature | Draggy | Super Drag Drop |
+| --- | --- | --- |
+| Drag link | ✔️ | ✔️ |
+| Drag text | ✔️ | ✔️ |
+| Drag image | ❌ (coming soon) | ✔️ |
+| Open in background | ❌ | ✔️ |
+| Custom search engine | ✔️ | ✔️ (limited to Bing and default search engine) |
+| Maximum search term length | ✔️ | ❌ |
+| Minimum drag distance | ✔️ | ❌ |
+| Cancel drag | Move mouse back into the circle | Press Esc key |
+| Prompt | Circle overlay | Top toast |
+| Website block list | ✔️ (configure in Tampermonkey) | ✔️ |
