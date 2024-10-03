@@ -1,6 +1,6 @@
 ## 🪄 Features
 
-- Drag a link to open in a new tab
+- Drag a link or image to open in a new tab
 - Drag a piece of text to search in a new tab
 - Customizable search engine and maximum search term length
 - Customizable minimum drag distance
@@ -26,16 +26,15 @@ If you're using Microsoft Edge, you might find that "Super Drag Drop" is what yo
 
 | Feature | Draggy | Super Drag Drop |
 | --- | --- | --- |
-| Drag link | 🟢 | 🟢 |
-| Drag text | 🟢 | 🟢 |
-| Drag image | <span title="coming soon">🔴*</span> | 🟢 |
-| Open in background | <span title="browser's design makes this feature impossible">🔴*</span> | 🟢 |
+| Drag link, text and image | 🟢 | 🟢 |
+| Open in background | <span title="Browser's design makes this feature impossible">🔴*</span> | 🟢 |
 | Compatibility | 🟡 | 🟢 |
-| Custom search engine | 🟢 | <span title="limited to Bing and default search engine">🟡*</span> |
+| Custom search engine | 🟢 | <span title="Limited to Bing and default search engine">🟡*</span> |
 | Maximum search term length | 🟢 | 🔴 |
 | Minimum drag distance | 🟢 | 🔴 |
 | Cancel drag | <span title="Move mouse back into the circle (browser's design makes cancelling with Esc impossible)">🟢*</span> | <span title="Press Esc key">🟢*</span> |
 | Prompt | <span title="Circle overlay">🟢*</span> | <span title="Top toast">🟢*</span> |
-| Website exclude list | <span title="configure in Tampermonkey">🟢*</span> | 🟢 |
+| Website exclude list | <span title="Configure in Tampermonkey">🟢*</span> | 🟢 |
 | Hackability | 🟢 | 🔴 |
-| Privacy | 🟢 | <span title="adds tracking parameters when searching">🔴*</span> |
+| Privacy | 🟢 | <span title="Adds tracking parameters when searching">🔴*</span> |
+| Cross-browser | <span title="Expected to work on all modern browsers with Tampermonkey">🟢*</span> | <span title="Edge-exclusive">🔴*</span> |

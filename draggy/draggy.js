@@ -2,7 +2,7 @@
 // @name         Draggy
 // @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
 // @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 // @author       PRO-2684
@@ -82,7 +82,7 @@
     const circle = initOverlay();
     /**
      * Judging criteria for draggy.
-     * @type {{ selection: (e: DragEvent) => string|HTMLAnchorElement|null, handlers: (e: DragEvent) => boolean, dropEvent: (e: DragEvent) => boolean, }}
+     * @type {{ selection: (e: DragEvent) => string|HTMLAnchorElement|HTMLImageElement|null, handlers: (e: DragEvent) => boolean, dropEvent: (e: DragEvent) => boolean, }}
      */
     const judging = {
         selection: (e) => {
@@ -95,10 +95,14 @@
             }
             const link = e.target.closest("a[href]");
             const href = link?.getAttribute("href");
-            if (!href || href.startsWith("javascript:") || href === "#") {
-                return null;
+            if (href && !href.startsWith("javascript:") && href !== "#") {
+                return link;
             }
-            return link;
+            const img = e.target.closest("img[src]");
+            const src = img.src;
+            if (src) {
+                return img;
+            }
         },
         handlers: (e) => e.dataTransfer.dropEffect === "none" && e.dataTransfer.effectAllowed === "uninitialized" && !e.defaultPrevented,
         dropEvent: (e) => e.timeStamp - lastDrop > config.get("maxTimeDelta"),
@@ -250,6 +254,8 @@
         const data = judging.selection(e);
         if (data instanceof HTMLAnchorElement) {
             window.open(data.href, "_blank");
+        } else if (data instanceof HTMLImageElement) {
+            window.open(data.src, "_blank");
         } else if (typeof data === "string") {
             search(data);
         } else {
