@@ -2,14 +2,16 @@
 // @name         Draggy
 // @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.1.3
+// @version      0.1.4
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
 // @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
+// @tag          productivity
 // @author       PRO-2684
 // @match        *://*/*
 // @run-at       document-start
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @license      gpl-3.0
+// @grant        GM_openInTab
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_deleteValue
@@ -32,6 +34,18 @@
             input: (prop, orig) => (orig + 1) % 3,
             processor: "same",
             formatter: (prop, value) => configDesc.circleOverlay.name + ": " + ["Never", "Auto", "Always"][value],
+        },
+        openTabInBg: {
+            name: "Open tab in background",
+            title: "Whether to open new tabs in the background.",
+            type: "bool",
+            value: false,
+        },
+        openTabInsert: {
+            name: "Open tab insert",
+            title: "Whether to insert the new tab next to the current tab. If false, the new tab will be appended to the end.",
+            type: "bool",
+            value: true,
         },
         searchEngine: {
             name: "Search engine",
@@ -150,6 +164,13 @@
         return false
     }
     /**
+     * Opens the given URL in a new tab, respecting the user's preference.
+     * @param {string} url The URL to open.
+     */
+    function open(url) {
+        GM_openInTab(url, { active: !config.get("openTabInBg"), insert: config.get("openTabInsert") });
+    }
+    /**
      * Searches for the given keyword.
      * @param {string} keyword The keyword to search for.
      */
@@ -159,7 +180,7 @@
         const truncated = maxLength > 0 ? keyword.slice(0, maxLength) : keyword;
         const url = searchEngine.replace("{}", encodeURIComponent(truncated));
         log(`Searching for "${truncated}" using "${url}"`);
-        window.open(url, "_blank");
+        open(url);
     }
     /**
      * Updates the circle overlay size.
@@ -253,9 +274,9 @@
         e.preventDefault();
         const data = judging.selection(e);
         if (data instanceof HTMLAnchorElement) {
-            window.open(data.href, "_blank");
+            open(data.href);
         } else if (data instanceof HTMLImageElement) {
-            window.open(data.src, "_blank");
+            open(data.src);
         } else if (typeof data === "string") {
             search(data);
         } else {

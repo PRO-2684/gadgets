@@ -10,10 +10,12 @@
 
 ## ⚙️ Configuation
 
-- **Circle overlay**: When to show the circle overlay
+- **Circle overlay**: When to show the circle overlay。
     - Always: Always show the circle overlay when dragging is detected
     - Auto: Show the circle overlay only when the detected dragging is targeting text selection or links
     - Never: Never show the circle overlay
+- **Open tab in background**: Whether to open new tabs in the background。
+- **Open tab insert**: Whether to insert the new tab next to the current tab. If false, the new tab will be appended to the end.
 - **Search engine**: Search engine used when dragging text. Use `{}` as a placeholder for the URL-encoded query.
 - **Maximum text length**: Maximum length of the search term. If the length of the search term exceeds this value, it will be truncated. Set to 0 to disable this feature.
 - **Minimum drag distance**: Minimum distance to trigger draggy.
@@ -27,7 +29,8 @@ If you're using Microsoft Edge, you might find that "Super Drag Drop" is what yo
 | Feature | Draggy | Super Drag Drop |
 | --- | --- | --- |
 | Drag link, text and image | 🟢 | 🟢 |
-| Open in background | <span title="Browser's design makes this feature impossible">🔴*</span> | 🟢 |
+| Open tab in background | 🟢 | 🟢 |
+| Open tab insert | 🟢 | <span title="Opened tabs always get appended to the end">🔴*</span> |
 | Compatibility | 🟡 | 🟢 |
 | Custom search engine | 🟢 | <span title="Limited to Bing and default search engine">🟡*</span> |
 | Maximum search term length | 🟢 | 🔴 |
