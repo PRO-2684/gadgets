@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.1.6
+// @version      0.1.7
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -302,8 +302,6 @@
         log("Calling preventTracking");
         const elements = [
             // Prevents tracking data from being sent to https://collector.github.com/github/collect
-            // https://github.githubassets.com/assets/ui/packages/hydro-analytics/hydro-analytics.ts, `const visitorMeta = document.querySelector<HTMLMetaElement>('meta[name=visitor-payload]')`
-            $("meta[name=visitor-payload]"),
             // https://github.githubassets.com/assets/node_modules/@github/hydro-analytics-client/dist/meta-helpers.js
             // Breakpoint on function `getOptionsFromMeta` to see the argument `prefix`, which is `octolytics`
             // Or investigate `hydro-analytics.ts` mentioned above, you may find: `const options = getOptionsFromMeta('octolytics')`

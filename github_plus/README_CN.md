@@ -50,7 +50,7 @@ GitHub 上 [一个 Release](https://github.com/microsoft/terminal/releases/tag/v
 
 ### `Tracking Prevention` 功能
 
-通过调查源代码（感谢源代码映射）并设置断点，我们可以发现 GitHub 从某些 `<meta>` 标签初始化跟踪端点。通过移除这些标签，我们可以阻止一些跟踪。更多细节可以在源代码中找到。
+通过调查源代码（感谢源代码映射）并设置断点，我们可以发现 GitHub 从某些 `<meta>` 标签初始化跟踪端点。通过移除这些标签，我们可以阻止一些跟踪。更多细节可以参阅源代码，或阅读 [这篇帖子](https://www.52pojie.cn/forum.php?mod=viewthread&tid=1969514)。
 
 ## 🤔 已知问题
 
