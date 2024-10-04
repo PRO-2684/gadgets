@@ -16,8 +16,19 @@
     - Never: 从不显示圆形覆盖层
 - **Open tab in background**: 是否在后台打开新标签页。
 - **Open tab insert**: 是否将新标签页插入到当前标签页旁边。如果为 false，则新标签页将追加到末尾。
-- **Search engine**: 拖拽文本时使用的搜索引擎。使用 `{}` 作为 URL 编码的查询关键词的占位符。
-- **Maximum text length**: 搜索词的最大长度。如果搜索词的长度超过此值，将被截断。将其设置为 0 以禁用此功能。
+- **Search engine (default)**: 拖拽文本时使用的默认搜索引擎。使用 `{<max-length>}` 作为 URL 编码查询的占位符，其中 `<max-length>` 是最大文本长度。如果未指定 `<max-length>`，则搜索词不会被截断。
+    - **Search engine (left)**: 向左拖拽文本时使用的搜索引擎。留空以使用默认搜索引擎。
+    - **Search engine (right)**: 向右拖拽文本时使用的搜索引擎。留空以使用默认搜索引擎。
+    - **Search engine (up)**: 向上拖拽文本时使用的搜索引擎。留空以使用默认搜索引擎。
+    - **Search engine (down)**: 向下拖拽文本时使用的搜索引擎。留空以使用默认搜索引擎。
+    - <details><summary>作者的配置</summary>
+        <ul>
+            <li><strong>Search engine (left)</strong>: <code>https://www.deepl.com/zh/translator#en/zh-hans/{}</code> (DeepL 翻译)</li>
+            <li><strong>Search engine (right)</strong>: <code>https://opnxng.com/search?q={50}</code> (OpnXng 搜索)</li>
+            <li><strong>Search engine (up)</strong>: <code>https://www.google.com/search?q={50}</code> (Google 搜索)</li>
+            <li><strong>Search engine (down)</strong>: <code>https://www.bing.com/search?q={50}</code> (Bing 搜索)</li>
+        </ul>
+    </details>
 - **Minimum drag distance**: 触发 draggy 的最小距离。
 - **Maximum time delta**: esc/drop 和 dragend 事件之间的最大时间差，以将它们视为不同的用户手势。*通常不需要更改此值。*
 - **Debug mode**: 启用调试模式。
@@ -32,7 +43,7 @@
 | 后台打开标签页 | 🟢 | 🟢 |
 | 插入打开的标签页 | 🟢 | <span title="已打开的标签页总是追加到末尾">🔴*</span> |
 | 兼容性 | 🟡 | 🟢 |
-| 自定义搜索引擎 | 🟢 | <span title="仅限必应和默认搜索引擎">🟡*</span> |
+| 自定义搜索引擎 | <span title="基于拖拽方向允许最多 4 个不同的搜索引擎">🟢*</span> | <span title="仅允许 1 个搜索引擎且限制为 Bing 或默认搜索引擎">🟡*</span> |
 | 搜索词最大长度 | 🟢 | 🔴 |
 | 最小拖拽距离 | 🟢 | 🔴 |
 | 取消拖拽 | <span title="将鼠标移回圈内 (浏览器设计使得 Esc 取消无法实现)">🟢*</span> | <span title="按 Esc 键">🟢*</span> |

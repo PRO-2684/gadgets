@@ -16,8 +16,19 @@
     - Never: Never show the circle overlay
 - **Open tab in background**: Whether to open new tabs in the background。
 - **Open tab insert**: Whether to insert the new tab next to the current tab. If false, the new tab will be appended to the end.
-- **Search engine**: Search engine used when dragging text. Use `{}` as a placeholder for the URL-encoded query.
-- **Maximum text length**: Maximum length of the search term. If the length of the search term exceeds this value, it will be truncated. Set to 0 to disable this feature.
+- **Search engine (default)**: Default search engine used when dragging text. Use `{<max-length>}` as a placeholder for the URL-encoded query, where `<max-length>` is the maximum text length. If `<max-length>` is not specified, the search term will not be truncated.
+    - **Search engine (left)**: Search engine used when dragging text left. Leave it blank to use the default search engine.
+    - **Search engine (right)**: Search engine used when dragging text right. Leave it blank to use the default search engine.
+    - **Search engine (up)**: Search engine used when dragging text up. Leave it blank to use the default search engine.
+    - **Search engine (down)**: Search engine used when dragging text down. Leave it blank to use the default search engine.
+    - <details><summary>Author's configuration</summary>
+        <ul>
+            <li><strong>Search engine (left)</strong>: <code>https://www.deepl.com/zh/translator#en/zh-hans/{}</code> (DeepL Translation)</li>
+            <li><strong>Search engine (right)</strong>: <code>https://opnxng.com/search?q={50}</code> (OpnXng Search)</li>
+            <li><strong>Search engine (up)</strong>: <code>https://www.google.com/search?q={50}</code> (Google Search)</li>
+            <li><strong>Search engine (down)</strong>: <code>https://www.bing.com/search?q={50}</code> (Bing Search)</li>
+        </ul>
+    </details>
 - **Minimum drag distance**: Minimum distance to trigger draggy.
 - **Maximum time delta**: Maximum time difference between esc/drop and dragend events to consider them as separate user gesture. *Usually there's no need to change this value.*
 - **Debug mode**: Enables debug mode.
@@ -32,7 +43,7 @@ If you're using Microsoft Edge, you might find that "Super Drag Drop" is what yo
 | Open tab in background | 🟢 | 🟢 |
 | Open tab insert | 🟢 | <span title="Opened tabs always get appended to the end">🔴*</span> |
 | Compatibility | 🟡 | 🟢 |
-| Custom search engine | 🟢 | <span title="Limited to Bing and default search engine">🟡*</span> |
+| Custom search engine | <span title="Allows up to 4 different search engines based on dragging direction">🟢*</span> | <span title="Only 1 search engine allowed and limited to Bing or default search engine">🟡*</span> |
 | Maximum search term length | 🟢 | 🔴 |
 | Minimum drag distance | 🟢 | 🔴 |
 | Cancel drag | <span title="Move mouse back into the circle (browser's design makes cancelling with Esc impossible)">🟢*</span> | <span title="Press Esc key">🟢*</span> |

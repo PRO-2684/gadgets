@@ -2,7 +2,7 @@
 // @name         Draggy
 // @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.1.4
+// @version      0.1.5
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
 // @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 // @tag          productivity
@@ -48,27 +48,47 @@
             value: true,
         },
         searchEngine: {
-            name: "Search engine",
-            title: "Search engine used when dragging text. Use {} as a placeholder for the URL-encoded query.",
+            name: "Search engine (default)",
+            title: "Default search engine used when dragging text. Use `{<max-length>}` as a placeholder for the URL-encoded query, where `<max-length>` is the maximum text length. If `<max-length>` is not specified, the search term will not be truncated.",
             type: "string",
-            value: "https://www.google.com/search?q={}",
+            value: "https://www.google.com/search?q={50}",
         },
-        maxLength: {
-            name: "Maximum text length",
-            title: "Maximum length of the search term. If the length of the search term exceeds this value, it will be truncated. Set to 0 to disable this feature.",
-            type: "int_range-0-1000",
-            value: 100,
+        searchEngineLeft: {
+            name: "Search engine (left)",
+            title: "Search engine used when dragging text left. Leave it blank to use the default search engine.",
+            type: "string",
+            value: ""
+        },
+        searchEngineRight: {
+            name: "Search engine (right)",
+            title: "Search engine used when dragging text right. Leave it blank to use the default search engine.",
+            type: "string",
+            value: ""
+        },
+        searchEngineUp: {
+            name: "Search engine (up)",
+            title: "Search engine used when dragging text up. Leave it blank to use the default search engine.",
+            type: "string",
+            value: ""
+        },
+        searchEngineDown: {
+            name: "Search engine (down)",
+            title: "Search engine used when dragging text down. Leave it blank to use the default search engine.",
+            type: "string",
+            value: ""
         },
         minDistance: {
             name: "Minimum drag distance",
             title: "Minimum distance to trigger draggy.",
-            type: "int_range-1-1000",
+            type: "int",
+            processor: "int_range-1-1000",
             value: 50,
         },
         maxTimeDelta: {
             name: "Maximum time delta",
             title: "Maximum time difference between esc/drop and dragend events to consider them as separate user gesture. Usually there's no need to change this value.",
-            type: "int_range-1-100",
+            type: "int",
+            processor: "int_range-1-100",
             value: 10,
         },
         debug: {
@@ -173,12 +193,15 @@
     /**
      * Searches for the given keyword.
      * @param {string} keyword The keyword to search for.
+     * @param {string} direction The direction of the drag.
      */
-    function search(keyword) {
-        const searchEngine = config.get("searchEngine");
-        const maxLength = config.get("maxLength");
-        const truncated = maxLength > 0 ? keyword.slice(0, maxLength) : keyword;
-        const url = searchEngine.replace("{}", encodeURIComponent(truncated));
+    function search(keyword, direction) {
+        const searchEngine = config.get(`searchEngine${direction}`) || config.get("searchEngine");
+        const maxLenMatch = searchEngine.match(/\{(\d*)\}/);
+        const maxLenParsed = parseInt(maxLenMatch?.[1]);
+        const maxLen = isNaN(maxLenParsed) ? +Infinity : maxLenParsed;
+        const truncated = keyword.slice(0, maxLen);
+        const url = searchEngine.replace(maxLenMatch[0], encodeURIComponent(truncated));
         log(`Searching for "${truncated}" using "${url}"`);
         open(url);
     }
@@ -221,7 +244,7 @@
                     pointer-events: none;
                 }
                 &[data-draggy-overlay="0"] > #draggy-overlay {  }
-                &[data-draggy-overlay="1"] > #draggy-overlay[data-draggy-selection] { display: block; }
+                &[data-draggy-overlay="1"] > #draggy-overlay[data-draggy-selected] { display: block; }
                 &[data-draggy-overlay="2"] > #draggy-overlay { display: block; }
             }
         `;
@@ -242,9 +265,9 @@
     }, { passive: true });
     document.addEventListener("dragstart", (e) => {
         if (!judging.selection(e)) {
-            circle.toggleAttribute("data-draggy-selection", false);
+            circle.toggleAttribute("data-draggy-selected", false);
         } else {
-            circle.toggleAttribute("data-draggy-selection", true);
+            circle.toggleAttribute("data-draggy-selected", true);
         }
         const { x, y } = e;
         startPos = { x, y };
@@ -278,7 +301,12 @@
         } else if (data instanceof HTMLImageElement) {
             open(data.src);
         } else if (typeof data === "string") {
-            search(data);
+            // Judge direction of the drag (Up, Down, Left, Right)
+            const isVertical = Math.abs(dy) > Math.abs(dx);
+            const isPositive = isVertical ? dy > 0 : dx > 0;
+            const direction = isVertical ? (isPositive ? "Down" : "Up") : (isPositive ? "Right" : "Left");
+            log("Draggy direction:", direction);
+            search(data, direction);
         } else {
             log("Draggy can't find selected text or a valid link");
         }
