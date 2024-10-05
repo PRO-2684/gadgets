@@ -11,6 +11,7 @@ Simple config lib for Tampermonkey scripts. ([Greasy Fork](https://greasyfork.or
 - **Automatically update the menu** when config is modified (by either user or script)
 - Support **listeners for config get/set**
 - Support **multi-tab synchronization**
+- Support **folders** (nested config items)
 - Support either auto or manual menu registration
 - Highly **customizable**
     - Customizable config value input method (`prop.input`)

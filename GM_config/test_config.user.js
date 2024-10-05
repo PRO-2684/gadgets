@@ -11,7 +11,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1456701/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1459364/Tampermonkey%20Config.js
 // @license      gpl-3.0
 // ==/UserScript==
 
