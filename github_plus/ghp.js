@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.1.7
+// @version      0.1.8
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -17,7 +17,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1456932/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1459364/Tampermonkey%20Config.js
 // ==/UserScript==
 
 (function() {
@@ -54,39 +54,57 @@
         $default: {
             autoClose: false
         },
-        token: {
-            name: "Personal Access Token",
-            title: "Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit)",
-            type: "str",
+        release: {
+            name: "📦 Release Features",
+            type: "folder",
+            items: {
+                uploader: {
+                    name: "Release Uploader",
+                    title: "Show who uploaded a release asset",
+                    type: "bool",
+                    value: true,
+                },
+                downloads: {
+                    name: "Release Downloads",
+                    title: "Show how many times a release asset has been downloaded",
+                    type: "bool",
+                    value: true,
+                },
+                histogram: {
+                    name: "Release Histogram",
+                    title: "Show a histogram of download counts for each release asset",
+                    type: "bool",
+                },
+            },
         },
-        debug: {
-            name: "Debug",
-            title: "Enable debug mode",
-            type: "bool",
+        additional: {
+            name: "🪄 Additional Features",
+            type: "folder",
+            items: {
+                trackingPrevention: {
+                    name: "Tracking Prevention",
+                    title: () => { return `Prevent some tracking by GitHub (${name} has prevented tracking ${GM_getValue("trackingPrevented", 0)} time(s))`; },
+                    type: "bool",
+                    value: true,
+                },
+            },
         },
-        releaseUploader: {
-            name: "Release Uploader",
-            title: "Show who uploaded a release asset",
-            type: "bool",
-            value: true,
+        advanced: {
+            name: "⚙️ Advanced Settings",
+            type: "folder",
+            items: {
+                token: {
+                    name: "Personal Access Token",
+                    title: "Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit)",
+                    type: "str",
+                },
+                debug: {
+                    name: "Debug",
+                    title: "Enable debug mode",
+                    type: "bool",
+                },
+            },
         },
-        releaseDownloads: {
-            name: "Release Downloads",
-            title: "Show how many times a release asset has been downloaded",
-            type: "bool",
-            value: true,
-        },
-        releaseHistogram: {
-            name: "Release Histogram",
-            title: "Show a histogram of download counts for each release asset",
-            type: "bool",
-        },
-        trackingPrevention: {
-            name: "Tracking Prevention",
-            title: () => { return `Prevent some tracking by GitHub (${name} has prevented tracking ${GM_getValue("trackingPrevented", 0)} time(s))`; },
-            type: "bool",
-            value: true,
-        }
     };
     const config = new GM_config(configDesc);
 
@@ -98,7 +116,7 @@
      * @param {...any} args The arguments to log.
      */
     function log(...args) {
-        if (config.get("debug")) console.log(`%c[${name}]%c`, `color:${themeColor};`, "color: unset;", ...args);
+        if (config.get("advanced.debug")) console.log(`%c[${name}]%c`, `color:${themeColor};`, "color: unset;", ...args);
     }
     /**
      * Warn the given arguments.
@@ -114,7 +132,7 @@
      * @returns {Promise<Response>} The response from the fetch.
      */
     async function fetchWithToken(url, options) {
-        const token = config.get("token");
+        const token = config.get("advanced.token");
         if (token) {
             if (!options) options = {};
             if (!options.headers) options.headers = {};
@@ -227,15 +245,15 @@
             const size = statistics.querySelector("span.flex-auto");
             size.classList.remove("flex-auto");
             size.classList.add("flex-shrink-0", "flex-grow-0");
-            if (config.get("releaseDownloads")) {
+            if (config.get("release.downloads")) {
                 const downloadCount = createDownloadCount(assetInfo.downloads);
                 statistics.prepend(downloadCount);
             }
-            if (config.get("releaseUploader")) {
+            if (config.get("release.uploader")) {
                 const uploaderLink = createUploaderLink(assetInfo.uploader);
                 statistics.prepend(uploaderLink);
             }
-            if (config.get("releaseHistogram") && maxDownloads > 0 && assets.length > 1) {
+            if (config.get("release.histogram") && maxDownloads > 0 && assets.length > 1) {
                 showHistogram(asset, assetInfo.downloads, maxDownloads);
             }
         });
@@ -262,7 +280,7 @@
      */
     function setupListeners() {
         log("Calling setupListeners");
-        if (!config.get("releaseDownloads") && !config.get("releaseUploader") && !config.get("releaseHistogram")) return; // No need to run
+        if (!config.get("release.downloads") && !config.get("release.uploader") && !config.get("release.histogram")) return; // No need to run
         // IncludeFragmentElement: https://github.com/github/include-fragment-element/blob/main/src/include-fragment-element.ts
         const fragments = document.querySelectorAll('[data-hpc] details[data-view-component="true"] include-fragment');
         fragments.forEach(fragment => {
@@ -320,7 +338,7 @@
             GM_setValue("trackingPrevented", GM_getValue("trackingPrevented", 0) + 1);
         }
     }
-    if (config.get("trackingPrevention")) {
+    if (config.get("additional.trackingPrevention")) {
         // document.addEventListener("DOMContentLoaded", preventTracking);
         // All we need to remove is in the `head` element, so we can run it immediately.
         preventTracking();

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         52 Enhance
 // @namespace    http://tampermonkey.net/
-// @version      0.7.3
+// @version      0.7.4
 // @description  52 破解论坛增强脚本
 // @author       PRO
 // @run-at       document-start
@@ -14,7 +14,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1448594/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1459364/Tampermonkey%20Config.js
 // ==/UserScript==
 
 (function() {
@@ -22,36 +22,44 @@
     const idPrefix = "52-enhance-";
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
-    const config_desc = {
+    const configDesc = {
         "$default": {
-            value: true,
-            input: "current",
-            processor: "not",
-            formatter: "boolean",
             autoClose: false
         },
-        "regex-filter": { name: "正则过滤", title: "使用正则表达式过滤帖子", value: "", input: "prompt", processor: "same", formatter: "normal" },
-        "css-fix": { name: "CSS 修复", title: "动态透明度；图标上光标不显示为 pointer" },
-        "hide": { name: "* 一键隐藏", title: "为旧版代码块添加“隐藏代码”的按钮；一键隐藏所有置顶帖；添加隐藏回复的按钮" },
-        "get-to-top": { name: "* 回到顶部", title: "双击导航栏回到顶部；修改回到顶部按钮行为为原生" },
-        "emoji-fix": { name: "* 修复 Emoji", title: "修复 Emoji 显示" },
-        "native-tip": { name: "* 原生提示", title: "使用原生提示框", value: false },
-        "hide-signature": { name: "隐藏签名档", title: "隐藏所有签名档", value: false },
-        "allow-tiny-signature": { name: "允许小签名", title: "允许小型签名档 (不含图片)" },
-        "lazy-signature-image": { name: "* 懒加载签名图片", title: "延迟加载签名档中的图片" },
-        "hide-warning": { name: "隐藏提醒", title: "隐藏所有提醒", value: false },
-        "hide-avatar-detail": { name: "隐藏头像详情", title: "隐藏头像下的详情 (统计信息、各类奖章、收听按钮)", value: false },
-        "hide-rating": { name: "隐藏评分", title: "隐藏所有评分", value: false },
-        "hide-comment": { name: "隐藏点评", title: "隐藏所有点评", value: false },
-        "hide-serial": { name: "隐藏序号", title: "隐藏主页帖子列表的序号" },
-        "hide-background": { name: "隐藏背景", title: "隐藏部分背景图片" },
-        "hide-top": { name: "隐藏顶栏", title: "隐藏顶栏和导航栏", value: false },
-        "image-max-height": { name: "限制图片最大高度", title: "将帖子图片的最大高度限制为 70vh", value: false },
-        "auto-sign": { name: "自动签到", title: "进入论坛时自动后台签到" },
-        "shortcut": { name: "快捷键", title: "Enter: 快速跳到回复栏" },
-        "infinite-scroll": { name: "无限滚动", title: "滚动到末尾时自动加载下一页" },
+        "hide": {
+            name: "🫥 隐藏设置",
+            type: "folder",
+            items: {
+                "one-click": { name: "* 一键隐藏", title: "为旧版代码块添加“隐藏代码”的按钮；一键隐藏所有置顶帖；添加隐藏回复的按钮", type: "bool", value: true },
+                "warning": { name: "隐藏提醒", title: "隐藏所有提醒", type: "bool", value: false },
+                "avatar-detail": { name: "隐藏头像详情", title: "隐藏头像下的详情 (统计信息、各类奖章、收听按钮)", type: "bool", value: false },
+                "rating": { name: "隐藏评分", title: "隐藏所有评分", type: "bool", value: false },
+                "comment": { name: "隐藏点评", title: "隐藏所有点评", type: "bool", value: false },
+                "serial": { name: "隐藏序号", title: "隐藏主页帖子列表的序号", type: "bool", value: true },
+                "background": { name: "隐藏背景", title: "隐藏部分背景图片", type: "bool", value: true },
+                "top": { name: "隐藏顶栏", title: "隐藏顶栏和导航栏", type: "bool", value: false },
+                "signature": { name: "隐藏签名档", title: "隐藏所有签名档", type: "bool", value: false },
+                "allow-tiny-signature": { name: "允许小签名", title: "允许小型签名档 (不含图片)", type: "bool", value: true },
+            }
+        },
+        "regex-filter": { name: "正则过滤", title: "使用正则表达式过滤帖子", type: "str" },
+        "css-fix": { name: "CSS 修复", title: "动态透明度；图标上光标不显示为 pointer", type: "bool", value: true },
+        "get-to-top": { name: "* 回到顶部", title: "双击导航栏回到顶部；修改回到顶部按钮行为为原生", type: "bool", value: true },
+        "emoji-fix": { name: "* 修复 Emoji", title: "修复 Emoji 显示", type: "bool", value: true },
+        "native-tip": { name: "* 原生提示", title: "使用原生提示框", type: "bool", value: false },
+        "lazy-signature-image": { name: "* 懒加载签名图片", title: "延迟加载签名档中的图片", type: "bool", value: true },
+        "image-max-height": { name: "限制图片最大高度", title: "将帖子图片的最大高度限制为 70vh", type: "bool", value: false },
+        "auto-sign": { name: "自动签到", title: "进入论坛时自动后台签到", type: "bool", value: true },
+        "shortcut": { name: "快捷键", title: "Enter: 快速跳到回复栏", type: "bool", value: true },
+        "infinite-scroll": { name: "无限滚动", title: "滚动到末尾时自动加载下一页", type: "bool", value: true },
     };
-    const config = new GM_config(config_desc, { immediate: false });
+    const config = new GM_config(configDesc, {
+        immediate: false,
+        folderDisplay: {
+            parentText: "< 返回",
+            parentTitle: "返回上级目录",
+        }
+    });
     const configProxy = config.proxy;
     // Styles
     const dynamicStyle = {
@@ -63,15 +71,15 @@
                 #jz52top:hover { opacity: 0.8; }
             }
             html { scroll-behavior: smooth; }`,
-        "hide-signature": "div.sign { display: none; }",
-        "allow-tiny-signature": "div.sign:not(:has(img)) { display: block; }",
-        "hide-warning": ".vw50_kfc_pb, .vw50_kfc_pt, .vw50_kfc_f { display: none; }",
-        "hide-avatar-detail": "div.tns.xg2, dl.credit-list, p.md_ctrl, p.xg1, ul.xl.xl2.o.cl { display: none; }",
-        "hide-rating": "div.pcb > h3.psth.xs1, dl.rate { display: none; }",
-        "hide-comment": "div.pcb > div.cm { display: none; }",
-        "hide-serial": "div.boxbg_7ree { background-image: none; padding-left: 0; }",
-        "hide-background": "body, textarea#fastpostmessage { background: none !important; }",
-        "hide-top": "#toptb, #nv_ph, #nv, .comiis_nav { display: none; }",
+        "hide.warning": ".vw50_kfc_pb, .vw50_kfc_pt, .vw50_kfc_f { display: none; }",
+        "hide.avatar-detail": "div.tns.xg2, dl.credit-list, p.md_ctrl, p.xg1, ul.xl.xl2.o.cl { display: none; }",
+        "hide.rating": "div.pcb > h3.psth.xs1, dl.rate { display: none; }",
+        "hide.comment": "div.pcb > div.cm { display: none; }",
+        "hide.serial": "div.boxbg_7ree { background-image: none; padding-left: 0; }",
+        "hide.background": "body, textarea#fastpostmessage { background: none !important; }",
+        "hide.top": "#toptb, #nv_ph, #nv, .comiis_nav { display: none; }",
+        "hide.signature": "div.sign { display: none; }",
+        "hide.allow-tiny-signature": "div.sign:not(:has(img)) { display: block; }",
         "image-max-height": "#postlist .plc .t_f img, #postlist .plc .tattl img { max-height: 70vh; }"
     };
     // Helper function for css
@@ -129,7 +137,7 @@
         }
     });
     // Hide
-    function hide() {
+    function hideOneClick() {
         // Basic CSS
         const css = `div.hidden, tr.hidden { display: none; }
         td.hidden { cursor: help; background: repeating-linear-gradient(135deg, transparent 0, transparent 6px, #e7e7e7 6px, #e7e7e7 12px, transparent 12px) no-repeat 0 0, #eee; }
@@ -139,7 +147,7 @@
         .toggle-reply-header { opacity: 0.6; }
         .toggle-reply-footer { display: block; text-align: center; position: relative; top: 0.8em; }
         @media (max-width: 650px) { td.hidden > div > div > em::after { content: ""; } }`;
-        injectCSS("hide", css);
+        injectCSS("hide.one-click", css);
         // Hide code
         function toggleCode() {
             const code = this.parentNode.parentNode.lastChild;
@@ -371,7 +379,7 @@
     }
     // Run on DOMContentLoaded
     document.addEventListener("DOMContentLoaded", () => {
-        configProxy["hide"] && hide();
+        configProxy["hide.one-click"] && hideOneClick();
         configProxy["get-to-top"] && getToTop();
         configProxy["emoji-fix"] && emojiFix();
         configProxy["native-tip"] && nativeTip();

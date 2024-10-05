@@ -9,14 +9,17 @@
 
 ## ⚙️ Configuation
 
-- **Personal Access Token**: Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit). For more information, see the [Personal Access Token (PAT)](#-personal-access-token-pat) section.
-- **Debug**: Enable debug mode.
-- **Release Downloads**: Show download counts of release assets.
-- **Release Uploader**: Show uploader of release assets.
-- **Release Histogram**: Show a histogram of download counts.
-    - Does not show up if there is only zero or one release asset.
-    - Does not show up if none of the release assets have been downloaded.
-- **Tracking Prevention**: Prevents some tracking by GitHub.
+- **📦 Release Features**
+    - **Release Downloads**: Show download counts of release assets.
+    - **Release Uploader**: Show uploader of release assets.
+    - **Release Histogram**: Show a histogram of download counts.
+        - Does not show up if there is only zero or one release asset.
+        - Does not show up if none of the release assets have been downloaded.
+- **🪄 Additional Features**
+    - **Tracking Prevention**: Prevents some tracking by GitHub.
+- **⚙️ Advanced Settings**
+    - **Personal Access Token**: Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit). For more information, see the [Personal Access Token (PAT)](#-personal-access-token-pat) section.
+    - **Debug**: Enable debug mode.
 
 ## 🖼️ Showcase
 

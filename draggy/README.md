@@ -10,13 +10,17 @@
 
 ## ⚙️ Configuation
 
-- **Circle overlay**: When to show the circle overlay。
-    - Always: Always show the circle overlay when dragging is detected
-    - Auto: Show the circle overlay only when the detected dragging is targeting text selection or links
-    - Never: Never show the circle overlay
-- **Open tab in background**: Whether to open new tabs in the background。
-- **Open tab insert**: Whether to insert the new tab next to the current tab. If false, the new tab will be appended to the end.
-- **Search engine (default)**: Default search engine used when dragging text. Use `{<max-length>}` as a placeholder for the URL-encoded query, where `<max-length>` is the maximum text length. If `<max-length>` is not specified, the search term will not be truncated.
+- **🎨 Appearance settings**: Settings for the appearance of Draggy overlay.
+    - **Circle overlay**: When to show the circle overlay。
+        - Always: Always show the circle overlay when dragging is detected
+        - Auto: Show the circle overlay only when the detected dragging is targeting text selection or links
+        - Never: Never show the circle overlay
+- **🛠️ Operation settings**: Settings for the operation of Draggy.
+    - **Open tab in background**: Whether to open new tabs in the background。
+    - **Open tab insert**: Whether to insert the new tab next to the current tab. If false, the new tab will be appended to the end.
+    - **Minimum drag distance**: Minimum distance to trigger draggy.
+- **🔎 Search engine settings**: Configure search engines for different directions. Use `{<max-length>}` as a placeholder for the URL-encoded query, where `<max-length>` is the maximum text length. If `<max-length>` is not specified, the search term will not be truncated.
+    - **Search engine (default)**: Default search engine used when dragging text.
     - **Search engine (left)**: Search engine used when dragging text left. Leave it blank to use the default search engine.
     - **Search engine (right)**: Search engine used when dragging text right. Leave it blank to use the default search engine.
     - **Search engine (up)**: Search engine used when dragging text up. Leave it blank to use the default search engine.
@@ -29,9 +33,9 @@
             <li><strong>Search engine (down)</strong>: <code>https://www.bing.com/search?q={50}</code> (Bing Search)</li>
         </ul>
     </details>
-- **Minimum drag distance**: Minimum distance to trigger draggy.
-- **Maximum time delta**: Maximum time difference between esc/drop and dragend events to consider them as separate user gesture. *Usually there's no need to change this value.*
-- **Debug mode**: Enables debug mode.
+- **⚙️ Advanced settings**: Settings for advanced users or debugging.
+    - **Maximum time delta**: Maximum time difference between esc/drop and dragend events to consider them as separate user gesture. *Usually there's no need to change this value.*
+    - **Debug mode**: Enables debug mode.
 
 ## 📃 Notes
 

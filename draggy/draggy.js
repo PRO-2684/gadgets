@@ -2,7 +2,7 @@
 // @name         Draggy
 // @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.1.5
+// @version      0.1.6
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
 // @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 // @tag          productivity
@@ -18,7 +18,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1456932/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1459364/Tampermonkey%20Config.js
 // ==/UserScript==
 (function () {
     "use strict";
@@ -27,78 +27,106 @@
         $default: {
             autoClose: false,
         },
-        circleOverlay: {
-            name: "Circle overlay",
-            title: "When to show the circle overlay.",
-            value: 1,
-            input: (prop, orig) => (orig + 1) % 3,
-            processor: "same",
-            formatter: (prop, value) => configDesc.circleOverlay.name + ": " + ["Never", "Auto", "Always"][value],
+        appearance: {
+            name: "🎨 Appearance settings",
+            title: "Settings for the appearance of Draggy overlay.",
+            type: "folder",
+            items: {
+                circleOverlay: {
+                    name: "Circle overlay",
+                    title: "When to show the circle overlay.",
+                    value: 1,
+                    input: (prop, orig) => (orig + 1) % 3,
+                    processor: "same",
+                    formatter: (name, value) => name + ": " + ["Never", "Auto", "Always"][value],
+                },
+            },
         },
-        openTabInBg: {
-            name: "Open tab in background",
-            title: "Whether to open new tabs in the background.",
-            type: "bool",
-            value: false,
-        },
-        openTabInsert: {
-            name: "Open tab insert",
-            title: "Whether to insert the new tab next to the current tab. If false, the new tab will be appended to the end.",
-            type: "bool",
-            value: true,
+        operation: {
+            name: "🛠️ Operation settings",
+            title: "Settings for the operation of Draggy.",
+            type: "folder",
+            items: {
+                openTabInBg: {
+                    name: "Open tab in background",
+                    title: "Whether to open new tabs in the background.",
+                    type: "bool",
+                    value: false,
+                },
+                openTabInsert: {
+                    name: "Open tab insert",
+                    title: "Whether to insert the new tab next to the current tab. If false, the new tab will be appended to the end.",
+                    type: "bool",
+                    value: true,
+                },
+                minDistance: {
+                    name: "Minimum drag distance",
+                    title: "Minimum distance to trigger draggy.",
+                    type: "int",
+                    processor: "int_range-1-1000",
+                    value: 50,
+                },
+            },
         },
         searchEngine: {
-            name: "Search engine (default)",
-            title: "Default search engine used when dragging text. Use `{<max-length>}` as a placeholder for the URL-encoded query, where `<max-length>` is the maximum text length. If `<max-length>` is not specified, the search term will not be truncated.",
-            type: "string",
-            value: "https://www.google.com/search?q={50}",
+            name: "🔎 Search engine settings",
+            title: "Configure search engines for different directions. Use `{<max-length>}` as a placeholder for the URL-encoded query, where `<max-length>` is the maximum text length. If `<max-length>` is not specified, the search term will not be truncated.",
+            type: "folder",
+            items: {
+                default: {
+                    name: "Search engine (default)",
+                    title: "Default search engine used when dragging text.",
+                    type: "string",
+                    value: "https://www.google.com/search?q={50}",
+                },
+                left: {
+                    name: "Search engine (left)",
+                    title: "Search engine used when dragging text left. Leave it blank to use the default search engine.",
+                    type: "string",
+                    value: ""
+                },
+                right: {
+                    name: "Search engine (right)",
+                    title: "Search engine used when dragging text right. Leave it blank to use the default search engine.",
+                    type: "string",
+                    value: ""
+                },
+                up: {
+                    name: "Search engine (up)",
+                    title: "Search engine used when dragging text up. Leave it blank to use the default search engine.",
+                    type: "string",
+                    value: ""
+                },
+                down: {
+                    name: "Search engine (down)",
+                    title: "Search engine used when dragging text down. Leave it blank to use the default search engine.",
+                    type: "string",
+                    value: ""
+                },
+            },
         },
-        searchEngineLeft: {
-            name: "Search engine (left)",
-            title: "Search engine used when dragging text left. Leave it blank to use the default search engine.",
-            type: "string",
-            value: ""
-        },
-        searchEngineRight: {
-            name: "Search engine (right)",
-            title: "Search engine used when dragging text right. Leave it blank to use the default search engine.",
-            type: "string",
-            value: ""
-        },
-        searchEngineUp: {
-            name: "Search engine (up)",
-            title: "Search engine used when dragging text up. Leave it blank to use the default search engine.",
-            type: "string",
-            value: ""
-        },
-        searchEngineDown: {
-            name: "Search engine (down)",
-            title: "Search engine used when dragging text down. Leave it blank to use the default search engine.",
-            type: "string",
-            value: ""
-        },
-        minDistance: {
-            name: "Minimum drag distance",
-            title: "Minimum distance to trigger draggy.",
-            type: "int",
-            processor: "int_range-1-1000",
-            value: 50,
-        },
-        maxTimeDelta: {
-            name: "Maximum time delta",
-            title: "Maximum time difference between esc/drop and dragend events to consider them as separate user gesture. Usually there's no need to change this value.",
-            type: "int",
-            processor: "int_range-1-100",
-            value: 10,
-        },
-        debug: {
-            name: "Debug mode",
-            title: "Enables debug mode.",
-            type: "bool",
-            value: false,
+        advanced: {
+            name: "⚙️ Advanced settings",
+            title: "Settings for advanced users or debugging.",
+            type: "folder",
+            items: {
+                maxTimeDelta: {
+                    name: "Maximum time delta",
+                    title: "Maximum time difference between esc/drop and dragend events to consider them as separate user gesture. Usually there's no need to change this value.",
+                    type: "int",
+                    processor: "int_range-1-100",
+                    value: 10,
+                },
+                debug: {
+                    name: "Debug mode",
+                    title: "Enables debug mode.",
+                    type: "bool",
+                    value: false,
+                },
+            },
         },
     };
-    const config = new GM_config(configDesc, { immediate: false });
+    const config = new GM_config(configDesc, { immediate: true });
     /**
      * Last time a drop event occurred.
      * @type {number}
@@ -139,7 +167,7 @@
             }
         },
         handlers: (e) => e.dataTransfer.dropEffect === "none" && e.dataTransfer.effectAllowed === "uninitialized" && !e.defaultPrevented,
-        dropEvent: (e) => e.timeStamp - lastDrop > config.get("maxTimeDelta"),
+        dropEvent: (e) => e.timeStamp - lastDrop > config.get("advanced.maxTimeDelta"),
     };
 
     /**
@@ -147,7 +175,7 @@
      * @param {...any} args The arguments to log.
      */
     function log(...args) {
-        if (config.get("debug")) {
+        if (config.get("advanced.debug")) {
             console.log(`[${name}]`, ...args);
         }
     }
@@ -188,7 +216,7 @@
      * @param {string} url The URL to open.
      */
     function open(url) {
-        GM_openInTab(url, { active: !config.get("openTabInBg"), insert: config.get("openTabInsert") });
+        GM_openInTab(url, { active: !config.get("operation.openTabInBg"), insert: config.get("operation.openTabInsert") });
     }
     /**
      * Searches for the given keyword.
@@ -196,7 +224,7 @@
      * @param {string} direction The direction of the drag.
      */
     function search(keyword, direction) {
-        const searchEngine = config.get(`searchEngine${direction}`) || config.get("searchEngine");
+        const searchEngine = config.get(`searchEngine.${direction}`) || config.get("searchEngine.default");
         const maxLenMatch = searchEngine.match(/\{(\d*)\}/);
         const maxLenParsed = parseInt(maxLenMatch?.[1]);
         const maxLen = isNaN(maxLenParsed) ? +Infinity : maxLenParsed;
@@ -289,7 +317,7 @@
         const { x, y } = e;
         const [dx, dy] = [x - startPos.x, y - startPos.y];
         const distance = Math.hypot(dx, dy);
-        if (distance < config.get("minDistance")) {
+        if (distance < config.get("operation.minDistance")) {
             log("Draggy interrupted by short drag distance:", distance);
             return;
         }
@@ -304,7 +332,7 @@
             // Judge direction of the drag (Up, Down, Left, Right)
             const isVertical = Math.abs(dy) > Math.abs(dx);
             const isPositive = isVertical ? dy > 0 : dx > 0;
-            const direction = isVertical ? (isPositive ? "Down" : "Up") : (isPositive ? "Right" : "Left");
+            const direction = isVertical ? (isPositive ? "down" : "up") : (isPositive ? "right" : "left");
             log("Draggy direction:", direction);
             search(data, direction);
         } else {
@@ -314,8 +342,8 @@
 
     // Dynamic configuration
     const callbacks = {
-        circleOverlay: toggleOverlay,
-        minDistance: onMinDistanceChange,
+        "appearance.circleOverlay": toggleOverlay,
+        "operation.minDistance": onMinDistanceChange,
     };
     for (const [prop, callback] of Object.entries(callbacks)) { // Initialize
         callback(config.get(prop));
