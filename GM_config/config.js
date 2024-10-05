@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.0.3
+// @version      1.1.0
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -21,7 +21,7 @@ class GM_config extends EventTarget {
      * The version of the GM_config library
      */
     static get version() {
-        return "1.0.3";
+        return "1.1.0";
     }
     /**
      * Built-in processors for user input
@@ -60,15 +60,6 @@ class GM_config extends EventTarget {
         },
     };
     /**
-     * Built-in formatters for user input
-     * @type {Object<string, Function>}
-     */
-    static #builtinFormatters = {
-        normal: (name, value) => `${name}: ${value}`,
-        boolean: (name, value) => `${name}: ${value ? "✔" : "✘"}`,
-        name_only: (name, value) => name,
-    };
-    /**
      * The proxied config object, to be initialized in the constructor
      */
     proxy = {};
@@ -86,10 +77,20 @@ class GM_config extends EventTarget {
      * @type {Object<string, Function>}
      */
     #builtinInputs = {
-        current: (prop, orig) => orig,
         prompt: (prop, orig) => {
-            const s = prompt(`🤔 New value for ${this.#desc[prop].name}:`, orig);
+            const s = window.prompt(`🤔 New value for ${this.#getProp(prop).name}:`, orig);
             return s === null ? orig : s;
+        },
+        current: (prop, orig) => orig,
+        action: (prop, orig) => {
+            this.#dispatch(false, { prop, before: orig, after: orig, remote: false });
+            return orig;
+        },
+        folder: (prop, orig) => {
+            const last = GM_config.#dottedToList(prop).pop();
+            this.#down(last);
+            this.#dispatch(false, { prop, before: orig, after: orig, remote: false });
+            return orig;
         },
     };
     /**
@@ -122,19 +123,67 @@ class GM_config extends EventTarget {
         },
         action: { // Action
             value: null,
-            input: (prop, orig) => {
-                this.#dispatch(false, { prop, before: orig, after: orig, remote: false });
-                return orig;
-            },
+            input: "action",
             processor: "same",
             formatter: "name_only",
             autoClose: true,
         },
+        folder: { // Folder
+            value: null,
+            items: {},
+            input: "folder",
+            processor: "same",
+            formatter: "folder",
+            autoClose: false,
+        },
+    };
+    /**
+     * Built-in formatters for user input
+     * @type {Object<string, Function>}
+     */
+    #builtinFormatters = {
+        normal: (name, value) => `${name}: ${value}`,
+        boolean: (name, value) => `${name}: ${value ? "✔" : "✘"}`,
+        name_only: (name, value) => name,
+        folder: (name, value) => `${this.#folderDisplay.prefix}${name}${this.#folderDisplay.suffix}`,
     };
     /**
      * A mapping for the registered menu items, from property to menu id
      */
     #registered = {};
+    /**
+     * Controls the display of the folder
+     * @type { {prefix: string, suffix: string, parent: string} }
+     */
+    #folderDisplay = {
+        prefix: "",
+        suffix: " >",
+        parentText: "< Back",
+        parentTitle: "Return to parent folder",
+    };
+    /**
+     * The current path we're at
+     * @type {string[]}
+     */
+    #currentPath = [];
+    /**
+     * Cache for current config description
+     * @type {Object|null}
+     */
+    #currentDescCache = null;
+    /**
+     * Get the config description at the current path
+     * @type {Object}
+     */
+    get #currentDesc() {
+        if (this.#currentDescCache) return this.#currentDescCache;
+        let desc = this.#desc;
+        for (const path of this.#currentPath) {
+            desc = desc[path].items;
+        }
+        this.#currentDescCache = desc;
+        return desc;
+    }
     /**
      * The constructor of the GM_config class
      * @param {Object} desc The config description object
@@ -144,29 +193,47 @@ class GM_config extends EventTarget {
      */
     constructor(desc, options) { // Register menu items based on given config description
         super();
-        // Calc true default value
-        const $default = Object.assign({
-            input: "prompt",
-            processor: "same",
-            formatter: "normal"
-        }, desc["$default"] ?? {});
-        Object.assign(this.#desc, desc);
-        delete this.#desc.$default;
         // Handle value change events
+        /**
+         * Handle value change events
+         * @param {string} prop The dotted property name
+         * @param {any} before The value before the change
+         * @param {any} after The value after the change
+         * @param {boolean} remote Whether the change is remote
+         */
         function onValueChange(prop, before, after, remote) {
-            const defaultValue = this.#desc[prop].value;
+            const defaultValue = this.#getProp(prop).value;
             // If `before` or `after` is `undefined`, replace it with default value
             if (before === undefined) before = defaultValue;
             if (after === undefined) after = defaultValue;
             this.#dispatch(true, { prop, before, after, remote });
         }
         // Complete desc & setup value change listeners
-        for (const key in this.#desc) {
-            this.#desc[key] = Object.assign({}, $default, this.#builtinTypes[this.#desc[key].type] ?? {}, this.#desc[key]);
-            GM_addValueChangeListener(key, onValueChange.bind(this));
+        function initDesc(desc, path = [], parentDefault = {}) {
+            // Calc true default value for current level
+            const $default = Object.assign({}, parentDefault, desc["$default"] ?? {});
+            delete desc.$default;
+            for (const key in desc) {
+                const fullPath = [...path, key];
+                desc[key] = Object.assign({}, $default, this.#builtinTypes[desc[key].type] ?? {}, desc[key]);
+                if (desc[key].type === "folder") {
+                    initDesc.call(this, desc[key].items, fullPath, $default);
+                } else {
+                    GM_addValueChangeListener(GM_config.#listToDotted(fullPath), onValueChange.bind(this));
+                }
+            }
         }
+        this.#desc = desc;
+        initDesc.call(this, this.#desc, [], {
+            input: "prompt",
+            processor: "same",
+            formatter: "normal"
+        });
+        // Set options
+        this.debug = options?.debug ?? this.debug;
+        Object.assign(this.#folderDisplay, options?.folderDisplay ?? {});
         // Proxied config
-        this.proxy = new Proxy(this.#desc, {
+        this.proxy = new Proxy({}, {
             get: (desc, prop) => {
                 return this.get(prop);
             },
@@ -204,7 +271,6 @@ class GM_config extends EventTarget {
                 this.#log(`🔍 "${e.detail.prop}" requested, value is ${e.detail.after}`);
             });
         }
-        this.debug = options?.debug ?? this.debug;
     }
     /**
      * If given a function, calls it with following arguments; otherwise, returns the given value
@@ -215,8 +281,24 @@ class GM_config extends EventTarget {
         return typeof value === "function" ? value(...args) : value;
     }
     /**
+     * Convert a dotted string to a list
+     * @param {string} dotted The dotted string
+     * @returns {string[]} The list
+     */
+    static #dottedToList(dotted) {
+        return dotted.split(".").filter(s => s);
+    }
+    /**
+     * Convert a list to a dotted string
+     * @param {string[]} list The list
+     * @returns {string} The dotted string
+     */
+    static #listToDotted(list) {
+        return list.join(".");
+    }
+    /**
      * Get the value of a property
-     * @param {string} prop The property name
+     * @param {string} prop The dotted property name
      * @returns {any} The value of the property
      */
     get(prop) {
@@ -233,13 +315,13 @@ class GM_config extends EventTarget {
     }
     /**
      * Set the value of a property
-     * @param {string} prop The property name
+     * @param {string} prop The dotted property name
      * @param {any} value The value to be set
      * @returns {boolean} Whether the value is set successfully
      */
     set(prop, value) {
         // Store value
-        const defaultValue = this.#desc[prop].value;
+        const defaultValue = this.#getProp(prop).value;
         if (value === defaultValue && typeof GM_deleteValue === "function") {
             GM_deleteValue(prop); // Delete stored value if it's the same as default value
             this.#log(`🗑️ "${prop}" deleted`);
@@ -250,12 +332,27 @@ class GM_config extends EventTarget {
         return true;
     }
     /**
+     * Get the description of a property
+     * @param {string|string[]} path The path to the property, either a dotted string or a list
+     * @returns {Object} The description of the property
+     */
+    #getProp(path) {
+        if (typeof path === "string") {
+            path = GM_config.#dottedToList(path);
+        }
+        let desc = this.#desc;
+        for (const key of path.slice(0, -1)) {
+            desc = desc[key].items;
+        }
+        return desc[path[path.length - 1]];
+    }
+    /**
      * Get the value of a property (only for internal use; won't trigger events)
-     * @param {string} prop The property name
+     * @param {string} prop The dotted property name
      * @returns {any} The value of the property
      */
     #get(prop) {
-        return GM_getValue(prop, this.#desc[prop].value);
+        return GM_getValue(prop, this.#getProp(prop).value);
     }
     /**
      * Log a message if debug is enabled
@@ -283,9 +380,28 @@ class GM_config extends EventTarget {
         return this.dispatchEvent(event);
     }
     /**
-     * Register menu items
+     * Go to the parent folder
+     * @returns {void}
+     */
+    #up() {
+        this.#currentPath.pop();
+        this.#log(`⬆️ Went up to ${GM_config.#listToDotted(this.#currentPath) || "#root"}`);
+        this.#register();
+    }
+    /**
+     * Go to a subfolder
+     * @param {string} name The name of the subfolder
+     */
+    #down(name) {
+        this.#currentPath.push(name);
+        this.#log(`⬇️ Went down to ${GM_config.#listToDotted(this.#currentPath)}`);
+        this.#register();
+    }
+    /**
+     * Register menu items at the current path
      */
     #register() {
+        this.#currentDescCache = null; // Clear cache
         // Unregister old menu items
         for (const prop in this.#registered) {
             const id = this.#registered[prop];
@@ -293,19 +409,32 @@ class GM_config extends EventTarget {
             delete this.#registered[prop];
             this.#log(`- Unregistered menu command: prop="${prop}", id=${id}`);
         }
-        for (const prop in this.#desc) {
-            this.#registered[prop] = this.#registerItem(prop);
+        // Register parent menu item (if not at root)
+        if (this.#currentPath.length) {
+            const id = GM_registerMenuCommand(this.#folderDisplay.parentText, () => {
+                this.#up();
+            }, {
+                autoClose: false,
+                title: this.#folderDisplay.parentTitle
+            });
+            this.#registered[null] = id;
+            this.#log(`+ Registered menu command: prop=null, id=${id}`);
+        }
+        // Register new menu items
+        for (const prop in this.#currentDesc) {
+            const fullProp = GM_config.#listToDotted([...this.#currentPath, prop]);
+            this.#registered[fullProp] = this.#registerItem(fullProp);
         }
     }
     /**
      * (Re-)register a single menu item, return its menu id
-     * @param {string} prop The property
+     * @param {string} prop The dotted property name
      */
     #registerItem(prop) {
-        const { name, input, formatter, accessKey, autoClose, title } = this.#desc[prop];
+        const { name, input, processor, formatter, accessKey, autoClose, title } = this.#getProp(prop);
         const orig = this.#get(prop);
         const inputFunc = typeof input === "function" ? input : this.#builtinInputs[input];
-        const formatterFunc = typeof formatter === "function" ? formatter : GM_config.#builtinFormatters[formatter];
+        const formatterFunc = typeof formatter === "function" ? formatter : this.#builtinFormatters[formatter];
         const option = {
             accessKey: GM_config.#call(accessKey, prop, name, orig),
             autoClose: GM_config.#call(autoClose, prop, name, orig),
@@ -316,7 +445,6 @@ class GM_config extends EventTarget {
             let value;
             try {
                 value = inputFunc(prop, orig);
-                const processor = this.#desc[prop].processor;
                 if (typeof processor === "function") { // Process user input
                     value = processor(value);
                 } else if (typeof processor === "string") {

@@ -43,7 +43,7 @@ console.log(GM_config.version); // *Print version*
 
 ### Config description
 
-The first step is to define your config description, which is a dictionary and each of its key (apart from possible `$default`) represents the id of a config item.
+The first step is to define your config description, which is a dictionary and each of its key (apart from possible `$default`) represents the id of a config item. Note that no `.` is allowed in the id.
 
 #### `$default`
 
@@ -93,41 +93,21 @@ const configDesc = {
 
 The type of the config item, used for quickly setting up common properties. Currently supported types are:
 
-```javascript
-#builtin_types = {
-    str: { // String
-        value: "",
-        input: "prompt",
-        processor: "same",
-        formatter: "normal",
-    },
-    bool: { // Boolean
-        value: false,
-        input: "current",
-        processor: "not",
-        formatter: "boolean",
-    },
-    int: { // Integer
-        value: 0,
-        input: "prompt",
-        processor: "int",
-        formatter: "normal",
-    },
-    float: { // Float
-        value: 0.0,
-        input: "prompt",
-        processor: "float",
-        formatter: "normal",
-    },
-    action: { // Action
-        value: null,
-        input: (prop, orig) => {...}, // Do not override. To setup callback(s), listen for this attribute's `get` events using `config.addEventListener`
-        processor: "same",
-        formatter: "name_only",
-        autoClose: true,
-    },
-};
-```
+- `str`: String
+- `bool`: Boolean
+- `int`: Integer
+- `float`: Float
+- `action`: Calls function(s) when clicked
+    - You should not override `prop.input` and `prop.processor` for this type
+    - Listen for this property's `get` events using `config.addEventListener` to set up callback(s)
+- `folder`: A folder that contains other config items
+    - You should override `prop.items` to create config items in this folder, which should be in the same format as the top-level config description `configDesc`
+    - You may use `$default` in a folder
+    - You may nest folders as many as you like
+    - Use dotted names to access nested config items, i.e.
+        - `config.get("folder1.folder2.item")`
+        - `config.proxy["folder1.folder2.item"]`
+        - `config.proxy.folder1.folder2.item` is not supported
 
 You may use it like this:
 
@@ -163,7 +143,8 @@ Built-in input methods:
 
 - `prompt`: Ask for user input using `prompt()` (default value)
 - `current`: Current value will be used as user input (Usually used with `prop.processor=not` so as to create a switch, or with custom `processor` to create a generator)
-- `name_only`: Only show the name of the config item (Used internally by `action` type)
+- `action`: Dispatches a `get` event and returns the original value. Will `autoClose` the menu to indicate that the click is successful. (Used internally by `action` type)
+- `folder`: Goes down the given folder specified by the config item's id. After this, dispatches a `get` event and returns the original value. Will not `autoClose` the menu. (Used internally by `folder` type)
 
 #### `prop.processor`
 
@@ -194,6 +175,8 @@ Built-in formatters:
 
 - `normal`: Display in the format of `name: value`
 - `boolean`: Display method aimed for boolean values. `true` will be displayed as `name: ✔`, `false` will be displayed as `name: ✘`.
+- `name_only`: Only show the name of the config item (Used internally by `action` type)
+- `folder`: Wrap the name with `options.folderDisplay.prefix` and `options.folderDisplay.suffix`. (Used internally by `folder` type)
 
 #### Other Tampermonkey provided properties
 
@@ -205,8 +188,9 @@ The priority of the properties is as follows (from highest to lowest):
 
 1. The properties you explicitly set for each config item
 2. The properties implied by the `type` of the config item
-3. The properties you set for `$default`
-4. The default values for `$default`
+3. The properties you set for `$default` in this folder
+4. Calculated `$default` for parent folder
+5. The default values for `$default`
 
 ### Register menu
 
@@ -218,6 +202,11 @@ After defining your config description, you can register the menu item by constr
         - If set to `true`, the menu item will be registered immediately. (default value)
         - If set to `false`, the user need to click "Show configuration" to register it.
     - `debug`: Whether to enable debug mode. If set to `true`, debug information will be printed to console. Default value is `false`. (Can be modified by `config.debug` at any time)
+    - `folderDisplay`: Controls how a `folder` type config item is displayed.
+        - `prefix`: Prefix of a folder name. Default value is empty string.
+        - `suffix`: Suffix of a folder name. Default value is ` >`.
+        - `parentText`: The text indicating the parent folder. Default value is `< Back`.
+        - `parentTitle`: The title of the parent folder. Default value is `Return to parent folder`.
 
 ```javascript
 const config = new GM_config(configDesc, { immediate: false }); // *Register menu*
@@ -277,116 +266,7 @@ This feature is often used to update your script dynamically when config is modi
 
 ## 👀 Working example
 
-Install below code as a script, and see how does it work:
-
-```javascript
-// ==UserScript==
-// @name         Test Config
-// @namespace    http://tampermonkey.net/
-// @version      1.0.1
-// @description  This is an example to demostrate the usage of greasyfork.org/scripts/470224.
-// @author       PRO
-// @match        https://greasyfork.org/*
-// @icon         https://greasyfork.org/vite/assets/blacklogo16-bc64b9f7.png
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_registerMenuCommand
-// @grant        GM_unregisterMenuCommand
-// @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1456701/Tampermonkey%20Config.js
-// @license      gpl-3.0
-// ==/UserScript==
-
-(function() {
-    'use strict';
-    const configDesc = { // Config description
-        $default: {
-            autoClose: false
-        },
-        anyString: {
-            name: "Any String",
-            type: "str"
-        },
-        anyBoolean: {
-            name: "Any boolean",
-            type: "bool"
-        },
-        anyInteger:{
-            name: "Any integer",
-            type: "int"
-        },
-        anyFloat: {
-            name: "Any float",
-            type: "float"
-        },
-        someAction: {
-            name: "Some action",
-            title: "Click me!",
-            type: "action"
-        },
-        password: {
-            name: "Password", // Display name
-            value: "tmp", // Default value
-            input: "prompt", // How to get user input (Invoked when user clicks the menu command)
-            // Built-in values:
-            // "current": Current value will be passed to `processor` as user input (generator-like)
-            // "prompt": Use `prompt` to get user input (default value)
-            // <function>: Custom function to get user input, should return certain value to be processed by `processor`
-            //     (prop, orig) => input
-            processor: (v) => {
-                if (v.length < 3) throw "Too short!";
-                return v;
-            }
-            //
-        },
-        enabled: {
-            name: "Enabled",
-            title: (prop, name, value) => value ? "Disable some feature" : "Enable some feature",
-            value: true,
-            // The following can be replaced by `type: "bool"`
-            input: "current",
-            processor: "not", // Process user inputs, throw error if invalid
-            // Built-in processors:
-            // "same": Return user input directly (default value)
-            // "not": Invert boolean value
-            // "int": Convert to integer
-            // "int_range-min-max": Convert to integer in range [min, max], raise error if invalid ("" for no limit)
-            // "float": Convert to float
-            // "float_range-min-max": Convert to float in range [min, max], raise error if invalid ("" for no limit)
-            // <function>: Custom function to process value
-            //     (input) => stored
-            formatter: "boolean", // Format value to be displayed in menu command
-            // Built-in formatters:
-            // "normal": `${name}: ${value}`
-            // "boolean": `${name}: ${value ? "✔" : "✘"}`
-            // <function>: Custom function to format value
-            //     (name, value) => string
-        },
-        val: {
-            name: "Positive float",
-            value: 11.4,
-            processor: "float_range-0-" // Convert to float in range [0, +∞)
-        }
-    }
-    const config = new GM_config(configDesc, { immediate: false, debug: true }); // Register menu commands
-    function someAction() {
-        console.log("Action is invoked!");
-    }
-    config.addEventListener("get", (e) => { // Listen to `get` events for `someAction`
-        if (e.detail.prop === "someAction") {
-            someAction();
-        }
-    });
-    config.addEventListener("set", (e) => { // Listen to config changes
-        console.log(e.detail);
-    });
-    window.setTimeout(() => { // Change config values, and menu commands will be updated automatically
-        config.proxy.val += 1; // Remember to validate the value before setting it
-    }, 5000);
-})();
-```
-
-Alternatively, you can try out this lib in action with [Greasy Fork Enhance](https://greasyfork.org/scripts/467078).
+Install [this test code](https://github.com/PRO-2684/gadgets/raw/refs/heads/main/GM_config/test_config.user.js), and see how does it work; Or you can try out this lib in action with [Greasy Fork Enhance](https://greasyfork.org/scripts/467078).
 
 ## ⚠️ Note
 

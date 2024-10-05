@@ -43,7 +43,7 @@ console.log(GM_config.version); // *输出版本*
 
 ### 配置描述
 
-使用这个库的第一步是创建一个配置描述。配置描述是一个字典，它的每个属性 (除了可能的 `$default` 外) 都是一个配置项的 id。
+使用这个库的第一步是创建一个配置描述。配置描述是一个字典，它的每个属性 (除了可能的 `$default` 外) 都是一个配置项的 id。需要注意的是，不允许 `.` 出现在配置项的 id 中。
 
 #### `$default`
 
@@ -92,40 +92,21 @@ const configDesc = {
 
 配置项的类型，用于快速设置常见的属性集。当前支持的类型有：
 
-```javascript
-#builtin_types = {
-    str: { // 字符串
-        value: "",
-        input: "prompt",
-        processor: "same",
-        formatter: "normal",
-    },
-    bool: { // 布尔值
-        value: false,
-        input: "current",
-        processor: "not",
-        formatter: "boolean",
-    },
-    int: { // 整数
-        value: 0,
-        input: "prompt",
-        processor: "int",
-        formatter: "normal",
-    },
-    float: { // 浮点数
-        value: 0.0,
-        input: "prompt",
-        processor: "float",
-        formatter: "normal",
-    },
-    action: { // 动作
-        value: null,
-        input: (prop, orig) => {...}, // 请勿覆盖。为实现回调，请使用 `config.addEventListener` 监听此属性的 `get` 事件
-        formatter: "name_only",
-        autoClose: true,
-    },
-};
-```
+- `str`：字符串
+- `bool`：布尔值
+- `int`：整数
+- `float`：浮点数
+- `action`：点击时调用函数
+    - 你不应该覆盖此类型的 `prop.input` 和 `prop.processor` 属性
+    - 为实现回调，请使用 `config.addEventListener` 监听此属性的 `get` 事件
+- `folder`：一个含有其它配置项的文件夹
+    - 你需要覆盖 `prop.items` 来在文件夹下创建配置项，其格式与顶层配置描述 `configDesc` 相同
+    - 你可以在文件夹内使用 `$default`
+    - 你可以随你喜欢嵌套任意多的文件夹
+    - 通过句点访问嵌套的配置项，例如：
+        - `config.get("folder1.folder2.item")`
+        - `config.proxy["folder1.folder2.item"]`
+        - `config.proxy.folder1.folder2.item` 类型的访问暂不支持
 
 你可以像这样使用它们：
 
@@ -161,7 +142,8 @@ const configDesc = {
 
 - `prompt`：弹出对话框询问输入（默认）
 - `current`：使用当前值作为输入（常与 `prop.processor=not` 配合使用，用于开关；或与自定义的 `processor` 配合使用，构成生成器）
-- `name_only`: 仅显示名称，不显示值（内部用于 `action` 类型）
+- `action`：派发 `get` 事件，返回原值（内部用于 `action` 类型）
+- `folder`：进入由配置项 id 指定的文件夹。在此之后，派发 `get` 事件，返回原值（内部用于 `folder` 类型）
 
 #### `prop.processor`
 
@@ -192,6 +174,8 @@ const configDesc = {
 
 - `normal`：`name: value` 的形式
 - `boolean`：针对布尔值的展现方式。`true` 显示为 `name: ✔`，`false` 显示为 `name: ✘`
+- `name_only`: 仅显示名称，不显示值（内部用于 `action` 类型）
+- `folder`: 使用 `options.folderDisplay.prefix` 和 `options.folderDisplay.suffix` 包裹名称（内部用于 `folder` 类型）
 
 #### 其它 Tampermonkey 提供的属性
 
@@ -203,8 +187,9 @@ const configDesc = {
 
 1. 你为配置项明确设置的属性
 2. `type` 隐含的属性
-3. 你为 `$default` 设置的属性
-4. `$default` 的默认值
+3. 你为此文件夹的 `$default` 设置的属性
+4. 计算后父文件夹的 `$default`
+5. `$default` 的默认值
 
 ### 注册配置菜单
 
@@ -216,6 +201,11 @@ const configDesc = {
         - 若为 `true`，则会立即注册菜单（默认）
         - 若为 `false`，需要用户点击 `Show configuration` 后才会注册配置菜单
     - `debug`：是否开启调试模式。若为 `true`，会输出调试信息。默认为 `false`。（随时可以通过 `config.debug` 来修改）
+    - `folderDisplay`：控制 `folder` 类型的展现方式
+        - `prefix`：文件夹名称前缀，默认为空字符串
+        - `suffix`：文件夹名称后缀，默认为 ` >`
+        - `parentText`：父文件夹的文本，默认为 `< Back`
+        - `parentTitle`：父文件夹的标题，默认为 `Return to parent folder`
 
 ```javascript
 const config = new GM_config(configDesc, { immediate: false }); // *注册配置菜单*
@@ -275,116 +265,7 @@ config.addEventListener("get", (e) => {
 
 ## 👀 完整的例子
 
-将以下测试代码安装为脚本，观察它是如何工作的：
-
-```javascript
-// ==UserScript==
-// @name         Test Config
-// @namespace    http://tampermonkey.net/
-// @version      1.0.1
-// @description  This is an example to demostrate the usage of greasyfork.org/scripts/470224.
-// @author       PRO
-// @match        https://greasyfork.org/*
-// @icon         https://greasyfork.org/vite/assets/blacklogo16-bc64b9f7.png
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_registerMenuCommand
-// @grant        GM_unregisterMenuCommand
-// @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1456701/Tampermonkey%20Config.js
-// @license      gpl-3.0
-// ==/UserScript==
-
-(function() {
-    'use strict';
-    const configDesc = { // Config description
-        $default: {
-            autoClose: false
-        },
-        anyString: {
-            name: "Any String",
-            type: "str"
-        },
-        anyBoolean: {
-            name: "Any boolean",
-            type: "bool"
-        },
-        anyInteger:{
-            name: "Any integer",
-            type: "int"
-        },
-        anyFloat: {
-            name: "Any float",
-            type: "float"
-        },
-        someAction: {
-            name: "Some action",
-            title: "Click me!",
-            type: "action"
-        },
-        password: {
-            name: "Password", // Display name
-            value: "tmp", // Default value
-            input: "prompt", // How to get user input (Invoked when user clicks the menu command)
-            // Built-in values:
-            // "current": Current value will be passed to `processor` as user input (generator-like)
-            // "prompt": Use `prompt` to get user input (default value)
-            // <function>: Custom function to get user input, should return certain value to be processed by `processor`
-            //     (prop, orig) => input
-            processor: (v) => {
-                if (v.length < 3) throw "Too short!";
-                return v;
-            }
-            //
-        },
-        enabled: {
-            name: "Enabled",
-            title: (prop, name, value) => value ? "Disable some feature" : "Enable some feature",
-            value: true,
-            // The following can be replaced by `type: "bool"`
-            input: "current",
-            processor: "not", // Process user inputs, throw error if invalid
-            // Built-in processors:
-            // "same": Return user input directly (default value)
-            // "not": Invert boolean value
-            // "int": Convert to integer
-            // "int_range-min-max": Convert to integer in range [min, max], raise error if invalid ("" for no limit)
-            // "float": Convert to float
-            // "float_range-min-max": Convert to float in range [min, max], raise error if invalid ("" for no limit)
-            // <function>: Custom function to process value
-            //     (input) => stored
-            formatter: "boolean", // Format value to be displayed in menu command
-            // Built-in formatters:
-            // "normal": `${name}: ${value}`
-            // "boolean": `${name}: ${value ? "✔" : "✘"}`
-            // <function>: Custom function to format value
-            //     (name, value) => string
-        },
-        val: {
-            name: "Positive float",
-            value: 11.4,
-            processor: "float_range-0-" // Convert to float in range [0, +∞)
-        }
-    }
-    const config = new GM_config(configDesc, { immediate: false, debug: true }); // Register menu commands
-    function someAction() {
-        console.log("Action is invoked!");
-    }
-    config.addEventListener("get", (e) => { // Listen to `get` events for `someAction`
-        if (e.detail.prop === "someAction") {
-            someAction();
-        }
-    });
-    config.addEventListener("set", (e) => { // Listen to config changes
-        console.log(e.detail);
-    });
-    window.setTimeout(() => { // Change config values, and menu commands will be updated automatically
-        config.proxy.val += 1; // Remember to validate the value before setting it
-    }, 5000);
-})();
-```
-
-或者，你也可以安装这个脚本来体验这个库的功能：[Greasy Fork Enhance](https://greasyfork.org/scripts/467078)
+安装 [此测试代码](https://github.com/PRO-2684/gadgets/raw/refs/heads/main/GM_config/test_config.user.js)，观察它是如何工作的；或者，你也可以安装 [Greasy Fork Enhance](https://greasyfork.org/scripts/467078) 来体验这个库的功能。
 
 ## ⚠️ 注意
 
