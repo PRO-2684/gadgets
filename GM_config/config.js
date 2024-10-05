@@ -27,7 +27,7 @@ class GM_config extends EventTarget {
      * Built-in processors for user input
      * @type {Object<string, Function>}
      */
-    static #builtin_processors = {
+    static #builtinProcessors = {
         same: (v) => v,
         not: (v) => !v,
         int: (s) => {
@@ -35,11 +35,11 @@ class GM_config extends EventTarget {
             if (isNaN(value)) throw `Invalid value: ${s}, expected integer!`;
             return value;
         },
-        int_range: (s, min_s, max_s) => {
+        int_range: (s, minStr, maxStr) => {
             const value = parseInt(s);
             if (isNaN(value)) throw `Invalid value: ${s}, expected integer!`;
-            const min = (min_s === "") ? -Infinity : parseInt(min_s);
-            const max = (max_s === "") ? +Infinity : parseInt(max_s);
+            const min = (minStr === "") ? -Infinity : parseInt(minStr);
+            const max = (maxStr === "") ? +Infinity : parseInt(maxStr);
             if (min !== NaN && value < min) throw `Invalid value: ${s}, expected integer >= ${min}!`;
             if (max !== NaN && value > max) throw `Invalid value: ${s}, expected integer <= ${max}!`;
             return value;
@@ -49,11 +49,11 @@ class GM_config extends EventTarget {
             if (isNaN(value)) throw `Invalid value: ${s}, expected float!`;
             return value;
         },
-        float_range: (s, min_s, max_s) => {
+        float_range: (s, minStr, maxStr) => {
             const value = parseFloat(s);
             if (isNaN(value)) throw `Invalid value: ${s}, expected float!`;
-            const min = (min_s === "") ? -Infinity : parseFloat(min_s);
-            const max = (max_s === "") ? +Infinity : parseFloat(max_s);
+            const min = (minStr === "") ? -Infinity : parseFloat(minStr);
+            const max = (maxStr === "") ? +Infinity : parseFloat(maxStr);
             if (min !== NaN && value < min) throw `Invalid value: ${s}, expected float >= ${min}!`;
             if (max !== NaN && value > max) throw `Invalid value: ${s}, expected float <= ${max}!`;
             return value;
@@ -63,7 +63,7 @@ class GM_config extends EventTarget {
      * Built-in formatters for user input
      * @type {Object<string, Function>}
      */
-    static #builtin_formatters = {
+    static #builtinFormatters = {
         normal: (name, value) => `${name}: ${value}`,
         boolean: (name, value) => `${name}: ${value ? "✔" : "✘"}`,
         name_only: (name, value) => name,
@@ -85,7 +85,7 @@ class GM_config extends EventTarget {
      * The built-in input functions
      * @type {Object<string, Function>}
      */
-    #builtin_inputs = {
+    #builtinInputs = {
         current: (prop, orig) => orig,
         prompt: (prop, orig) => {
             const s = prompt(`🤔 New value for ${this.#desc[prop].name}:`, orig);
@@ -95,7 +95,7 @@ class GM_config extends EventTarget {
     /**
      * The built-in types
      */
-    #builtin_types = {
+    #builtinTypes = {
         str: { // String
             value: "",
             input: "prompt",
@@ -162,7 +162,7 @@ class GM_config extends EventTarget {
         }
         // Complete desc & setup value change listeners
         for (const key in this.#desc) {
-            this.#desc[key] = Object.assign({}, $default, this.#builtin_types[this.#desc[key].type] ?? {}, this.#desc[key]);
+            this.#desc[key] = Object.assign({}, $default, this.#builtinTypes[this.#desc[key].type] ?? {}, this.#desc[key]);
             GM_addValueChangeListener(key, onValueChange.bind(this));
         }
         // Proxied config
@@ -194,7 +194,7 @@ class GM_config extends EventTarget {
                     this.#log(`🔧 "${e.detail.prop}" changed from ${e.detail.before} to ${e.detail.after}, remote: ${e.detail.remote}`);
                     const id = this.#registered[e.detail.prop];
                     if (id !== undefined) {
-                        this.#register_item(e.detail.prop);
+                        this.#registerItem(e.detail.prop);
                     } else {
                         this.#log(`+ Skipped updating menu since it's not registered: prop="${e.detail.prop}"`);
                     }
@@ -239,8 +239,8 @@ class GM_config extends EventTarget {
      */
     set(prop, value) {
         // Store value
-        const default_value = this.#desc[prop].value;
-        if (value === default_value && typeof GM_deleteValue === "function") {
+        const defaultValue = this.#desc[prop].value;
+        if (value === defaultValue && typeof GM_deleteValue === "function") {
             GM_deleteValue(prop); // Delete stored value if it's the same as default value
             this.#log(`🗑️ "${prop}" deleted`);
         } else {
@@ -294,36 +294,36 @@ class GM_config extends EventTarget {
             this.#log(`- Unregistered menu command: prop="${prop}", id=${id}`);
         }
         for (const prop in this.#desc) {
-            this.#registered[prop] = this.#register_item(prop);
+            this.#registered[prop] = this.#registerItem(prop);
         }
     }
     /**
      * (Re-)register a single menu item, return its menu id
      * @param {string} prop The property
      */
-    #register_item(prop) {
+    #registerItem(prop) {
         const { name, input, formatter, accessKey, autoClose, title } = this.#desc[prop];
         const orig = this.#get(prop);
-        const input_func = typeof input === "function" ? input : this.#builtin_inputs[input];
-        const formatter_func = typeof formatter === "function" ? formatter : GM_config.#builtin_formatters[formatter];
+        const inputFunc = typeof input === "function" ? input : this.#builtinInputs[input];
+        const formatterFunc = typeof formatter === "function" ? formatter : GM_config.#builtinFormatters[formatter];
         const option = {
             accessKey: GM_config.#call(accessKey, prop, name, orig),
             autoClose: GM_config.#call(autoClose, prop, name, orig),
             title: GM_config.#call(title, prop, name, orig),
             id: this.#registered[prop],
         };
-        const id = GM_registerMenuCommand(formatter_func(name, orig), () => {
+        const id = GM_registerMenuCommand(formatterFunc(name, orig), () => {
             let value;
             try {
-                value = input_func(prop, orig);
+                value = inputFunc(prop, orig);
                 const processor = this.#desc[prop].processor;
                 if (typeof processor === "function") { // Process user input
                     value = processor(value);
                 } else if (typeof processor === "string") {
                     const parts = processor.split("-");
-                    const processor_func = GM_config.#builtin_processors[parts[0]];
-                    if (processor_func !== undefined) // Process user input
-                        value = processor_func(value, ...parts.slice(1));
+                    const processorFunc = GM_config.#builtinProcessors[parts[0]];
+                    if (processorFunc !== undefined) // Process user input
+                        value = processorFunc(value, ...parts.slice(1));
                     else // Unknown processor
                         throw `Unknown processor: ${processor}`;
                 } else {
