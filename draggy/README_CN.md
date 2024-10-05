@@ -18,6 +18,7 @@
 - **🛠️ Operation settings**: Draggy 的操作设置。
     - **Open tab in background**: 是否在后台打开新标签页。
     - **Open tab insert**: 是否将新标签页插入到当前标签页旁边。如果为 false，则新标签页将追加到末尾。
+    - **Matching URI in text**: 是否在选定的文本中匹配 URI。如果启用 ***且*** 选定的文本是有效的 URI ***且*** 其协议被允许，则 Draggy 将直接打开它而不是搜索。
     - **Minimum drag distance**: 触发 draggy 的最小距离。
 - **🔎 Search engine settings**: 为不同方向配置搜索引擎。使用 `{<max-length>}` 作为 URL 编码查询的占位符，其中 `<max-length>` 是最大文本长度。如果未指定 `<max-length>`，则搜索词不会被截断。
     - **Search engine (default)**: 拖拽文本时使用的默认搜索引擎。
@@ -34,6 +35,7 @@
         </ul>
     </details>
 - **⚙️ Advanced settings**: 针对高级用户或调试的设置。
+    - **Allowed protocols**: 允许的文本中匹配到的 URI 的协议，用逗号分隔。留空以允许所有协议。
     - **Maximum time delta**: esc/drop 和 dragend 事件之间的最大时间差，以将它们视为不同的用户手势。*通常不需要更改此值。*
     - **Debug mode**: 启用调试模式。
 
@@ -48,6 +50,7 @@
 | 插入打开的标签页 | 🟢 | <span title="已打开的标签页总是追加到末尾">🔴*</span> |
 | 兼容性 | 🟡 | 🟢 |
 | 自定义搜索引擎 | <span title="基于拖拽方向允许最多 4 个不同的搜索引擎">🟢*</span> | <span title="仅允许 1 个搜索引擎且限制为 Bing 或默认搜索引擎">🟡*</span> |
+| 自定义允许的协议 | 🟢 | <span title="仅允许 http 和 https">🔴*</span> |
 | 搜索词最大长度 | 🟢 | 🔴 |
 | 最小拖拽距离 | 🟢 | 🔴 |
 | 取消拖拽 | <span title="将鼠标移回圈内 (浏览器设计使得 Esc 取消无法实现)">🟢*</span> | <span title="按 Esc 键">🟢*</span> |

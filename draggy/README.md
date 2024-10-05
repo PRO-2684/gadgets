@@ -18,6 +18,7 @@
 - **🛠️ Operation settings**: Settings for the operation of Draggy.
     - **Open tab in background**: Whether to open new tabs in the background。
     - **Open tab insert**: Whether to insert the new tab next to the current tab. If false, the new tab will be appended to the end.
+    - **Matching URI in text**: Whether to match URI in the selected text. If enabled ***AND*** the selected text is a valid URI ***AND*** its protocol is allowed, Draggy will open it directly instead of searching.
     - **Minimum drag distance**: Minimum distance to trigger draggy.
 - **🔎 Search engine settings**: Configure search engines for different directions. Use `{<max-length>}` as a placeholder for the URL-encoded query, where `<max-length>` is the maximum text length. If `<max-length>` is not specified, the search term will not be truncated.
     - **Search engine (default)**: Default search engine used when dragging text.
@@ -34,6 +35,7 @@
         </ul>
     </details>
 - **⚙️ Advanced settings**: Settings for advanced users or debugging.
+    - **Allowed protocols**: Comma-separated list of allowed protocols for matched URI in texts. Leave it blank to allow all protocols.
     - **Maximum time delta**: Maximum time difference between esc/drop and dragend events to consider them as separate user gesture. *Usually there's no need to change this value.*
     - **Debug mode**: Enables debug mode.
 
@@ -48,6 +50,7 @@ If you're using Microsoft Edge, you might find that "Super Drag Drop" is what yo
 | Open tab insert | 🟢 | <span title="Opened tabs always get appended to the end">🔴*</span> |
 | Compatibility | 🟡 | 🟢 |
 | Custom search engine | <span title="Allows up to 4 different search engines based on dragging direction">🟢*</span> | <span title="Only 1 search engine allowed and limited to Bing or default search engine">🟡*</span> |
+| Custom allowed protocols | 🟢 | <span title="Only allows http & https">🔴*</span> |
 | Maximum search term length | 🟢 | 🔴 |
 | Minimum drag distance | 🟢 | 🔴 |
 | Cancel drag | <span title="Move mouse back into the circle (browser's design makes cancelling with Esc impossible)">🟢*</span> | <span title="Press Esc key">🟢*</span> |

@@ -2,7 +2,7 @@
 // @name         Draggy
 // @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.1.6
+// @version      0.1.7
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
 // @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 // @tag          productivity
@@ -59,6 +59,12 @@
                     type: "bool",
                     value: true,
                 },
+                matchingUriInText: {
+                    name: "Matching URI in text",
+                    title: "Whether to match URI in the selected text. If enabled AND the selected text is a valid URI AND its protocol is allowed, Draggy will open it directly instead of searching.",
+                    type: "bool",
+                    value: true,
+                },
                 minDistance: {
                     name: "Minimum drag distance",
                     title: "Minimum distance to trigger draggy.",
@@ -110,6 +116,12 @@
             title: "Settings for advanced users or debugging.",
             type: "folder",
             items: {
+                allowedProtocols: {
+                    name: "Allowed protocols",
+                    title: "Comma-separated list of allowed protocols for matched URI in texts. Leave it blank to allow all protocols.",
+                    type: "string",
+                    value: "http,https,ftp,mailto,tel",
+                },
                 maxTimeDelta: {
                     name: "Maximum time delta",
                     title: "Maximum time difference between esc/drop and dragend events to consider them as separate user gesture. Usually there's no need to change this value.",
@@ -217,6 +229,22 @@
      */
     function open(url) {
         GM_openInTab(url, { active: !config.get("operation.openTabInBg"), insert: config.get("operation.openTabInsert") });
+    }
+    /**
+     * Handles the given text based on the drag direction. If the text is a valid URI and protocol is allowed, open the URI; otherwise, search for the text.
+     * @param {string} text The text to handle.
+     * @param {string} direction The direction of the drag.
+     */
+    function handleText(text, direction) {
+        if (URL.canParse(text)) {
+            const url = new URL(text);
+            const allowedProtocols = config.get("advanced.allowedProtocols").split(",").map(p => p.trim()).filter(Boolean);
+            if (allowedProtocols.length === 0 || allowedProtocols.includes(url.protocol.slice(0, -1))) {
+                open(text);
+                return;
+            }
+        }
+        search(text, direction);
     }
     /**
      * Searches for the given keyword.
@@ -334,7 +362,7 @@
             const isPositive = isVertical ? dy > 0 : dx > 0;
             const direction = isVertical ? (isPositive ? "down" : "up") : (isPositive ? "right" : "left");
             log("Draggy direction:", direction);
-            search(data, direction);
+            handleText(data, direction);
         } else {
             log("Draggy can't find selected text or a valid link");
         }
