@@ -5,40 +5,40 @@
 ## 🪄 Functions
 
 - Filter out (hides) scripts whose name matches the given regular expression, disabled when left empty (examples listed below)
-  - `.{30,}`: Hide scripts whose name length is greater than 30
-  - `网盘|网课|网购`: Hide scripts containing `网盘`, `网课`, or `网购`
-  - `[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDEFF]|\uFE0F`: Hide scripts containing emojis
+    - `.{30,}`: Hide scripts whose name length is greater than 30
+    - `网盘|网课|网购`: Hide scripts containing `网盘`, `网课`, or `网购`
+    - `[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDEFF]|\uFE0F`: Hide scripts containing emojis
 - Add anchors for headers (`h1~h6`) at Greasyfork pages, so you can navigate easily
 - Quickly goes back to top
-  - Double click white space at either sides
-  - Click `↑` button at lower right corner
+    - Double click white space at either sides
+    - Click `↑` button at lower right corner
 - Aside panel for showing outline (*Dynamic opacity*)
 - Fix current tab link to make it functional as well (Including tabs at script detail page and the logo at homepage)
 - Larger file drop area
 - Copy/hide/show code support ([Test link](https://greasyfork.org/scripts/470224))
-  - Auto hide code that has larger line number than given value
+    - Auto hide code that has larger line number than given value
 - More recognizable tables
 - Flat layout
 - Show version number in script list
 - Advanced search syntax (**Case-insensitive**)
-  - `site:`: Only display scripts for given site, e.g. query `ad site:youtube.com` will navigate you to `https://greasyfork.org/scripts/by-site/youtube.com?q=ad`
-  - `type:`: Search in specified type, including:
-    - `script`: Script search (default)
-    - `lib`, `library`: Library search
-    - ~~`code`: Code search~~
-    - `user`: User search
-  - `lang:`: Specify programming language (Only for script search)
-    - `js`, `javascript`: JavaScript (default)
-    - `css`: CSS
-    - `any`, `all`: All languages
-  - `sort:`: Specify sorting method (Only for script search)
-    - `rel`, `relevant`, `relevance`: Sort by relevance (default when query is given)
-    - `day`, `daily`, `daily_install`, `daily_installs`: Sort by daily installs (default when no query is given)
-    - `total`, `total_install`, `total_installs`: Sort by total installs
-    - `score`, `rate`, `rating`, `ratings`: Sort by rating
-    - `created`, `created_at`: Sort by creation time
-    - `updated`, `updated_at`: Sort by update time
-    - `name`, `title`: Sort by name
+    - `site:`: Only display scripts for given site, e.g. query `ad site:youtube.com` will navigate you to `https://greasyfork.org/scripts/by-site/youtube.com?q=ad`
+    - `type:`: Search in specified type, including:
+        - `script`: Script search (default)
+        - `lib`, `library`: Library search
+        - ~~`code`: Code search~~
+        - `user`: User search
+    - `lang:`: Specify programming language (Only for script search)
+        - `js`, `javascript`: JavaScript (default)
+        - `css`: CSS
+        - `any`, `all`: All languages
+    - `sort:`: Specify sorting method (Only for script search)
+        - `rel`, `relevant`, `relevance`: Sort by relevance (default when query is given)
+        - `day`, `daily`, `daily_install`, `daily_installs`: Sort by daily installs (default when no query is given)
+        - `total`, `total_install`, `total_installs`: Sort by total installs
+        - `score`, `rate`, `rating`, `ratings`: Sort by rating
+        - `created`, `created_at`: Sort by creation time
+        - `updated`, `updated_at`: Sort by update time
+        - `name`, `title`: Sort by name
 - Display alternative URLs for libraries
 - Display a short link to current script
 - Keyboard shortcuts
@@ -52,16 +52,21 @@
 
 > Config marked with `*` requires refreshing to take effect
 
-- **Regex Filter**: Use regex to filter out matching scripts
-- **Auto hide code**: Whether to hide long code snippets
-- **Min rows to hide**: Minimum number of rows to hide that piece of code
-- **Tab size**: Tab indentation size
-- **Hide buttons**: Whether to hide floating buttons
-- **Flat layout**: Whether to enable flat layout
-- **Show version**: Show version number in script list
-- **Animation**: Enable animation
-- **Alternative URLs for library**: Display alternative URLs for libraries
-- **Short link**: Display a short link to current script
-- **Shortcut**: Enable keyboard shortcuts
-- \***Search syntax**: Enable partial search syntax
-- \***Image proxy**: Use `wsrv.nl` as proxy for user-uploaded images
+- **🔎 Filter and Search**
+    - **Shortcut**: Enable keyboard shortcuts
+    - **Regex filter**: Use regex to filter out matching scripts
+    - **\*Search syntax**: Enable partial search syntax for Greasy Fork search bar
+- **📝 Code blocks**
+    - **Auto hide code**: Hide long code blocks by default
+    - **Min rows to hide**: Minimum number of rows to hide
+    - **Tab size**: Set Tab indentation size
+    - **Animation**: Enable animation for toggling code blocks
+- **🎨 Display**
+    - **Hide buttons**: Hide floating buttons added by this script
+    - **Flat layout**: Use flat layout for script list and descriptions
+    - **Show version**: Show version number in script list
+- **🔧 Other**
+    - **Short link**: Display a shortened link to current script
+    - **Alternative URLs for library**: Show a list of alternative URLs for a given library
+    - **\*Image proxy**: Use `wsrv.nl` as proxy for user-uploaded images
+    - **Debug**: Enable debug mode

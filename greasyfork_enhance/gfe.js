@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.8.2
+// @version      0.8.3
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
@@ -13,7 +13,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1448594/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1459364/Tampermonkey%20Config.js
 // @icon         https://raw.githubusercontent.com/greasyfork-org/greasyfork/main/public/images/blacklogo16.png
 // @icon64       https://raw.githubusercontent.com/greasyfork-org/greasyfork/main/public/images/blacklogo96.png
 // @license      gpl-3.0
@@ -34,47 +34,145 @@
     if (!is_run) return;
     // Config
     const configDesc = {
-        "$default": {
-            value: true,
-            input: "current",
-            processor: "not",
-            formatter: "boolean",
-            autoClose: false
+        $default: {
+            autoClose: false,
         },
-        "regex-filter": { name: "Regex filter", title: "Use regex to filter out matching scripts", value: "", input: "prompt", processor: "same", formatter: "normal" },
-        "auto-hide-code": { name: "Auto hide code", title: "Hide long code blocks by default" },
-        "auto-hide-rows": {
-            name: "Min rows to hide",
-            value: 10,
-            input: "prompt",
-            processor: "int_range-1-",
-            formatter: "normal",
-            title: "Minimum number of rows to hide"
+        filterAndSearch: {
+            name: "🔎 Filter and Search",
+            type: "folder",
+            items: {
+                shortcut: {
+                    name: "Shortcut",
+                    title: "Enable keyboard shortcuts",
+                    type: "bool",
+                    value: true,
+                },
+                regexFilter: {
+                    name: "Regex filter",
+                    title: "Use regex to filter out matching scripts",
+                    value: "",
+                },
+                searchSyntax: {
+                    name: "*Search syntax",
+                    title: "Enable partial search syntax for Greasy Fork search bar",
+                    type: "bool",
+                    value: true,
+                },
+            },
         },
-        "tab-size": {
-            name: "Tab size",
-            value: 4,
-            input: "prompt",
-            processor: "int_range-0-",
-            formatter: "normal",
-            title: "Set Tab indentation size"
+        codeblocks: {
+            name: "📝 Code blocks",
+            type: "folder",
+            items: {
+                autoHideCode: {
+                    name: "Auto hide code",
+                    title: "Hide long code blocks by default",
+                    type: "bool",
+                    value: true,
+                },
+                autoHideRows: {
+                    name: "Min rows to hide",
+                    title: "Minimum number of rows to hide",
+                    type: "int",
+                    value: 10,
+                    processor: "int_range-1-",
+                },
+                tabSize: {
+                    name: "Tab size",
+                    title: "Set Tab indentation size",
+                    type: "int",
+                    value: 4,
+                    processor: "int_range-0-",
+                },
+                animation: {
+                    name: "Animation",
+                    title: "Enable animation for toggling code blocks",
+                    type: "bool",
+                    value: true,
+                },
+            }
         },
-        "hide-buttons": { name: "Hide buttons", title: "Hide floating buttons added by this script", value: false },
-        "flat-layout": { name: "Flat layout", title: "Use flat layout for script list and descriptions", value: false },
-        "show-version": { name: "Show version", title: "Show version number in script list", value: false },
-        "animation": { name: "Animation", title: "Enable animation for toggling code blocks" },
-        "lib-alternative-url": { name: "Alternative URLs for library", title: "Show a list of alternative URLs for a given library", value: false },
-        "short-link": { name: "Short link", title: "Display a shortened link to current script" },
-        "shortcut": { name: "Shortcut", title: "Enable keyboard shortcuts" },
-        "search-syntax": { name: "*Search syntax", title: "Enable partial search syntax for Greasy Fork search bar" },
-        "image-proxy": { name: "*Image proxy", title: "Use `wsrv.nl` as proxy for user-uploaded images", value: false },
+        display: {
+            name: "🎨 Display",
+            type: "folder",
+            items: {
+                hideButtons: {
+                    name: "Hide buttons",
+                    title: "Hide floating buttons added by this script",
+                    type: "bool",
+                    value: false,
+                },
+                flatLayout: {
+                    name: "Flat layout",
+                    title: "Use flat layout for script list and descriptions",
+                    type: "bool",
+                    value: false,
+                },
+                showVersion: {
+                    name: "Show version",
+                    title: "Show version number in script list",
+                    type: "bool",
+                    value: false,
+                },
+            },
+        },
+        other: {
+            name: "🔧 Other",
+            type: "folder",
+            items: {
+                shortLink: {
+                    name: "Short link",
+                    title: "Display a shortened link to current script",
+                    type: "bool",
+                    value: true,
+                },
+                libAlternativeUrl: {
+                    name: "Alternative URLs for library",
+                    title: "Show a list of alternative URLs for a given library",
+                    type: "bool",
+                    value: false,
+                },
+                imageProxy: {
+                    name: "*Image proxy",
+                    title: "Use `wsrv.nl` as proxy for user-uploaded images",
+                    type: "bool",
+                    value: false,
+                },
+                debug: {
+                    name: "Debug",
+                    title: "Enable debug mode",
+                    type: "bool",
+                    value: false,
+                },
+            }
+        }
     };
     const config = new GM_config(configDesc);
     const configProxy = config.proxy;
     // CSS
     const dynamicStyle = {
-        "hide-buttons": `div#float-buttons { display: none; }`,
-        "flat-layout": `
+        "codeblocks.animation": `
+            /* Toggle code animation */
+            pre > code { transition: height 0.5s ease-in-out 0s; }
+            /* Adapted from animate.css - https://animate.style/ */
+            :root { --animate-duration: 1s; --animate-delay: 1s; --animate-repeat: 1; }
+            .animate__animated { animation-duration: var(--animate-duration); animation-fill-mode: both; }
+            .animate__animated.animate__fastest { animation-duration: calc(var(--animate-duration) / 3); }
+            @keyframes tada {
+                from { transform: scale3d(1, 1, 1); }
+                10%, 20% { transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg); }
+                30%, 50%, 70%, 90% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg); }
+                40%, 60%, 80% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg); }
+                to { transform: scale3d(1, 1, 1); }
+            }
+            .animate__tada { animation-name: tada; }
+            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            .animate__fadeIn { animation-name: fadeIn; }
+            @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+            .animate__fadeOut { -webkit-animation-name: fadeOut; animation-name: fadeOut; }
+        `,
+        "display.hideButtons": `div#float-buttons { display: none; }`,
+        "display.flatLayout": `
             .script-list > li {
                 &:not(.ad-entry) { padding-right: 0; }
                 article {
@@ -112,33 +210,17 @@
             #script-info .script-meta-block { float: right; column-count: 1; max-width: 300px; border-left: 1px solid #DDDDDD; margin-left: 1em; padding-left: 1em; }
             #additional-info { width: calc(100% - 2em - 2px); }
         `,
-        "show-version": `.script-list > li[data-script-version]::before { content: "@" attr(data-script-version); position: absolute; translate: 0 -1em; color: grey; font-size: smaller; }`,
-        "animation": `
-            /* Toggle code animation */
-            pre > code { transition: height 0.5s ease-in-out 0s; }
-            /* Adapted from animate.css - https://animate.style/ */
-            :root { --animate-duration: 1s; --animate-delay: 1s; --animate-repeat: 1; }
-            .animate__animated { animation-duration: var(--animate-duration); animation-fill-mode: both; }
-            .animate__animated.animate__fastest { animation-duration: calc(var(--animate-duration) / 3); }
-            @keyframes tada {
-                from { transform: scale3d(1, 1, 1); }
-                10%, 20% { transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg); }
-                30%, 50%, 70%, 90% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg); }
-                40%, 60%, 80% { transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg); }
-                to { transform: scale3d(1, 1, 1); }
-            }
-            .animate__tada { animation-name: tada; }
-            @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-            .animate__fadeIn { animation-name: fadeIn; }
-            @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-            .animate__fadeOut { -webkit-animation-name: fadeOut; animation-name: fadeOut; }
-        `
+        "display.showVersion": `.script-list > li[data-script-version]::before { content: "@" attr(data-script-version); position: absolute; translate: 0 -1em; color: grey; font-size: smaller; }`,
     };
     // Functions
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
-    const log = console.log.bind(console, `[${name}]`);
     const body = $("body");
+    function log(...args) {
+        if (configProxy["other.debug"]) {
+            console.log(`[${name}]`, ...args);
+        }
+    }
     function sanitify(s) {
         // Remove emojis (such a headache)
         s = s.replaceAll(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDEFF]|\uFE0F)/g, "");
@@ -395,6 +477,7 @@
         return result;
     }
     function regexFilter(regexStr) {
+        const debug = configProxy["other.debug"];
         const scripts = $$(".script-list > li");
         if (regexStr === "" || scripts.length === 0) {
             scripts.forEach(script => script.classList.remove("regex-filtered"));
@@ -403,19 +486,19 @@
         }
         const regex = new RegExp(regexStr, "i");
         let count = 0;
-        console.groupCollapsed(`[${name}] Regex filtered scripts`);
+        debug && console.groupCollapsed(`[${name}] Regex filtered scripts`);
         scripts.forEach(script => {
             if (regexFilterOne(regex, script)) {
                 count++;
             }
         });
         setRegexFilterTip(`Filtered: ${count}/${scripts.length}`);
-        console.groupEnd();
+        debug && console.groupEnd();
     }
-    regexFilter(configProxy["regex-filter"]);
+    regexFilter(configProxy["filterAndSearch.regexFilter"]);
     // Auto hide code blocks
     function autoHide() {
-        if (!configProxy["auto-hide-code"]) {
+        if (!configProxy["codeblocks.autoHideCode"]) {
             for (const code_block of code_blocks) {
                 const toggle = code_block.firstChild.lastChild;
                 if (!toggle) continue;
@@ -430,7 +513,7 @@
                 const toggle = code_block.firstChild.lastChild;
                 if (!toggle) continue;
                 const hidden = toggle.textContent === "Show code";
-                if (rows >= configProxy["auto-hide-rows"] && !hidden || rows < configProxy["auto-hide-rows"] && hidden) {
+                if (rows >= configProxy["codeblocks.autoHideRows"] && !hidden || rows < configProxy["codeblocks.autoHideRows"] && hidden) {
                     code_block.firstChild.lastChild.click(); // Click the toggle button
                 }
             }
@@ -443,7 +526,7 @@
     }, { once: true });
     // Tab size
     function tabSize() {
-        const size = configProxy["tab-size"];
+        const size = configProxy["codeblocks.tabSize"];
         const style = $("style#" + idPrefix + "tab-size") ?? document.head.appendChild(document.createElement("style"));
         style.id = idPrefix + "tab-size";
         style.textContent = `pre { tab-size: ${size}; }`;
@@ -484,7 +567,7 @@
             }
         }
     }
-    alternativeURLs(configProxy["lib-alternative-url"]);
+    alternativeURLs(configProxy["other.libAlternativeUrl"]);
     // Short link
     function shortLink(enable) {
         const description = $("div#script-content");
@@ -519,7 +602,7 @@
             });
         }
     }
-    shortLink(configProxy["short-link"]);
+    shortLink(configProxy["other.shortLink"]);
     // Shortcut
     function submitOnCtrlEnter(e) {
         const form = this.form;
@@ -572,18 +655,19 @@
             shortcutEnabled = false;
         }
     }
-    shortcut(configProxy["shortcut"]);
+    shortcut(configProxy["filterAndSearch.shortcut"]);
     // Initialize css
     for (const prop in dynamicStyle) {
         cssHelper(prop, configProxy[prop]);
     }
     // Dynamically respond to config changes
     const callbacks = {
-        "regex-filter": regexFilter,
-        "auto-hide-code": autoHide,
-        "auto-hide-rows": autoHide,
-        "tab-size": tabSize,
-        "flat-layout": (after) => {
+        "filterAndSearch.shortcut": shortcut,
+        "filterAndSearch.regexFilter": regexFilter,
+        "codeblocks.autoHideCode": autoHide,
+        "codeblocks.autoHideRows": autoHide,
+        "codeblocks.tabSize": tabSize,
+        "display.flatLayout": (after) => {
             const meta_orig = $("#script-info > #script-content .script-meta-block");
             const meta_mod = $("#script-info > .script-meta-block");
             if (after && meta_orig) {
@@ -594,11 +678,10 @@
                 additional.before(meta_mod);
             }
         },
-        "lib-alternative-url": alternativeURLs,
-        "short-link": shortLink,
-        "shortcut": shortcut,
+        "other.shortLink": shortLink,
+        "other.libAlternativeUrl": alternativeURLs,
     };
-    callbacks["flat-layout"](configProxy["flat-layout"]);
+    callbacks["display.flatLayout"](configProxy["display.flatLayout"]);
     config.addEventListener("set", e => {
         const callback = callbacks[e.detail.prop];
         if (callback && (e.detail.before !== e.detail.after)) {
@@ -645,7 +728,7 @@
         "name": "name",
         "title": "name",
     };
-    if (configProxy["search-syntax"]) {
+    if (configProxy["filterAndSearch.searchSyntax"]) {
         function parseString(input) {
             // Regular expression to match key:value pairs, allowing for non-word characters in values
             const regex = /\b(\w+:[^\s]+)\b/g;
@@ -709,7 +792,7 @@
         }
     }
     // Image proxy
-    if (configProxy["image-proxy"]) {
+    if (configProxy["other.imageProxy"]) {
         const PROXY = "https://wsrv.nl/?url=";
         const images = $$("a[href^='/rails/active_storage/blobs/redirect/'] > img[src^='https://greasyfork.']");
         for (const img of images) {
