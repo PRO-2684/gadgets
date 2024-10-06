@@ -1,8 +1,8 @@
 /* ==UserStyle==
 @name           百度系 Debloat
 @namespace      github.com/openstyles/stylus
-@version        0.1.2
-@description    隐藏百度百科、百度经验的一些垃圾玩意儿
+@version        0.1.3
+@description    隐藏百度的一些垃圾玩意儿
 @author         PRO-2684
 @license     	gpl-3.0
 @preprocessor   stylus
@@ -16,6 +16,7 @@
 @var checkbox hideAside "[通用] 完全隐藏侧栏" 0
 @var checkbox hideBubble "[贴吧] 隐藏气泡" 1
 @var checkbox hideShortcutTip "[贴吧] 隐藏快捷键提示" 0
+@var checkbox hideFooter "[翻译] 隐藏底栏" 1
 ==/UserStyle== */
 
 @-moz-document domain("baike.baidu.com") {
@@ -181,6 +182,36 @@
     }
     if (hideShortcutTip) {
         .creative-shortcut-tip-container {
+            display: none;
+        }
+    }
+}
+@-moz-document domain("fanyi.baidu.com") {
+    if (hideFuckingVideo) {
+        .dictionary-explain-video {
+            display: none;
+        }
+    }
+    if (hideTopBar) {
+        #header {
+            display: none !important;
+        }
+    }
+    if (hideAd) {
+        .trans-domain-btn, .ai-trans-btn, .manual-trans-btn, .collection-btn, .op-trans-fb, .note-expand-btn, #app-read {
+            display: none !important; // 切换翻译领域，AI 翻译，人工翻译，收藏，反馈 (赞、踩)，笔记，百度翻译课程中心广告
+        }
+        #transOtherRight, #app-guide, #desktop-guide-wrapper {
+            display: none; // 右侧广告？APP 广告？桌面版广告？
+        }
+    }
+    if (hideFloat) {
+        .footer > .extra-wrap {
+            display: none !important;
+        }
+    }
+    if (hideFooter) {
+        .footer > .inner {
             display: none;
         }
     }
