@@ -12,29 +12,34 @@ Simply navigate to [Greasy Fork](https://greasyfork.org/scripts/492480) and clic
 
 ## Configuration
 
-Statistics can be viewed by clicking `Show Statistics` in the menu, and can be cleared by clicking OK.
-
-For advanced users, you can configure which hooks and rules are enabled by modifying this script's external storage in Tampermonkey:
-
-```jsonc
-{
-    "hooks": {
-        "location.href": true, // Check `location.href` (not really a hook, actually)
-        "click": true, // Intercept `click` events
-        "mousedown": true, // Intercept `mousedown` events
-        "auxclick": true, // Intercept `auxclick` events
-        "touchstart": true, // Intercept `touchstart` events
-        "window.open": true, // Hook `window.open` calls
-        "pushState": false, // Hook `pushState` calls
-        "replaceState": false, // Hook `replaceState` calls
-        "cn.bing.com": true // Intercept a series of events in `cn.bing.com`
-    },
-    "rules": {
-        // Visit https://github.com/PRO-2684/pURLfy-rules/ for related instructions
-    },
-    "senseless": true // Enable senseless mode (better compatibility, Less intrusive, but less effective)
-}
-```
+- **📖 Rules Settings**: Enable or disable rules
+    - **Tracking**: Rules for purifying tracking links
+    - **Outgoing**: Rules for purifying outgoing links
+    - **Shortener**: Rules for restoring shortened links
+    - **Alternative**: Redirects you from some websites to their better alternatives
+    - **Other**: Rules for purifying other types of links
+    - **Remove Text Fragment**: Remove Text Fragments from URL
+- **🪝 Hooks Settings**: Enable or disable hooks
+    - **location.href**: Check location.href
+    - **click**: Intercept `click` events
+    - **mousedown**: Intercept `mousedown` events
+    - **auxclick**: Intercept `auxclick` events
+    - **touchstart**: Intercept `touchstart` events
+    - **window.open**: Hook `window.open` calls
+    - **pushState**: Hook `history.pushState` calls
+    - **replaceState**: Hook `history.replaceState` calls
+    - **Bing**: Site-specific hook for Bing
+- **📊 Statistics**: Show statistics
+    - **URL**: Number of links purified
+    - **Parameter**: Number of parameters removed
+    - **Decoded**: Number of URLs decoded (`param` mode)
+    - **Redirected**: Number of URLs redirected (`redirect` mode)
+    - **Visited**: Number of URLs visited (`visit` mode)
+    - **Character**: Number of characters deleted
+- **⚙️ Advanced options**: Advanced options
+    - **Purify URL**: Manually purify a URL
+    - **Senseless Mode**: Enable senseless mode
+    - **Debug Mode**: Enable debug mode
 
 ## Updating rules
 

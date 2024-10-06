@@ -22,29 +22,34 @@
 
 ## 配置
 
-统计数据可以点击菜单中 `Show Statistics` 查看，点击确定后可以清空统计数据。
-
-对于高级用户，您可以通过修改此脚本在 Tampermonkey 中的外部存储来配置启用哪些 hook 和规则:
-
-```jsonc
-{
-    "hooks": {
-        "location.href": true, // 检查 `location.href` (实际上并不是一个 hook)
-        "click": true, // 监听 `click` 事件
-        "mousedown": true, // 监听 `mousedown` 事件
-        "auxclick": true, // 监听 `auxclick` 事件
-        "touchstart": true, // 监听 `touchstart` 事件
-        "window.open": true, // Hook `window.open` 调用
-        "pushState": false, // Hook `pushState` 调用
-        "replaceState": false, // Hook `replaceState` 调用
-        "cn.bing.com": true // 拦截 `cn.bing.com` 中一系列的事件
-    },
-    "rules": {
-        // 前往 https://github.com/PRO-2684/pURLfy-rules/ 查看相关说明
-    },
-    "senseless": true // 启用无感模式 (兼容性更好，干扰较少，但效果较差)
-}
-```
+- **📖 Rule Settings**：启用或禁用规则
+    - **Tracking**：净化跟踪链接的规则
+    - **Outgoing**：净化外链的规则
+    - **Shortener**：恢复短链的规则
+    - **Alternative**：将您从某些网站重定向到更好的替代网站
+    - **Other**：净化其他类型链接的规则
+    - **Remove Text Fragment**：从 URL 中删除 Text Fragments
+- **🪝 Hooks Settings**：启用或禁用 Hook
+    - **location.href**：检查 location.href
+    - **click**：拦截 `click` 事件
+    - **mousedown**：拦截 `mousedown` 事件
+    - **auxclick**：拦截 `auxclick` 事件
+    - **touchstart**：拦截 `touchstart` 事件
+    - **window.open**：Hook `window.open` 调用
+    - **pushState**：Hook `history.pushState` 调用
+    - **replaceState**：Hook `history.replaceState` 调用
+    - **Bing**：Bing 的特定网站 Hook
+- **📊 Statistics**：显示统计信息
+    - **URL**：净化的链接数量
+    - **Parameter**：删除的参数数量
+    - **Decoded**：解码的 URL 数量（`param` 模式）
+    - **Redirected**：重定向的 URL 数量（`redirect` 模式）
+    - **Visited**：访问的 URL 数量（`visit` 模式）
+    - **Character**：删除的字符数量
+- **⚙️ Advanced options**：高级选项
+    - **Purify URL**：手动净化 URL
+    - **Senseless Mode**：启用无感模式
+    - **Debug Mode**：启用调试模式
 
 ## 工作原理
 
