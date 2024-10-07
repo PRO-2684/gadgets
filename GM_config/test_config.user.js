@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         Test Config
 // @namespace    http://tampermonkey.net/
-// @version      1.1.0
+// @version      1.1.1
 // @description  This is an example to demostrate the usage of greasyfork.org/scripts/470224.
 // @author       PRO
 // @match        https://greasyfork.org/*
 // @icon         https://greasyfork.org/vite/assets/blacklogo16-bc64b9f7.png
 // @grant        GM_setValue
 // @grant        GM_getValue
+// @grant        GM_deleteValue
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener

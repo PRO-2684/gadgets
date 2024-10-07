@@ -265,14 +265,14 @@ As you might have expected, you can remove the listener by calling `config.remov
 
 `e.detail` is a dictionary with the following properties:
 
-- `prop`: The id of the config item accessed/modified.
+- `prop`: The id of the config item accessed/modified. Use dots to represent nested config items.
 - `before`: The value of the config item before the operation.
 - `after`: The value of the config item after the operation.
 - `remote`: Indicating whether this modification is caused by other script instances. Always `false` for `get` event (cannot detect other instances' accesses).
 
 This feature is often used to update your script dynamically when config is modified. In this lib, auto-updating menu is implemented by this feature.
 
-### To sum up: the process of modifying config
+### Sum up: the process of modifying config
 
 1. User clicks the menu command
 2. Pass `prop.name` and current value to `prop.input` to get user input
@@ -280,6 +280,16 @@ This feature is often used to update your script dynamically when config is modi
 4. Save processed value
 5. Dispatch event with corresponding detail
 6. Update menu command (triggered by the event)
+
+### Sum up: operating on `config.proxy` vs `config`
+
+| Operation | `config` | `config.proxy` |
+| --- | --- | --- |
+| Get config | `config.get("price")` | `config.proxy.price` |
+| Set config | `config.set("price", 100)` | `config.proxy.price = 100` |
+| List config | `config.list("someFolder.folder")` | `Object.keys(config.proxy.someFolder.folder)` |
+
+Internally, all operations on `config.proxy` are mapped to operations on `config`.
 
 ## 👀 Working example
 

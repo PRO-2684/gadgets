@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.1.1
+// @version      1.1.2
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -378,7 +378,7 @@ class GM_config extends EventTarget {
     list(prop) {
         const normalized = GM_config.#normalizeProp(prop ?? "");
         if (normalized) {
-            return Object.keys(this.#getProp(normalized).items);
+            return Object.keys(this.#getProp(normalized)?.items ?? {});
         } else {
             return Object.keys(this.#desc);
         }

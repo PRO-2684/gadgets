@@ -264,7 +264,7 @@ config.addEventListener("get", (e) => {
 
 `e.detail` 对象的属性如下：
 
-- `prop`：被查询/修改的配置项的 id。
+- `prop`：被查询/修改的配置项的 id。使用句点表示嵌套的配置项。
 - `before`：变更前的值。
 - `after`：变更后的值。
 - `remote`：表名此修改是否由其它脚本实例造成的，`get` 事件中此属性总为 `false` (无法检测其它脚本实例获取配置)。
@@ -279,6 +279,16 @@ config.addEventListener("get", (e) => {
 4. 保存处理后的值
 5. 发出对应 `detail` 的事件
 6. 更新菜单项（被上述事件触发）
+
+### 总结：操作 `config.proxy` 与 `config` 的对比
+
+| 操作 | `config` | `config.proxy` |
+| --- | --- | --- |
+| 查询配置 | `config.get("price")` | `config.proxy.price` |
+| 修改配置 | `config.set("price", 100)` | `config.proxy.price = 100` |
+| 枚举配置 | `config.list("someFolder.folder")` | `Object.keys(config.proxy.someFolder.folder)` |
+
+在内部，所有对 `config.proxy` 的操作都会映射到对 `config` 的操作。
 
 ## 👀 完整的例子
 
