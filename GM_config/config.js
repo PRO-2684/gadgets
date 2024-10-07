@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.1.0
+// @version      1.1.1
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -21,7 +21,7 @@ class GM_config extends EventTarget {
      * The version of the GM_config library
      */
     static get version() {
-        return "1.1.0";
+        return "1.1.1";
     }
     /**
      * Built-in processors for user input
@@ -233,14 +233,42 @@ class GM_config extends EventTarget {
         this.debug = options?.debug ?? this.debug;
         Object.assign(this.#folderDisplay, options?.folderDisplay ?? {});
         // Proxied config
-        this.proxy = new Proxy({}, {
-            get: (desc, prop) => {
-                return this.get(prop);
-            },
-            set: (desc, prop, value) => {
-                return this.set(prop, value);
+        const proxyCache = {};
+        /**
+         * Handlers for the proxied config object
+         * @param {string} basePath The base path
+         */
+        const handlers = (basePath) => {
+            return {
+                has: (target, prop) => {
+                    const normalized = GM_config.#normalizeProp(`${basePath}.${prop}`);
+                    return this.#getProp(normalized) !== undefined;
+                },
+                get: (target, prop) => {
+                    const normalized = GM_config.#normalizeProp(`${basePath}.${prop}`);
+                    const desc = this.#getProp(normalized);
+                    if (desc === undefined) return undefined;
+                    if (desc.type === "folder") {
+                        if (!proxyCache[normalized]) {
+                            proxyCache[normalized] = new Proxy({}, handlers(normalized));
+                        }
+                        return proxyCache[normalized];
+                    } else {
+                        return this.get(normalized);
+                    }
+                },
+                set: (target, prop, value) => {
+                    return this.set(`${basePath}.${prop}`, value);
+                },
+                ownKeys: (target) => {
+                    return this.list(basePath);
+                },
+                getOwnPropertyDescriptor: (target, prop) => {
+                    return { enumerable: true, configurable: true };
+                }
             }
-        });
+        }
+        this.proxy = new Proxy({}, handlers(""));
         // Register menu items
         if (window === window.top) {
             if (options?.immediate ?? true) {
@@ -297,16 +325,25 @@ class GM_config extends EventTarget {
         return list.join(".");
     }
     /**
+     * Normalize a property name
+     * @param {string} prop The property name
+     * @returns {string} The normalized property name
+     */
+    static #normalizeProp(prop) {
+        return GM_config.#listToDotted(GM_config.#dottedToList(prop));
+    }
+    /**
      * Get the value of a property
      * @param {string} prop The dotted property name
      * @returns {any} The value of the property
      */
     get(prop) {
+        const normalized = GM_config.#normalizeProp(prop);
         // Return stored value, else default value
-        const value = this.#get(prop);
+        const value = this.#get(normalized);
         // Dispatch get event
         this.#dispatch(false, {
-            prop,
+            prop: normalized,
             before: value,
             after: value,
             remote: false
@@ -320,21 +357,36 @@ class GM_config extends EventTarget {
      * @returns {boolean} Whether the value is set successfully
      */
     set(prop, value) {
+        const normalized = GM_config.#normalizeProp(prop);
         // Store value
-        const defaultValue = this.#getProp(prop).value;
+        const desc = this.#getProp(normalized);
+        if (desc === undefined) return false; // Property not found
+        const defaultValue = desc.value;
         if (value === defaultValue && typeof GM_deleteValue === "function") {
-            GM_deleteValue(prop); // Delete stored value if it's the same as default value
-            this.#log(`🗑️ "${prop}" deleted`);
+            GM_deleteValue(normalized); // Delete stored value if it's the same as default value
+            this.#log(`🗑️ "${normalized}" deleted`);
         } else {
-            GM_setValue(prop, value);
+            GM_setValue(normalized, value);
         }
         // Dispatch set event (will be handled by value change listeners)
         return true;
     }
     /**
+     * List all properties at the given path
+     * @param {string|null|undefined} prop The dotted property name of a folder, or nullish for root
+     */
+    list(prop) {
+        const normalized = GM_config.#normalizeProp(prop ?? "");
+        if (normalized) {
+            return Object.keys(this.#getProp(normalized).items);
+        } else {
+            return Object.keys(this.#desc);
+        }
+    }
+    /**
      * Get the description of a property
      * @param {string|string[]} path The path to the property, either a dotted string or a list
-     * @returns {Object} The description of the property
+     * @returns {Object|undefined} The description of the property, or `undefined` if not found
      */
     #getProp(path) {
         if (typeof path === "string") {
@@ -342,17 +394,17 @@ class GM_config extends EventTarget {
         }
         let desc = this.#desc;
         for (const key of path.slice(0, -1)) {
-            desc = desc[key].items;
+            desc = desc?.[key]?.items;
         }
-        return desc[path[path.length - 1]];
+        return desc ? desc[path[path.length - 1]] : undefined;
     }
     /**
      * Get the value of a property (only for internal use; won't trigger events)
      * @param {string} prop The dotted property name
-     * @returns {any} The value of the property
+     * @returns {any} The value of the property, `undefined` if not found
      */
     #get(prop) {
-        return GM_getValue(prop, this.#getProp(prop).value);
+        return GM_getValue(prop, this.#getProp(prop)?.value);
     }
     /**
      * Log a message if debug is enabled

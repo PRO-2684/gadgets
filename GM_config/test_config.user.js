@@ -11,6 +11,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
+// @grant        unsafeWindow
 // @require      https://update.greasyfork.org/scripts/470224/1459364/Tampermonkey%20Config.js
 // @license      gpl-3.0
 // ==/UserScript==
@@ -116,7 +117,21 @@
     config.addEventListener("set", (e) => { // Listen to config changes
         console.log(e.detail);
     });
+    window.setTimeout(() => { // List config keys
+        // Using `config.list()`
+        console.log("Root", config.list());
+        console.log("Some folder", config.list("someFolder"));
+        console.log("Another nested folder", config.list("someFolder.folder"));
+        // Using proxy
+        for (const [k, v] of Object.entries(config.proxy)) {
+            console.log(k, v);
+        }
+        for (const key in config.proxy.someFolder.folder) {
+            console.log("Another nested folder", key);
+        }
+    }, 1000);
     window.setTimeout(() => { // Change config values, and menu commands will be updated automatically
         config.proxy["simple.val"] += 1; // Remember to validate the value before setting it
     }, 5000);
+    unsafeWindow.config = config; // Export config object for debugging
 })();

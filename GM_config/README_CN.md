@@ -107,7 +107,8 @@ const configDesc = {
     - 通过句点访问嵌套的配置项，例如：
         - `config.get("folder1.folder2.item")`
         - `config.proxy["folder1.folder2.item"]`
-        - `config.proxy.folder1.folder2.item` 类型的访问暂不支持
+        - `config.proxy.folder1.folder2.item`
+        - `config.proxy["folder1.folder2"].item`
 
 你可以像这样使用它们：
 
@@ -213,7 +214,7 @@ const config = new GM_config(configDesc, { immediate: false }); // *注册配置
 console.log(config.get("price")); // *可以开始使用了 🎉*
 ```
 
-### 查询/修改配置
+### 查询/修改/枚举配置
 
 当你注册了一个配置菜单后，你就可以使用 `GM_config` 返回的对象来查询/修改配置了。例如：
 
@@ -227,6 +228,21 @@ config.set("price", 100); // *修改配置* (菜单项会自动更新)
 ```javascript
 console.log(config.proxy.price); // *查询配置*
 config.proxy.price = 100; // *修改配置* (菜单项会自动更新)
+```
+
+如果你想要枚举给定文件夹下的配置项，可以使用 `config.list(folder)`。例如：
+
+```javascript
+console.log(config.list("someFolder.folder")); // *枚举 someFolder.folder 下的配置项*
+```
+
+由于 `config.proxy` 是可枚举并且深度代理的，你可以使用 `for` 或者 `Object.keys` 来枚举配置项。例如：
+
+```javascript
+for (const [name, value] of Object.entries(config.proxy.someFolder.folder)) {
+    console.log(name, value);
+}
+console.log(Object.keys(config.proxy.someFolder.folder));
 ```
 
 ### 监听配置的查询/修改

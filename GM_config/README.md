@@ -108,7 +108,8 @@ The type of the config item, used for quickly setting up common properties. Curr
     - Use dotted names to access nested config items, i.e.
         - `config.get("folder1.folder2.item")`
         - `config.proxy["folder1.folder2.item"]`
-        - `config.proxy.folder1.folder2.item` is not supported
+        - `config.proxy.folder1.folder2.item`
+        - `config.proxy["folder1.folder2"].item`
 
 You may use it like this:
 
@@ -214,7 +215,7 @@ const config = new GM_config(configDesc, { immediate: false }); // *Register men
 console.log(config.get("price")); // *You may now start using the config 🎉*
 ```
 
-### Get/set config
+### Get/set/list config
 
 After registering the menu, you can get/set config by accessing the `GM_config` instance. e.g:
 
@@ -228,6 +229,21 @@ Alternatively, operate on `config.proxy` to get/set config. e.g:
 ```javascript
 console.log(config.proxy.price); // *Get config*
 config.proxy.price = 100; // *Modify config* (The menu will be updated automatically)
+```
+
+To list config items at given folder, use `config.list(folder)`. e.g:
+
+```javascript
+console.log(config.list("someFolder.folder")); // *List config items in someFolder.folder*
+```
+
+Since the proxy object is iterable deeply proxied, you can also use `for` or `Object.keys` to list all config items. e.g:
+
+```javascript
+for (const [name, value] of Object.entries(config.proxy.someFolder.folder)) {
+    console.log(name, value);
+}
+console.log(Object.keys(config.proxy.someFolder.folder));
 ```
 
 ### Listen for config get/set
