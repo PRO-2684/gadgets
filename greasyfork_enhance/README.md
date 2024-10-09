@@ -47,6 +47,7 @@
     - `Escape` to unfocus
 - Image proxy using `wsrv.nl`
 - Customize Tab indentation size
+- Always show the notification widget
 
 ## ⚙️ Configuation
 
@@ -65,6 +66,7 @@
     - **Hide buttons**: Hide floating buttons added by this script
     - **Flat layout**: Use flat layout for script list and descriptions
     - **Show version**: Show version number in script list
+    - **Always show notification**: Always show the notification widget
 - **🔧 Other**
     - **Short link**: Display a shortened link to current script
     - **Alternative URLs for library**: Show a list of alternative URLs for a given library

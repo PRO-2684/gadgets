@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.8.3
+// @version      0.8.4
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
@@ -114,6 +114,12 @@
                     type: "bool",
                     value: false,
                 },
+                alwaysShowNotification: {
+                    name: "Always show notification",
+                    title: "Always show the notification widget",
+                    type: "bool",
+                    value: false,
+                }
             },
         },
         other: {
@@ -568,6 +574,36 @@
         }
     }
     alternativeURLs(configProxy["other.libAlternativeUrl"]);
+    // Flat layout
+    function flatLayout(enable) {
+        const meta_orig = $("#script-info > #script-content .script-meta-block");
+        const meta_mod = $("#script-info > .script-meta-block");
+        if (enable && meta_orig) {
+            const header = $("#script-info > header");
+            header.before(meta_orig);
+        } else if (!enable && meta_mod) {
+            const additional = $("#script-info > #script-content #additional-info");
+            additional.before(meta_mod);
+        }
+    }
+    flatLayout(configProxy["display.flatLayout"]);
+    // Always show notification
+    function alwaysShowNotification(enable) {
+        const nav = $("#nav-user-info");
+        const existing = nav.querySelector(".notification-widget");
+        if (!nav || existing && existing.textContent !== "0") return; // There's unread notification or user is not logged in
+        if (enable && !existing) {
+            const profile = nav.querySelector(".user-profile-link");
+            const notification = nav.insertBefore(document.createElement("span"), profile);
+            notification.className = "notification-widget";
+            const a = notification.appendChild(document.createElement("a"));
+            a.textContent = "0";
+            a.href = profile.querySelector("a").href + "/notifications";
+        } else if (!enable && existing) {
+            existing.remove();
+        }
+    }
+    alwaysShowNotification(configProxy["display.alwaysShowNotification"]);
     // Short link
     function shortLink(enable) {
         const description = $("div#script-content");
@@ -667,21 +703,11 @@
         "codeblocks.autoHideCode": autoHide,
         "codeblocks.autoHideRows": autoHide,
         "codeblocks.tabSize": tabSize,
-        "display.flatLayout": (after) => {
-            const meta_orig = $("#script-info > #script-content .script-meta-block");
-            const meta_mod = $("#script-info > .script-meta-block");
-            if (after && meta_orig) {
-                const header = $("#script-info > header");
-                header.before(meta_orig);
-            } else if (!after && meta_mod) {
-                const additional = $("#script-info > #script-content #additional-info");
-                additional.before(meta_mod);
-            }
-        },
+        "display.flatLayout": flatLayout,
+        "display.alwaysShowNotification": alwaysShowNotification,
         "other.shortLink": shortLink,
         "other.libAlternativeUrl": alternativeURLs,
     };
-    callbacks["display.flatLayout"](configProxy["display.flatLayout"]);
     config.addEventListener("set", e => {
         const callback = callbacks[e.detail.prop];
         if (callback && (e.detail.before !== e.detail.after)) {

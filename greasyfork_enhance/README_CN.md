@@ -47,6 +47,7 @@
     - `Escape` 取消聚焦
 - 使用 `wsrv.nl` 作为图像代理
 - 控制 Tab 缩进大小
+- 总是显示通知小部件
 
 ## ⚙️ 配置
 
@@ -79,6 +80,7 @@
     - **Hide buttons**: 是否隐藏悬浮按钮
     - **Flat layout**: 是否启用扁平布局
     - **Show version**: 在脚本列表中显示版本号
+    - **Always show notification**: 总是显示通知小部件
 - **🔧 Other**
     - **Short link**: 展示当前脚本的短链
     - **Alternative URLs for library**: 展示库的其他可用网址
