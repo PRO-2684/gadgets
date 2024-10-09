@@ -19,6 +19,7 @@
     - **Tracking Prevention**: Prevents some tracking by GitHub.
 - **⚙️ Advanced Settings**
     - **Personal Access Token**: Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit). For more information, see the [Personal Access Token (PAT)](#-personal-access-token-pat) section.
+    - **Rate Limit**: View the current rate limit status.
     - **Debug**: Enable debug mode.
 
 ## 🖼️ Showcase

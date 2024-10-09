@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.1.8
+// @version      0.1.9
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -17,7 +17,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1459364/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1460555/Tampermonkey%20Config.js
 // ==/UserScript==
 
 (function() {
@@ -98,6 +98,11 @@
                     title: "Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit)",
                     type: "str",
                 },
+                rateLimit: {
+                    name: "Rate Limit",
+                    title: "View the current rate limit status",
+                    type: "action",
+                },
                 debug: {
                     name: "Debug",
                     title: "Enable debug mode",
@@ -141,10 +146,14 @@
             options.headers.Authorization = `Bearer ${token}`;
         }
         const r = await fetch(url, options);
+        function parseRateLimit(suffix, defaultValue = -1) {
+            const parsed = parseInt(r.headers.get(`X-RateLimit-${suffix}`));
+            return isNaN(parsed) ? defaultValue : parsed;
+        }
         // Update rate limit
-        rateLimit.limit = parseInt(r.headers.get("X-RateLimit-Limit"));
-        rateLimit.remaining = parseInt(r.headers.get("X-RateLimit-Remaining"));
-        rateLimit.reset = parseInt(r.headers.get("X-RateLimit-Reset"));
+        for (const key of Object.keys(rateLimit)) {
+            rateLimit[key] = parseRateLimit(key); // Case-insensitive
+        }
         const resetDate = new Date(rateLimit.reset * 1000).toLocaleString();
         log(`Rate limit: remaining ${rateLimit.remaining}/${rateLimit.limit}, resets at ${resetDate}`);
         if (r.status === 403 || r.status === 429) { // If we get 403 or 429, we've hit the rate limit.
@@ -343,6 +352,14 @@
         // All we need to remove is in the `head` element, so we can run it immediately.
         preventTracking();
     }
+
+    // Show rate limit
+    config.addEventListener("get", (e) => {
+        if (e.detail.prop === "advanced.rateLimit") {
+            const resetDate = new Date(rateLimit.reset * 1000).toLocaleString();
+            alert(`Rate limit: remaining ${rateLimit.remaining}/${rateLimit.limit}, resets at ${resetDate}.\nIf you see -1, it means the rate limit has not been fetched yet, or GitHub has not provided the rate limit information.`);
+        }
+    });
 
     log(`${name} v${version} has been loaded 🎉`);
 })();
