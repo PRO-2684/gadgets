@@ -22,7 +22,7 @@
 // @connect      *
 // @require      https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.1.15
 // @require      https://update.greasyfork.org/scripts/492078/1443165/pURLfy.js
-// @require      https://update.greasyfork.org/scripts/470224/1459364/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1460555/Tampermonkey%20Config.js
 // @resource     rules-tracking https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/tracking.min.json
 // @resource     rules-outgoing https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/outgoing.min.json
 // @resource     rules-shortener https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/shortener.min.json
@@ -230,7 +230,7 @@
         return purifier.purify(url);
     }
     // Import rules
-    for (const key in configDesc.rules.items) {
+    for (const key of config.list("rules")) {
         const enabled = config.get(`rules.${key}`);
         if (enabled) {
             log(`Importing rules: ${key}`);
