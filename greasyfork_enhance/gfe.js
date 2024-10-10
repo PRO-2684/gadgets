@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.8.4
+// @version      0.8.5
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
@@ -141,6 +141,12 @@
                 imageProxy: {
                     name: "*Image proxy",
                     title: "Use `wsrv.nl` as proxy for user-uploaded images",
+                    type: "bool",
+                    value: false,
+                },
+                lazyImage: {
+                    name: "*Lazy image",
+                    title: "Load user images lazily",
                     type: "bool",
                     value: false,
                 },
@@ -825,6 +831,13 @@
             img.src = PROXY + img.src;
             const link = img.parentElement;
             link.href = PROXY + link.href;
+        }
+    }
+    // Lazy image
+    if (configProxy["other.lazyImage"]) {
+        const images = $$(".user-content img");
+        for (const image of images) {
+            image.loading = "lazy";
         }
     }
 })();
