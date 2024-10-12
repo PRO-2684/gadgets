@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.8.5
+// @version      0.8.6
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
@@ -600,11 +600,10 @@
         if (!nav || existing && existing.textContent !== "0") return; // There's unread notification or user is not logged in
         if (enable && !existing) {
             const profile = nav.querySelector(".user-profile-link");
-            const notification = nav.insertBefore(document.createElement("span"), profile);
+            const notification = nav.insertBefore(document.createElement("a"), profile);
             notification.className = "notification-widget";
-            const a = notification.appendChild(document.createElement("a"));
-            a.textContent = "0";
-            a.href = profile.querySelector("a").href + "/notifications";
+            notification.textContent = "0";
+            notification.href = profile.querySelector("a").href + "/notifications";
         } else if (!enable && existing) {
             existing.remove();
         }
