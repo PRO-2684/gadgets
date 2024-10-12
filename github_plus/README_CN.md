@@ -6,6 +6,9 @@
 
 - 不使用 `MutationObserver` 或 `setInterval`，纯粹基于事件驱动，比类似功能的脚本更高效
 - 没有危险的动态修补，确保兼容性
+- 实验性支持各种 GitHub 镜像站
+    - 需自行将镜像站添加到**此脚本的 `用户匹配` 列表**
+    - `管理面板` - `已安装脚本` - `GitHub 增强` - `设置` - `包括/排除` - `用户匹配` - `添加...`
 
 ## ⚙️ 配置
 
@@ -35,6 +38,7 @@ GitHub 上 [一个 Release](https://github.com/microsoft/terminal/releases/tag/v
 - 在 `Repository access` 选项卡下只需选择 `Public Repositories (read-only)`（默认设置）。此部分后面展示了一张示例图片，以供参考。
 - 请注意，此脚本无法在私有仓库上添加额外信息。
 - 记得 *在令牌过期时生成一个新令牌*。
+- 自行承担在镜像站上使用个人访问令牌的风险。
 
 个人访问令牌的示例设置：
 

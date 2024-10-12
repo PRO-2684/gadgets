@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.1.9
+// @version      0.2.0
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -24,14 +24,24 @@
     'use strict';
     const { name, version } = GM_info.script;
     /**
+     * The top domain of the current page.
+     * @type {string}
+     */
+    const topDomain = location.hostname.split(".").slice(-2).join(".");
+    /**
+     * The official domain of GitHub.
+     * @type {string}
+     */
+    const officialDomain = "github.com";
+    /**
      * The color used for logging. Matches the color of the GitHub.
      * @type {string}
      */
     const themeColor = "#f78166";
     /**
-     * Regular expression to match the expanded assets URL. (https://github.com/<username>/<repo>/releases/expanded_assets/<version>)
+     * Regular expression to match the expanded assets URL. (https://<host>/<username>/<repo>/releases/expanded_assets/<version>)
      */
-    const expandedAssetsRegex = /https:\/\/github\.com\/([^/]+)\/([^/]+)\/releases\/expanded_assets\/([^/]+)/;
+    const expandedAssetsRegex = new RegExp(`https://${topDomain.replaceAll(".", "\\.")}/([^/]+)/([^/]+)/releases/expanded_assets/([^/]+)`);
     /**
      * Data about the release. Maps `owner`, `repo` and `version` to the details of a release. Details are `Promise` objects if exist.
      */
@@ -131,6 +141,14 @@
         console.warn(`%c[${name}]%c`, `color:${themeColor};`, "color: unset;", ...args);
     }
     /**
+     * Replace the domain of the given URL with the top domain if needed.
+     * @param {string} url The URL to fix.
+     * @returns {string} The fixed URL.
+     */
+    function fixDomain(url) {
+        return (topDomain === officialDomain) ? url : url.replace(`https://${officialDomain}/`, `https://${topDomain}/`); // Replace top domain
+    }
+    /**
      * Fetch the given URL with the personal access token, if given. Also updates rate limit.
      * @param {string} url The URL to fetch.
      * @param {RequestInit} options The options to pass to `fetch`.
@@ -176,17 +194,18 @@
         if (!releaseData[owner]) releaseData[owner] = {};
         if (!releaseData[owner][repo]) releaseData[owner][repo] = {};
         if (!releaseData[owner][repo][version]) {
-            const promise = fetchWithToken(`https://api.github.com/repos/${owner}/${repo}/releases/tags/${version}`).then(
+            const url = `https://api.${topDomain}/repos/${owner}/${repo}/releases/tags/${version}`;
+            const promise = fetchWithToken(url).then(
                 response => response.json()
             ).then(data => {
                 log(`Fetched release data for ${owner}/${repo}@${version}:`, data);
                 const assets = {};
                 for (const asset of data.assets) {
-                    assets[asset.browser_download_url] = {
+                    assets[fixDomain(asset.browser_download_url)] = {
                         downloads: asset.download_count,
                         uploader: {
                             name: asset.uploader.login,
-                            url: asset.uploader.html_url
+                            url: fixDomain(asset.uploader.html_url)
                         }
                     };
                 }
@@ -296,7 +315,7 @@
             fragment.addEventListener("include-fragment-replace", onFragmentReplace, { once: true });
         });
     }
-    if (location.hostname === "github.com") { // Only run on GitHub main site
+    if (location.hostname === topDomain) { // Only run on GitHub main site
         document.addEventListener("DOMContentLoaded", setupListeners);
         // Examine event listeners on `document`, and you can see the event listeners for the `turbo:*` events. (Remember to check `Framework Listeners`)
         document.addEventListener("turbo:load", setupListeners);

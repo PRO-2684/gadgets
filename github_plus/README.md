@@ -6,6 +6,9 @@
 
 - No use of `MutationObserver` or `setInterval`, purely event-driven, making it more efficient than scripts of similar functionality
 - No dangerous monkey patching, ensuring compatibility
+- Experimental support for all GitHub mirrors
+    - You need to add the mirror site to **this script's `User matches` list**
+    - `Dashboard` - `Installed Userscripts` - `GitHub Plus` - `Settings` - `Includes/Excludes` - `User matches` - `Add...`
 
 ## ⚙️ Configuation
 
@@ -35,6 +38,7 @@ Example "Assets" section of [a release](https://github.com/microsoft/terminal/re
 - Simply select `Public Repositories (read-only)` under `Repository access` tab, which is the default setup. An example image is shown below for reference.
 - Do note that this script won't be able to add additional information on private repositories.
 - Remember to *generate a new token when it expires*.
+- Use a personal access token on a mirror site at your own risk.
 
 Example setup for personal access token:
 
