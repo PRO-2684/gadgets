@@ -316,7 +316,7 @@
         });
     }
     if (location.hostname === topDomain) { // Only run on GitHub main site
-        document.addEventListener("DOMContentLoaded", setupListeners);
+        document.addEventListener("DOMContentLoaded", setupListeners, { once: true });
         // Examine event listeners on `document`, and you can see the event listeners for the `turbo:*` events. (Remember to check `Framework Listeners`)
         document.addEventListener("turbo:load", setupListeners);
         // Other possible approaches and reasons against them:
@@ -363,6 +363,7 @@
         ];
         elements.forEach(el => el?.remove());
         if (elements.some(el => el)) {
+            log("Prevented tracking", elements);
             GM_setValue("trackingPrevented", GM_getValue("trackingPrevented", 0) + 1);
         }
     }
@@ -370,6 +371,15 @@
         // document.addEventListener("DOMContentLoaded", preventTracking);
         // All we need to remove is in the `head` element, so we can run it immediately.
         preventTracking();
+        document.addEventListener("turbo:before-render", preventTracking);
+    }
+
+    // Debugging
+    if (config.get("advanced.debug")) {
+        const events = ["turbo:before-render", "turbo:before-morph-element", "turbo:before-frame-render", "turbo:load", "turbo:render", "turbo:frame-render"];
+        events.forEach(event => {
+            document.addEventListener(event, e => log(`Event: ${event}`, e));
+        });
     }
 
     // Show rate limit
