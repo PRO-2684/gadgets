@@ -12,10 +12,12 @@
 
 ## ⚙️ Configuation
 
+- **🔢 Code Features**
+    - **Clone Full Command**: Append `git clone ` before `https` and `git@` URLs under the code tab. (Experimental, may or may not work)
 - **📦 Release Features**
-    - **Release Downloads**: Show download counts of release assets.
     - **Release Uploader**: Show uploader of release assets.
-    - **Release Histogram**: Show a histogram of download counts.
+    - **Release Downloads**: Show download counts of release assets.
+    - **Release Histogram**: Show a histogram of download counts for each release asset.
         - Does not show up if there is only zero or one release asset.
         - Does not show up if none of the release assets have been downloaded.
 - **🪄 Additional Features**

@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.2.0
+// @version      0.2.1
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -17,6 +17,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
+// @grant        GM_addElement
 // @require      https://update.greasyfork.org/scripts/470224/1460555/Tampermonkey%20Config.js
 // ==/UserScript==
 
@@ -64,19 +65,31 @@
         $default: {
             autoClose: false
         },
+        code: {
+            name: "🔢 Code Features",
+            type: "folder",
+            items: {
+                cloneFullCommand: {
+                    name: "Clone Full Command",
+                    title: "Append `git clone ` before `https` and `git@` URLs under the code tab",
+                    type: "bool",
+                    value: false,
+                }
+            },
+        },
         release: {
             name: "📦 Release Features",
             type: "folder",
             items: {
                 uploader: {
                     name: "Release Uploader",
-                    title: "Show who uploaded a release asset",
+                    title: "Show uploader of release assets",
                     type: "bool",
                     value: true,
                 },
                 downloads: {
                     name: "Release Downloads",
-                    title: "Show how many times a release asset has been downloaded",
+                    title: "Show download counts of release assets",
                     type: "bool",
                     value: true,
                 },
@@ -182,7 +195,54 @@
         return r;
     }
 
-    // Release-* features
+    // Code features
+    /**
+     * Show the full command to clone a repository.
+     * @param {HTMLElement} [target] The target element to search for the embedded data.
+     */
+    function cloneFullCommand(target = document.body) {
+        document.currentScript?.remove(); // Self-remove
+        const embeddedData = target.querySelector('react-partial[partial-name="repos-overview"] > script[data-target="react-partial.embeddedData"]'); // The element containing the repository information
+        if (!embeddedData) {
+            log("Full clone command not enabled - no embedded data found");
+            return false;
+        }
+        const data = JSON.parse(embeddedData?.textContent);
+        const protocolInfo = data.props?.initialPayload?.overview?.codeButton?.local?.protocolInfo;
+        if (!protocolInfo) {
+            log("Full clone command not enabled - no protocol information found");
+            return false;
+        }
+        function prefix(uri) {
+            return !uri || uri.startsWith("git clone ") ? uri : "git clone " + uri;
+        }
+        protocolInfo.httpUrl = prefix(protocolInfo.httpUrl);
+        protocolInfo.sshUrl = prefix(protocolInfo.sshUrl);
+        embeddedData.textContent = JSON.stringify(data);
+        log("Full clone command enabled");
+        return true;
+    }
+    if (config.get("code.cloneFullCommand")) {
+        // document.addEventListener("DOMContentLoaded", cloneFullCommand, { once: true }); // Doesn't work, since our script is running too late, after `embeddedData` is accessed by GitHub. Need to add the script in the head so as to defer DOM parsing.
+        const dataPresent = $('react-partial[partial-name="repos-overview"] > script[data-target="react-partial.embeddedData"]');
+        if (dataPresent) {
+            cloneFullCommand();
+        } else {
+            // https://a.opnxng.com/exchange/stackoverflow.com/questions/41394983/how-to-defer-inline-javascript
+            const logDef = config.get("advanced.debug") ? `const log = (...args) => console.log("%c[${name}]%c", "color:${themeColor};", "color: unset;", ...args);\n` : "const log = () => {};\n"; // Define the `log` function, respecting the debug mode
+            const scriptText = logDef + "const target = document.body;\n" + cloneFullCommand.toString().replace(/^.*?{|}$/g, ""); // Get the function body
+            const wrapped = `(function() {${scriptText}})();`; // Wrap the function in an IIFE so as to prevent polluting the global scope
+            GM_addElement(document.head, "script", { textContent: wrapped, type: "module" }); // Use `GM_addElement` instead of native `appendChild` to bypass CSP
+            // Utilize data URI and set `defer` attribute to defer the script execution (can't bypass CSP)
+            // GM_addElement(document.head, "script", { src: `data:text/javascript,${encodeURIComponent(wrapped)}`, defer: true });
+        }
+        // Adapt to dynamic loading
+        document.addEventListener("turbo:before-render", e => {
+            cloneFullCommand(e.detail.newBody.querySelector("[data-turbo-body]") ?? e.detail.newBody);
+        });
+    }
+
+    // Release features
     /**
      * Get the release data for the given owner, repo and version.
      * @param {string} owner The owner of the repository.
@@ -376,7 +436,7 @@
 
     // Debugging
     if (config.get("advanced.debug")) {
-        const events = ["turbo:before-render", "turbo:before-morph-element", "turbo:before-frame-render", "turbo:load", "turbo:render", "turbo:frame-render"];
+        const events = ["turbo:before-render", "turbo:before-morph-element", "turbo:before-frame-render", "turbo:load", "turbo:render", "turbo:morph", "turbo:morph-element", "turbo:frame-render"];
         events.forEach(event => {
             document.addEventListener(event, e => log(`Event: ${event}`, e));
         });
