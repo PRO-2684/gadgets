@@ -1,8 +1,8 @@
 /* ==UserStyle==
 @name           Scrollbar Mod
 @namespace      github.com/PRO-2684
-@version        0.2.0
-@description    Customize your ScrollBar - Mod version
+@version        0.2.1
+@description    Customize your ScrollBar and selection - Mod version
 @author         PRO-2684
 @license     	gpl-3.0
 @preprocessor   stylus
@@ -13,6 +13,7 @@
 @var color    CustomHandleColor     "Handle Color"            #2d2d2d
 @var color    CustomHandleHover     "Handle Hover"            #5b5b5b
 @var color    CustomHandleActive    "Handle Active"           #7b7b7b
+@var color    CustomSelectionColor  "Selection Color"         #5d5d5d
 @var text     Radius                "Radius"                  46px
 @var text     ScrollbarWidth        "ScrollBar Width"         8px
 @var text     ScrollbarHandleShrink "ScrollBar Handle Shrink" 1px
@@ -29,55 +30,64 @@
             TrackColor: #161616,
             HandleColor: #2d2d2d,
             HandleHover: #5b5b5b,
-            HandleActive: #7b7b7b
+            HandleActive: #7b7b7b,
+            SelectionColor: #5d5d5d
         },
         "Deep-Dark": {
             TrackColor: #232846,
             HandleColor: #383779,
             HandleHover: #4358a6,
-            HandleActive: #4f6fc2
+            HandleActive: #4f6fc2,
+            SelectionColor: #8d8d8d
         },
         "Green-Plain": {
             TrackColor: #345d38,
             HandleColor: #5dab6a,
             HandleHover: #6eb565,
-            HandleActive: #7db565
+            HandleActive: #7db565,
+            SelectionColor: #75a87e
         },
         "Light-Red": {
             TrackColor: #5d3434,
             HandleColor: #ab5d5d,
             HandleHover: #b56565,
-            HandleActive: #c27b7b
+            HandleActive: #c27b7b,
+            SelectionColor: #a87e75
         },
         "Desert": {
             TrackColor: #5d4834,
             HandleColor: #ab805d,
             HandleHover: #b59165,
-            HandleActive: #c2a07b
+            HandleActive: #c2a07b,
+            SelectionColor: #c8a075
         },
         "Tradewind": {
             TrackColor: #345d4d,
             HandleColor: #5dab8a,
             HandleHover: #65b5a5,
-            HandleActive: #7bb5b5
+            HandleActive: #7bb5b5,
+            SelectionColor: #73a87e
         },
         "Hippie-Blue": {
             TrackColor: #344c5d,
             HandleColor: #5d7dab,
             HandleHover: #658db5,
-            HandleActive: #7b9cb5
+            HandleActive: #7b9cb5,
+            SelectionColor: #5d83bb
         },
         "Purple": {
             TrackColor: #45345d,
             HandleColor: #8c5dab,
             HandleHover: #9565b5,
-            HandleActive: #a07bc2
+            HandleActive: #a07bc2,
+            SelectionColor: #8d5dab
         },
         "Custom": {
             TrackColor: CustomTrackColor,
             HandleColor: CustomHandleColor,
             HandleHover: CustomHandleHover,
-            HandleActive: CustomHandleActive
+            HandleActive: CustomHandleActive,
+            SelectionColor: CustomSelectionColor
         }
     }
     colors = themes[Theme]
@@ -126,6 +136,11 @@
         &:active {
             background: alpha(colors.HandleActive, Opacity / 100) i;
         }
+    }
+
+    /* Selection */
+    ::selection {
+        background-color: alpha(colors.SelectionColor, Opacity / 100) i;
     }
 
     /* Smooth Scroll */

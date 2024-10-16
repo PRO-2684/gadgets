@@ -15,6 +15,7 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
 - \* `Handle Color`: Customize the handle color of the scrollbar
 - \* `Handle Hover`: Customize the handle color of the scrollbar when hovered
 - \* `Handle Active`: Customize the handle color of the scrollbar when activated
+- \* `Selection Color`: Customize the background color of the selected text (might not work with [Dark Reader](https://darkreader.org/)'s dynamic mode)
 - `Radius`: Customize the radius of the scrollbar handle and background
 - `Scrollbar Width`: Customize the width of the scrollbar *when hovered*
 - `Scrollbar Handle Shrink`: Set how much the scrollbar handle should shrink on both sides when *not hovered*
@@ -31,6 +32,7 @@ This is a mod version for the [Scrollbar Advanced](https://userstyles.world/styl
 - New features
     - `Handle Active` feature
     - `ScrollBar Handle Shrink` feature
+    - `Selection Color` feature
     - `Opacity` feature
     - `Smooth Scroll` feature
     - `Force` feature
