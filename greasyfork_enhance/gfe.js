@@ -90,6 +90,12 @@
                     type: "bool",
                     value: true,
                 },
+                metadata: {
+                    name: "Metadata",
+                    title: "Parses certain script metadata and displays it on the script code page",
+                    type: "bool",
+                    value: false,
+                },
             }
         },
         display: {
@@ -390,11 +396,11 @@
     #greasyfork-enhance-regex-filter-tip { float: right; color: grey; }
     @media screen and (max-width: 800px) { #greasyfork-enhance-regex-filter-tip { display: none; } }`);
     // Aside panel & Anchors
-    const is_script = /^\/[^\/]+\/scripts/;
-    const is_specific_script = /^\/[^\/]+\/scripts\/\d+/;
-    const is_disccussion = /^\/[^\/]+\/discussions/;
+    const isScript = /^\/[^\/]+\/scripts/;
+    const isSpecificScript = /^\/[^\/]+\/scripts\/\d+/;
+    const isDisccussion = /^\/[^\/]+\/discussions/;
     const path = window.location.pathname;
-    if ((!is_script.test(path) && !is_disccussion.test(path)) || is_specific_script.test(path)) {
+    if ((!isScript.test(path) && !isDisccussion.test(path)) || isSpecificScript.test(path)) {
         const panel = body.insertBefore(document.createElement("aside"), $("body > div.width-constraint"));
         panel.className = "panel";
         const reference_node = $("body > div.width-constraint > section");
@@ -422,15 +428,15 @@
     // Buttons
     const buttons = body.appendChild(document.createElement("div"));
     buttons.id = "float-buttons";
-    const to_top = buttons.appendChild(document.createElement("a"));
-    to_top.classList.add("button");
-    to_top.classList.add("dynamic-opacity");
-    to_top.href = "#top";
-    to_top.text = "↑";
+    const goToTop = buttons.appendChild(document.createElement("a"));
+    goToTop.classList.add("button");
+    goToTop.classList.add("dynamic-opacity");
+    goToTop.href = "#top";
+    goToTop.text = "↑";
     // Double click to get to top
     body.addEventListener("dblclick", (e) => {
         if (e.target === body) {
-            to_top.click();
+            goToTop.click();
         }
     });
     // Fix current tab link
@@ -456,194 +462,17 @@
         text.appendChild(link2);
     }
     // Toolbar for code blocks
-    const code_blocks = document.getElementsByTagName("pre");
-    for (const code_block of code_blocks) {
-        if (code_block.firstChild.tagName === "CODE") {
-            const height = getComputedStyle(code_block.firstChild).getPropertyValue("height");
-            code_block.firstChild.style.height = height;
-            code_block.firstChild.setAttribute("data-height", height);
-            code_block.insertAdjacentElement("afterbegin", createToolbar());
+    const codeBlocks = document.getElementsByTagName("pre");
+    for (const codeBlock of codeBlocks) {
+        if (codeBlock.firstChild.tagName === "CODE") {
+            const height = getComputedStyle(codeBlock.firstChild).getPropertyValue("height");
+            codeBlock.firstChild.style.height = height;
+            codeBlock.firstChild.setAttribute("data-height", height);
+            codeBlock.insertAdjacentElement("afterbegin", createToolbar());
         }
     }
-    // Regex filter
-    const regexFilterTip = $(".sidebarred > .sidebarred-main-content > .script-list#browse-script-list")
-        ?.previousElementSibling?.appendChild?.(document.createElement("span"));
-    if (regexFilterTip) {
-        regexFilterTip.id = idPrefix + "regex-filter-tip";
-        regexFilterTip.title = `[${name}] Number of scripts filtered by regex`;
-    }
-    function setRegexFilterTip(content) {
-        if (regexFilterTip) {
-            regexFilterTip.textContent = content;
-        }
-    }
-    function regexFilterOne(regex, script) {
-        const info = script.querySelector("article > h2");
-        if (!info) return;
-        const name = info.querySelector(".script-link").textContent;
-        const result = regex.test(name);
-        script.classList.toggle("regex-filtered", result);
-        if (result) {
-            log("Filtered:", name);
-        }
-        return result;
-    }
-    function regexFilter(regexStr) {
-        const debug = configProxy["other.debug"];
-        const scripts = $$(".script-list > li");
-        if (regexStr === "" || scripts.length === 0) {
-            scripts.forEach(script => script.classList.remove("regex-filtered"));
-            setRegexFilterTip("");
-            return;
-        }
-        const regex = new RegExp(regexStr, "i");
-        let count = 0;
-        debug && console.groupCollapsed(`[${name}] Regex filtered scripts`);
-        scripts.forEach(script => {
-            if (regexFilterOne(regex, script)) {
-                count++;
-            }
-        });
-        setRegexFilterTip(`Filtered: ${count}/${scripts.length}`);
-        debug && console.groupEnd();
-    }
-    regexFilter(configProxy["filterAndSearch.regexFilter"]);
-    // Auto hide code blocks
-    function autoHide() {
-        if (!configProxy["codeblocks.autoHideCode"]) {
-            for (const code_block of code_blocks) {
-                const toggle = code_block.firstChild.lastChild;
-                if (!toggle) continue;
-                if (toggle.textContent === "Show code") {
-                    toggle.click(); // Click the toggle button
-                }
-            }
-        } else {
-            for (const code_block of code_blocks) {
-                const m = code_block.lastChild.textContent.match(/\n/g);
-                const rows = m ? m.length : 0;
-                const toggle = code_block.firstChild.lastChild;
-                if (!toggle) continue;
-                const hidden = toggle.textContent === "Show code";
-                if (rows >= configProxy["codeblocks.autoHideRows"] && !hidden || rows < configProxy["codeblocks.autoHideRows"] && hidden) {
-                    code_block.firstChild.lastChild.click(); // Click the toggle button
-                }
-            }
-        }
-    }
-    document.addEventListener("readystatechange", (e) => {
-        if (e.target.readyState === "complete") {
-            autoHide();
-        }
-    }, { once: true });
-    // Tab size
-    function tabSize() {
-        const size = configProxy["codeblocks.tabSize"];
-        const style = $("style#" + idPrefix + "tab-size") ?? document.head.appendChild(document.createElement("style"));
-        style.id = idPrefix + "tab-size";
-        style.textContent = `pre { tab-size: ${size}; }`;
-    }
-    tabSize();
-    // Alternative URLs for library
-    function alternativeURLs(enable) {
-        if ($(".remove-attachments") || !$("div#script-content") || $("div#script-content > div#install-area")) return; // Not a library
-        const id = idPrefix + "lib-alternative-url";
-        const current = document.getElementById(id);
-        if (current && !enable) {
-            current.remove();
-        } else if (!current && enable) {
-            const description = $("div#script-content > p");
-            const trim = "// @require ";
-            const text = description?.querySelector("code")?.textContent;
-            if (!text || !text.startsWith(trim)) return; // Found no URL
-            const url = text.slice(trim.length);
-            const parts = url.split("/");
-            const scriptId = parts[4];
-            const scriptVersion = parts[5];
-            const fileName = parts[6];
-            const URLs = [
-                [`// @require https://update.greasyfork.org/scripts/${scriptId}/${fileName}`, "Latest version"],
-                [`// @require https://greasyfork.org/scripts/${scriptId}/code/${fileName}?version=${scriptVersion}`, "Current version (Legacy)"],
-                [`// @require https://greasyfork.org/scripts/${scriptId}/code/${fileName}`, "Latest version (Legacy)"],
-            ];
 
-            const detail = document.createElement("p").appendChild(document.createElement("details"));
-            description.after(detail.parentElement);
-            detail.parentElement.id = id;
-            detail.appendChild(document.createElement("summary")).textContent = "Alternative URLs";
-            const list = detail.appendChild(document.createElement("ul"));
-            for (const [url, text] of URLs) {
-                const link = list.appendChild(document.createElement("li")).appendChild(document.createElement("code"));
-                link.textContent = url;
-                link.title = text;
-            }
-        }
-    }
-    alternativeURLs(configProxy["other.libAlternativeUrl"]);
-    // Flat layout
-    function flatLayout(enable) {
-        const meta_orig = $("#script-info > #script-content .script-meta-block");
-        const meta_mod = $("#script-info > .script-meta-block");
-        if (enable && meta_orig) {
-            const header = $("#script-info > header");
-            header.before(meta_orig);
-        } else if (!enable && meta_mod) {
-            const additional = $("#script-info > #script-content #additional-info");
-            additional.before(meta_mod);
-        }
-    }
-    flatLayout(configProxy["display.flatLayout"]);
-    // Always show notification
-    function alwaysShowNotification(enable) {
-        const nav = $("#nav-user-info");
-        const profile = nav?.querySelector(".user-profile-link");
-        const existing = nav.querySelector(".notification-widget");
-        if (!nav || !profile || existing && existing.textContent !== "0") return; // There's unread notification or user is not logged in
-        if (enable && !existing) {
-            const notification = nav.insertBefore(document.createElement("a"), profile);
-            notification.className = "notification-widget";
-            notification.textContent = "0";
-            notification.href = profile.querySelector("a").href + "/notifications";
-        } else if (!enable && existing) {
-            existing.remove();
-        }
-    }
-    alwaysShowNotification(configProxy["display.alwaysShowNotification"]);
-    // Short link
-    function shortLink(enable) {
-        const description = $("div#script-content");
-        const url = window.location.href;
-        const scriptId = url.match(/\/scripts\/(\d+)/)?.[1];
-        if (!scriptId || !description) return;
-        const id = idPrefix + "short-link";
-        const current = document.getElementById(id);
-        if (current && !enable) {
-            current.remove();
-        } else if (!current && enable) {
-            const short = `https://greasyfork.org/scripts/${scriptId}`;
-            const p = description.insertAdjacentElement("beforebegin", document.createElement("p"));
-            p.id = id;
-            p.textContent = "Short link: ";
-            const link = p.appendChild(document.createElement("a"));
-            link.href = short;
-            link.textContent = short;
-            const copy = p.appendChild(document.createElement("a"));
-            copy.textContent = "(Copy)";
-            copy.style.marginLeft = "1em";
-            copy.style.cursor = "pointer";
-            copy.title = "Copy short link to clipboard";
-            copy.addEventListener("click", () => {
-                if (copy.textContent === "(Copied!)") return;
-                navigator.clipboard.writeText(short).then(() => {
-                    copy.textContent = "(Copied!)";
-                    window.setTimeout(() => {
-                        copy.textContent = "(Copy)";
-                    }, 1000);
-                });
-            });
-        }
-    }
-    shortLink(configProxy["other.shortLink"]);
+    // Filter and Search
     // Shortcut
     function submitOnCtrlEnter(e) {
         const form = this.form;
@@ -697,31 +526,49 @@
         }
     }
     shortcut(configProxy["filterAndSearch.shortcut"]);
-    // Initialize css
-    for (const prop in dynamicStyle) {
-        cssHelper(prop, configProxy[prop]);
+    // Regex filter
+    const regexFilterTip = $(".sidebarred > .sidebarred-main-content > .script-list#browse-script-list")
+        ?.previousElementSibling?.appendChild?.(document.createElement("span"));
+    if (regexFilterTip) {
+        regexFilterTip.id = idPrefix + "regex-filter-tip";
+        regexFilterTip.title = `[${name}] Number of scripts filtered by regex`;
     }
-    // Dynamically respond to config changes
-    const callbacks = {
-        "filterAndSearch.shortcut": shortcut,
-        "filterAndSearch.regexFilter": regexFilter,
-        "codeblocks.autoHideCode": autoHide,
-        "codeblocks.autoHideRows": autoHide,
-        "codeblocks.tabSize": tabSize,
-        "display.flatLayout": flatLayout,
-        "display.alwaysShowNotification": alwaysShowNotification,
-        "other.shortLink": shortLink,
-        "other.libAlternativeUrl": alternativeURLs,
-    };
-    config.addEventListener("set", e => {
-        const callback = callbacks[e.detail.prop];
-        if (callback && (e.detail.before !== e.detail.after)) {
-            callback(e.detail.after);
+    function setRegexFilterTip(content) {
+        if (regexFilterTip) {
+            regexFilterTip.textContent = content;
         }
-        if (e.detail.prop in dynamicStyle) {
-            cssHelper(e.detail.prop, e.detail.after);
+    }
+    function regexFilterOne(regex, script) {
+        const info = script.querySelector("article > h2");
+        if (!info) return;
+        const name = info.querySelector(".script-link").textContent;
+        const result = regex.test(name);
+        script.classList.toggle("regex-filtered", result);
+        if (result) {
+            log("Filtered:", name);
         }
-    });
+        return result;
+    }
+    function regexFilter(regexStr) {
+        const debug = configProxy["other.debug"];
+        const scripts = $$(".script-list > li");
+        if (regexStr === "" || scripts.length === 0) {
+            scripts.forEach(script => script.classList.remove("regex-filtered"));
+            setRegexFilterTip("");
+            return;
+        }
+        const regex = new RegExp(regexStr, "i");
+        let count = 0;
+        debug && console.groupCollapsed(`[${name}] Regex filtered scripts`);
+        scripts.forEach(script => {
+            if (regexFilterOne(regex, script)) {
+                count++;
+            }
+        });
+        setRegexFilterTip(`Filtered: ${count}/${scripts.length}`);
+        debug && console.groupEnd();
+    }
+    regexFilter(configProxy["filterAndSearch.regexFilter"]);
     // Search syntax
     const types = {
         "script": "scripts",
@@ -822,6 +669,288 @@
             processSearch(search);
         }
     }
+
+    // Code blocks
+    // Auto hide code blocks
+    function autoHide() {
+        if (!configProxy["codeblocks.autoHideCode"]) {
+            for (const code_block of codeBlocks) {
+                const toggle = code_block.firstChild.lastChild;
+                if (!toggle) continue;
+                if (toggle.textContent === "Show code") {
+                    toggle.click(); // Click the toggle button
+                }
+            }
+        } else {
+            for (const codeBlock of codeBlocks) {
+                const m = codeBlock.lastChild.textContent.match(/\n/g);
+                const rows = m ? m.length : 0;
+                const toggle = codeBlock.firstChild.lastChild;
+                if (!toggle) continue;
+                const hidden = toggle.textContent === "Show code";
+                if (rows >= configProxy["codeblocks.autoHideRows"] && !hidden || rows < configProxy["codeblocks.autoHideRows"] && hidden) {
+                    codeBlock.firstChild.lastChild.click(); // Click the toggle button
+                }
+            }
+        }
+    }
+    document.addEventListener("readystatechange", (e) => {
+        if (e.target.readyState === "complete") {
+            autoHide();
+        }
+    }, { once: true });
+    // Tab size
+    function tabSize(value) {
+        const style = $("style#" + idPrefix + "tab-size") ?? document.head.appendChild(document.createElement("style"));
+        style.id = idPrefix + "tab-size";
+        style.textContent = `pre { tab-size: ${value}; }`;
+    }
+    tabSize(configProxy["codeblocks.tabSize"]);
+    // Metadata
+    function extractUserScriptMetadata(code) {
+        const result = {};
+        const userScriptRegex = /\/\/\s*=+\s*UserScript\s*=+\s*([\s\S]*?)\s*=+\s*\/UserScript\s*=+\s*/;
+        const match = code.match(userScriptRegex);
+        if (match) {// If the UserScript block is found
+            const content = match[1];// Extract the content within the UserScript block
+            const lines = content.split('\n'); // Split the content by newline
+
+            lines.forEach(line => {
+                // Regular expression to match "// @name value" pattern
+                const matchLine = line.trim().match(/^\/\/\s*@(\S+)\s+(.+)$/);
+                if (matchLine) {
+                    const name = matchLine[1]; // Extract the name
+                    const value = matchLine[2]; // Extract the value
+                    switch (typeof result[name]) {
+                        case "undefined": // First occurrence
+                            result[name] = value;
+                            break;
+                        case "string": // Second occurrence
+                            result[name] = [result[name], value];
+                            break;
+                        case "object": // Third or more occurrence
+                            result[name].push(value);
+                            break;
+                    }
+                }
+            });
+        }
+        return result;
+    }
+    function metadata(enable) {
+        const id = idPrefix + "metadata";
+        const current = document.getElementById(id);
+        if (current && !enable) {
+            current.remove();
+        } else if (!current && enable) {
+            const scriptCodeBlock = document.querySelector(".code-container > pre.prettyprint.lang-js");
+            const description = $("div#script-content");
+            if (!window.location.pathname.endsWith("/code") || !scriptCodeBlock || !description) return;
+            const metaBlock = document.createElement("ul");
+            description.prepend(metaBlock);
+            metaBlock.id = id;
+            const script = scriptCodeBlock.querySelector("ol") ? Array.from(scriptCodeBlock.querySelectorAll("ol > li")).map(li => li.textContent).join("\n") : scriptCodeBlock.textContent;
+            const metadata = extractUserScriptMetadata(script);
+            const commonHosts = {
+                GreasyFork: /^https?:\/\/update\.greasyfork\.org\/scripts\/\d+\/(?<ver>\d+)\/(?<name>.+?)\.js$/,
+                JsDelivr: /^https?:\/\/cdn\.jsdelivr\.net\/(?<reg>\w+)\/(@[^/]+\/)?(?<name>[^@]+)@(?<ver>[^/]+)/,
+                Cloudflare: /^https?:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/(?<name>[^/]+)\/(?<ver>[^/]+)/,
+            };
+            const commonRegistries = {
+                npm: "NPM",
+                gh: "GitHub",
+            };
+            // We're interested in `@grant`, `@connect`, `@require`, `@resource`
+            const interestedMetadata = {};
+            const interestedKeys = {
+                grant: {
+                    brief: "Required permissions",
+                    display: (value) => {
+                        const valueCode = document.createElement("code");
+                        valueCode.textContent = value;
+                        if (value !== "none") {
+                            const valueLink = document.createElement("a");
+                            valueLink.appendChild(valueCode);
+                            valueLink.href = `https://www.tampermonkey.net/documentation.php#api:${valueCode.textContent}`;
+                            valueLink.title = `See documentation about ${valueCode.textContent}`;
+                            return valueLink;
+                        } else {
+                            return valueCode;
+                        }
+                    }
+                },
+                connect: {
+                    brief: "Allowed URLs to connect",
+                    display: (value) => {
+                        const valueCode = document.createElement("code");
+                        valueCode.textContent = value;
+                        return valueCode;
+                    }
+                },
+                require: {
+                    brief: "External libraries",
+                    display: (value) => {
+                        const valueLink = document.createElement("a");
+                        valueLink.href = value;
+                        valueLink.textContent = value;
+                        for (const [host, regex] of Object.entries(commonHosts)) {
+                            const match = value.match(regex);
+                            if (match) {
+                                const { name, ver, reg } = match.groups;
+                                const optionalRegistry = commonRegistries[reg] ? `${commonRegistries[reg]} on ` : "";
+                                valueLink.textContent = `${decodeURIComponent(name)}@${ver} (${optionalRegistry}${host})`;
+                                break;
+                            }
+                        }
+                        return valueLink;
+                    }
+                },
+                resource: {
+                    brief: "External resources",
+                    display: (value) => {
+                        const valueCode = document.createElement("code");
+                        const [name, link] = value.split(" ");
+                        const valueLink = document.createElement("a");
+                        valueLink.appendChild(valueCode);
+                        valueLink.href = link.trim();
+                        valueCode.textContent = name.trim();
+                        return valueLink;
+                    }
+                }
+            };
+            for (const key in interestedKeys) {
+                const values = metadata[key] ?? [];
+                interestedMetadata[key] = Array.isArray(values) ? values : [values];
+            }
+            log("Interested Metadata:", interestedMetadata);
+            // Display
+            for (const [key, values] of Object.entries(interestedMetadata)) {
+                const keyInfo = interestedKeys[key];
+                const li = metaBlock.appendChild(document.createElement("li"));
+                const keyLink = li.appendChild(document.createElement("a"));
+                keyLink.href = `https://www.tampermonkey.net/documentation.php#meta:${key}`;
+                keyLink.title = keyInfo.brief;
+                keyLink.textContent = `@${key}`;
+                const separator = li.appendChild(document.createElement("span"));
+                separator.textContent = ": ";
+                for (const value of values) {
+                    li.appendChild(keyInfo.display(value));
+                    const separator = li.appendChild(document.createElement("span"));
+                    separator.textContent = ", ";
+                }
+                if (values.length > 0) {
+                    li.lastChild.remove(); // Remove the last separator
+                } else {
+                    li.appendChild(document.createTextNode("none"));
+                }
+            }
+        }
+    }
+    metadata(configProxy["codeblocks.metadata"]);
+
+    // Display
+    // Flat layout
+    function flatLayout(enable) {
+        const meta_orig = $("#script-info > #script-content .script-meta-block");
+        const meta_mod = $("#script-info > .script-meta-block");
+        if (enable && meta_orig) {
+            const header = $("#script-info > header");
+            header.before(meta_orig);
+        } else if (!enable && meta_mod) {
+            const additional = $("#script-info > #script-content #additional-info");
+            additional.before(meta_mod);
+        }
+    }
+    flatLayout(configProxy["display.flatLayout"]);
+    // Always show notification
+    function alwaysShowNotification(enable) {
+        const nav = $("#nav-user-info");
+        const profile = nav?.querySelector(".user-profile-link");
+        const existing = nav.querySelector(".notification-widget");
+        if (!nav || !profile || existing && existing.textContent !== "0") return; // There's unread notification or user is not logged in
+        if (enable && !existing) {
+            const notification = nav.insertBefore(document.createElement("a"), profile);
+            notification.className = "notification-widget";
+            notification.textContent = "0";
+            notification.href = profile.querySelector("a").href + "/notifications";
+        } else if (!enable && existing) {
+            existing.remove();
+        }
+    }
+    alwaysShowNotification(configProxy["display.alwaysShowNotification"]);
+
+    // Other
+    // Short link
+    function shortLink(enable) {
+        const description = $("div#script-content");
+        const url = window.location.href;
+        const scriptId = url.match(/\/scripts\/(\d+)/)?.[1];
+        if (!scriptId || !description) return;
+        const id = idPrefix + "short-link";
+        const current = document.getElementById(id);
+        if (current && !enable) {
+            current.remove();
+        } else if (!current && enable) {
+            const short = `https://greasyfork.org/scripts/${scriptId}`;
+            const p = description.insertAdjacentElement("beforebegin", document.createElement("p"));
+            p.id = id;
+            p.textContent = "Short link: ";
+            const link = p.appendChild(document.createElement("a"));
+            link.href = short;
+            link.textContent = short;
+            const copy = p.appendChild(document.createElement("a"));
+            copy.textContent = "(Copy)";
+            copy.style.marginLeft = "1em";
+            copy.style.cursor = "pointer";
+            copy.title = "Copy short link to clipboard";
+            copy.addEventListener("click", () => {
+                if (copy.textContent === "(Copied!)") return;
+                navigator.clipboard.writeText(short).then(() => {
+                    copy.textContent = "(Copied!)";
+                    window.setTimeout(() => {
+                        copy.textContent = "(Copy)";
+                    }, 1000);
+                });
+            });
+        }
+    }
+    shortLink(configProxy["other.shortLink"]);
+    // Alternative URLs for library
+    function alternativeURLs(enable) {
+        if ($(".remove-attachments") || !$("div#script-content") || $("div#script-content > div#install-area")) return; // Not a library
+        const id = idPrefix + "lib-alternative-url";
+        const current = document.getElementById(id);
+        if (current && !enable) {
+            current.remove();
+        } else if (!current && enable) {
+            const description = $("div#script-content > p");
+            const trim = "// @require ";
+            const text = description?.querySelector("code")?.textContent;
+            if (!text || !text.startsWith(trim)) return; // Found no URL
+            const url = text.slice(trim.length);
+            const parts = url.split("/");
+            const scriptId = parts[4];
+            const scriptVersion = parts[5];
+            const fileName = parts[6];
+            const URLs = [
+                [`// @require https://update.greasyfork.org/scripts/${scriptId}/${fileName}`, "Latest version"],
+                [`// @require https://greasyfork.org/scripts/${scriptId}/code/${fileName}?version=${scriptVersion}`, "Current version (Legacy)"],
+                [`// @require https://greasyfork.org/scripts/${scriptId}/code/${fileName}`, "Latest version (Legacy)"],
+            ];
+
+            const detail = document.createElement("p").appendChild(document.createElement("details"));
+            description.after(detail.parentElement);
+            detail.parentElement.id = id;
+            detail.appendChild(document.createElement("summary")).textContent = "Alternative URLs";
+            const list = detail.appendChild(document.createElement("ul"));
+            for (const [url, text] of URLs) {
+                const link = list.appendChild(document.createElement("li")).appendChild(document.createElement("code"));
+                link.textContent = url;
+                link.title = text;
+            }
+        }
+    }
+    alternativeURLs(configProxy["other.libAlternativeUrl"]);
     // Image proxy
     if (configProxy["other.imageProxy"]) {
         const PROXY = "https://wsrv.nl/?url=";
@@ -839,4 +968,31 @@
             image.loading = "lazy";
         }
     }
+
+    // Initialize css
+    for (const prop in dynamicStyle) {
+        cssHelper(prop, configProxy[prop]);
+    }
+    // Dynamically respond to config changes
+    const callbacks = {
+        "filterAndSearch.shortcut": shortcut,
+        "filterAndSearch.regexFilter": regexFilter,
+        "codeblocks.autoHideCode": autoHide,
+        "codeblocks.autoHideRows": autoHide,
+        "codeblocks.tabSize": tabSize,
+        "codeblocks.metadata": metadata,
+        "display.flatLayout": flatLayout,
+        "display.alwaysShowNotification": alwaysShowNotification,
+        "other.shortLink": shortLink,
+        "other.libAlternativeUrl": alternativeURLs,
+    };
+    config.addEventListener("set", e => {
+        const callback = callbacks[e.detail.prop];
+        if (callback && (e.detail.before !== e.detail.after)) {
+            callback(e.detail.after);
+        }
+        if (e.detail.prop in dynamicStyle) {
+            cssHelper(e.detail.prop, e.detail.after);
+        }
+    });
 })();

@@ -48,6 +48,7 @@
 - Image proxy using `wsrv.nl`
 - Customize Tab indentation size
 - Always show the notification widget
+- Metadata parsing
 
 ## ⚙️ Configuation
 
@@ -62,6 +63,7 @@
     - **Min rows to hide**: Minimum number of rows to hide
     - **Tab size**: Set Tab indentation size
     - **Animation**: Enable animation for toggling code blocks
+    - **Metadata**: Parses certain important script metadata and displays it on the script code page
 - **🎨 Display**
     - **Hide buttons**: Hide floating buttons added by this script
     - **Flat layout**: Use flat layout for script list and descriptions
