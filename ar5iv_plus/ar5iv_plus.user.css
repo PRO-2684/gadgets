@@ -1,0 +1,61 @@
+/* ==UserStyle==
+@name           ar5iv Plus
+@namespace      github.com/openstyles/stylus
+@version        1.0.0
+@description    Enhance ar5iv.labs.arxiv.org/html/ with various tweaks and improvements.
+@author         PRO-2684
+@license     	gpl-3.0
+@preprocessor   stylus
+@var number stickyHeader "Sticky Header" [3, 0, 3, 1]
+@var checkbox compactCaption "Compact Caption" 1
+@var checkbox copyFix "Copy Fix" 1
+==/UserStyle== */
+@-moz-document url-prefix("https://ar5iv.labs.arxiv.org/html/") {
+    if (stickyHeader > 0) {
+        div.ltx_abstract > .ltx_title {
+            position: sticky;
+            background-color: var(--background-color);
+            top: 0;
+            z-index: 4;
+        }
+        article > section {
+            > .ltx_title {
+                position: sticky;
+                background-color: var(--background-color);
+                top: 0;
+                z-index: 3;
+            }
+            if (stickyHeader > 1) {
+                > section {
+                    > .ltx_title {
+                        position: sticky;
+                        background-color: var(--background-color);
+                        top: 30.5px;
+                        z-index: 2;
+                    }
+                    if (stickyHeader > 2) {
+                        > section {
+                            > .ltx_title {
+                                position: sticky;
+                                background-color: var(--background-color);
+                                top: 56.5px;
+                                z-index: 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (compactCaption) {
+        .ltx_figure .ltx_caption, .ltx_table .ltx_caption {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+    }
+    if (copyFix) {
+        .ltx_itemize > .ltx_item > .ltx_tag_item, .ltx_title > .ltx_tag {
+            user-select: none;
+        }
+    }
+}
