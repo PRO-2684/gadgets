@@ -2,7 +2,7 @@
 // @name         Draggy
 // @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.1.7
+// @version      0.1.8
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
 // @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 // @tag          productivity
@@ -278,30 +278,28 @@
         const style = document.head.appendChild(document.createElement("style"));
         style.id = "draggy-style";
         style.textContent = `
-            body {
-                > #draggy-overlay {
-                    --size: 50px; /* Circle radius */
-                    --center-x: calc(-1 * var(--size)); /* Hide the circle by default */
-                    --center-y: calc(-1 * var(--size));
-                    display: none;
-                    position: fixed;
-                    box-sizing: border-box;
-                    width: calc(var(--size) * 2);
-                    height: calc(var(--size) * 2);
-                    top: calc(var(--center-y) - var(--size));
-                    left: calc(var(--center-x) - var(--size));
-                    border-radius: 50%;
-                    border: 1px solid white; /* Circle border */
-                    padding: 0;
-                    margin: 0;
-                    mix-blend-mode: difference; /* Invert the background */
-                    background: transparent;
-                    z-index: 9999999999;
-                    pointer-events: none;
-                }
-                &[data-draggy-overlay="0"] > #draggy-overlay {  }
-                &[data-draggy-overlay="1"] > #draggy-overlay[data-draggy-selected] { display: block; }
-                &[data-draggy-overlay="2"] > #draggy-overlay { display: block; }
+            body > #draggy-overlay {
+                --size: 50px; /* Circle radius */
+                --center-x: calc(-1 * var(--size)); /* Hide the circle by default */
+                --center-y: calc(-1 * var(--size));
+                display: none;
+                position: fixed;
+                box-sizing: border-box;
+                width: calc(var(--size) * 2);
+                height: calc(var(--size) * 2);
+                top: calc(var(--center-y) - var(--size));
+                left: calc(var(--center-x) - var(--size));
+                border-radius: 50%;
+                border: 1px solid white; /* Circle border */
+                padding: 0;
+                margin: 0;
+                mix-blend-mode: difference; /* Invert the background */
+                background: transparent;
+                z-index: 9999999999;
+                pointer-events: none;
+                &[data-draggy-overlay="0"] {  }
+                &[data-draggy-overlay="1"][data-draggy-selected] { display: block; }
+                &[data-draggy-overlay="2"] { display: block; }
             }
         `;
         return circle;
@@ -311,7 +309,7 @@
      * @param {number} mode When to show the circle overlay.
      */
     function toggleOverlay(mode) {
-        document.body.setAttribute("data-draggy-overlay", mode);
+        circle.setAttribute("data-draggy-overlay", mode);
     }
 
     // Event listeners
