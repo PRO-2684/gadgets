@@ -5,6 +5,7 @@
 - Customizable search engine and maximum search term length
 - Customizable minimum drag distance
 - A circle overlay to indicate the minimum drag distance
+- Dark Reader support
 - Todo list
     - Using `Esc` to interrupt draggy (might not be possible to detect)
 

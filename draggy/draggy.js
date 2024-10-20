@@ -2,7 +2,7 @@
 // @name         Draggy
 // @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.1.8
+// @version      0.1.9
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
 // @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 // @tag          productivity
@@ -277,6 +277,7 @@
         circle.id = "draggy-overlay";
         const style = document.head.appendChild(document.createElement("style"));
         style.id = "draggy-style";
+        style.classList.add("darkreader"); // Make Dark Reader ignore
         style.textContent = `
             body > #draggy-overlay {
                 --size: 50px; /* Circle radius */
@@ -295,7 +296,7 @@
                 margin: 0;
                 mix-blend-mode: difference; /* Invert the background */
                 background: transparent;
-                z-index: 9999999999;
+                z-index: 2147483647;
                 pointer-events: none;
                 &[data-draggy-overlay="0"] {  }
                 &[data-draggy-overlay="1"][data-draggy-selected] { display: block; }
