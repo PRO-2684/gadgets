@@ -65,3 +65,4 @@ By investigating source code (thanks for the source mapping) and setting breakpo
 ## 🤔 Known Issues
 
 - The added information might not align well.
+- You might see a "Error Looks like something went wrong!" banner if "Tracking Prevention" is enabled.

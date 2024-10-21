@@ -65,3 +65,4 @@ GitHub 上 [一个 Release](https://github.com/microsoft/terminal/releases/tag/v
 ## 🤔 已知问题
 
 - 添加的信息可能不对齐。
+- 如果启用了 "Tracking Prevention"，则可能会看到一个 "Error Looks like something went wrong!" 横幅。
