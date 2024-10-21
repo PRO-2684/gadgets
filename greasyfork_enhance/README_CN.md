@@ -39,16 +39,15 @@
         - `created`, `created_at`: 按创建时间排序
         - `updated`, `updated_at`: 按更新时间排序
         - `name`, `title`: 按名称排序
-- 展示库的其他可用网址
-- 展示当前脚本的短链
 - 快捷键
     - 在文本输入框 `Ctrl+Enter` 提交表单
     - `Enter` 聚焦至第一个搜索框/文本框
     - `Escape` 取消聚焦
+    - `ArrowLeft` 和 `ArrowRight` 来切换至上一页和下一页
 - 使用 `wsrv.nl` 作为图像代理
 - 控制 Tab 缩进大小
-- 总是显示通知小部件
 - 元数据解析
+- 以及更多...
 
 ## ⚙️ 配置
 
@@ -66,6 +65,7 @@
     - **Metadata**: 解析部分重要的脚本元数据并在脚本代码页显示
 - **🎨 Display**
     - **Hide buttons**: 是否隐藏悬浮按钮
+    - **Sticky pagination**: 使分页栏浮动
     - **Flat layout**: 是否启用扁平布局
     - **Show version**: 在脚本列表中显示版本号
     - **Always show notification**: 总是显示通知小部件

@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.8.7
+// @version      0.8.8
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
@@ -108,6 +108,12 @@
                     type: "bool",
                     value: false,
                 },
+                stickyPagination: {
+                    name: "Sticky pagination",
+                    title: "Make pagination bar sticky",
+                    type: "bool",
+                    value: true,
+                },
                 flatLayout: {
                     name: "Flat layout",
                     title: "Use flat layout for script list and descriptions",
@@ -190,6 +196,7 @@
             .animate__fadeOut { -webkit-animation-name: fadeOut; animation-name: fadeOut; }
         `,
         "display.hideButtons": `div#float-buttons { display: none; }`,
+        "display.stickyPagination": `.sidebarred-main-content > .pagination { position: sticky; bottom: 0; backdrop-filter: blur(5px); padding: 0.5em; }`,
         "display.flatLayout": `
             .script-list > li {
                 &:not(.ad-entry) { padding-right: 0; }
@@ -482,7 +489,7 @@
             form.submit();
         }
     }
-    function handleInputFocus(e) {
+    function handleShortcut(e) {
         const ele = document.activeElement;
         // Ignore key combinations
         if (e.ctrlKey || e.altKey || e.metaKey || e.shiftKey) {
@@ -500,12 +507,22 @@
         if (e.isComposing || e.keyCode === 229) {
             return;
         }
-        if (e.key === "Enter") {
-            const input = $("input[type=search]") || $("input[type=text]") || $("textarea");
-            if (input) {
-                e.preventDefault();
-                input.focus();
+        // Focus on search bar
+        switch (e.key) {
+            case "Enter": {
+                const input = $("input[type=search]") || $("input[type=text]") || $("textarea");
+                if (input) {
+                    e.preventDefault();
+                    input.focus();
+                }
+                break;
             }
+            case "ArrowLeft":
+                $("a.previous_page")?.click();
+                break;
+            case "ArrowRight":
+                $("a.next_page")?.click();
+                break;
         }
     }
     let shortcutEnabled = false;
@@ -515,13 +532,13 @@
             for (const textarea of textAreas) {
                 textarea.addEventListener("keyup", submitOnCtrlEnter);
             }
-            document.addEventListener("keydown", handleInputFocus);
+            document.addEventListener("keydown", handleShortcut);
             shortcutEnabled = true;
         } else if (shortcutEnabled && !enable) {
             for (const textarea of textAreas) {
                 textarea.removeEventListener("keyup", submitOnCtrlEnter);
             }
-            document.removeEventListener("keydown", handleInputFocus);
+            document.removeEventListener("keydown", handleShortcut);
             shortcutEnabled = false;
         }
     }

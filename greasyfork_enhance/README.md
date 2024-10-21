@@ -39,16 +39,15 @@
         - `created`, `created_at`: Sort by creation time
         - `updated`, `updated_at`: Sort by update time
         - `name`, `title`: Sort by name
-- Display alternative URLs for libraries
-- Display a short link to current script
 - Keyboard shortcuts
     - `Ctrl+Enter` inside a textarea to submit forms
     - `Enter` to focus on first search box / textarea
     - `Escape` to unfocus
+    - `ArrowLeft` and `ArrowRight` for previous and next page
 - Image proxy using `wsrv.nl`
 - Customize Tab indentation size
-- Always show the notification widget
 - Metadata parsing
+- ... and more
 
 ## ⚙️ Configuation
 
@@ -66,6 +65,7 @@
     - **Metadata**: Parses certain important script metadata and displays it on the script code page
 - **🎨 Display**
     - **Hide buttons**: Hide floating buttons added by this script
+    - **Sticky pagination**: Make pagination bar sticky
     - **Flat layout**: Use flat layout for script list and descriptions
     - **Show version**: Show version number in script list
     - **Always show notification**: Always show the notification widget
