@@ -29,9 +29,15 @@
 
 ## 🖼️ Showcase
 
-Example "Assets" section of [a release](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0) on GitHub, with `Release Downloads`, `Release Uploader` and `Release Histogram` enabled:
+<details><summary>
+Example "Assets" section
+</summary>
+
+Example "Assets" section of [a release](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0) on GitHub, with `Release Downloads`, `Release Uploader` and `Release Histogram` enabled
 
 ![](./assets.jpg)
+
+</details>
 
 ## 🔑 Personal Access Token (PAT)
 
@@ -42,9 +48,13 @@ Example "Assets" section of [a release](https://github.com/microsoft/terminal/re
 - Remember to *generate a new token when it expires*.
 - Use a personal access token on a mirror site at your own risk.
 
-Example setup for personal access token:
+<details><summary>
+Example setup for personal access token
+</summary>
 
 ![](./token.jpeg)
+
+</details>
 
 ## 💡 Mechanism
 

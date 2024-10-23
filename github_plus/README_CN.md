@@ -29,9 +29,15 @@
 
 ## 🖼️ 效果展示
 
-GitHub 上 [一个 Release](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0) "Assests" 部分的示例，启用了 `Release Downloads`, `Release Uploader` 和 `Release Histogram`：
+<details><summary>
+"Assests" 部分示例
+</summary>
+
+GitHub 上 [一个 Release](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0) "Assests" 部分的示例，启用了 `Release Downloads`, `Release Uploader` 和 `Release Histogram`
 
 ![](./assets.jpg)
+
+</details>
 
 ## 🔑 个人访问令牌 (PAT)
 
@@ -42,9 +48,13 @@ GitHub 上 [一个 Release](https://github.com/microsoft/terminal/releases/tag/v
 - 记得 *在令牌过期时生成一个新令牌*。
 - 自行承担在镜像站上使用个人访问令牌的风险。
 
-个人访问令牌的示例设置：
+<details><summary>
+个人访问令牌示例设置
+</summary>
 
 ![](./token.jpeg)
+
+</details>
 
 ## 💡 机制
 
