@@ -14,6 +14,9 @@
 
 - **🔢 Code Features**
     - **Clone Full Command**: 在代码标签下的 `https` 和 `git@` URL 前附加 `git clone `。(实验性功能，可能有效也可能无效)
+- **🎨 Appearance**
+    - **Cursor Blink**: 启用光标闪烁。
+    - **Cursor Animation**: 使光标平滑移动。
 - **📦 Release Features**
     - **Release Uploader**: 显示 Release 中文件的上传者。
     - **Release Downloads**: 显示 Release 中文件的下载次数。

@@ -14,6 +14,9 @@
 
 - **🔢 Code Features**
     - **Clone Full Command**: Append `git clone ` before `https` and `git@` URLs under the code tab. (Experimental, may or may not work)
+- **🎨 Appearance**
+    - **Cursor Blink**: Enable cursor blinking.
+    - **Cursor Animation**: Make cursor move smoothly.
 - **📦 Release Features**
     - **Release Uploader**: Show uploader of release assets.
     - **Release Downloads**: Show download counts of release assets.

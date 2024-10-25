@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.2.1
+// @version      0.2.2
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -24,6 +24,7 @@
 (function() {
     'use strict';
     const { name, version } = GM_info.script;
+    const idPrefix = "ghp-"; // Prefix for the IDs of the elements
     /**
      * The top domain of the current page.
      * @type {string}
@@ -74,7 +75,25 @@
                     title: "Append `git clone ` before `https` and `git@` URLs under the code tab",
                     type: "bool",
                     value: false,
-                }
+                },
+            },
+        },
+        appearance: {
+            name: "🎨 Appearance",
+            type: "folder",
+            items: {
+                cursorBlink: {
+                    name: "Cursor Blink",
+                    title: "Enable cursor blinking",
+                    type: "bool",
+                    value: false,
+                },
+                cursorAnimation: {
+                    name: "Cursor Animation",
+                    title: "Make cursor move smoothly",
+                    type: "bool",
+                    value: false,
+                },
             },
         },
         release: {
@@ -136,6 +155,21 @@
     };
     const config = new GM_config(configDesc);
 
+    // Helper function for css
+    function injectCSS(id, css) {
+        const style = document.head.appendChild(document.createElement("style"));
+        style.id = idPrefix + id;
+        style.textContent = css;
+        return style;
+    }
+    function cssHelper(id, enable) {
+        const current = document.getElementById(idPrefix + id);
+        if (current) {
+            current.disabled = !enable;
+        } else if (enable) {
+            injectCSS(id, dynamicStyle[id]);
+        }
+    }
     // General functions
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
@@ -193,6 +227,15 @@
             warn(`Rate limit has been exhausted! Will reset at ${resetDate}`);
         }
         return r;
+    }
+
+    // CSS-related features
+    const dynamicStyle = {
+        "appearance.cursorBlink": `[data-testid="navigation-cursor"] { animation: blink 1s step-end infinite; }`,
+        "appearance.cursorAnimation": `[data-testid="navigation-cursor"] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }`,
+    };
+    for (const prop in dynamicStyle) {
+        cssHelper(prop, config.get(prop));
     }
 
     // Code features
@@ -386,7 +429,7 @@
         //   - Monkey-patching
         //   - If using regex to modify the response, it would be tedious to maintain
         //   - If using `DOMParser`, the same HTML would be parsed twice
-        document.head.appendChild(document.createElement("style")).textContent = `
+        injectCSS("release", `
             @media (min-width: 1012px) { /* Making more room for the additional info */
                 .ghp-release-asset .col-lg-9 {
                     width: 60%; /* Originally ~75% */
@@ -400,7 +443,7 @@
             .ghp-release-asset { /* Styling the histogram */
                 background: linear-gradient(to right, var(--bgColor-accent-muted) var(--percent, 0%), transparent 0);
             }
-        `;
+        `);
     }
 
     // Tracking prevention
@@ -447,6 +490,11 @@
         if (e.detail.prop === "advanced.rateLimit") {
             const resetDate = new Date(rateLimit.reset * 1000).toLocaleString();
             alert(`Rate limit: remaining ${rateLimit.remaining}/${rateLimit.limit}, resets at ${resetDate}.\nIf you see -1, it means the rate limit has not been fetched yet, or GitHub has not provided the rate limit information.`);
+        }
+    });
+    config.addEventListener("set", (e) => {
+        if (e.detail.prop in dynamicStyle) {
+            cssHelper(e.detail.prop, e.detail.after);
         }
     });
 
