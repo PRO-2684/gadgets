@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           ar5iv Plus
 @namespace      github.com/openstyles/stylus
-@version        1.0.1
+@version        1.0.2
 @description    Enhance ar5iv.labs.arxiv.org/html/ with various tweaks and improvements.
 @author         PRO-2684
 @license     	gpl-3.0
@@ -25,6 +25,9 @@
                 top: 0;
                 z-index: 3;
             }
+            *[id] {
+                scroll-margin-top: 30.5px;
+            }
             if (stickyHeader > 1) {
                 > section {
                     > .ltx_title {
@@ -33,6 +36,9 @@
                         top: 30.5px;
                         z-index: 2;
                     }
+                    *[id] {
+                        scroll-margin-top: 56.5px;
+                    }
                     if (stickyHeader > 2) {
                         > section {
                             > .ltx_title {
@@ -40,6 +46,9 @@
                                 background-color: var(--background-color);
                                 top: 56.5px;
                                 z-index: 1;
+                            }
+                            *[id] {
+                                scroll-margin-top: 78px;
                             }
                         }
                     }
