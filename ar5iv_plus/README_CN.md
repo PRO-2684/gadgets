@@ -5,4 +5,7 @@
 ## 🪄 功能和配置
 
 - `Sticky Header`: 标题浮动的最大层级。设置为 0 以禁用。
+- `Header Blur`: 使浮动标题略微模糊和透明。
 - `Compact Caption`: 使说明文字更紧凑。
+- `Copy Fix`: 将部分序号标记为不可复制。
+- `Z-Index Fix`: 使活动图像始终处于顶部。
