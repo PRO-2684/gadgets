@@ -1,29 +1,41 @@
 /* ==UserStyle==
 @name           ar5iv Plus
 @namespace      github.com/openstyles/stylus
-@version        1.0.2
+@version        1.0.3
 @description    Enhance ar5iv.labs.arxiv.org/html/ with various tweaks and improvements.
 @author         PRO-2684
 @license     	gpl-3.0
 @preprocessor   stylus
 @var number stickyHeader "Sticky Header" [3, 0, 3, 1]
+@var checkbox headerBlur "Header Blur" 1
 @var checkbox compactCaption "Compact Caption" 1
 @var checkbox copyFix "Copy Fix" 1
+@var checkbox zIndexFix "Z-Index Fix" 1
 ==/UserStyle== */
 @-moz-document url-prefix("https://ar5iv.labs.arxiv.org/html/") {
+    @css {
+        :root {
+            --semi-transparent-background-color: rgb(from var(--background-color) r g b / 0.5);
+        }
+    }
+    setStickyHeader(top, zIndex) {
+        position: sticky;
+        if (headerBlur) {
+            backdrop-filter: blur(1px);
+            background-color: var(--semi-transparent-background-color);
+        } else {
+            background-color: var(--background-color);
+        }
+        top: top;
+        z-index: zIndex;
+    }
     if (stickyHeader > 0) {
         div.ltx_abstract > .ltx_title {
-            position: sticky;
-            background-color: var(--background-color);
-            top: 0;
-            z-index: 4;
+            setStickyHeader(0, 4);
         }
         article > section {
             > .ltx_title {
-                position: sticky;
-                background-color: var(--background-color);
-                top: 0;
-                z-index: 3;
+                setStickyHeader(0, 3);
             }
             *[id] {
                 scroll-margin-top: 30.5px;
@@ -31,10 +43,7 @@
             if (stickyHeader > 1) {
                 > section {
                     > .ltx_title {
-                        position: sticky;
-                        background-color: var(--background-color);
-                        top: 30.5px;
-                        z-index: 2;
+                        setStickyHeader(30.5px, 2);
                     }
                     *[id] {
                         scroll-margin-top: 56.5px;
@@ -42,10 +51,7 @@
                     if (stickyHeader > 2) {
                         > section {
                             > .ltx_title {
-                                position: sticky;
-                                background-color: var(--background-color);
-                                top: 56.5px;
-                                z-index: 1;
+                                setStickyHeader(56.5px, 1);
                             }
                             *[id] {
                                 scroll-margin-top: 78px;
@@ -65,6 +71,11 @@
     if (copyFix) {
         .ltx_enumerate > .ltx_item > .ltx_tag_item, .ltx_itemize > .ltx_item > .ltx_tag_item, .ltx_title > .ltx_tag {
             user-select: none;
+        }
+    }
+    if (zIndexFix) {
+        .ltx_figure img:active, .ltx_p>img.ltx_graphics:active, .ltx_text>img.ltx_graphics:active {
+            z-index: 5;
         }
     }
 }
