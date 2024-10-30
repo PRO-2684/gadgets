@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         百度翻译 Plus
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  一系列针对百度翻译的功能增强
 // @author       PRO-2684
-// @run-at       document-start
+// @run-at       document-end
 // @match        https://fanyi.baidu.com/*
 // @icon         https://fanyi.baidu.com/favicon.ico
 // @license      gpl-3.0
@@ -19,7 +19,6 @@
 
 (function() {
     'use strict';
-    const $ = document.querySelector.bind(document);
     const configDesc = {
         $default: {
             autoClose: false,
@@ -44,6 +43,9 @@
         }
     };
     const config = new GM_config(configDesc);
+    const panel = document.querySelector(".translate-main > .trans-left");
+    const wrap = panel.querySelector(".trans-input-wrap");
+    const textarea = panel.querySelector("textarea");
     function hasFile(e) {
         for (const item of e.dataTransfer.items) {
             if (item.kind === "file") {
@@ -53,21 +55,18 @@
         return false;
     }
     function handleDrop(e) {
-        const el = $(".translate-main > .trans-left");
-        if (e.dataTransfer.items.length === 0 || hasFile(e) || !el) {
+        if (e.dataTransfer.items.length === 0 || hasFile(e) || !panel) {
             return; // No text or has file or not ready - ignore
         }
 
         // Stop baidu from processing the real drop
         e.stopPropagation();
         // Dispatch events to fake the drop
-        el.dispatchEvent(new DragEvent("drop", {
-            ...e,
-            dataTransfer: new DataTransfer(), // Make an empty data transfer so as to prevent infinite loop and baidu's processing
+        wrap.dispatchEvent(new DragEvent("dragleave", {
+            bubbles: true,
         }));
 
         // Set the text
-        const textarea = el.querySelector("textarea");
         const text = e.dataTransfer.getData("text");
         if (config.get("textDropReplace")) {
             textarea.value = text;
@@ -80,9 +79,9 @@
     let textDropAllowed = false;
     function allowTextDrop(allow) {
         if (textDropAllowed && !allow) {
-            document.removeEventListener("drop", handleDrop, { capture: true });
+            panel.removeEventListener("drop", handleDrop, { capture: true });
         } else if (!textDropAllowed && allow) {
-            document.addEventListener("drop", handleDrop, { capture: true });
+            panel.addEventListener("drop", handleDrop, { capture: true });
         }
     }
     function setDebug(debug) {
@@ -92,7 +91,9 @@
         allowTextDrop: allowTextDrop,
         debug: setDebug,
     };
-    allowTextDrop(config.get("allowTextDrop"));
+    for (const [prop, callback] of Object.entries(callbacks)) {
+        callback(config.get(prop));
+    }
     config.addEventListener("set", (e) => {
         const callback = callbacks[e.detail.prop];
         if (callback) {
