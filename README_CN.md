@@ -9,6 +9,7 @@
 - `arxiv_html_debloate`: 隐藏 `arxiv.org/html/*` 上的不必要元素，让你拥有一个干净的阅读体验。
 - `auto_grading`: 自动评教 `tqm.ustc.edu.cn`。
 - `baidu_debloate`: 隐藏百度站点上的一些垃圾玩意儿，包括 `baike.baidu.com` 和 `jingyan.baidu.com`。
+- `baidu_fanyi_plus`: 一系列针对百度翻译的功能增强。
 - `bb_batch_reconcile`: 批量核对 [Blackboard](https://www.blackboard.com/) 系统中的学生成绩。
 - `checkbox_patch`: 修补某个复选框的 `checked` 属性，使得当 `checked` 值被其他脚本修改时会发出 `change` 事件。
 - `CORS_helper`: 一个简单的、可自定义的脚本，帮助你绕过 CORS 限制。

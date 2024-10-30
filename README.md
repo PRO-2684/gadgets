@@ -9,6 +9,7 @@ Some code snippets that's hard to categorize. See READMEs under subfolders for d
 - `arxiv_html_debloate`: Hides unnecessary elements on `arxiv.org/html/*`, giving you a clean view.
 - `auto_grading`: Auto grading for `tqm.ustc.edu.cn`.
 - `baidu_debloate`: Hides some gibberish on Baidu sites, including `baike.baidu.com` and `jingyan.baidu.com`.
+- `baidu_fanyi_plus`: Enhance Baidu Fanyi with additional features.
 - `bb_batch_reconcile`: Batch reconcile student grades in [Blackboard](https://www.blackboard.com/) system.
 - `checkbox_patch`: Patches the property `checked` of a certain checkbox, so that a `change` event will be issued when the `checked` value is modified by other scripts.
 - `CORS_helper`: A simple, customizable script that helps you to bypass CORS restrictions.
