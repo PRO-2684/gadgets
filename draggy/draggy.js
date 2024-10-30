@@ -2,7 +2,7 @@
 // @name         Draggy
 // @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.2.0
+// @version      0.2.1
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
 // @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 // @tag          productivity
@@ -275,7 +275,7 @@
     function initOverlay() {
         const circle = document.body.appendChild(document.createElement("div"));
         circle.id = "draggy-overlay";
-        const style = document.head.appendChild(document.createElement("style"));
+        const style = document.documentElement.appendChild(document.createElement("style"));
         style.id = "draggy-style";
         style.classList.add("darkreader"); // Make Dark Reader ignore
         style.textContent = `
