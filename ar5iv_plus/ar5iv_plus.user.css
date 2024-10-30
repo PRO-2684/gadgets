@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           ar5iv Plus
 @namespace      github.com/openstyles/stylus
-@version        1.0.4
+@version        1.0.5
 @description    Enhance ar5iv.labs.arxiv.org/html/ with various tweaks and improvements.
 @author         PRO-2684
 @license     	gpl-3.0
@@ -66,7 +66,7 @@
         }
     }
     if (semiTransparent) {
-        .ar5iv-bibitem-preview {
+        .ar5iv-bibitem-preview, .ar5iv-button-close-preview {
             makeSemiTransparent();
         }
     }
