@@ -1,15 +1,15 @@
 /* ==UserStyle==
 @name           ar5iv Plus
 @namespace      github.com/openstyles/stylus
-@version        1.0.3
+@version        1.0.4
 @description    Enhance ar5iv.labs.arxiv.org/html/ with various tweaks and improvements.
 @author         PRO-2684
 @license     	gpl-3.0
 @preprocessor   stylus
 @var number stickyHeader "Sticky Header" [3, 0, 3, 1]
-@var checkbox headerBlur "Header Blur" 1
+@var checkbox semiTransparent "Semi Transparent" 1
 @var checkbox compactCaption "Compact Caption" 1
-@var checkbox copyFix "Copy Fix" 1
+@var checkbox copyFix "Copy Fix" 0
 @var checkbox zIndexFix "Z-Index Fix" 1
 ==/UserStyle== */
 @-moz-document url-prefix("https://ar5iv.labs.arxiv.org/html/") {
@@ -18,11 +18,14 @@
             --semi-transparent-background-color: rgb(from var(--background-color) r g b / 0.5);
         }
     }
+    makeSemiTransparent() {
+        backdrop-filter: blur(1px);
+        background-color: var(--semi-transparent-background-color);
+    }
     setStickyHeader(top, zIndex) {
         position: sticky;
-        if (headerBlur) {
-            backdrop-filter: blur(1px);
-            background-color: var(--semi-transparent-background-color);
+        if (semiTransparent) {
+            makeSemiTransparent();
         } else {
             background-color: var(--background-color);
         }
@@ -60,6 +63,11 @@
                     }
                 }
             }
+        }
+    }
+    if (semiTransparent) {
+        .ar5iv-bibitem-preview {
+            makeSemiTransparent();
         }
     }
     if (compactCaption) {
