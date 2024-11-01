@@ -9,3 +9,7 @@ Enhance ar5iv.labs.arxiv.org/html/ with various tweaks and improvements.
 - `Compact`: Makes captions and references preview more compact.
 - `Copy Fix`: Marks certain serial numbers as non-copyable.
 - `Z-Index Fix`: Makes active figures always on top.
+
+## 🖼️ Screenshot
+
+![Screenshot](./ar5iv_plus.jpg)
