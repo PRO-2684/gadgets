@@ -2,7 +2,7 @@
 // @name         Draggy
 // @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.2.1
+// @version      0.2.2
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
 // @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 // @tag          productivity
@@ -160,15 +160,15 @@
      */
     const judging = {
         selection: (e) => {
-            const link = e.target?.closest?.("a[href]");
-            const href = link?.getAttribute("href");
-            if (href && !href.startsWith("javascript:") && href !== "#") {
-                return link;
-            }
             const img = e.target?.closest?.("img[src]");
             const src = img?.src;
             if (src) {
                 return img;
+            }
+            const link = e.target?.closest?.("a[href]");
+            const href = link?.getAttribute("href");
+            if (href && !href.startsWith("javascript:") && href !== "#") {
+                return link;
             }
             const selection = window.getSelection();
             const selectionAncestor = commonAncestor(selection.anchorNode, selection.focusNode);
