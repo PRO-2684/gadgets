@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.2.2
+// @version      0.2.3
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -75,6 +75,13 @@
                     title: "Append `git clone ` before `https` and `git@` URLs under the code tab",
                     type: "bool",
                     value: false,
+                },
+                tabSize: {
+                    name: "Tab Size",
+                    title: "Set Tab indentation size",
+                    type: "int",
+                    value: 4,
+                    processor: "int_range-0-",
                 },
             },
         },
@@ -284,6 +291,16 @@
             cloneFullCommand(e.detail.newBody.querySelector("[data-turbo-body]") ?? e.detail.newBody);
         });
     }
+    /**
+     * Set the tab size for the code blocks.
+     * @param {number} size The tab size to set.
+     */
+    function tabSize(size) {
+        const id = idPrefix + "tabSize";
+        const style = document.getElementById(id) ?? injectCSS(id, "");
+        style.textContent = `pre, code { tab-size: ${size}; }`;
+    }
+    tabSize(config.get("code.tabSize"));
 
     // Release features
     /**
@@ -485,6 +502,11 @@
         });
     }
 
+    // Callbacks
+    const callbacks = {
+        "code.tabSize": tabSize,
+    };
+
     // Show rate limit
     config.addEventListener("get", (e) => {
         if (e.detail.prop === "advanced.rateLimit") {
@@ -495,6 +517,9 @@
     config.addEventListener("set", (e) => {
         if (e.detail.prop in dynamicStyle) {
             cssHelper(e.detail.prop, e.detail.after);
+        }
+        if (e.detail.prop in callbacks) {
+            callbacks[e.detail.prop](e.detail.after);
         }
     });
 
