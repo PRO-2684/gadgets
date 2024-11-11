@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         52 Enhance
 // @namespace    http://tampermonkey.net/
-// @version      0.7.4
+// @version      0.7.5
 // @description  52 破解论坛增强脚本
 // @author       PRO
 // @run-at       document-start
@@ -292,7 +292,7 @@
             const sign1 = $("#um > p:nth-child(3) > a:nth-child(1) > img");
             const sign2 = $("#res-sign > a");
             const url = sign1?.parentElement?.href;
-            if (!sign1 || !sign2 || !url) return;
+            if (!sign1 || !sign2 || !url || !url.startsWith("https://www.52pojie.cn/home.php?mod=task")) return;
             const waf = "https://www.52pojie.cn/waf_text_verify.html";
             const iframe = document.body.appendChild(document.createElement("iframe"));
             iframe.src = url;
