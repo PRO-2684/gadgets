@@ -2,7 +2,7 @@
 // @name         Draggy
 // @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.2.3
+// @version      0.2.4
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
 // @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 // @tag          productivity
@@ -301,11 +301,18 @@
                 &[data-draggy-overlay="2"] { display: block; }
             }
         `;
-        GM_addElement(document.documentElement, "style", {
-            id: "draggy-style",
-            class: "darkreader", // Make Dark Reader ignore
-            textContent
-        });
+        function addStyle() {
+            if (document.getElementById("draggy-style")) {
+                return;
+            }
+            GM_addElement(document.documentElement, "style", {
+                id: "draggy-style",
+                class: "darkreader", // Make Dark Reader ignore
+                textContent
+            });
+        }
+        addStyle();
+        setTimeout(addStyle, 1000); // Dark Reader might remove the style
         return circle;
     }
     /**
