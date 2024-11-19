@@ -19,6 +19,7 @@ Some code snippets that's hard to categorize. See READMEs under subfolders for d
 - `GM_config`: Simple config lib for Tampermonkey scripts.
 - `greasyfork_enhance`: Enhance your experience at Greasyfork.
 - `hover_card`: Get Github hovercard for given repo.
+- `naive_jq`: A naive implementation of `jq` in Node.js, only for quick testing.
 - `purlfy_for_tm`: The ultimate URL purifier - Tampermonkey version.
 - `sanitify_header_id`: Sanitify/Sanitize given string (header id) so that it is (hopefully) free of emojis, with its spaces replaced by `-`.
 - `scrollbar_mod`: Customize your scrollbar easily.

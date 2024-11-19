@@ -19,6 +19,7 @@
 - `GM_config`: 简易的 Tampermonkey 脚本配置库。
 - `greasyfork_enhance`: 增进 Greasyfork 浏览体验。
 - `hover_card`: 获取 Github 仓库的悬停卡片。
+- `naive_jq`: 一个简单的 `jq` 的 Node.js 实现，仅用于快速测试。
 - `purlfy_for_tm`: 终极 URL 净化器 - Tampermonkey 版本。
 - `sanitify_header_id`: 格式化给定字符串（标题 ID），使其不含表情符号，空格被 `-` 替代。
 - `scrollbar_mod`: 轻松定制你的滚动条。
