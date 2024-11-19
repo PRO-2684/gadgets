@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           ar5iv Plus
 @namespace      github.com/openstyles/stylus
-@version        1.0.6
+@version        1.0.7
 @description    Enhance ar5iv.labs.arxiv.org/html/ with various tweaks and improvements.
 @author         PRO-2684
 @license     	gpl-3.0
@@ -33,6 +33,9 @@
         z-index: zIndex;
     }
     if (stickyHeader > 0) {
+        .ltx_title_paragraph {
+            margin-right: 0;
+        }
         div.ltx_abstract > .ltx_title {
             setStickyHeader(0, 4);
         }
