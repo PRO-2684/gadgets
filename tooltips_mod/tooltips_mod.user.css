@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Tooltips Mod
 @namespace      github.com/PRO-2684
-@version        0.1.0
+@version        0.1.1
 @description    Implement `title` attribute display as a tooltip on touch screen devices
 @author         PRO-2684
 @license     	gpl-3.0
@@ -64,7 +64,7 @@
     }
     // If `TextDecoration` is not "default", apply it
     if (TextDecoration != "default") {
-        [title]:hover::after {
+        [title] {
             text-decoration: TextDecoration;
         }
     }
