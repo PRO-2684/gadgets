@@ -2,7 +2,7 @@
 
 This is a mod version for the [Tooltips on android](https://userstyles.world/style/8853/tooltips-on-android) userstyle with additional features, available on:
 
-- ~~[UserStyles.World](#) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](#)~~
+- [UserStyles.World](https://userstyles.world/style/19461/tooltips-mod) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://userstyles.world/api/style/19461.user.css)
 - [GitHub](https://github.com/PRO-2684/gadgets/raw/main/tooltips_mod/) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://github.com/PRO-2684/gadgets/raw/main/tooltips_mod/tooltips_mod.user.css)
 
 ## Features & Configuration
