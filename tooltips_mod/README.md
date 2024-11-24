@@ -24,9 +24,12 @@ This is a mod version for the [Tooltips on android](https://userstyles.world/sty
 - \* `BorderColor`: Customize the border color of the tooltips
 - `BorderStyle`: Customize the border style of the tooltips
 - `TextDecoration`: Choose a text decoration for elements with `title` attribute (`default` for not applying any)
+    - Example: `underline dashed`
+    - Refer to [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration) for more options
+- `Opacity`: Customize the opacity of the tooltips
 - `Radius`: Customize the border radius of the tooltips
 - `PaddingX`/`PaddingY`: Customize the padding of the tooltips
-- `Opacity`: Customize the opacity of the tooltips
+- `MarginX`/`MarginY`: Customize the margin of the tooltips
 
 ## Mod Features
 

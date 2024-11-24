@@ -13,10 +13,12 @@
 @var color      BorderColor    "BorderColor"     #e0e0e2
 @var text       BorderStyle    "BorderStyle"     "1px solid"
 @var text       TextDecoration "Text Decoration" "default"
-@var range      Radius         "Radius"          [0, 0, 50, "px"]
-@var range      PaddingX       "PaddingX"        [6, 0, 50, "px"]
-@var range      PaddingY       "PaddingY"        [3, 0, 50, "px"]
 @var range      Opacity        "Opacity"         [100, 0, 100, "%"]
+@var range      Radius         "Radius"          [0, 0, 20, "px"]
+@var range      PaddingX       "PaddingX"        [6, 0, 20, "px"]
+@var range      PaddingY       "PaddingY"        [3, 0, 20, "px"]
+@var range      MarginX        "MarginX"         [0, 0, 20, "px"]
+@var range      MarginY        "MarginY"         [0, 0, 20, "px"]
 ==/UserStyle== */
 
 @-moz-document regexp(".*") {
@@ -48,6 +50,7 @@
 
     [title]:hover::after {
         display: inline;
+        content: attr(title);
         position: fixed;
         {positions[Position][0]}: 0;
         {positions[Position][1]}: 0;
@@ -57,10 +60,11 @@
         color: colors.Foreground;
         border: BorderStyle colors.BorderColor;
         border-radius: Radius;
-        padding: PaddingY PaddingX;
-        margin: 0;
         opacity: Opacity;
-        content: attr(title);
+        padding: PaddingY PaddingX;
+        margin: MarginY MarginX;
+        line-height: normal;
+        font-weight: normal;
     }
     // If `TextDecoration` is not "default", apply it
     if (TextDecoration != "default") {
