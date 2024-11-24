@@ -1,0 +1,71 @@
+/* ==UserStyle==
+@name           Tooltips Mod
+@namespace      github.com/PRO-2684
+@version        0.1.0
+@description    Implement `title` attribute display as a tooltip on touch screen devices
+@author         PRO-2684
+@license     	gpl-3.0
+@preprocessor   stylus
+@var select     Position       "Position"        ["'↙'", "'↘'", "'↖'", "'↗'"]
+@var select     Theme          "Theme"           ["Chrome", "Edge", "Custom"]
+@var color      Background     "Background"      #1f1f1f
+@var color      Foreground     "Foreground"      #cac8ca
+@var color      BorderColor    "BorderColor"     #e0e0e2
+@var text       BorderStyle    "BorderStyle"     "1px solid"
+@var text       TextDecoration "Text Decoration" "default"
+@var range      Radius         "Radius"          [0, 0, 50, "px"]
+@var range      PaddingX       "PaddingX"        [6, 0, 50, "px"]
+@var range      PaddingY       "PaddingY"        [3, 0, 50, "px"]
+@var range      Opacity        "Opacity"         [100, 0, 100, "%"]
+==/UserStyle== */
+
+@-moz-document regexp(".*") {
+    /* Themes */
+    themes = {
+        "Chrome": {
+            Background: #1f1f1f,
+            Foreground: #cac8ca,
+            BorderColor: #e0e0e2
+        },
+        "Edge": {
+            Background: #4a4a4a,
+            Foreground: #fffdff,
+            BorderColor: #ffffff
+        },
+        "Custom": {
+            Background: Background,
+            Foreground: Foreground,
+            BorderColor: BorderColor
+        }
+    }
+    colors = themes[Theme]
+    positions = {
+        "↙": ("bottom" "left"),
+        "↘": ("bottom" "right"),
+        "↖": ("top" "left"),
+        "↗": ("top" "right")
+    }
+
+    [title]:hover::after {
+        display: inline;
+        position: fixed;
+        {positions[Position][0]}: 0;
+        {positions[Position][1]}: 0;
+        font-size: 12px;
+        z-index: 9999;
+        background: colors.Background;
+        color: colors.Foreground;
+        border: BorderStyle colors.BorderColor;
+        border-radius: Radius;
+        padding: PaddingY PaddingX;
+        margin: 0;
+        opacity: Opacity;
+        content: attr(title);
+    }
+    // If `TextDecoration` is not "default", apply it
+    if (TextDecoration != "default") {
+        [title]:hover::after {
+            text-decoration: TextDecoration;
+        }
+    }
+}
