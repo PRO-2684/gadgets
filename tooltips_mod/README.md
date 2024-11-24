@@ -5,6 +5,13 @@ This is a mod version for the [Tooltips on android](https://userstyles.world/sty
 - [UserStyles.World](https://userstyles.world/style/19461/tooltips-mod) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://userstyles.world/api/style/19461.user.css)
 - [GitHub](https://github.com/PRO-2684/gadgets/raw/main/tooltips_mod/) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://github.com/PRO-2684/gadgets/raw/main/tooltips_mod/tooltips_mod.user.css)
 
+## Preview
+
+| Theme | Screenshot |
+| --- | --- |
+| Chrome | ![Chrome](./chrome.jpg) |
+| Edge | ![Edge](./edge.jpg) |
+
 ## Features & Configuration
 
 > [!NOTE]
