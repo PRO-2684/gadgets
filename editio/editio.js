@@ -2,7 +2,7 @@
 // @name         Editio
 // @name:zh-CN   Editio
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  Add some extra features to inputs and textareas
 // @description:zh-CN 给输入框和文本框添加一些额外功能
 // @tag          productivity
@@ -49,7 +49,7 @@
                     value: false
                 },
                 jumping: {
-                    name: "🪝 Jumping",
+                    name: "🔁 Jumping",
                     title: "Jump between paired brackets - won't work for pairs with the same opening and closing characters",
                     type: "bool",
                     value: true
@@ -65,6 +65,25 @@
                         }
                         return input;
                     }
+                }
+            }
+        },
+        tabulator: {
+            name: "↔️ Tabulator",
+            title: "Tab-related features",
+            type: "folder",
+            items: {
+                tabOut: {
+                    name: "↪️ Tab out",
+                    title: "Pressing (Shift+) Tab to move to the next (or previous) character specified",
+                    type: "bool",
+                    value: true
+                },
+                tabOutChars: {
+                    name: "📜 Tab out chars",
+                    title: "Characters to tab out of",
+                    type: "str",
+                    value: "()[]{}<>\"'`,:;.",
                 }
             }
         }
@@ -179,16 +198,17 @@
     }
     /**
      * Handle shortcuts for jumping between paired brackets.
-     * @param {Event} e The KeyboardEvent.
+     * @param {KeyboardEvent} e The KeyboardEvent.
+     * @returns {boolean} Whether the event is handled.
      */
-    function onKeydown(e) {
+    function jumpingHandler(e) {
+        // Ctrl + Q
+        if (!e.ctrlKey || e.altKey || e.shiftKey || e.metaKey || e.key !== "q" || !config.get("pairing.jumping")) return;
         /**
          * The target element.
          * @type {HTMLInputElement | HTMLTextAreaElement}
          */
         const el = e.composedPath()[0];
-        // Ctrl + Q
-        if (!e.ctrlKey || e.altKey || e.shiftKey || e.metaKey || e.key !== "q" || !validTarget(el) || !config.get("pairing.jumping")) return;
         const { selectionStart: start, selectionEnd: end, value } = el;
         const diff = Math.abs(end - start);
         if (!(diff <= 1) || typeof start === "undefined") return; // Only handle the scenario where one or none character is selected and the cursor is inside the element
@@ -198,12 +218,62 @@
             e.preventDefault();
             e.stopImmediatePropagation();
             el.setSelectionRange(otherIndex, otherIndex + 1);
+            return true;
         }
+        return false;
+    }
+
+    // Tabulator
+    /**
+     * Characters to tab out of.
+     * @type {Set<string>}
+     */
+    let tabOutChars = new Set();
+    /**
+     * Find the character as the destination of the tab out action.
+     * @param {string} text The text to search in.
+     * @param {number} pos The position of the cursor.
+     * @param {number} direction The direction to search in.
+     * @returns {number} The position of the character to tab out of, or -1 if not found.
+     */
+    function findNextPos(text, pos, direction) {
+        // A position is valid if and only if the character at that position OR BEFORE that position is in the tabOutChars
+        for (let i = pos + direction; i >= 0 && i <= text.length; i += direction) { // `i <= text.length` is intentional, so as to handle the scenario where the cursor should be moved to the end of the text
+            if (tabOutChars.has(text.charAt(i)) || tabOutChars.has(text.charAt(i - 1))) return i;
+        }
+        return -1;
+    }
+    /**
+     * Handle the tab out action.
+     * @param {KeyboardEvent} e The KeyboardEvent.
+     * @returns {boolean} Whether the event is handled.
+     */
+    function tabOutHandler(e) {
+        if (e.ctrlKey || e.altKey || e.metaKey || e.key !== "Tab" || !config.get("tabulator.tabOut")) return;
+        /**
+         * The target element.
+         * @type {HTMLInputElement | HTMLTextAreaElement}
+         */
+        const el = e.composedPath()[0];
+        const { selectionStart: start, selectionEnd: end, value } = el;
+        if (start !== end) return; // Only handle the scenario where no character is selected
+        const direction = e.shiftKey ? -1 : 1;
+        const nextPos = findNextPos(value, start, direction);
+        if (nextPos !== -1) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            el.setSelectionRange(nextPos, nextPos);
+            return true;
+        }
+        return false;
     }
 
     // Set up
     document.addEventListener("beforeinput", onInput, { capture: false, passive: false });
-    document.addEventListener("keydown", onKeydown, { capture: false, passive: false });
+    document.addEventListener("keydown", (e) => {
+        if (e.defaultPrevented || !validTarget(e.composedPath()[0])) return; // Only handle the unhandled event on input and textarea
+        jumpingHandler(e) || tabOutHandler(e); // Only handle once at most
+    }, { capture: false, passive: false });
     /**
      * Prop-specific handlers for config changes.
      * @type {Record<string, (value: any) => void>}
@@ -216,6 +286,9 @@
                 pairs[value.charAt(i)] = value.charAt(i + 1);
                 reversePairs[value.charAt(i + 1)] = value.charAt(i);
             }
+        },
+        "tabulator.tabOutChars": (value) => {
+            tabOutChars = new Set(value);
         }
     };
     config.addEventListener("set", e => {

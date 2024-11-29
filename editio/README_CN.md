@@ -7,16 +7,19 @@ Editio 是一个由 Visual Studio Code 启发的简易脚本，它可以给输�
 ## 🪄 功能与配置
 
 - **🖇️ Pairing**: 匹配括号和引号
-    - **➕ Auto close**: 自动闭合括号和引号（类似于 VSCode 中的 `editor.autoClosingBrackets`）
-    - **➖ Auto delete**: 删除相邻的闭合引号或括号（类似于 VSCode 中的 `editor.autoClosingDelete`）
-    - **🚫 Auto overtype**: 覆盖闭合括号（类似于 VSCode 中的 `editor.autoClosingOvertype`）
+    - **➕ Auto close**: 自动闭合括号和引号（类似于 VSCode 中的 [`editor.autoClosingBrackets`](vscode://settings/editor.autoClosingBrackets)）
+    - **➖ Auto delete**: 删除相邻的闭合引号或括号（类似于 VSCode 中的 [`editor.autoClosingDelete`](vscode://settings/editor.autoClosingDelete)）
+    - **🚫 Auto overtype**: 覆写闭合括号（类似于 VSCode 中的 [`editor.autoClosingOvertype`](vscode://settings/editor.autoClosingOvertype)）
         - 输入字符是一个闭合字符且与光标后的字符相同
         - 光标前的字符是相应的开放字符
         - 对于具有相同开放和闭合字符的对子不起作用
-    - **🪝 Jumping**: 跳转到匹配的括号
+    - **🔁 Jumping**: 跳转到匹配的括号
         - 按 <kbd>Ctrl</kbd> + <kbd>Q</kbd> 跳转到匹配的括号
         - 对于具有相同开放和闭合字符的对子不起作用
     - **📜 Pairs**: 应该成对子的字符（长度应为偶数）
+- **↔️ Tabulator**: Tab 键相关的功能
+    - **↪️ Tab out**: 按下 (<kbd>Shift</kbd>+) <kbd>Tab</kbd> 来跳转至下一个 (或上一个) 所指定的字符 (与拓展 [`albert.TabOut`](vscode:extension/albert.TabOut) 相似)
+    - **📜 Tab out chars**: 需要 Tab out 的字符
 
 ## 📃 注意
 
