@@ -10,9 +10,12 @@ Editio is a simple script that adds some extra features to inputs and textareas,
     - **➕ Auto close**: Autoclose brackets and quotes (Similar to `editor.autoClosingBrackets` in VSCode)
     - **➖ Auto delete**: Remove adjacent closing quotes or brackets (Similar to `editor.autoClosingDelete` in VSCode)
     - **🚫 Auto overtype**: Type over closing brackets (Similar to `editor.autoClosingOvertype` in VSCode)
-        - Doesn't work for pairs with the same opening and closing characters
         - The input character is a closing one and the same as the character after the cursor
         - The character before the cursor is the respective opening one
+        - Doesn't work for pairs with the same opening and closing characters
+    - **🪝 Jumping**: Jump between paired brackets
+        - Press <kbd>Ctrl</kbd> + <kbd>Q</kbd> to jump to the matching bracket
+        - Doesn't work for pairs with the same opening and closing characters
     - **📜 Pairs**: A list of characters that should be paired (The length should be even)
 
 ## 📃 Notes

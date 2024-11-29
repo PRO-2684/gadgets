@@ -2,7 +2,7 @@
 // @name         Editio
 // @name:zh-CN   Editio
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  Add some extra features to inputs and textareas
 // @description:zh-CN 给输入框和文本框添加一些额外功能
 // @tag          productivity
@@ -48,6 +48,12 @@
                     type: "bool",
                     value: false
                 },
+                jumping: {
+                    name: "🪝 Jumping",
+                    title: "Jump between paired brackets - won't work for pairs with the same opening and closing characters",
+                    type: "bool",
+                    value: true
+                },
                 pairs: {
                     name: "📜 Pairs",
                     title: "A list of characters that should be paired",
@@ -66,6 +72,7 @@
     const config = new GM_config(configDesc);
 
     // Pairing
+    // Input-related
     /**
      * Pairs of characters we should consider.
      * @type {Record<string, string>}
@@ -85,7 +92,7 @@
          * The input or textarea element that triggered the event.
          * @type {HTMLInputElement | HTMLTextAreaElement}
          */
-        const el = e.target;
+        const el = e.composedPath()[0];
         const { selectionStart: start, selectionEnd: end, value } = el;
         if ((e.data in pairs) && config.get("pairing.autoClose")) { // The input character is paired and autoClose feature is enabled
             e.preventDefault();
@@ -108,7 +115,7 @@
      * @param {InputEvent} e The InputEvent.
      */
     function onBackspace(e) {
-        const el = e.target;
+        const el = e.composedPath()[0];
         const { selectionStart: start, selectionEnd: end, value } = el;
         if (start === end && start > 0 && end < value.length) {
             const charBefore = value.charAt(start - 1);
@@ -142,13 +149,61 @@
      * @param {InputEvent} e The InputEvent.
      */
     function onInput(e) {
-        if (e.isComposing || e.defaultPrevented || !validTarget(e.target)) return;
+        if (e.isComposing || e.defaultPrevented || !validTarget(e.composedPath()[0])) return;
         const handler = inputHandlers[e.inputType];
         if (handler) handler(e);
+    }
+    // Jumping
+    /**
+     * Find the other character's index in the given text.
+     * @param {string} text The text to search in.
+     * @param {number} pos The position of the character.
+     * @returns {number | null} The position of the other character in the pair, or null if not found.
+     */
+    function findOtherIndex(text, pos) {
+        const char = text.charAt(pos);
+        const [isPair, isReversePair] = [char in pairs, char in reversePairs];
+        if (isPair === isReversePair) return null; // Either not a pair or with the same opening and closing characters
+        const other = isPair ? pairs[char] : reversePairs[char];
+        const direction = isPair ? 1 : -1; // Searches forwards for the closing character, or backwards for the opening character
+        let count = 0;
+        for (let i = pos + direction; i >= 0 && i < text.length; i += direction) {
+            if (text.charAt(i) === char) {
+                count++;
+            } else if (text.charAt(i) === other) {
+                if (count === 0) return i;
+                count--;
+            }
+        }
+        return null;
+    }
+    /**
+     * Handle shortcuts for jumping between paired brackets.
+     * @param {Event} e The KeyboardEvent.
+     */
+    function onKeydown(e) {
+        /**
+         * The target element.
+         * @type {HTMLInputElement | HTMLTextAreaElement}
+         */
+        const el = e.composedPath()[0];
+        // Ctrl + Q
+        if (!e.ctrlKey || e.altKey || e.shiftKey || e.metaKey || e.key !== "q" || !validTarget(el) || !config.get("pairing.jumping")) return;
+        const { selectionStart: start, selectionEnd: end, value } = el;
+        const diff = Math.abs(end - start);
+        if (!(diff <= 1) || typeof start === "undefined") return; // Only handle the scenario where one or none character is selected and the cursor is inside the element
+        const otherIndex = findOtherIndex(value, Math.min(start, end)) // Try pairing the character selected or the one after the cursor
+            ?? (diff || findOtherIndex(value, start - 1)); // If not found, try the character before the cursor
+        if (otherIndex !== null) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            el.setSelectionRange(otherIndex, otherIndex + 1);
+        }
     }
 
     // Set up
     document.addEventListener("beforeinput", onInput, { capture: false, passive: false });
+    document.addEventListener("keydown", onKeydown, { capture: false, passive: false });
     /**
      * Prop-specific handlers for config changes.
      * @type {Record<string, (value: any) => void>}
