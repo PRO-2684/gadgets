@@ -7,9 +7,9 @@ Editio is a simple script that adds some extra features to inputs and textareas,
 ## 🪄 Features & Configuation
 
 - **🖇️ Pairing**: Pairing brackets and quotes
-    - **➕ Auto close**: Autoclose brackets and quotes (Similar to [`editor.autoClosingBrackets`](vscode://settings/editor.autoClosingBrackets) in VSCode)
-    - **➖ Auto delete**: Remove adjacent closing quotes or brackets (Similar to [`editor.autoClosingDelete`](vscode://settings/editor.autoClosingDelete) in VSCode)
-    - **🚫 Auto overtype**: Type over closing brackets (Similar to [`editor.autoClosingOvertype`](vscode://settings/editor.autoClosingOvertype) in VSCode)
+    - **➕ Auto close**: Autoclose brackets and quotes (Similar to [`editor.autoClosingBrackets`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%2Feditor.autoClosingBrackets) in VSCode)
+    - **➖ Auto delete**: Remove adjacent closing quotes or brackets (Similar to [`editor.autoClosingDelete`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%2Feditor.autoClosingDelete) in VSCode)
+    - **🚫 Auto overtype**: Type over closing brackets (Similar to [`editor.autoClosingOvertype`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%2Feditor.autoClosingOvertype) in VSCode)
         - The input character is a closing one and the same as the character after the cursor
         - The character before the cursor is the respective opening one
         - Doesn't work for pairs with the same opening and closing characters
@@ -18,7 +18,7 @@ Editio is a simple script that adds some extra features to inputs and textareas,
         - Doesn't work for pairs with the same opening and closing characters
     - **📜 Pairs**: A list of characters that should be paired (The length should be even)
 - **↔️ Tabulator**: Tab-related features
-    - **↪️ Tab out**: Pressing (<kbd>Shift</kbd>+) <kbd>Tab</kbd> to move to the next (or previous) character specified (Similar to the extension [`albert.TabOut`](vscode:extension/albert.TabOut))
+    - **↪️ Tab out**: Pressing (<kbd>Shift</kbd>+) <kbd>Tab</kbd> to move to the next (or previous) character specified (Similar to the extension [`albert.TabOut`](https://pro-2684.github.io/?page=redirect&url=vscode%3Aextension%2Falbert.TabOut))
     - **📜 Tab out chars**: Characters to tab out of
 
 ## 📃 Notes
