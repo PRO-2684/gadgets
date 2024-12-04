@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.1.2
+// @version      1.1.3
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -21,7 +21,7 @@ class GM_config extends EventTarget {
      * The version of the GM_config library
      */
     static get version() {
-        return "1.1.1";
+        return "1.1.3";
     }
     /**
      * Built-in processors for user input
