@@ -1,11 +1,15 @@
 # gadgets
+
 ![GitHub license](https://img.shields.io/github/license/PRO-2684/gadgets?style=flat-square) [English](./README.md) | 简体中文
 
 ## 介绍
+
 一些难以分类的代码片段。如果你对其中某些感兴趣，可以查看子文件夹下的 README 以获取详细描述。代码目录中未在下方列出的代码片段并未正式发布，并且没有相关文档，仅供测试。
 
 ## 列表
+
 - `52_enhance`: 52 破解论坛增强脚本。
+- `ar5iv_plus`: 为 `ar5iv.labs.arxiv.org/html/` 增加各种调整和改进。
 - `arxiv_html_debloate`: 隐藏 `arxiv.org/html/*` 上的不必要元素，让你拥有一个干净的阅读体验。
 - `auto_grading`: 自动评教 `tqm.ustc.edu.cn`。
 - `baidu_debloate`: 隐藏百度站点上的一些垃圾玩意儿，包括 `baike.baidu.com` 和 `jingyan.baidu.com`。
@@ -14,7 +18,9 @@
 - `checkbox_patch`: 修补某个复选框的 `checked` 属性，使得当 `checked` 值被其他脚本修改时会发出 `change` 事件。
 - `CORS_helper`: 一个简单的、可自定义的脚本，帮助你绕过 CORS 限制。
 - `draggy`: 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
+- `editio`: 一个简单的脚本，为输入框和文本框添加一些额外功能，灵感来自 Visual Studio Code。
 - `etag_server`: 简易的提供文件服务的 HTTP 服务器，但使用 `ETag` 而不是 `Last-Modified` 进行缓存。
+- `export_cookies`: 将当前标签页的 cookies 导出到文件。
 - `github_plus`: 为 GitHub 增加额外的功能。
 - `GM_config`: 简易的 Tampermonkey 脚本配置库。
 - `greasyfork_enhance`: 增进 Greasyfork 浏览体验。
@@ -29,7 +35,15 @@
 - `url_summary`: 获取给定 URL 的摘要，包括图标、标题、描述和关键词。
 - `wechat_video`: 下载微信公众号视频推送中的视频。
 
+## 未发布
+
+- `ccb_helper`
+- `google_scholar_plus`
+- `kill_adobe`
+- `stickers_wiki_downloader`
+
 ## README 模板
+
 ```markdown
 # `<snippet name>`
 
