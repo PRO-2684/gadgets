@@ -20,7 +20,13 @@ Editio is a simple script that adds some extra features to inputs and textareas,
 - **↔️ Tabulator**: Tab-related features
     - **↪️ Tab out**: Pressing (<kbd>Shift</kbd>+) <kbd>Tab</kbd> to move to the next (or previous) character specified (Similar to the extension [`albert.TabOut`](https://pro-2684.github.io/?page=redirect&url=vscode%3Aextension%2Falbert.TabOut))
     - **📜 Tab out chars**: Characters to tab out of
+- **🔗 URL**: URL-related features
+    - **📋 Paste into selection**: Paste the URL into the selection in Markdown format
+    - **🔍 Recognized schemes**: Recognized URL schemes for the URL-related features
+- **⚙️ Advanced**: Advanced options
+    - **🔒 Capture**: Set `capture` to true for the event listeners
+    - **🐞 Debug**: Enable debug mode
 
 ## 📃 Notes
 
-I've done my best to make undo/redo history work as similar to VSCode as possible. However, there are still some minor differences. Any contributions are welcome!
+I've done my best to make undo/redo history work as similar to VSCode as possible. However, there are still some minor differences. Contributions are welcome!

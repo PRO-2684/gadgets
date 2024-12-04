@@ -2,7 +2,7 @@
 // @name         Editio
 // @name:zh-CN   Editio
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  Add some extra features to inputs and textareas
 // @description:zh-CN 给输入框和文本框添加一些额外功能
 // @tag          productivity
@@ -86,6 +86,59 @@
                     value: "()[]{}<>\"'`,:;.",
                 }
             }
+        },
+        url: {
+            name: "🔗 URL",
+            title: "URL-related features",
+            type: "folder",
+            items: {
+                pasteIntoSelection: {
+                    name: "📋 Paste into selection",
+                    title: "Paste the URL into the selection in Markdown format",
+                    type: "bool",
+                    value: true
+                },
+                recognizedSchemes: {
+                    name: "🔍 Recognized schemes",
+                    title: "Recognized URL schemes for the URL-related features",
+                    value: ["http", "https", "ftp", "ws", "wss"],
+                    input: (prop, orig) => {
+                        return prompt("🤔 Enter the recognized schemes separated by spaces, or leave empty for any", orig.join(" "));
+                    },
+                    processor: (input) => {
+                        if (input === null) throw new Error("User cancelled the operation");
+                        return input.split(" ")
+                            .map(s => s.trim())
+                            .filter(s => s);
+                    },
+                    formatter: (name, value) => {
+                        if (value.length === 0) {
+                            return `${name}: *ANY*`;
+                        } else {
+                            return `${name}: ${value.join(" ")}`;
+                        }
+                    }
+                }
+            }
+        },
+        advanced: {
+            name: "⚙️ Advanced",
+            title: "Advanced options",
+            type: "folder",
+            items: {
+                capture: {
+                    name: "🔒 Capture",
+                    title: "Set `capture` to true for the event listeners",
+                    type: "bool",
+                    value: false
+                },
+                debug: {
+                    name: "🐞 Debug",
+                    title: "Enable debug mode",
+                    type: "bool",
+                    value: false
+                }
+            }
         }
     };
     const config = new GM_config(configDesc);
@@ -147,31 +200,6 @@
             }
         }
     }
-    /**
-     * Whether we should handle the InputEvent on the target.
-     * @param {HTMLElement} target The target element.
-     */
-    function validTarget(target) {
-        // Only handle the InputEvent on input and textarea
-        return target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement;
-    }
-    /**
-     * Handlers for different types of InputEvent.
-     * @type {Record<string, (e: InputEvent) => void>}
-     */
-    const inputHandlers = {
-        "insertText": onInsertText,
-        "deleteContentBackward": onBackspace,
-    }
-    /**
-     * Handle the InputEvent.
-     * @param {InputEvent} e The InputEvent.
-     */
-    function onInput(e) {
-        if (e.isComposing || e.defaultPrevented || !validTarget(e.composedPath()[0])) return;
-        const handler = inputHandlers[e.inputType];
-        if (handler) handler(e);
-    }
     // Jumping
     /**
      * Find the other character's index in the given text.
@@ -213,7 +241,7 @@
         const diff = Math.abs(end - start);
         if (!(diff <= 1) || typeof start === "undefined") return; // Only handle the scenario where one or none character is selected and the cursor is inside the element
         const otherIndex = findOtherIndex(value, Math.min(start, end)) // Try pairing the character selected or the one after the cursor
-            ?? (diff || findOtherIndex(value, start - 1)); // If not found, try the character before the cursor
+            ?? (diff ? null : findOtherIndex(value, start - 1)); // If not found, try the character before the cursor
         if (otherIndex !== null) {
             e.preventDefault();
             e.stopImmediatePropagation();
@@ -268,12 +296,69 @@
         return false;
     }
 
+    // URL
+    /**
+     * Handle the InputEvent of type "insertFromPaste", so as to paste the URL into the selection.
+     * @param {InputEvent} e The InputEvent.
+     */
+    function onPaste(e) {
+        /**
+         * The input or textarea element that triggered the event.
+         * @type {HTMLInputElement | HTMLTextAreaElement}
+         */
+        const el = e.composedPath()[0];
+        const { selectionStart: start, selectionEnd: end, value } = el;
+        if (start === end || !URL.canParse(e.data) || !config.get("url.pasteIntoSelection")) return;
+        const url = new URL(e.data);
+        const scheme = url.protocol.slice(0, -1);
+        const allowedSchemes = config.get("url.recognizedSchemes");
+        if (allowedSchemes.length > 0 && !allowedSchemes.includes(scheme)) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const selection = value.substring(start, end);
+        const wrapped = `[${selection}](${e.data})`;
+        document.execCommand("insertText", false, wrapped);
+        // Select the `selection` part
+        el.setSelectionRange(start + 1, start + 1 + selection.length);
+    }
+
     // Set up
-    document.addEventListener("beforeinput", onInput, { capture: false, passive: false });
-    document.addEventListener("keydown", (e) => {
+    /**
+     * Whether we should handle the InputEvent on the target.
+     * @param {HTMLElement} target The target element.
+     */
+    function validTarget(target) {
+        // Only handle the InputEvent on input and textarea
+        return target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement;
+    }
+    /**
+     * Handlers for different types of InputEvent.
+     * @type {Record<string, (e: InputEvent) => void>}
+     */
+    const inputHandlers = {
+        "insertText": onInsertText,
+        "deleteContentBackward": onBackspace,
+        "insertFromPaste": onPaste
+    }
+    /**
+     * Handle the InputEvent.
+     * @param {InputEvent} e The InputEvent.
+     */
+    function onInput(e) {
+        if (e.isComposing || e.defaultPrevented || !validTarget(e.composedPath()[0])) return;
+        const handler = inputHandlers[e.inputType];
+        if (handler) handler(e);
+    }
+    /**
+     * Handle the KeyboardEvent.
+     * @param {KeyboardEvent} e The KeyboardEvent.
+     */
+    function onKeydown(e) {
         if (e.defaultPrevented || !validTarget(e.composedPath()[0])) return; // Only handle the unhandled event on input and textarea
         jumpingHandler(e) || tabOutHandler(e); // Only handle once at most
-    }, { capture: false, passive: false });
+    }
+    document.addEventListener("beforeinput", onInput, { capture: config.get("advanced.capture"), passive: false });
+    document.addEventListener("keydown", onKeydown, { capture: config.get("advanced.capture"), passive: false });
     /**
      * Prop-specific handlers for config changes.
      * @type {Record<string, (value: any) => void>}
@@ -289,6 +374,9 @@
         },
         "tabulator.tabOutChars": (value) => {
             tabOutChars = new Set(value);
+        },
+        "advanced.debug": (value) => {
+            config.debug = value;
         }
     };
     config.addEventListener("set", e => {

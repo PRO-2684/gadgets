@@ -20,7 +20,13 @@ Editio 是一个由 Visual Studio Code 启发的简易脚本，它可以给输�
 - **↔️ Tabulator**: Tab 键相关的功能
     - **↪️ Tab out**: 按下 (<kbd>Shift</kbd>+) <kbd>Tab</kbd> 来跳转至下一个 (或上一个) 所指定的字符 (与拓展 [`albert.TabOut`](https://pro-2684.github.io/?page=redirect&url=vscode%3Aextension%2Falbert.TabOut) 相似)
     - **📜 Tab out chars**: 需要 Tab out 的字符
+- **🔗 URL**: 与 URL 相关的功能
+    - **📋 Paste into selection**: 将 URL 以 Markdown 格式粘贴到选中的文本中
+    - **🔍 Recognized schemes**: URL 相关功能所识别的 URL schemes
+- **⚙️ Advanced**: 高级选项
+    - **🔒 Capture**: 设立事件监听器时设置 `capture` 为 true
+    - **🐞 Debug**: 启用调试模式
 
 ## 📃 注意
 
-我已尽力使撤销/重做的历史记录与 VSCode 相似，但它们之间仍然存在一些微小的差异。欢迎任何贡献！
+我已尽力使撤销/重做的历史记录与 VSCode 相似，但它们之间仍然存在一些微小的差异。欢迎贡献！
