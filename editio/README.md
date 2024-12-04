@@ -24,7 +24,10 @@ Editio is a simple script that adds some extra features to inputs and textareas,
     - **📋 Paste into selection**: Paste the URL into the selection in Markdown format
     - **🔍 Recognized schemes**: Recognized URL schemes for the URL-related features
 - **⚙️ Advanced**: Advanced options
-    - **🔒 Capture**: Set `capture` to true for the event listeners
+    - **🔒 Capture**: Set [`capture`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#capture) to true for the event listeners
+        - If enabled, Editio's handlers are likely to override the website's handlers
+    - **🚫 Default prevented**: Don't handle the event if it's [`defaultPrevented`](https://developer.mozilla.org/en-US/docs/Web/API/Event/defaultPrevented)
+        - If disabled, Editio might handle the event again, even after it's been handled by the website
     - **🐞 Debug**: Enable debug mode
 
 ## 📃 Notes

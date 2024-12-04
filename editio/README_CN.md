@@ -24,7 +24,10 @@ Editio 是一个由 Visual Studio Code 启发的简易脚本，它可以给输�
     - **📋 Paste into selection**: 将 URL 以 Markdown 格式粘贴到选中的文本中
     - **🔍 Recognized schemes**: URL 相关功能所识别的 URL schemes
 - **⚙️ Advanced**: 高级选项
-    - **🔒 Capture**: 设立事件监听器时设置 `capture` 为 true
+    - **🔒 Capture**: 设立事件监听器时设置 [`capture`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#capture) 为 true
+        - 如果启用，Editio 的处理程序可能会覆盖网站的处理程序
+    - **🚫 Default prevented**: 如果事件被 [`defaultPrevented`](https://developer.mozilla.org/en-US/docs/Web/API/Event/defaultPrevented)，则不处理该事件
+        - 如果禁用，Editio 可能会再次处理该事件，即使它已被网站处理
     - **🐞 Debug**: 启用调试模式
 
 ## 📃 注意

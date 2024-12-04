@@ -2,7 +2,7 @@
 // @name         Editio
 // @name:zh-CN   Editio
 // @namespace    http://tampermonkey.net/
-// @version      0.1.3
+// @version      0.1.4
 // @description  Add some extra features to inputs and textareas
 // @description:zh-CN 给输入框和文本框添加一些额外功能
 // @tag          productivity
@@ -131,6 +131,12 @@
                     title: "Set `capture` to true for the event listeners",
                     type: "bool",
                     value: false
+                },
+                defaultPrevented: {
+                    name: "🚫 Default prevented",
+                    title: "Don't handle the event if it's `defaultPrevented`",
+                    type: "bool",
+                    value: true
                 },
                 debug: {
                     name: "🐞 Debug",
@@ -345,7 +351,7 @@
      * @param {InputEvent} e The InputEvent.
      */
     function onInput(e) {
-        if (e.isComposing || e.defaultPrevented || !validTarget(e.composedPath()[0])) return;
+        if (e.isComposing || (e.defaultPrevented && config.get("advanced.defaultPrevented")) || !validTarget(e.composedPath()[0])) return;
         const handler = inputHandlers[e.inputType];
         if (handler) handler(e);
     }
@@ -354,7 +360,7 @@
      * @param {KeyboardEvent} e The KeyboardEvent.
      */
     function onKeydown(e) {
-        if (e.defaultPrevented || !validTarget(e.composedPath()[0])) return; // Only handle the unhandled event on input and textarea
+        if ((e.defaultPrevented && config.get("advanced.defaultPrevented")) || !validTarget(e.composedPath()[0])) return; // Only handle the unhandled event on input and textarea
         jumpingHandler(e) || tabOutHandler(e); // Only handle once at most
     }
     document.addEventListener("beforeinput", onInput, { capture: config.get("advanced.capture"), passive: false });
