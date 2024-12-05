@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.5.1
+// @version      0.5.2
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -21,7 +21,7 @@
 // @grant        unsafeWindow
 // @connect      *
 // @require      https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.1.15
-// @require      https://update.greasyfork.org/scripts/492078/1443165/pURLfy.js
+// @require      https://update.greasyfork.org/scripts/492078/1497143/pURLfy.js
 // @require      https://update.greasyfork.org/scripts/470224/1460555/Tampermonkey%20Config.js
 // @resource     rules-tracking https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/tracking.min.json
 // @resource     rules-outgoing https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/outgoing.min.json
@@ -282,6 +282,7 @@
     }.bind(locationHook);
     locationHook.disable = async function () { } // Do nothing
     // Mouse-related hooks
+    const tagNames = new Set(["A", "AREA"]);
     function cloneAndStop(e) { // Clone an event and stop the original
         const newEvt = new e.constructor(e.type, e);
         e.preventDefault();
@@ -289,8 +290,9 @@
         return newEvt;
     }
     async function mouseHandler(e) { // Intercept mouse events
-        const ele = e.composedPath().find(ele => ele.tagName === "A");
+        const ele = e.composedPath().find(ele => tagNames.has(ele.tagName));
         if (ele && !ele.hasAttribute(tag2) && ele.href && !ele.getAttribute("href").startsWith("#")) {
+            ele.removeAttribute("ping"); // Remove `ping` attribute
             const href = ele.href;
             if (!href.startsWith("https://") && !href.startsWith("http://")) return; // Ignore non-HTTP(S) URLs
             if (!ele.hasAttribute(tag1)) { // The first to intercept
@@ -338,8 +340,9 @@
     });
     // Listen to `touchstart` event
     async function touchstartHandler(e) { // Always "senseless"
-        const ele = e.composedPath().find(ele => ele.tagName === "A");
+        const ele = e.composedPath().find(ele => tagNames.has(ele.tagName));
         if (ele && !ele.hasAttribute(tag1) && !ele.hasAttribute(tag2) && ele.href && !ele.getAttribute("href").startsWith("#")) {
+            ele.removeAttribute("ping"); // Remove `ping` attribute
             const href = ele.href;
             if (!href.startsWith("https://") && !href.startsWith("http://")) return; // Ignore non-HTTP(S) URLs
             ele.toggleAttribute(tag1, true);
