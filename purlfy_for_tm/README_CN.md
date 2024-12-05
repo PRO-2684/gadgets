@@ -49,6 +49,7 @@
 - **⚙️ Advanced options**：高级选项
     - **Purify URL**：手动净化 URL
     - **Senseless Mode**：启用无感模式
+    - **Disable Beacon**：使用一个无操作函数覆盖 [`navigator.sendBeacon`](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon)
     - **Debug Mode**：启用调试模式
 
 ## 工作原理

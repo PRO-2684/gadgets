@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.5.2
+// @version      0.5.3
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -201,6 +201,12 @@
                     title: "Enable senseless mode",
                     type: "bool",
                     value: true,
+                },
+                disableBeacon: {
+                    name: "Disable Beacon",
+                    title: "Overwrite `navigator.sendBeacon` to a no-op function",
+                    type: "bool",
+                    value: false,
                 },
                 debug: {
                     name: "Debug Mode",
@@ -520,6 +526,17 @@
     Promise.all(promises).then(() => {
         log(`[core ${Purlfy.version}] Initialized successfully! 🎉`);
     });
+    // advanced.disableBeacon
+    if (config.get("advanced.disableBeacon")) {
+        Object.defineProperty(navigator, "sendBeacon", {
+            value: (...args) => {
+                log("Blocked `navigator.sendBeacon`:", ...args);
+                return false;
+            },
+            writable: false,
+            configurable: false,
+        });
+    }
     // Manual purify
     function trim(url) { // Leave at most 100 characters
         return url.length > 100 ? url.slice(0, 100) + "..." : url;
