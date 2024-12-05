@@ -50,6 +50,7 @@
     - **Purify URL**：手动净化 URL
     - **Senseless Mode**：启用无感模式
     - **Disable Beacon**：使用一个无操作函数覆盖 [`navigator.sendBeacon`](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon)
+        - 您可以在 [Ping Spotter](https://apps.armin.dev/ping-spotter/#) 上尝试此功能 - "Beacon API" 这一部分将显示 "Request blocked"
     - **Debug Mode**：启用调试模式
 
 ## 工作原理

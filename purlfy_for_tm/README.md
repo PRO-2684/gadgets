@@ -40,6 +40,7 @@ Simply navigate to [Greasy Fork](https://greasyfork.org/scripts/492480) and clic
     - **Purify URL**: Manually purify a URL
     - **Senseless Mode**: Enable senseless mode
     - **Disable Beacon**: Overwrite [`navigator.sendBeacon`](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon) to a no-op function
+        - Try out this feature on [Ping Spotter](https://apps.armin.dev/ping-spotter/#) - the "Beacon API" section will show "Request blocked"
     - **Debug Mode**: Enable debug mode
 
 ## Updating rules
