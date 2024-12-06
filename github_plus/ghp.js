@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.2.3
+// @version      0.3.0
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -61,6 +61,22 @@
         reset: -1
     };
 
+    function enumType(values) {
+        return { // The value actually stored is the index
+            value: 0, // Default value is the first one
+            input: (prop, orig) => {
+                return (orig + 1) % values.length; // Cycle through the values
+            },
+            processor: (input) => {
+                if (input >= values.length) throw new Error(`Invalid value: ${input}, expected to be less than ${values.length}`);
+                return input;
+            },
+            formatter: (name, value) => {
+                return `${name}: ${values[value]}`;
+            },
+        };
+    }
+
     // Configuration
     const configDesc = {
         $default: {
@@ -71,17 +87,29 @@
             type: "folder",
             items: {
                 cloneFullCommand: {
-                    name: "Clone Full Command",
+                    name: "📥 Clone Full Command",
                     title: "Append `git clone ` before `https` and `git@` URLs under the code tab",
                     type: "bool",
                     value: false,
                 },
                 tabSize: {
-                    name: "Tab Size",
+                    name: "➡️ Tab Size",
                     title: "Set Tab indentation size",
                     type: "int",
                     value: 4,
                     processor: "int_range-0-",
+                },
+                cursorBlink: {
+                    name: "😉 Cursor Blink",
+                    title: "Enable cursor blinking",
+                    type: "bool",
+                    value: false,
+                },
+                cursorAnimation: {
+                    name: "🌊 Cursor Animation",
+                    title: "Make cursor move smoothly",
+                    type: "bool",
+                    value: false,
                 },
             },
         },
@@ -89,17 +117,20 @@
             name: "🎨 Appearance",
             type: "folder",
             items: {
-                cursorBlink: {
-                    name: "Cursor Blink",
-                    title: "Enable cursor blinking",
-                    type: "bool",
-                    value: false,
+                dashboard: {
+                    name: "📰 Dashboard",
+                    title: "Configures the dashboard",
+                    ...enumType(["Default", "Hide Copilot", "Hide Feed", "Mobile-Like"]),
                 },
-                cursorAnimation: {
-                    name: "Cursor Animation",
-                    title: "Make cursor move smoothly",
-                    type: "bool",
-                    value: false,
+                leftSidebar: {
+                    name: "↖️ Left Sidebar",
+                    title: "Configures the left sidebar",
+                    ...enumType(["Default", "Hidden"]),
+                },
+                rightSidebar: {
+                    name: "↗️ Right Sidebar",
+                    title: "Configures the right sidebar",
+                    ...enumType(["Default", "Hide 'Latest changes'", "Hide 'Explore repositories'", "Hide Completely"]),
                 },
             },
         },
@@ -108,19 +139,19 @@
             type: "folder",
             items: {
                 uploader: {
-                    name: "Release Uploader",
+                    name: "⬆️ Release Uploader",
                     title: "Show uploader of release assets",
                     type: "bool",
                     value: true,
                 },
                 downloads: {
-                    name: "Release Downloads",
+                    name: "📥 Release Downloads",
                     title: "Show download counts of release assets",
                     type: "bool",
                     value: true,
                 },
                 histogram: {
-                    name: "Release Histogram",
+                    name: "📊 Release Histogram",
                     title: "Show a histogram of download counts for each release asset",
                     type: "bool",
                 },
@@ -131,7 +162,7 @@
             type: "folder",
             items: {
                 trackingPrevention: {
-                    name: "Tracking Prevention",
+                    name: "🎭 Tracking Prevention",
                     title: () => { return `Prevent some tracking by GitHub (${name} has prevented tracking ${GM_getValue("trackingPrevented", 0)} time(s))`; },
                     type: "bool",
                     value: true,
@@ -143,17 +174,17 @@
             type: "folder",
             items: {
                 token: {
-                    name: "Personal Access Token",
+                    name: "🔑 Personal Access Token",
                     title: "Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit)",
                     type: "str",
                 },
                 rateLimit: {
-                    name: "Rate Limit",
+                    name: "📈 Rate Limit",
                     title: "View the current rate limit status",
                     type: "action",
                 },
                 debug: {
-                    name: "Debug",
+                    name: "🐞 Debug",
                     title: "Enable debug mode",
                     type: "bool",
                 },
@@ -174,7 +205,7 @@
         if (current) {
             current.disabled = !enable;
         } else if (enable) {
-            injectCSS(id, dynamicStyle[id]);
+            injectCSS(id, dynamicStyles[id]);
         }
     }
     // General functions
@@ -237,11 +268,11 @@
     }
 
     // CSS-related features
-    const dynamicStyle = {
-        "appearance.cursorBlink": `[data-testid="navigation-cursor"] { animation: blink 1s step-end infinite; }`,
-        "appearance.cursorAnimation": `[data-testid="navigation-cursor"] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }`,
+    const dynamicStyles = {
+        "code.cursorBlink": `[data-testid="navigation-cursor"] { animation: blink 1s step-end infinite; }`,
+        "code.cursorAnimation": `[data-testid="navigation-cursor"] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }`
     };
-    for (const prop in dynamicStyle) {
+    for (const prop in dynamicStyles) {
         cssHelper(prop, config.get(prop));
     }
 
@@ -300,7 +331,50 @@
         const style = document.getElementById(id) ?? injectCSS(id, "");
         style.textContent = `pre, code { tab-size: ${size}; }`;
     }
-    tabSize(config.get("code.tabSize"));
+
+    // Appearance features
+    /**
+     * Dynamic styles for the enum settings.
+     * @type {Object<string, Array<string>>}
+     */
+    const enumStyles = {
+        "appearance.dashboard": [
+            "/* Default */",
+            "/* Hide Copilot */ #dashboard > .news > .copilotPreview__container { display: none; }",
+            "/* Hide Feed */ #dashboard > .news > feed-container { display: none; }",
+            `/* Mobile-Like */
+            .application-main > div > aside[aria-label="Account context"] {
+                display: block !important;
+            }
+            #dashboard > .news {
+                > .copilotPreview__container { display: none; }
+                > feed-container { display: none; }
+                > .d-block.d-md-none { display: block !important; }
+            }`,
+        ],
+        "appearance.leftSidebar": [
+            "/* Default */",
+            "/* Hidden */ .application-main .feed-background > aside.feed-left-sidebar { display: none; }",
+        ],
+        "appearance.rightSidebar": [
+            "/* Default */",
+            "/* Hide 'Latest changes' */ aside.feed-right-sidebar > .dashboard-changelog { display: none; }",
+            "/* Hide 'Explore repositories' */ aside.feed-right-sidebar > [aria-label='Explore repositories'] { display: none; }",
+            "/* Hide Completely */ aside.feed-right-sidebar { display: none; }",
+        ],
+    };
+    /**
+     * Helper function to configure enum styles.
+     * @param {string} id The ID of the style.
+     * @param {string} mode The mode to set.
+     */
+    function enumStyleHelper(id, mode) {
+        const style = document.getElementById(idPrefix + id) ?? injectCSS(id, "");
+        style.textContent = enumStyles[id][mode];
+    }
+    for (const prop in enumStyles) {
+        enumStyleHelper(prop, config.get(prop));
+    }
 
     // Release features
     /**
@@ -506,6 +580,9 @@
     const callbacks = {
         "code.tabSize": tabSize,
     };
+    for (const [prop, callback] of Object.entries(callbacks)) {
+        callback(config.get(prop));
+    }
 
     // Show rate limit
     config.addEventListener("get", (e) => {
@@ -515,8 +592,11 @@
         }
     });
     config.addEventListener("set", (e) => {
-        if (e.detail.prop in dynamicStyle) {
+        if (e.detail.prop in dynamicStyles) {
             cssHelper(e.detail.prop, e.detail.after);
+        }
+        if (e.detail.prop in enumStyles) {
+            enumStyleHelper(e.detail.prop, e.detail.after);
         }
         if (e.detail.prop in callbacks) {
             callbacks[e.detail.prop](e.detail.after);

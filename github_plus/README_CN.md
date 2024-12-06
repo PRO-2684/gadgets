@@ -13,23 +13,26 @@
 ## ⚙️ 配置
 
 - **🔢 Code Features**
-    - **Clone Full Command**: 在代码标签下的 `https` 和 `git@` URL 前附加 `git clone `。(实验性功能，可能有效也可能无效)
-    - **Tab Size**: 设置 Tab 缩进大小。
+    - **📥 Clone Full Command**: 在代码标签下的 `https` 和 `git@` URL 前附加 `git clone `。(实验性功能，可能有效也可能无效)
+    - **➡️ Tab Size**: 设置 Tab 缩进大小。
+    - **😉 Cursor Blink**: 启用光标闪烁。
+    - **🌊 Cursor Animation**: 使光标平滑移动。
 - **🎨 Appearance**
-    - **Cursor Blink**: 启用光标闪烁。
-    - **Cursor Animation**: 使光标平滑移动。
+    - **📰 Dashboard**: 配置仪表盘 (`Default`, `Hide Copilot`, `Hide Feed`, `Mobile-Like`)
+    - **↖️ Left Sidebar**: 配置左侧栏 (`Default`, `Hidden`)
+    - **↗️ Right Sidebar**: 配置右侧栏 (`Default`, `Hide 'Latest changes'`, `Hide 'Explore repositories'`, `Hide Completely`)
 - **📦 Release Features**
-    - **Release Uploader**: 显示 Release 中文件的上传者。
-    - **Release Downloads**: 显示 Release 中文件的下载次数。
-    - **Release Histogram**: 显示 Release 中各文件的下载次数直方图。
+    - **⬆️ Release Uploader**: 显示 Release 中文件的上传者。
+    - **📥 Release Downloads**: 显示 Release 中文件的下载次数。
+    - **📊 Release Histogram**: 显示 Release 中各文件的下载次数直方图。
         - 如果只有零个或一个 Release 文件，则不会显示。
         - 如果没有任何 Release 文件被下载，则不会显示。
 - **🪄 Additional Features**
-    - **Tracking Prevention**: 阻止 GitHub 的一些跟踪。
+    - **🎭 Tracking Prevention**: 阻止 GitHub 的一些跟踪。
 - **⚙️ Advanced Settings**
-    - **Personal Access Token**: GitHub API 的个人访问令牌，以 `github_pat_` 开头（用于提升速率限制）。详见 [个人访问令牌 (PAT)](#-个人访问令牌-pat) 部分。
-    - **Rate Limit**: 查看当前速率限制状态。
-    - **Debug**: 启用调试模式。
+    - **🔑 Personal Access Token**: GitHub API 的个人访问令牌，以 `github_pat_` 开头（用于提升速率限制）。详见 [个人访问令牌 (PAT)](#-个人访问令牌-pat) 部分。
+    - **📈 Rate Limit**: 查看当前速率限制状态。
+    - **🐞 Debug**: 启用调试模式。
 
 ## 🖼️ 效果展示
 
@@ -39,7 +42,17 @@
 
 GitHub 上 [一个 Release](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0) "Assests" 部分的示例，启用了 `Release Downloads`, `Release Uploader` 和 `Release Histogram`
 
-![](./assets.jpg)
+![](./images/assets.jpg)
+
+</details>
+
+<details><summary>
+仪表盘示例
+</summary>
+
+这是一个仪表盘界面的示例，其中 `📰 Dashboard` 设置为 `Mobile-Like`, `↖️ Left Sidebar` 设置为 `Hidden`, `↗️ Right Sidebar` 设置为 `Hide 'Latest changes'`。
+
+![](./images/dashboard.jpg)
 
 </details>
 

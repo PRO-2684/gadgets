@@ -13,25 +13,28 @@
 ## ⚙️ Configuation
 
 - **🔢 Code Features**
-    - **Clone Full Command**: Append `git clone ` before `https` and `git@` URLs under the code tab. (Experimental, may or may not work)
-    - **Tab Size**: Set Tab indentation size.
+    - **📥 Clone Full Command**: Append `git clone ` before `https` and `git@` URLs under the code tab. (Experimental, may or may not work)
+    - **➡️ Tab Size**: Set Tab indentation size.
+    - **😉 Cursor Blink**: Enable cursor blinking.
+    - **🌊 Cursor Animation**: Make cursor move smoothly.
 - **🎨 Appearance**
-    - **Cursor Blink**: Enable cursor blinking.
-    - **Cursor Animation**: Make cursor move smoothly.
+    - **📰 Dashboard**: Configures the dashboard (`Default`, `Hide Copilot`, `Hide Feed`, `Mobile-Like`)
+    - **↖️ Left Sidebar**: Configures the left sidebar (`Default`, `Hidden`)
+    - **↗️ Right Sidebar**: Configures the right sidebar (`Default`, `Hide 'Latest changes'`, `Hide 'Explore repositories'`, `Hide Completely`)
 - **📦 Release Features**
-    - **Release Uploader**: Show uploader of release assets.
-    - **Release Downloads**: Show download counts of release assets.
-    - **Release Histogram**: Show a histogram of download counts for each release asset.
+    - **⬆️ Release Uploader**: Show uploader of release assets.
+    - **📥 Release Downloads**: Show download counts of release assets.
+    - **📊 Release Histogram**: Show a histogram of download counts for each release asset.
         - Does not show up if there is only zero or one release asset.
         - Does not show up if none of the release assets have been downloaded.
 - **🪄 Additional Features**
-    - **Tracking Prevention**: Prevents some tracking by GitHub.
+    - **🎭 Tracking Prevention**: Prevents some tracking by GitHub.
 - **⚙️ Advanced Settings**
-    - **Personal Access Token**: Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit). For more information, see the [Personal Access Token (PAT)](#-personal-access-token-pat) section.
-    - **Rate Limit**: View the current rate limit status.
-    - **Debug**: Enable debug mode.
+    - **🔑 Personal Access Token**: Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit). For more information, see the [Personal Access Token (PAT)](#-personal-access-token-pat) section.
+    - **📈 Rate Limit**: View the current rate limit status.
+    - **🐞 Debug**: Enable debug mode.
 
-## 🖼️ Showcase
+## 🖼️ Showcases
 
 <details><summary>
 Example "Assets" section
@@ -39,7 +42,17 @@ Example "Assets" section
 
 Example "Assets" section of [a release](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0) on GitHub, with `Release Downloads`, `Release Uploader` and `Release Histogram` enabled
 
-![](./assets.jpg)
+![](./images/assets.jpg)
+
+</details>
+
+<details><summary>
+Example Dashboard
+</summary>
+
+Example Dashboard, with `📰 Dashboard` set to `Mobile-Like`, `↖️ Left Sidebar` set to `Hidden` and `↗️ Right Sidebar` set to `Hide 'Latest changes'`.
+
+![](./images/dashboard.jpg)
 
 </details>
 
