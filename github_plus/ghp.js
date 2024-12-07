@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.3.0
+// @version      0.3.1
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -108,6 +108,12 @@
                 cursorAnimation: {
                     name: "🌊 Cursor Animation",
                     title: "Make cursor move smoothly",
+                    type: "bool",
+                    value: false,
+                },
+                fullWidth: {
+                    name: "🔲 Full Width",
+                    title: "Make the code block full width (copilot button may cover the end of the line)",
                     type: "bool",
                     value: false,
                 },
@@ -270,7 +276,8 @@
     // CSS-related features
     const dynamicStyles = {
         "code.cursorBlink": `[data-testid="navigation-cursor"] { animation: blink 1s step-end infinite; }`,
-        "code.cursorAnimation": `[data-testid="navigation-cursor"] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }`
+        "code.cursorAnimation": `[data-testid="navigation-cursor"] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }`,
+        "code.fullWidth": `#copilot-button-positioner { padding-right: 0; }`,
     };
     for (const prop in dynamicStyles) {
         cssHelper(prop, config.get(prop));
