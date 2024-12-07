@@ -2,9 +2,9 @@
 // @name         Editio
 // @name:zh-CN   Editio
 // @namespace    http://tampermonkey.net/
-// @version      0.1.4
-// @description  Add some extra features to inputs and textareas
-// @description:zh-CN 给输入框和文本框添加一些额外功能
+// @version      0.2.0
+// @description  Some Visual Studio Code's useful features ported to the web!
+// @description:zh-CN 将 Visual Studio Code 的部分实用功能移植到 Web 上！
 // @tag          productivity
 // @author       PRO-2684
 // @match        *://*/*
@@ -118,6 +118,33 @@
                             return `${name}: ${value.join(" ")}`;
                         }
                     }
+                }
+            }
+        },
+        mouse: {
+            name: "🖱️ Mouse",
+            title: "Mouse-related features",
+            type: "folder",
+            items: {
+                fastScroll: {
+                    name: "🚀 Fast scroll",
+                    title: "Scroll faster when holding the Alt key",
+                    type: "bool",
+                    value: false
+                },
+                fastScrollSensitivity: {
+                    name: "🎚️ Fast scroll sensitivity",
+                    title: "Scrolling speed multiplier when pressing `Alt`",
+                    type: "int",
+                    value: 5,
+                    processor: "int_range-1-10"
+                },
+                consecutiveScrollThreshold: {
+                    name: "⏱️ Consecutive scroll threshold",
+                    title: "The threshold of time difference for the scroll to be considered consecutive",
+                    type: "int",
+                    value: 200,
+                    processor: "int_range-0-1000"
                 }
             }
         },
@@ -328,6 +355,101 @@
         el.setSelectionRange(start + 1, start + 1 + selection.length);
     }
 
+    // Mouse
+    /**
+     * Scrolling speed multiplier when pressing `Alt`.
+     * @type {number}
+     */
+    let fastScrollSensitivity = config.get("mouse.fastScrollSensitivity");
+    /**
+     * The time threshold for the scroll to be considered consecutive.
+     * @type {number}
+     */
+    let consecutiveScrollThreshold = config.get("mouse.consecutiveScrollThreshold");
+    /**
+     * Information about the last scroll event.
+     * @type {{ time: number, el: HTMLElement }}
+     */
+    const lastScroll = {
+        time: 0,
+        el: document.scrollingElement,
+        vertical: true,
+        plus: true
+    };
+    /**
+     * Whether the element can be scrolled.
+     * @param {HTMLElement} el The element.
+     * @param {boolean} vertical Whether the scroll is vertical.
+     * @param {boolean} plus Whether the scroll is positive (down or right).
+     * @returns {boolean} Whether the element can be scrolled.
+     */
+    function canScroll(el, vertical = true, plus = true) {
+        const style = window.getComputedStyle(el);
+        const overflow = vertical ? style.overflowY : style.overflowX;
+        const scrollSize = vertical ? el.scrollHeight : el.scrollWidth;
+        const clientSize = vertical ? el.clientHeight : el.clientWidth;
+        const scrollPos = vertical ? el.scrollTop : el.scrollLeft;
+        const isScrollable = scrollSize > clientSize;
+        const canScrollFurther = plus ? (scrollPos + clientSize < scrollSize) : (scrollPos > 0);
+        if (isScrollable && canScrollFurther && !overflow.includes('visible') && !overflow.includes('hidden')) {
+            return true;
+        }
+        return false;
+    }
+    /**
+     * Find the scrollable element that should handle the event.
+     * @param {WheelEvent} e The WheelEvent.
+     * @param {boolean} vertical Whether the scroll is vertical.
+     * @param {boolean} plus Whether the scroll is positive (down or right).
+    */
+    function findScrollableElement(e, vertical = true, plus = true) {
+        // If the scroll is deemed consecutive, then return the previous scrollable element
+        if (e.timeStamp - lastScroll.time < consecutiveScrollThreshold && lastScroll.vertical === vertical && lastScroll.plus === plus) {
+            return lastScroll.el;
+        }
+        // https://gist.github.com/oscarmarina/3a546cff4d106a49a5be417e238d9558
+        const path = e.composedPath();
+        for (const el of path) {
+            if (!(el instanceof HTMLElement || el instanceof ShadowRoot)) {
+                continue;
+            }
+            if (canScroll(el, vertical, plus)) {
+                return el;
+            }
+        }
+        return document.scrollingElement;
+    }
+    /**
+     * Handle the mousewheel event.
+     * @param {WheelEvent} e The WheelEvent.
+     */
+    function onWheel(e) {
+        if (!e.altKey || e.deltaMode !== WheelEvent.DOM_DELTA_PIXEL) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const { deltaY } = e;
+        const amplified = deltaY * fastScrollSensitivity;
+        const [vertical, plus] = [!e.shiftKey, e.deltaY > 0];
+        const el = findScrollableElement(e, vertical, plus);
+        Object.assign(lastScroll, { time: e.timeStamp, el, vertical, plus });
+        el.scrollBy({
+            top: e.shiftKey ? 0 : amplified,
+            left: e.shiftKey ? amplified : 0,
+            behavior: "instant" // TODO: Smooth scrolling
+        });
+    }
+    /**
+     * Enable or disable the fast scroll feature.
+     * @param {boolean} enabled Whether the fast scroll feature is enabled.
+     */
+    function fastScroll(enabled) {
+        if (enabled) {
+            document.addEventListener("wheel", onWheel, { capture: config.get("advanced.capture"), passive: false });
+        } else {
+            document.removeEventListener("wheel", onWheel, { capture: config.get("advanced.capture"), passive: false });
+        }
+    }
+
     // Set up
     /**
      * Whether we should handle the InputEvent on the target.
@@ -383,6 +505,13 @@
         },
         "advanced.debug": (value) => {
             config.debug = value;
+        },
+        "mouse.fastScroll": fastScroll,
+        "mouse.fastScrollSensitivity": (value) => {
+            fastScrollSensitivity = value;
+        },
+        "mouse.consecutiveScrollThreshold": (value) => {
+            consecutiveScrollThreshold = value;
         }
     };
     config.addEventListener("set", e => {

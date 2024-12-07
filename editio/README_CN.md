@@ -2,7 +2,7 @@
 
 ## ✨ 简介
 
-Editio 是一个由 Visual Studio Code 启发的简易脚本，它可以给输入框和文本框添加一些额外功能。它十分轻量且（理论上）适用于所有网站上的所有输入框和文本框。
+Editio 是一个简单的脚本，将一些 Visual Studio Code 的功能移植到了 Web 上。它轻量且（理论上）可以在所有网站上运行。
 
 ## 🪄 功能与配置
 
@@ -23,6 +23,11 @@ Editio 是一个由 Visual Studio Code 启发的简易脚本，它可以给输�
 - **🔗 URL**: 与 URL 相关的功能
     - **📋 Paste into selection**: 将 URL 以 Markdown 格式粘贴到选中的文本中
     - **🔍 Recognized schemes**: URL 相关功能所识别的 URL schemes
+- **🖱️ Mouse**: 与鼠标相关的功能
+    - **🚀 Fast scroll**: 使得按下 <kbd>Alt</kbd> 时滚动更快
+        - 请注意，*使用* 此功能时会明确禁用平滑滚动
+    - **🎚️ Fast scroll sensitivity**: 按下 <kbd>Alt</kbd> 时加速的倍数
+    - **⏱️ Consecutive scroll threshold**: 将滚动行为认为是连续的时间差阈值
 - **⚙️ Advanced**: 高级选项
     - **🔒 Capture**: 设立事件监听器时设置 [`capture`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#capture) 为 true
         - 如果启用，Editio 的处理程序可能会覆盖网站的处理程序

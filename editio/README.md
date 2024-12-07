@@ -2,7 +2,7 @@
 
 ## ✨ Introduction
 
-Editio is a simple script that adds some extra features to inputs and textareas, inspired by Visual Studio Code. It's lightweight and (theoretically) applies to all inputs and textareas on all websites.
+Editio is a simple script that ports some features from Visual Studio Code to the web. It's lightweight and (theoretically) runs on all websites.
 
 ## 🪄 Features & Configuation
 
@@ -23,6 +23,11 @@ Editio is a simple script that adds some extra features to inputs and textareas,
 - **🔗 URL**: URL-related features
     - **📋 Paste into selection**: Paste the URL into the selection in Markdown format
     - **🔍 Recognized schemes**: Recognized URL schemes for the URL-related features
+- **🖱️ Mouse**: Mouse-related features
+    - **🚀 Fast scroll**: Scroll faster when holding the <kbd>Alt</kbd> key
+        - Note that smooth scrolling is disabled explicitly when *using* this feature
+    - **🎚️ Fast scroll sensitivity**: Scrolling speed multiplier when pressing <kbd>Alt</kbd>
+    - **⏱️ Consecutive scroll threshold**: The threshold of time difference for the scroll to be considered consecutive
 - **⚙️ Advanced**: Advanced options
     - **🔒 Capture**: Set [`capture`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#capture) to true for the event listeners
         - If enabled, Editio's handlers are likely to override the website's handlers
