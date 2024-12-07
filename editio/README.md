@@ -8,7 +8,7 @@ Editio is a simple script that ports some features from Visual Studio Code to th
 
 - **🖇️ Pairing**: Pairing brackets and quotes
     - **➕ Auto close**: Autoclose brackets and quotes (Similar to [`editor.autoClosingBrackets`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%2Feditor.autoClosingBrackets) in VSCode)
-    - **➖ Auto delete**: Remove adjacent closing quotes or brackets (Similar to [`editor.autoClosingDelete`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%2Feditor.autoClosingDelete) in VSCode)
+    - **➖ Auto delete**: Remove adjacent closing quotes or brackets (Similar to [`editor.autoClosingDelete`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%2Feditor.autoClosingDelete) and [`editor.autoSurround`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%editor.autoSurround) in VSCode)
     - **🚫 Auto overtype**: Type over closing brackets (Similar to [`editor.autoClosingOvertype`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%2Feditor.autoClosingOvertype) in VSCode)
         - The input character is a closing one and the same as the character after the cursor
         - The character before the cursor is the respective opening one
@@ -37,4 +37,11 @@ Editio is a simple script that ports some features from Visual Studio Code to th
 
 ## 📃 Notes
 
-I've done my best to make undo/redo history work as similar to VSCode as possible. However, there are still some minor differences. Contributions are welcome!
+I've done my best to make Editio work as similar to VSCode as possible. However, there are still some minor differences:
+
+- Editio **always** closes brackets and quotes, while VSCode can be configured to `languageDefined` or `beforeWhitespace`.
+- Editio **always** deletes and overtypes adjacent closing brackets and quotes, while VSCode only does so when the closing character is automatically inserted.
+- Selections and cursor positions are not kept in the editing history.
+- Editio's fast scroll does not support smooth scrolling.
+
+Contributions are welcome!

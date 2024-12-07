@@ -7,7 +7,7 @@ Editio 是一个简单的脚本，将一些 Visual Studio Code 的功能移植�
 ## 🪄 功能与配置
 
 - **🖇️ Pairing**: 匹配括号和引号
-    - **➕ Auto close**: 自动闭合括号和引号（类似于 VSCode 中的 [`editor.autoClosingBrackets`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%2Feditor.autoClosingBrackets)）
+    - **➕ Auto close**: 自动闭合括号和引号（类似于 VSCode 中的 [`editor.autoClosingBrackets`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%2Feditor.autoClosingBrackets) 和 [`editor.autoSurround`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%editor.autoSurround)）
     - **➖ Auto delete**: 删除相邻的闭合引号或括号（类似于 VSCode 中的 [`editor.autoClosingDelete`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%2Feditor.autoClosingDelete)）
     - **🚫 Auto overtype**: 覆写闭合括号（类似于 VSCode 中的 [`editor.autoClosingOvertype`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%2Feditor.autoClosingOvertype)）
         - 输入字符是一个闭合字符且与光标后的字符相同
@@ -37,4 +37,11 @@ Editio 是一个简单的脚本，将一些 Visual Studio Code 的功能移植�
 
 ## 📃 注意
 
-我已尽力使撤销/重做的历史记录与 VSCode 相似，但它们之间仍然存在一些微小的差异。欢迎贡献！
+我已尽力使 Editio 与 VSCode 相似，但它们之间仍然存在一些微小的差异：
+
+- Editio **总是**关闭括号和引号，而 VSCode 可以配置为 `languageDefined` 或 `beforeWhitespace`。
+- Editio **总是**删除和覆写相邻的闭合括号和引号，而 VSCode 仅在闭合字符时是自动插入的时候才会这样做。
+- 选区和光标的位置不会被记录在编辑历史中。
+- Editio 的快速滚动不支持平滑滚动。
+
+欢迎贡献！
