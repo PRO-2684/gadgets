@@ -11,6 +11,7 @@
 // @run-at       document-start
 // @icon         https://github.com/PRO-2684/gadgets/raw/refs/heads/main/editio/editio.svg
 // @license      gpl-3.0
+// @grant        unsafeWindow
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_deleteValue
@@ -175,6 +176,7 @@
         }
     };
     const config = new GM_config(configDesc);
+    const editio = {}; // Variables to expose if debug mode is enabled
 
     // Pairing
     // Input-related
@@ -368,7 +370,7 @@
     let consecutiveScrollThreshold = config.get("mouse.consecutiveScrollThreshold");
     /**
      * Information about the last scroll event.
-     * @type {{ time: number, el: HTMLElement }}
+     * @type {{ time: number, el: HTMLElement, vertical: boolean, plus: boolean }}
      */
     const lastScroll = {
         time: 0,
@@ -505,6 +507,11 @@
         },
         "advanced.debug": (value) => {
             config.debug = value;
+            if (value) {
+                unsafeWindow.editio = editio;
+            } else {
+                delete unsafeWindow.editio;
+            }
         },
         "mouse.fastScroll": fastScroll,
         "mouse.fastScrollSensitivity": (value) => {
@@ -521,4 +528,6 @@
     for (const [prop, handler] of Object.entries(configChangeHandlers)) {
         handler(config.get(prop));
     }
+    // Expose these variables if debug mode is enabled
+    Object.assign(editio, { config, pairs, reversePairs, tabOutChars, fastScrollSensitivity, consecutiveScrollThreshold, lastScroll });
 })();
