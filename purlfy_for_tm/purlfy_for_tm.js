@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.5.3
+// @version      0.5.4
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -21,8 +21,8 @@
 // @grant        unsafeWindow
 // @connect      *
 // @require      https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.1.15
-// @require      https://update.greasyfork.org/scripts/492078/1497143/pURLfy.js
-// @require      https://update.greasyfork.org/scripts/470224/1460555/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/492078/1499254/pURLfy.js
+// @require      https://update.greasyfork.org/scripts/470224/1498964/Tampermonkey%20Config.js
 // @resource     rules-tracking https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/tracking.min.json
 // @resource     rules-outgoing https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/outgoing.min.json
 // @resource     rules-shortener https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/shortener.min.json

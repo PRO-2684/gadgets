@@ -2,7 +2,7 @@
 // @name         Editio
 // @name:zh-CN   Editio
 // @namespace    http://tampermonkey.net/
-// @version      0.2.0
+// @version      0.2.1
 // @description  Some Visual Studio Code's useful features ported to the web!
 // @description:zh-CN 将 Visual Studio Code 的部分实用功能移植到 Web 上！
 // @tag          productivity
@@ -18,7 +18,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1459364/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1498964/Tampermonkey%20Config.js
 // ==/UserScript==
 
 (function () {
@@ -359,16 +359,6 @@
 
     // Mouse
     /**
-     * Scrolling speed multiplier when pressing `Alt`.
-     * @type {number}
-     */
-    let fastScrollSensitivity = config.get("mouse.fastScrollSensitivity");
-    /**
-     * The time threshold for the scroll to be considered consecutive.
-     * @type {number}
-     */
-    let consecutiveScrollThreshold = config.get("mouse.consecutiveScrollThreshold");
-    /**
      * Information about the last scroll event.
      * @type {{ time: number, el: HTMLElement, vertical: boolean, plus: boolean }}
      */
@@ -406,7 +396,9 @@
     */
     function findScrollableElement(e, vertical = true, plus = true) {
         // If the scroll is deemed consecutive, then return the previous scrollable element
-        if (e.timeStamp - lastScroll.time < consecutiveScrollThreshold && lastScroll.vertical === vertical && lastScroll.plus === plus) {
+        if (e.timeStamp - lastScroll.time < config.get("mouse.consecutiveScrollThreshold")
+            && lastScroll.vertical === vertical
+            && lastScroll.plus === plus) {
             return lastScroll.el;
         }
         // https://gist.github.com/oscarmarina/3a546cff4d106a49a5be417e238d9558
@@ -430,7 +422,7 @@
         e.preventDefault();
         e.stopImmediatePropagation();
         const { deltaY } = e;
-        const amplified = deltaY * fastScrollSensitivity;
+        const amplified = deltaY * config.get("mouse.fastScrollSensitivity");
         const [vertical, plus] = [!e.shiftKey, e.deltaY > 0];
         const el = findScrollableElement(e, vertical, plus);
         Object.assign(lastScroll, { time: e.timeStamp, el, vertical, plus });
@@ -514,12 +506,6 @@
             }
         },
         "mouse.fastScroll": fastScroll,
-        "mouse.fastScrollSensitivity": (value) => {
-            fastScrollSensitivity = value;
-        },
-        "mouse.consecutiveScrollThreshold": (value) => {
-            consecutiveScrollThreshold = value;
-        }
     };
     config.addEventListener("set", e => {
         const handler = configChangeHandlers[e.detail.prop];
@@ -529,5 +515,5 @@
         handler(config.get(prop));
     }
     // Expose these variables if debug mode is enabled
-    Object.assign(editio, { config, pairs, reversePairs, tabOutChars, fastScrollSensitivity, consecutiveScrollThreshold, lastScroll });
+    Object.assign(editio, { config, lastScroll });
 })();

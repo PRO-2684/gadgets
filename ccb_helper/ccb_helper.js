@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         建行网银助手
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  中国建设银行网银助手，优化建行网银的体验
 // @author       PRO-2684
 // @match        https://ebanking2.ccb.com.cn/*
@@ -14,7 +14,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1448594/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1498964/Tampermonkey%20Config.js
 // ==/UserScript==
 
 (function() {
@@ -30,7 +30,6 @@
         "disable-small-window": { name: "禁用小窗口", title: "不再使用小窗口打开新页面" },
     };
     const config = new GM_config(configDesc);
-    const configProxy = config.proxy;
     const log = console.log.bind(console, "[ccb_helper]");
     // == 禁用小窗口 ==
     const originalOpen = unsafeWindow.open.bind(unsafeWindow);
@@ -49,7 +48,7 @@
         "disable-small-window": disableSmallWindow,
     };
     for (const prop in callbacks) {
-        const value = configProxy[prop];
+        const value = config.get(prop);
         callbacks[prop](value);
     }
     config.addEventListener("set", e => {

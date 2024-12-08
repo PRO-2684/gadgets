@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.8.8
+// @version      0.8.9
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
@@ -13,7 +13,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1459364/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1498964/Tampermonkey%20Config.js
 // @icon         https://raw.githubusercontent.com/greasyfork-org/greasyfork/main/public/images/blacklogo16.png
 // @icon64       https://raw.githubusercontent.com/greasyfork-org/greasyfork/main/public/images/blacklogo96.png
 // @license      gpl-3.0
@@ -172,7 +172,6 @@
         }
     };
     const config = new GM_config(configDesc);
-    const configProxy = config.proxy;
     // CSS
     const dynamicStyle = {
         "codeblocks.animation": `
@@ -242,7 +241,7 @@
     const $$ = document.querySelectorAll.bind(document);
     const body = $("body");
     function log(...args) {
-        if (configProxy["other.debug"]) {
+        if (config.get("other.debug")) {
             console.log(`[${name}]`, ...args);
         }
     }
@@ -542,7 +541,7 @@
             shortcutEnabled = false;
         }
     }
-    shortcut(configProxy["filterAndSearch.shortcut"]);
+    shortcut(config.get("filterAndSearch.shortcut"));
     // Regex filter
     const regexFilterTip = $(".sidebarred > .sidebarred-main-content > .script-list#browse-script-list")
         ?.previousElementSibling?.appendChild?.(document.createElement("span"));
@@ -567,7 +566,7 @@
         return result;
     }
     function regexFilter(regexStr) {
-        const debug = configProxy["other.debug"];
+        const debug = config.get("other.debug");
         const scripts = $$(".script-list > li");
         if (regexStr === "" || scripts.length === 0) {
             scripts.forEach(script => script.classList.remove("regex-filtered"));
@@ -585,7 +584,7 @@
         setRegexFilterTip(`Filtered: ${count}/${scripts.length}`);
         debug && console.groupEnd();
     }
-    regexFilter(configProxy["filterAndSearch.regexFilter"]);
+    regexFilter(config.get("filterAndSearch.regexFilter"));
     // Search syntax
     const types = {
         "script": "scripts",
@@ -623,7 +622,7 @@
         "name": "name",
         "title": "name",
     };
-    if (configProxy["filterAndSearch.searchSyntax"]) {
+    if (config.get("filterAndSearch.searchSyntax")) {
         function parseString(input) {
             // Regular expression to match key:value pairs, allowing for non-word characters in values
             const regex = /\b(\w+:[^\s]+)\b/g;
@@ -690,7 +689,7 @@
     // Code blocks
     // Auto hide code blocks
     function autoHide() {
-        if (!configProxy["codeblocks.autoHideCode"]) {
+        if (!config.get("codeblocks.autoHideCode")) {
             for (const code_block of codeBlocks) {
                 const toggle = code_block.firstChild.lastChild;
                 if (!toggle) continue;
@@ -705,7 +704,7 @@
                 const toggle = codeBlock.firstChild.lastChild;
                 if (!toggle) continue;
                 const hidden = toggle.textContent === "Show code";
-                if (rows >= configProxy["codeblocks.autoHideRows"] && !hidden || rows < configProxy["codeblocks.autoHideRows"] && hidden) {
+                if (rows >= config.get("codeblocks.autoHideRows") && !hidden || rows < config.get("codeblocks.autoHideRows") && hidden) {
                     codeBlock.firstChild.lastChild.click(); // Click the toggle button
                 }
             }
@@ -722,7 +721,7 @@
         style.id = idPrefix + "tab-size";
         style.textContent = `pre { tab-size: ${value}; }`;
     }
-    tabSize(configProxy["codeblocks.tabSize"]);
+    tabSize(config.get("codeblocks.tabSize"));
     // Metadata
     function extractUserScriptMetadata(code) {
         const result = {};
@@ -863,7 +862,7 @@
             }
         }
     }
-    metadata(configProxy["codeblocks.metadata"]);
+    metadata(config.get("codeblocks.metadata"));
 
     // Display
     // Flat layout
@@ -878,7 +877,7 @@
             additional.before(meta_mod);
         }
     }
-    flatLayout(configProxy["display.flatLayout"]);
+    flatLayout(config.get("display.flatLayout"));
     // Always show notification
     function alwaysShowNotification(enable) {
         const nav = $("#nav-user-info");
@@ -894,7 +893,7 @@
             existing.remove();
         }
     }
-    alwaysShowNotification(configProxy["display.alwaysShowNotification"]);
+    alwaysShowNotification(config.get("display.alwaysShowNotification"));
 
     // Other
     // Short link
@@ -931,7 +930,7 @@
             });
         }
     }
-    shortLink(configProxy["other.shortLink"]);
+    shortLink(config.get("other.shortLink"));
     // Alternative URLs for library
     function alternativeURLs(enable) {
         if ($(".remove-attachments") || !$("div#script-content") || $("div#script-content > div#install-area")) return; // Not a library
@@ -967,9 +966,9 @@
             }
         }
     }
-    alternativeURLs(configProxy["other.libAlternativeUrl"]);
+    alternativeURLs(config.get("other.libAlternativeUrl"));
     // Image proxy
-    if (configProxy["other.imageProxy"]) {
+    if (config.get("other.imageProxy")) {
         const PROXY = "https://wsrv.nl/?url=";
         const images = $$("a[href^='/rails/active_storage/blobs/redirect/'] > img[src^='https://greasyfork.']");
         for (const img of images) {
@@ -979,7 +978,7 @@
         }
     }
     // Lazy image
-    if (configProxy["other.lazyImage"]) {
+    if (config.get("other.lazyImage")) {
         const images = $$(".user-content img");
         for (const image of images) {
             image.loading = "lazy";
@@ -988,7 +987,7 @@
 
     // Initialize css
     for (const prop in dynamicStyle) {
-        cssHelper(prop, configProxy[prop]);
+        cssHelper(prop, config.get(prop));
     }
     // Dynamically respond to config changes
     const callbacks = {

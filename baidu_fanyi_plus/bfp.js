@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度翻译 Plus
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  一系列针对百度翻译的功能增强
 // @author       PRO-2684
 // @run-at       document-end
@@ -14,7 +14,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1460555/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1498964/Tampermonkey%20Config.js
 // ==/UserScript==
 
 (function() {
@@ -88,7 +88,7 @@
         config.debug = debug;
     }
     const callbacks = {
-        allowTextDrop: allowTextDrop,
+        allowTextDrop,
         debug: setDebug,
     };
     for (const [prop, callback] of Object.entries(callbacks)) {
