@@ -172,6 +172,11 @@ class GM_config extends EventTarget {
      */
     #currentDescCache = null;
     /**
+     * Cache for config values
+     * @type {{[prop: string]: any}}
+     */
+    #configCache = {};
+    /**
      * Get the config description at the current path
      * @type {Object}
      */
@@ -191,7 +196,7 @@ class GM_config extends EventTarget {
      * @param {boolean} [options.immediate=true] Whether to register menu items immediately
      * @param {boolean} [options.debug=false] Whether to show debug information
      */
-    constructor(desc, options) { // Register menu items based on given config description
+    constructor(desc, options = {}) { // Register menu items based on given config description
         super();
         // Handle value change events
         /**
@@ -206,6 +211,11 @@ class GM_config extends EventTarget {
             // If `before` or `after` is `undefined`, replace it with default value
             if (before === undefined) before = defaultValue;
             if (after === undefined) after = defaultValue;
+            // Update cache, if present (so as not to cache config values that are not accessed)
+            if (prop in this.#configCache) {
+                this.#configCache[prop] = after;
+            }
+            // Dispatch set event
             this.#dispatch(true, { prop, before, after, remote });
         }
         // Complete desc & setup value change listeners
@@ -230,8 +240,8 @@ class GM_config extends EventTarget {
             formatter: "normal"
         });
         // Set options
-        this.debug = options?.debug ?? this.debug;
-        Object.assign(this.#folderDisplay, options?.folderDisplay ?? {});
+        this.debug = options.debug ?? this.debug;
+        Object.assign(this.#folderDisplay, options.folderDisplay ?? {});
         // Proxied config
         const proxyCache = {};
         /**
@@ -271,7 +281,7 @@ class GM_config extends EventTarget {
         this.proxy = new Proxy({}, handlers(""));
         // Register menu items
         if (window === window.top) {
-            if (options?.immediate ?? true) {
+            if (options.immediate ?? true) {
                 this.#register();
             } else {
                 // Register menu items after user clicks "Show configuration"
@@ -404,7 +414,12 @@ class GM_config extends EventTarget {
      * @returns {any} The value of the property, `undefined` if not found
      */
     #get(prop) {
-        return GM_getValue(prop, this.#getProp(prop)?.value);
+        // Use cache if present
+        if (prop in this.#configCache) return this.#configCache[prop];
+        // Otherwise, get value from storage
+        const value = GM_getValue(prop, this.#getProp(prop)?.value);
+        this.#configCache[prop] = value; // Cache the value
+        return value;
     }
     /**
      * Log a message if debug is enabled
