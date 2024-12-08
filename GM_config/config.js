@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.1.4
+// @version      1.1.5
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -19,9 +19,10 @@
 class GM_config extends EventTarget {
     /**
      * The version of the GM_config library
+     * @type {string}
      */
     static get version() {
-        return "1.1.4";
+        return "1.1.5";
     }
     /**
      * Built-in processors for user input
@@ -88,7 +89,7 @@ class GM_config extends EventTarget {
         },
         folder: (prop, orig) => {
             const last = GM_config.#dottedToList(prop).pop();
-            this.#down(last);
+            this.down(last);
             this.#dispatch(false, { prop, before: orig, after: orig, remote: false });
             return orig;
         },
@@ -176,6 +177,13 @@ class GM_config extends EventTarget {
      * @type {{[prop: string]: any}}
      */
     #configCache = {};
+    /**
+     * The current path we're at
+     * @type {string[]}
+     */
+    get currentPath() {
+        return [...this.#currentPath];
+    }
     /**
      * Get the config description at the current path
      * @type {Object}
@@ -450,21 +458,30 @@ class GM_config extends EventTarget {
     }
     /**
      * Go to the parent folder
-     * @returns {void}
+     * @returns {string | null} The name of the parent folder, or `null` if at root
      */
-    #up() {
-        this.#currentPath.pop();
+    up() {
+        const value = this.#currentPath.pop();
         this.#log(`⬆️ Went up to ${GM_config.#listToDotted(this.#currentPath) || "#root"}`);
         this.#register();
+        return value ?? null;
     }
     /**
      * Go to a subfolder
      * @param {string} name The name of the subfolder
+     * @returns {boolean} Whether the operation is successful
      */
-    #down(name) {
+    down(name) {
+        // Check if the property exists and is a folder
+        const currentDesc = this.#currentDesc;
+        if (!(name in currentDesc && currentDesc[name].type === "folder")) {
+            this.#log(`❌ Cannot go down to ${name} - not a folder`);
+            return false;
+        }
         this.#currentPath.push(name);
         this.#log(`⬇️ Went down to ${GM_config.#listToDotted(this.#currentPath)}`);
         this.#register();
+        return true;
     }
     /**
      * Register menu items at the current path
@@ -481,7 +498,7 @@ class GM_config extends EventTarget {
         // Register parent menu item (if not at root)
         if (this.#currentPath.length) {
             const id = GM_registerMenuCommand(this.#folderDisplay.parentText, () => {
-                this.#up();
+                this.up();
             }, {
                 autoClose: false,
                 title: this.#folderDisplay.parentTitle

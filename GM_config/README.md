@@ -275,6 +275,14 @@ As you might have expected, you can remove the listener by calling `config.remov
 
 This feature is often used to update your script dynamically when config is modified. In this lib, auto-updating menu is implemented by this feature.
 
+### Programmatic folder navigation
+
+You can call `config.up()` and `config.down(name)` to navigate up and down the folder hierarchy, and `config.currentPath` to check the current path. To be specific:
+
+- `config.up()`: Go up one level. If already at the top level, simply re-register. Returns a `string` indicating the parent folder, or `null` if already at the root.
+- `config.down(name)`: Go down to the folder specified by `name`. If `name` is not a folder, do nothing. Returns `true` if successfully navigated, `false` otherwise.
+- `config.currentPath`: A list of `string`, each representing a folder, in the order from the root to the current folder. Note that this property is read-only.
+
 ### Sum up: the process of modifying config
 
 1. User clicks the menu command
