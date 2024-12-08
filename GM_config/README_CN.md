@@ -258,7 +258,10 @@ config.addEventListener("get", (e) => {
 });
 ```
 
-需要注意的是，`get` 事件仅在当前窗口的脚本获取配置时触发，而 `set` 事件会在所有窗口的脚本修改配置时触发。`set` 的这一特性使得多标签页同步成为可能。
+需要注意的是：
+
+- `get` 事件仅在当前脚本实例获取配置时触发
+- `set` 事件会在 *任意来源* 修改配置时触发，而这使得多标签页同步成为可能
 
 正如你所想，你可以通过 `config.removeEventListener(type, listener, options?)` 来移除监听器。这两个接口与 [`EventTarget.addEventListener`](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/addEventListener) 和 [`EventTarget.removeEventListener`](https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/removeEventListener) 的用法完全一致。
 
@@ -292,7 +295,7 @@ config.addEventListener("get", (e) => {
 
 ## 👀 完整的例子
 
-安装 [此测试代码](https://github.com/PRO-2684/gadgets/raw/refs/heads/main/GM_config/test_config.user.js)，观察它是如何工作的；或者，你也可以安装 [Greasy Fork Enhance](https://greasyfork.org/scripts/467078) 来体验这个库的功能。
+安装 [此测试代码](./test_config.user.js)，观察它是如何工作的；或者，你也可以安装 [Greasy Fork Enhance](https://greasyfork.org/scripts/467078) 来体验这个库的功能。
 
 ## ⚠️ 注意
 

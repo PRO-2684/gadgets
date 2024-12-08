@@ -259,7 +259,10 @@ config.addEventListener("get", (e) => {
 });
 ```
 
-It should be noted that `get` event is only triggered when the config is accessed by the script in the current window, while `set` event is triggered when the config is modified by the script in any window. This feature of `set` makes multi-tab synchronization possible.
+It should be noted that:
+
+- `get` event is only triggered when the config is accessed by current script instance
+- `set` event is triggered when the config is modified from *any sources*, making multi-tab synchronization possible
 
 As you might have expected, you can remove the listener by calling `config.removeEventListener(type, listener, options?)`. These two methods are identical to [`EventTarget.addEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) and [`EventTarget.removeEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener).
 
@@ -293,7 +296,7 @@ Internally, all operations on `config.proxy` are mapped to operations on `config
 
 ## 👀 Working example
 
-Install [this test code](https://github.com/PRO-2684/gadgets/raw/refs/heads/main/GM_config/test_config.user.js), and see how does it work; Or you can try out this lib in action with [Greasy Fork Enhance](https://greasyfork.org/scripts/467078).
+Install [this test code](./test_config.user.js), and see how does it work; Or you can try out this lib in action with [Greasy Fork Enhance](https://greasyfork.org/scripts/467078).
 
 ## ⚠️ Note
 

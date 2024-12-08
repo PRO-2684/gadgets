@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.1.3
+// @version      1.1.4
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -21,7 +21,7 @@ class GM_config extends EventTarget {
      * The version of the GM_config library
      */
     static get version() {
-        return "1.1.3";
+        return "1.1.4";
     }
     /**
      * Built-in processors for user input
@@ -349,8 +349,9 @@ class GM_config extends EventTarget {
      */
     get(prop) {
         const normalized = GM_config.#normalizeProp(prop);
+        const defaultValue = this.#getProp(prop).value;
         // Return stored value, else default value
-        const value = this.#get(normalized);
+        const value = this.#get(normalized, defaultValue);
         // Dispatch get event
         this.#dispatch(false, {
             prop: normalized,
@@ -411,13 +412,14 @@ class GM_config extends EventTarget {
     /**
      * Get the value of a property (only for internal use; won't trigger events)
      * @param {string} prop The dotted property name
+     * @param {any} defaultValue The default value if not found
      * @returns {any} The value of the property, `undefined` if not found
      */
-    #get(prop) {
+    #get(prop, defaultValue) {
         // Use cache if present
         if (prop in this.#configCache) return this.#configCache[prop];
         // Otherwise, get value from storage
-        const value = GM_getValue(prop, this.#getProp(prop)?.value);
+        const value = GM_getValue(prop, defaultValue);
         this.#configCache[prop] = value; // Cache the value
         return value;
     }
@@ -498,8 +500,8 @@ class GM_config extends EventTarget {
      * @param {string} prop The dotted property name
      */
     #registerItem(prop) {
-        const { name, input, processor, formatter, accessKey, autoClose, title } = this.#getProp(prop);
-        const orig = this.#get(prop);
+        const { name, value, input, processor, formatter, accessKey, autoClose, title } = this.#getProp(prop);
+        const orig = this.#get(prop, value);
         const inputFunc = typeof input === "function" ? input : this.#builtinInputs[input];
         const formatterFunc = typeof formatter === "function" ? formatter : this.#builtinFormatters[formatter];
         const option = {
