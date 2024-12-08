@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         Test Config
 // @namespace    http://tampermonkey.net/
-// @version      1.1.1
-// @description  This is an example to demostrate the usage of greasyfork.org/scripts/470224.
+// @version      1.1.4
+// @description  This is an example to demostrate the usage of [GM_config](greasyfork.org/scripts/470224)
 // @author       PRO
 // @match        https://greasyfork.org/*
 // @icon         https://greasyfork.org/vite/assets/blacklogo16-bc64b9f7.png
@@ -13,7 +13,7 @@
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
 // @grant        unsafeWindow
-// @require      https://update.greasyfork.org/scripts/470224/1459364/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1498964/Tampermonkey%20Config.js
 // @license      gpl-3.0
 // ==/UserScript==
 
