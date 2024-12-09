@@ -2,7 +2,7 @@
 
 Hides unnecessary elements on `arxiv.org/html/*`, giving you a clean view.
 
-- [UserStyles.World](https://userstyles.world/style/16559/arxiv-html-debloat) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://userstyles.world/api/style/16559.user.css)
+- [UserStyles.World](https://userstyles.world/style/16559) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://userstyles.world/api/style/16559.user.css)
 - [GitHub](https://github.com/PRO-2684/gadgets/raw/main/arxiv_html_debloate/) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://github.com/PRO-2684/gadgets/raw/main/arxiv_html_debloate/arxiv_html_debloate.user.css)
 
 ## 🪄 Features & Configuration

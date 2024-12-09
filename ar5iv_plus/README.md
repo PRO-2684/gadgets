@@ -1,6 +1,9 @@
 # ar5iv Plus
 
-Enhance ar5iv.labs.arxiv.org/html/ with various tweaks and improvements.
+Enhance ar5iv with various tweaks and improvements.
+
+- [UserStyles.World](https://userstyles.world/style/18946) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://userstyles.world/api/style/18946.user.css)
+- [GitHub](https://github.com/PRO-2684/gadgets/raw/main/ar5iv_plus/) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://github.com/PRO-2684/gadgets/raw/main/ar5iv_plus/ar5iv_plus.user.css)
 
 ## 🪄 Features & Configuration
 

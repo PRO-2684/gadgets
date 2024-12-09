@@ -2,7 +2,7 @@
 
 > 我是人民评委？我评价溺马了戈壁！
 
-![Greasy Fork](https://img.shields.io/greasyfork/dt/457282) [![](https://img.shields.io/badge/Crazy%20Thur.-V%20me%2050-red?logo=kfc)](https://greasyfork.org/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaWZvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10e04ed7ed56ae18d22cec6d675b34fd579cecab/wechat.jpeg?locale=zh-CN)
+[![Greasy Fork](https://img.shields.io/greasyfork/dt/457282)](https://greasyfork.org/scripts/457282) [![](https://img.shields.io/badge/Crazy%20Thur.-V%20me%2050-red?logo=kfc)](https://greasyfork.org/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaWZvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10e04ed7ed56ae18d22cec6d675b34fd579cecab/wechat.jpeg?locale=zh-CN)
 
 此脚本可以帮助你在 USTC 教学质量管理平台自动评教，节省时间，解放双手。关键词：自动评教、自动评价、教学评估、教学质量管理平台、USTC、中科大、中国科学技术大学。
 

@@ -1,6 +1,9 @@
 # ar5iv Plus
 
-增强 ar5iv.labs.arxiv.org/html/ 的各种调整和改进。
+增强 ar5iv 的各种调整和改进。
+
+- [UserStyles.World](https://userstyles.world/style/18946) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://userstyles.world/api/style/18946.user.css)
+- [GitHub](https://github.com/PRO-2684/gadgets/raw/main/ar5iv_plus/) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://github.com/PRO-2684/gadgets/raw/main/ar5iv_plus/ar5iv_plus.user.css)
 
 ## 🪄 功能和配置
 

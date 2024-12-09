@@ -13,45 +13,51 @@
 
 ### 🧩 用户脚本
 
-- `52_enhance`: 52 破解论坛增强脚本。
-- `auto_grading`: 自动评教 `tqm.ustc.edu.cn`。
-- `baidu_fanyi_plus`: 一系列针对百度翻译的功能增强。
-- `CORS_helper`: 一个简单的、可自定义的脚本，帮助你绕过 CORS 限制。
-- `draggy`: 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
-- `editio`: 一个简单的脚本，为输入框和文本框添加一些额外功能，灵感来自 Visual Studio Code。
-- `export_cookies`: 将当前标签页的 cookies 导出到文件。
-- `github_plus`: 为 GitHub 增加额外的功能。
-- `GM_config`: 简易的 Tampermonkey 脚本配置库。
-- `greasyfork_enhance`: 增进 Greasyfork 浏览体验。
-- `purlfy_for_tm`: 终极 URL 净化器 - Tampermonkey 版本。
-- `uhp`: USTC Helper - 为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
+| 用户脚本 | GreasyFork | 描述 |
+| --- | --- | --- |
+| [`52_enhance`](./52_enhance) | [#469051](https://greasyfork.org/scripts/469051) | 52 破解论坛增强脚本。 |
+| [`auto_grading`](./auto_grading) | [#457282](https://greasyfork.org/scripts/457282) | 自动评教 `tqm.ustc.edu.cn`。 |
+| [`baidu_fanyi_plus`](./baidu_fanyi_plus) | N/A | 一系列针对百度翻译的功能增强。 |
+| [`CORS_helper`](./CORS_helper) | [#508769](https://greasyfork.org/scripts/508769) | 一个简单的、可自定义的脚本，帮助你绕过 CORS 限制。 |
+| [`draggy`](./draggy) | [#511154](https://greasyfork.org/scripts/511154) | 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。 |
+| [`editio`](./editio) | [#519147](https://greasyfork.org/scripts/519147) | 一个简单的脚本，为输入框和文本框添加一些额外功能，灵感来自 Visual Studio Code。 |
+| [`export_cookies`](./export_cookies) | [#517291](https://greasyfork.org/scripts/517291) | 将当前标签页的 cookies 导出到文件。 |
+| [`github_plus`](./github_plus) | [#510742](https://greasyfork.org/scripts/510742) | 为 GitHub 增加额外的功能。 |
+| [`GM_config`](./GM_config) | [#470224](https://greasyfork.org/scripts/470224) | 简易的 Tampermonkey 脚本配置库。 |
+| [`greasyfork_enhance`](./greasyfork_enhance) | [#467078](https://greasyfork.org/scripts/467078) | 增进 Greasyfork 浏览体验。 |
+| [`purlfy_for_tm`](./purlfy_for_tm) | [#492480](https://greasyfork.org/scripts/492480) | 终极 URL 净化器 - Tampermonkey 版本。 |
+| [`uhp`](./uhp) | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - 为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。 |
 
 ### 🎨 用户样式
 
-- `ar5iv_plus`: 为 `ar5iv.labs.arxiv.org/html/` 增加各种调整和改进。
-- `arxiv_html_debloate`: 隐藏 `arxiv.org/html/*` 上的不必要元素，让你拥有一个干净的阅读体验。
-- `baidu_debloate`: 隐藏百度站点上的一些垃圾玩意儿，包括 `baike.baidu.com` 和 `jingyan.baidu.com`。
-- `scrollbar_mod`: 轻松定制你的滚动条。
-- `tooltip_mod`: 在触摸屏设备上将 `title` 属性显示为工具提示。
+| 用户样式 | UserStyles.world | 描述 |
+| --- | --- | --- |
+| [`ar5iv_plus`](./ar5iv_plus) | [#18946](https://userstyles.world/style/18946) | 为 `ar5iv.labs.arxiv.org/html/` 增加各种调整和改进。 |
+| [`arxiv_html_debloate`](./arxiv_html_debloate) | [#16559](https://userstyles.world/style/16559) | 隐藏 `arxiv.org/html/*` 上的不必要元素，让你拥有一个干净的阅读体验。 |
+| [`baidu_debloate`](./baidu_debloate) | [#17133](https://userstyles.world/style/17133) | 隐藏百度站点上的一些垃圾玩意儿，包括 `baike.baidu.com`，`jingyan.baidu.com`，`tieba.baidu.com` 和 `fanyi.baidu.com`。 |
+| [`scrollbar_mod`](./scrollbar_mod) | [#16203](https://userstyles.world/style/16203) | 轻松定制你的滚动条。 |
+| [`tooltips_mod`](./tooltips_mod) | [#19461](https://userstyles.world/style/19461) | 在触摸屏设备上将 `title` 属性显示为工具提示。 |
 
 ### 🛠️ 其他
 
-- `bb_batch_reconcile` *: 批量核对 [Blackboard](https://www.blackboard.com/) 系统中的学生成绩。
-- `checkbox_patch` *: 修补某个复选框的 `checked` 属性，使得当 `checked` 值被其他脚本修改时会发出 `change` 事件。
-- `etag_server` *: 简易的提供文件服务的 HTTP 服务器，但使用 `ETag` 而不是 `Last-Modified` 进行缓存。
-- `hover_card` *: 获取 Github 仓库的悬停卡片。
-- `naive_jq` *: 一个简单的 `jq` 的 Node.js 实现，仅用于快速测试。
-- `sanitify_header_id` *: 格式化给定字符串（标题 ID），使其不含表情符号，空格被 `-` 替代。
-- `subnet_helper` *: 将二进制子网掩码转换为人类可读的表示法（点十进制表示法加长度），反之亦然。此外，它还可以提供给定子网中的可用 IP 范围和数量。
-- `url_summary` *: 获取给定 URL 的摘要，包括图标、标题、描述和关键词。
-- `wechat_video` *: 下载微信公众号视频推送中的视频。
+| 代码片段 | 描述 |
+| --- | --- |
+| [`bb_batch_reconcile`](./bb_batch_reconcile) * | 批量核对 [Blackboard](https://www.blackboard.com/) 系统中的学生成绩。 |
+| [`checkbox_patch`](./checkbox_patch) * | 修补某个复选框的 `checked` 属性，使得当 `checked` 值被其他脚本修改时会发出 `change` 事件。 |
+| [`etag_server`](./etag_server) * | 简易的提供文件服务的 HTTP 服务器，但使用 `ETag` 而不是 `Last-Modified` 进行缓存。 |
+| [`hover_card`](./hover_card) * | 获取 Github 仓库的悬停卡片。 |
+| [`naive_jq`](./naive_jq) * | 一个简单的 `jq` 的 Node.js 实现，仅用于快速测试。 |
+| [`sanitify_header_id`](./sanitify_header_id) * | 格式化给定字符串（标题 ID），使其不含表情符号，空格被 `-` 替代。 |
+| [`subnet_helper`](./subnet_helper) * | 将二进制子网掩码转换为人类可读的表示法（点十进制表示法加长度），反之亦然。此外，它还可以提供给定子网中的可用 IP 范围和数量。 |
+| [`url_summary`](./url_summary) * | 获取给定 URL 的摘要，包括图标、标题、描述和关键词。 |
+| [`wechat_video`](./wechat_video) * | 下载微信公众号视频推送中的视频。 |
 
 ## 🚧 未发布
 
-- `ccb_helper`
-- `google_scholar_plus`
-- `kill_adobe`
-- `stickers_wiki_downloader`
+- [`ccb_helper`](./ccb_helper)
+- [`google_scholar_plus`](./google_scholar_plus)
+- [`kill_adobe`](./kill_adobe)
+- [`stickers_wiki_downloader`](./stickers_wiki_downloader)
 
 ## 📄 README 模板
 
