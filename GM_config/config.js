@@ -61,43 +61,9 @@ class GM_config extends EventTarget {
         },
     };
     /**
-     * The proxied config object, to be initialized in the constructor
-     */
-    proxy = {};
-    /**
-     * Whether to show debug information
-     * @type {boolean}
-     */
-    debug = false;
-    /**
-     * The config description object, to be initialized in the constructor
-     */
-    #desc = {};
-    /**
-     * The built-in input functions
-     * @type {Object<string, Function>}
-     */
-    #builtinInputs = {
-        prompt: (prop, orig) => {
-            const s = window.prompt(`🤔 New value for ${this.#getProp(prop).name}:`, orig);
-            return s === null ? orig : s;
-        },
-        current: (prop, orig) => orig,
-        action: (prop, orig) => {
-            this.#dispatch(false, { prop, before: orig, after: orig, remote: false });
-            return orig;
-        },
-        folder: (prop, orig) => {
-            const last = GM_config.#dottedToList(prop).pop();
-            this.down(last);
-            this.#dispatch(false, { prop, before: orig, after: orig, remote: false });
-            return orig;
-        },
-    };
-    /**
      * The built-in types
      */
-    #builtinTypes = {
+    static #builtinTypes = {
         str: { // String
             value: "",
             input: "prompt",
@@ -136,6 +102,40 @@ class GM_config extends EventTarget {
             processor: "same",
             formatter: "folder",
             autoClose: false,
+        },
+    };
+    /**
+     * The proxied config object, to be initialized in the constructor
+     */
+    proxy = {};
+    /**
+     * Whether to show debug information
+     * @type {boolean}
+     */
+    debug = false;
+    /**
+     * The config description object, to be initialized in the constructor
+     */
+    #desc = {};
+    /**
+     * The built-in input functions
+     * @type {Object<string, Function>}
+     */
+    #builtinInputs = {
+        prompt: (prop, orig) => {
+            const s = window.prompt(`🤔 New value for ${this.#getProp(prop).name}:`, orig);
+            return s === null ? orig : s;
+        },
+        current: (prop, orig) => orig,
+        action: (prop, orig) => {
+            this.#dispatch(false, { prop, before: orig, after: orig, remote: false });
+            return orig;
+        },
+        folder: (prop, orig) => {
+            const last = GM_config.#dottedToList(prop).pop();
+            this.down(last);
+            this.#dispatch(false, { prop, before: orig, after: orig, remote: false });
+            return orig;
         },
     };
     /**
@@ -233,7 +233,7 @@ class GM_config extends EventTarget {
             delete desc.$default;
             for (const key in desc) {
                 const fullPath = [...path, key];
-                desc[key] = Object.assign({}, $default, this.#builtinTypes[desc[key].type] ?? {}, desc[key]);
+                desc[key] = Object.assign({}, $default, GM_config.#builtinTypes[desc[key].type] ?? {}, desc[key]);
                 if (desc[key].type === "folder") {
                     initDesc.call(this, desc[key].items, fullPath, $default);
                 } else {

@@ -4,7 +4,7 @@
 
 ## 📖 Introduction
 
-Some miscellaneous code snippets, including userscripts and userstyles. See READMEs under subfolders for detailed description if you're interested in some of them. Note that:
+Some miscellaneous code snippets, including userscripts and userstyles etc. See READMEs under subfolders for detailed description if you're interested in some of them. Note that:
 
 - While most of the snippets are well-tested, snippets under [Unreleased](#-unreleased) are the exceptions.
 - Snippets marked with asterisk (*) are archived and not actively maintained.
