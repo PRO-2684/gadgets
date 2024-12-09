@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           ar5iv Plus
 @namespace      github.com/openstyles/stylus
-@version        1.0.7
+@version        1.0.8
 @description    Enhance ar5iv.labs.arxiv.org/html/ with various tweaks and improvements.
 @author         PRO-2684
 @license     	gpl-3.0
@@ -12,7 +12,8 @@
 @var checkbox copyFix "Copy Fix" 0
 @var checkbox zIndexFix "Z-Index Fix" 1
 ==/UserStyle== */
-@-moz-document url-prefix("https://ar5iv.labs.arxiv.org/html/") {
+@-moz-document url-prefix("https://ar5iv.labs.arxiv.org/html/"),
+    url-prefix("https://ar5iv.org/html/") {
     @css {
         :root {
             --semi-transparent-background-color: rgb(from var(--background-color) r g b / 0.5);
