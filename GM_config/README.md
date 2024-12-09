@@ -32,9 +32,64 @@ This library needs the following permissions to work:
 // @grant        GM_addValueChangeListener // Listen for config changes
 ```
 
-**Delete the comment** if you copied and pasted the code, or there might be errors. You may want to delete `@grant none` (if present). If you used `window` object in your script, try `@grant unsafeWindow` and then `let window = unsafeWindow`.
+**Delete the comment** if you copied and pasted the code, or there might be errors. You may want to delete `@grant none` (if present).
 
-## 📖 Usage
+## 🚀 Quick start
+
+To begin with, you'll need an `Object` to describe how your config is structured. This is termed "config description". Here's an example of a simple config description:
+
+```javascript
+const configDesc = {
+    price: { // Config item id, sometimes called "prop"
+        name: "Price", // Display name
+        type: "int", // Type of the config item
+        value: 100 // Default value
+    },
+    name: {
+        name: "Name",
+        type: "str",
+        value: "John Doe"
+    }
+};
+```
+
+You might want to restrict the range of the integer value. No problem, you can use `min` and `max` to do so. Here's an example:
+
+```javascript
+const configDesc = {
+    price: {
+        name: "Price",
+        type: "int",
+        value: 100,
+        min: 1, // There's no such thing as a free lunch
+        max: 1000 // I can't afford it!
+    },
+    // ...
+}
+```
+
+In this way, you've restricted the value in range $[1, 1000]$. Also, you might want a boolean value or a switch. No worries, we've got you covered - simply use `"bool"` as the `type`. For a complete list of supported types and their usage, kindly refer to the [documentation](#proptype).
+
+After defining your config description, it's time to register it. Here's how you can do it:
+
+```javascript
+const config = new GM_config(configDesc); // Register menu
+```
+
+Quite simple, right? Now you can start using your config. Normally, you want to **query** your config values, **modify** them programmatically under certain conditions, and **listen** for changes for dynamic updates. Here's how you can do it:
+
+```javascript
+console.log(config.get("price")); // Query config
+config.set("price", 100); // Modify config (The displayed menu will be updated automatically)
+config.addEventListener("set", (e) => {
+    const { prop, before, after } = e.detail;
+    console.log(`Config ${prop} is modified from ${before} to ${after}`);
+});
+```
+
+Now that you've successfully set up a simple config menu for your script, it's time to dive deeper into the [documentation](#documentation) to explore more advanced features.
+
+## 📖 Documentation
 
 ### Determine version
 
@@ -237,33 +292,30 @@ console.log(config.get("price")); // *You may now start using the config 🎉*
 
 ### Get/set/list config
 
-After registering the menu, you can get/set config by accessing the `GM_config` instance. e.g:
+After registering the menu, you can get/set/list config by calling `.get(prop)`, `.set(prop, value)` and `.list(path)` on the instance respectively. e.g:
 
 ```javascript
 console.log(config.get("price")); // *Get config*
 config.set("price", 100); // *Modify config* (The menu will be updated automatically)
+console.log(config.list("someFolder.folder")); // *List config items in someFolder.folder*
 ```
 
-Alternatively, operate on `config.proxy` to get/set config. e.g:
+Alternatively, operate on `config.proxy` to get/set/list config. e.g:
 
 ```javascript
 console.log(config.proxy.price); // *Get config*
 config.proxy.price = 100; // *Modify config* (The menu will be updated automatically)
-```
-
-To list config items at given folder, use `config.list(folder)`. e.g:
-
-```javascript
-console.log(config.list("someFolder.folder")); // *List config items in someFolder.folder*
-```
-
-Since the proxy object is iterable deeply proxied, you can also use `for` or `Object.keys` to list all config items. e.g:
-
-```javascript
-for (const [name, value] of Object.entries(config.proxy.someFolder.folder)) {
-    console.log(name, value);
+// *List config items in someFolder.folder*
+for (const [prop, value] of Object.entries(config.proxy.someFolder.folder)) {
+    console.log(prop, value);
 }
 console.log(Object.keys(config.proxy.someFolder.folder));
+```
+
+Since no `.` is allowed in the id, you could also do this:
+
+```javascript
+console.assert(config.proxy["someFolder.folder"].nothing === config.proxy.someFolder.folder.nothing);
 ```
 
 ### Listen for config get/set
@@ -279,19 +331,19 @@ config.addEventListener("get", (e) => {
 });
 ```
 
-It should be noted that:
-
-- `get` event is only triggered when the config is accessed by current script instance
-- `set` event is triggered when the config is modified from *any sources*, making multi-tab synchronization possible
-
-As you might have expected, you can remove the listener by calling `config.removeEventListener(type, listener, options?)`. These two methods are identical to [`EventTarget.addEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) and [`EventTarget.removeEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener).
-
 `e.detail` is a dictionary with the following properties:
 
 - `prop`: The id of the config item accessed/modified. Use dots to represent nested config items.
 - `before`: The value of the config item before the operation.
 - `after`: The value of the config item after the operation.
 - `remote`: Indicating whether this modification is caused by other script instances. Always `false` for `get` event (cannot detect other instances' accesses).
+
+It should be noted that:
+
+- `get` event is only triggered when the config is accessed by current script instance
+- `set` event is triggered when the config is modified from *any sources*, making multi-tab synchronization possible
+
+As you might have expected, you can remove the listener by calling `config.removeEventListener(type, listener, options?)`. These two methods are identical to [`EventTarget.addEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener) and [`EventTarget.removeEventListener`](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener).
 
 This feature is often used to update your script dynamically when config is modified. In this lib, auto-updating menu is implemented by this feature.
 
