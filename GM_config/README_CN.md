@@ -96,7 +96,11 @@ const configDesc = {
 - `str`：字符串
 - `bool`：布尔值
 - `int`：整数
+    - 若指定 `prop.min`，则检查值是否大于等于 `prop.min`
+    - 若指定 `prop.max`，则检查值是否小于等于 `prop.max`
 - `float`：浮点数
+    - 若指定 `prop.min`，则检查值是否大于等于 `prop.min`
+    - 若指定 `prop.max`，则检查值是否小于等于 `prop.max`
 - `action`：点击时调用函数
     - 你不应该覆盖此类型的 `prop.input` 和 `prop.processor` 属性
     - 为实现回调，请使用 `config.addEventListener` 监听此属性的 `get` 事件
@@ -104,6 +108,11 @@ const configDesc = {
     - 你需要覆盖 `prop.items` 来在文件夹下创建配置项，其格式与顶层配置描述 `configDesc` 相同
     - 你可以在文件夹内使用 `$default`
     - 你可以随你喜欢嵌套任意多的文件夹
+    - 通过 `prop.folderDisplay` 来控制文件夹的展现方式
+        - `prefix`：子文件夹名称前缀，默认为空字符串
+        - `suffix`：子文件夹名称后缀，默认为 ` >`
+        - `parentText`：返回上一级的文本，默认为 `< Back`
+        - `parentTitle`：返回上一级的标题，默认为 `Return to parent folder`
     - 通过句点访问嵌套的配置项，例如：
         - `config.get("folder1.folder2.item")`
         - `config.proxy["folder1.folder2.item"]`
@@ -136,11 +145,17 @@ const configDesc = {
 
 #### `prop.input`
 
-> `(prop, orig) => input`
+> `(prop, orig, desc) => input`
 
-配置项的输入方式。可以提供一个字符串（内置输入方式），也可以是一个自定义函数（当菜单项被点击时触发）。它**接受配置项的名称和当前值，返回用户输入值**。若 `prop.input` 和 `$default.input` 均未指定，将使用 `prompt`，即弹出对话框询问输入。注意，“用户输入值”也可以实际上并非由用户输入，而是由脚本提供的。例如内置输入方式 `current`。
+配置项的输入方式。可以提供一个字符串（内置输入方式），也可以是一个自定义函数（当菜单项被点击时触发）。若 `prop.input` 和 `$default.input` 均未指定，将使用 `prompt`，即弹出对话框询问输入。注意，“用户输入值”也可以实际上并非由用户输入，而是由脚本提供的。例如内置输入方式 `current`。
 
-内置输入方式：
+此函数的参数如下：
+
+- `prop`：配置项的 id
+- `orig`：当前值
+- `desc`：配置项的配置描述
+
+内置输入函数：
 
 - `prompt`：弹出对话框询问输入（默认）
 - `current`：使用当前值作为输入（常与 `prop.processor=not` 配合使用，用于开关；或与自定义的 `processor` 配合使用，构成生成器）
@@ -149,28 +164,38 @@ const configDesc = {
 
 #### `prop.processor`
 
-> `(input) => stored`
+> `(prop, input, desc) => stored`
 
-配置项的输入值处理器。可以提供一个字符串（内置处理器），也可以是一个自定义函数。它**接受用户输入的值，返回处理后的值**。若用户输入的值不合法，处理器应该**抛出错误**。若 `prop.processor` 和 `$default.processor` 均未指定，将默认使用 `same` 处理器，即直接返回用户输入。常见的使用情况是将用户输入的字符串转换为整数或者浮点数。
+处理用户输入值，返回应被存储的值。可以提供一个字符串（内置处理器），也可以是一个自定义函数。若用户输入的值不合法，处理器应该**抛出错误**。若 `prop.processor` 和 `$default.processor` 均未指定，将默认使用 `same` 处理器，即直接返回用户输入。常见的使用情况是将用户输入的字符串转换为整数或者浮点数。
+
+此函数的参数如下：
+
+- `prop`：配置项的 id
+- `input`：用户输入的值
+- `desc`：配置项的配置描述
 
 内置处理器：
 
 - `same`：直接返回用户输入的字符串
 - `not`：取反（常与 `prop.input=current` 配合使用，用于开关）
-- `int`：转换为整数
-- `int_range-<min>-<max>`：转换为整数，且限制在 `[<min>, <max>]` 范围内
-    - 不建议省略 `-`，否则可能出错
-    - `<min>` 和 `<max>` 可以是任意整数，若不提供则视为此端无限制
-- `float`：转换为浮点数
-- `float_range-<min>-<max>`：转换为浮点数，且限制在 `[<min>, <max>]` 范围内
-    - 不建议省略 `-`，否则可能出错
-    - `<min>` 和 `<max>` 可以是任意浮点数，若不提供则视为此端无限制
+- `int`：转换为在范围内的整数（若指定）
+    - 若指定 `prop.min`，则检查值是否大于等于 `prop.min`
+    - 若指定 `prop.max`，则检查值是否小于等于 `prop.max`
+- `float`：转换为在范围内的浮点数（若指定）
+    - 若指定 `prop.min`，则检查值是否大于等于 `prop.min`
+    - 若指定 `prop.max`，则检查值是否小于等于 `prop.max`
 
 #### `prop.formatter`
 
-> `(name, value) => string`
+> `(prop, value, desc) => string`
 
-配置项在菜单的展现方式。展现方式可以是一个字符串（内置展现方式），也可以是一个自定义函数。它**接受配置项的名称和当前值，返回菜单项的显示文本**。若 `prop.formatter` 和 `$default.formatter` 均未指定，则使用 `normal` 展现方式。
+控制菜单项的显示文本。展现方式可以是一个字符串（内置展现方式），也可以是一个自定义函数。若 `prop.formatter` 和 `$default.formatter` 均未指定，则使用 `normal` 展现方式。
+
+此函数的参数如下：
+
+- `prop`：配置项的 id
+- `value`：配置项的值
+- `desc`：配置项的配置描述
 
 内置展现方式：
 
@@ -203,11 +228,6 @@ const configDesc = {
         - 若为 `true`，则会立即注册菜单（默认）
         - 若为 `false`，需要用户点击 `Show configuration` 后才会注册配置菜单
     - `debug`：是否开启调试模式。若为 `true`，会输出调试信息。默认为 `false`。（随时可以通过 `config.debug` 来修改）
-    - `folderDisplay`：控制 `folder` 类型的展现方式
-        - `prefix`：文件夹名称前缀，默认为空字符串
-        - `suffix`：文件夹名称后缀，默认为 ` >`
-        - `parentText`：父文件夹的文本，默认为 `< Back`
-        - `parentTitle`：父文件夹的标题，默认为 `Return to parent folder`
 
 ```javascript
 const config = new GM_config(configDesc, { immediate: false }); // *注册配置菜单*

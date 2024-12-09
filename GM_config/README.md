@@ -97,7 +97,11 @@ The type of the config item, used for quickly setting up common properties. Curr
 - `str`: String
 - `bool`: Boolean
 - `int`: Integer
+    - If `prop.min` is provided, it will check if the value is greater than or equal to it
+    - If `prop.max` is provided, it will check if the value is less than or equal to it
 - `float`: Float
+    - If `prop.min` is provided, it will check if the value is greater than or equal to it
+    - If `prop.max` is provided, it will check if the value is less than or equal to it
 - `action`: Calls function(s) when clicked
     - You should not override `prop.input` and `prop.processor` for this type
     - Listen for this property's `get` events using `config.addEventListener` to set up callback(s)
@@ -105,6 +109,11 @@ The type of the config item, used for quickly setting up common properties. Curr
     - You should override `prop.items` to create config items in this folder, which should be in the same format as the top-level config description `configDesc`
     - You may use `$default` in a folder
     - You may nest folders as many as you like
+    - Use `prop.folderDisplay` to customize how a folder is displayed
+        - `prefix`: Prefix of subfolder names. Default value is empty string.
+        - `suffix`: Suffix of subfolder names. Default value is ` >`.
+        - `parentText`: The text indicating going up a level. Default value is `< Back`.
+        - `parentTitle`: The title of going up a level. Default value is `Return to parent folder`.
     - Use dotted names to access nested config items, i.e.
         - `config.get("folder1.folder2.item")`
         - `config.proxy["folder1.folder2.item"]`
@@ -137,11 +146,17 @@ The default value of the config item, can be of any type. Note that you should c
 
 #### `prop.input`
 
-> `(prop, orig) => input`
+> `(prop, orig, desc) => input`
 
-How to get user input. Expected a string (built-in input method) or a function (invoked when user clicks the menu item). It **accepts the name of config item and returns user input**. If not specified by both `prop.input` and `$default.input`, `prompt` will be used, i.e. ask for user input using `prompt()`. Note that "user input value" does not necessarily have to be actually input by user, it can be provided by script. (e.g. built-in input method `current`).
+How to get user input. Expected a string (built-in input method) or a function (invoked when user clicks the menu item). If not specified by both `prop.input` and `$default.input`, `prompt` will be used, i.e. ask for user input using `prompt()`. Note that "user input value" does not necessarily have to be actually input by user, it can be provided by script. (e.g. built-in input method `current`).
 
-Built-in input methods:
+Arguments of the function:
+
+- `prop`: The id of the config item
+- `orig`: Current value
+- `desc`: The config description of the config item
+
+Built-in input functions:
 
 - `prompt`: Ask for user input using `prompt()` (default value)
 - `current`: Current value will be used as user input (Usually used with `prop.processor=not` so as to create a switch, or with custom `processor` to create a generator)
@@ -150,28 +165,38 @@ Built-in input methods:
 
 #### `prop.processor`
 
-> `(input) => stored`
+> `(prop, input, desc) => stored`
 
-How to process user input. Expected a string (built-in processor) or a function. It **accepts user input and returns value to be stored**. **Throw error** if user input is invalid. If not specified by both `prop.formatter` and `$default.formatter`, `same` will be used, i.e. return user input directly. A common use case is to convert user input to integers or floats.
+Process user input and return the value to be stored. Expected a string (built-in processor) or a function. **Throw error** if user input is invalid. If not specified by both `prop.formatter` and `$default.formatter`, `same` will be used, i.e. return user input directly. A common use case is to convert user input to integers or floats.
+
+Arguments of the function:
+
+- `prop`: The id of the config item
+- `input`: User input
+- `desc`: The config description of the config item
 
 Built-in processors:
 
 - `same`: Return user input directly
 - `not`: Invert boolean value (Usually used with `prop.input=current` so as to create a switch)
-- `int`: Convert to integer
-- `int_range-min-max`: Convert to integer in range `[min, max]`
-    - It is not advisable to omit `-`, because there might be errors.
-    - `<min>` and `<max>` can be any integer. Not provided inferred as no limit on that side.
-- `float`: Convert to float
-- `float_range-min-max`: Convert to float in range `[min, max]`
-    - It is not advisable to omit `-`, because there might be errors.
-    - `<min>` and `<max>` can be any float. Not provided inferred as no limit on that side.
+- `int`: Convert to integer in given range (if specified)
+    - If `prop.min` is provided, it will check if the value is greater than or equal to it
+    - If `prop.max` is provided, it will check if the value is less than or equal to it
+- `float`: Convert to float in given range (if specified)
+    - If `prop.min` is provided, it will check if the value is greater than or equal to it
+    - If `prop.max` is provided, it will check if the value is less than or equal to it
 
 #### `prop.formatter`
 
-> `(name, value) => string`
+> `(prop, value, desc) => string`
 
-How to display the menu item. Expected a string (built-in formatter) or a function. It **accepts the name of config item and its current value, and returns the text to be displayed on the menu**. If not specified by both `prop.formatter` and `$default.formatter`, `normal` will be used.
+Controls the text to be displayed on the menu. Expected a string (built-in formatter) or a function. If not specified by both `prop.formatter` and `$default.formatter`, `normal` will be used.
+
+Arguments of the function:
+
+- `prop`: The id of the config item
+- `value`: The value of the config item
+- `desc`: The config description of the config item
 
 Built-in formatters:
 
@@ -204,11 +229,6 @@ After defining your config description, you can register the menu item by constr
         - If set to `true`, the menu item will be registered immediately. (default value)
         - If set to `false`, the user need to click "Show configuration" to register it.
     - `debug`: Whether to enable debug mode. If set to `true`, debug information will be printed to console. Default value is `false`. (Can be modified by `config.debug` at any time)
-    - `folderDisplay`: Controls how a `folder` type config item is displayed.
-        - `prefix`: Prefix of a folder name. Default value is empty string.
-        - `suffix`: Suffix of a folder name. Default value is ` >`.
-        - `parentText`: The text indicating the parent folder. Default value is `< Back`.
-        - `parentTitle`: The title of the parent folder. Default value is `Return to parent folder`.
 
 ```javascript
 const config = new GM_config(configDesc, { immediate: false }); // *Register menu*

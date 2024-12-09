@@ -3,7 +3,7 @@
 // @name:zh-CN   Tampermonkey 配置
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.1.5
+// @version      1.2.0
 // @description  Simple Tampermonkey script config library
 // @description:zh-CN  简易的 Tampermonkey 脚本配置库
 // @author       PRO
@@ -22,43 +22,43 @@ class GM_config extends EventTarget {
      * @type {string}
      */
     static get version() {
-        return "1.1.5";
+        return "1.2.0";
     }
     /**
      * Built-in processors for user input
      * @type {Object<string, Function>}
      */
     static #builtinProcessors = {
-        same: (v) => v,
-        not: (v) => !v,
-        int: (s) => {
+        same: (prop, v, desc) => v,
+        not: (prop, v, desc) => !v,
+        int: (prop, s, desc) => {
             const value = parseInt(s);
             if (isNaN(value)) throw `Invalid value: ${s}, expected integer!`;
-            return value;
-        },
-        int_range: (s, minStr, maxStr) => {
-            const value = parseInt(s);
-            if (isNaN(value)) throw `Invalid value: ${s}, expected integer!`;
-            const min = (minStr === "") ? -Infinity : parseInt(minStr);
-            const max = (maxStr === "") ? +Infinity : parseInt(maxStr);
+            const min = desc.min ?? -Infinity;
+            const max = desc.max ?? +Infinity;
             if (min !== NaN && value < min) throw `Invalid value: ${s}, expected integer >= ${min}!`;
             if (max !== NaN && value > max) throw `Invalid value: ${s}, expected integer <= ${max}!`;
             return value;
         },
-        float: (s) => {
+        float: (prop, s, desc) => {
             const value = parseFloat(s);
             if (isNaN(value)) throw `Invalid value: ${s}, expected float!`;
-            return value;
-        },
-        float_range: (s, minStr, maxStr) => {
-            const value = parseFloat(s);
-            if (isNaN(value)) throw `Invalid value: ${s}, expected float!`;
-            const min = (minStr === "") ? -Infinity : parseFloat(minStr);
-            const max = (maxStr === "") ? +Infinity : parseFloat(maxStr);
+            const min = desc.min ?? -Infinity;
+            const max = desc.max ?? +Infinity;
             if (min !== NaN && value < min) throw `Invalid value: ${s}, expected float >= ${min}!`;
             if (max !== NaN && value > max) throw `Invalid value: ${s}, expected float <= ${max}!`;
             return value;
         },
+    };
+    /**
+     * Built-in formatters for user input
+     * @type {Object<string, Function>}
+     */
+    static #builtinFormatters = {
+        normal: (prop, value, desc) => `${desc.name}: ${value}`,
+        boolean: (prop, value, desc) => `${desc.name}: ${value ? "✔" : "✘"}`,
+        name_only: (prop, value, desc) => desc.name,
+        folder: (prop, value, desc) => `${desc.folderDisplay.prefix}${desc.name}${desc.folderDisplay.suffix}`,
     };
     /**
      * The built-in types
@@ -122,16 +122,16 @@ class GM_config extends EventTarget {
      * @type {Object<string, Function>}
      */
     #builtinInputs = {
-        prompt: (prop, orig) => {
-            const s = window.prompt(`🤔 New value for ${this.#getProp(prop).name}:`, orig);
+        prompt: (prop, orig, desc) => {
+            const s = window.prompt(`🤔 New value for ${desc.name}:`, orig);
             return s === null ? orig : s;
         },
-        current: (prop, orig) => orig,
-        action: (prop, orig) => {
+        current: (prop, orig, desc) => orig,
+        action: (prop, orig, desc) => {
             this.#dispatch(false, { prop, before: orig, after: orig, remote: false });
             return orig;
         },
-        folder: (prop, orig) => {
+        folder: (prop, orig, desc) => {
             const last = GM_config.#dottedToList(prop).pop();
             this.down(last);
             this.#dispatch(false, { prop, before: orig, after: orig, remote: false });
@@ -139,29 +139,9 @@ class GM_config extends EventTarget {
         },
     };
     /**
-     * Built-in formatters for user input
-     * @type {Object<string, Function>}
-     */
-    #builtinFormatters = {
-        normal: (name, value) => `${name}: ${value}`,
-        boolean: (name, value) => `${name}: ${value ? "✔" : "✘"}`,
-        name_only: (name, value) => name,
-        folder: (name, value) => `${this.#folderDisplay.prefix}${name}${this.#folderDisplay.suffix}`,
-    };
-    /**
      * A mapping for the registered menu items, from property to menu id
      */
     #registered = {};
-    /**
-     * Controls the display of the folder
-     * @type { {prefix: string, suffix: string, parent: string} }
-     */
-    #folderDisplay = {
-        prefix: "",
-        suffix: " >",
-        parentText: "< Back",
-        parentTitle: "Return to parent folder",
-    };
     /**
      * The current path we're at
      * @type {string[]}
@@ -185,10 +165,10 @@ class GM_config extends EventTarget {
         return [...this.#currentPath];
     }
     /**
-     * Get the config description at the current path
+     * Get the config items at the current path
      * @type {Object}
      */
-    get #currentDesc() {
+    get #currentItems() {
         if (this.#currentDescCache) return this.#currentDescCache;
         let desc = this.#desc;
         for (const path of this.#currentPath) {
@@ -226,16 +206,25 @@ class GM_config extends EventTarget {
             // Dispatch set event
             this.#dispatch(true, { prop, before, after, remote });
         }
+        /**
+         * Assigns values from source objects to target object (considering that `folderDisplay` is a shallow object)
+         */
+        function assign(obj, ...sources) {
+            // Merge `folderDisplay` objects
+            const folderDisplay = Object.assign(obj.folderDisplay ?? {}, ...sources.map(s => s.folderDisplay ?? {}));
+            // Assign other properties
+            return Object.assign(obj, ...sources, { folderDisplay });
+        }
         // Complete desc & setup value change listeners
         function initDesc(desc, path = [], parentDefault = {}) {
             // Calc true default value for current level
-            const $default = Object.assign({}, parentDefault, desc["$default"] ?? {});
+            const $default = assign({}, parentDefault, desc.$default ?? {});
             delete desc.$default;
-            for (const key in desc) {
-                const fullPath = [...path, key];
-                desc[key] = Object.assign({}, $default, GM_config.#builtinTypes[desc[key].type] ?? {}, desc[key]);
-                if (desc[key].type === "folder") {
-                    initDesc.call(this, desc[key].items, fullPath, $default);
+            for (const prop in desc) {
+                const fullPath = [...path, prop];
+                desc[prop] = assign({}, $default, GM_config.#builtinTypes[desc[prop].type] ?? {}, desc[prop]);
+                if (desc[prop].type === "folder") {
+                    initDesc.call(this, desc[prop].items, fullPath, $default);
                 } else {
                     GM_addValueChangeListener(GM_config.#listToDotted(fullPath), onValueChange.bind(this));
                 }
@@ -245,11 +234,16 @@ class GM_config extends EventTarget {
         initDesc.call(this, this.#desc, [], {
             input: "prompt",
             processor: "same",
-            formatter: "normal"
+            formatter: "normal",
+            folderDisplay: {
+                prefix: "",
+                suffix: " >",
+                parentText: "< Back",
+                parentTitle: "Return to parent folder",
+            }
         });
         // Set options
         this.debug = options.debug ?? this.debug;
-        Object.assign(this.#folderDisplay, options.folderDisplay ?? {});
         // Proxied config
         const proxyCache = {};
         /**
@@ -473,8 +467,8 @@ class GM_config extends EventTarget {
      */
     down(name) {
         // Check if the property exists and is a folder
-        const currentDesc = this.#currentDesc;
-        if (!(name in currentDesc && currentDesc[name].type === "folder")) {
+        const currentItems = this.#currentItems;
+        if (!(name in currentItems && currentItems[name].type === "folder")) {
             this.#log(`❌ Cannot go down to ${name} - not a folder`);
             return false;
         }
@@ -488,6 +482,7 @@ class GM_config extends EventTarget {
      */
     #register() {
         this.#currentDescCache = null; // Clear cache
+        const currentDesc = this.#getProp(this.#currentPath);
         // Unregister old menu items
         for (const prop in this.#registered) {
             const id = this.#registered[prop];
@@ -497,17 +492,17 @@ class GM_config extends EventTarget {
         }
         // Register parent menu item (if not at root)
         if (this.#currentPath.length) {
-            const id = GM_registerMenuCommand(this.#folderDisplay.parentText, () => {
+            const id = GM_registerMenuCommand(currentDesc.folderDisplay.parentText, () => {
                 this.up();
             }, {
                 autoClose: false,
-                title: this.#folderDisplay.parentTitle
+                title: currentDesc.folderDisplay.parentTitle
             });
             this.#registered[null] = id;
             this.#log(`+ Registered menu command: prop=null, id=${id}`);
         }
         // Register new menu items
-        for (const prop in this.#currentDesc) {
+        for (const prop in this.#currentItems) {
             const fullProp = GM_config.#listToDotted([...this.#currentPath, prop]);
             this.#registered[fullProp] = this.#registerItem(fullProp);
         }
@@ -517,27 +512,27 @@ class GM_config extends EventTarget {
      * @param {string} prop The dotted property name
      */
     #registerItem(prop) {
-        const { name, value, input, processor, formatter, accessKey, autoClose, title } = this.#getProp(prop);
+        const desc = this.#getProp(prop);
+        const { name, value, input, processor, formatter, accessKey, autoClose, title } = desc;
         const orig = this.#get(prop, value);
         const inputFunc = typeof input === "function" ? input : this.#builtinInputs[input];
-        const formatterFunc = typeof formatter === "function" ? formatter : this.#builtinFormatters[formatter];
+        const formatterFunc = typeof formatter === "function" ? formatter : GM_config.#builtinFormatters[formatter];
         const option = {
             accessKey: GM_config.#call(accessKey, prop, name, orig),
             autoClose: GM_config.#call(autoClose, prop, name, orig),
             title: GM_config.#call(title, prop, name, orig),
             id: this.#registered[prop],
         };
-        const id = GM_registerMenuCommand(formatterFunc(name, orig), () => {
+        const id = GM_registerMenuCommand(formatterFunc(prop, orig, desc), () => {
             let value;
             try {
-                value = inputFunc(prop, orig);
+                value = inputFunc(prop, orig, desc);
                 if (typeof processor === "function") { // Process user input
-                    value = processor(value);
+                    value = processor(prop, value, desc);
                 } else if (typeof processor === "string") {
-                    const parts = processor.split("-");
-                    const processorFunc = GM_config.#builtinProcessors[parts[0]];
+                    const processorFunc = GM_config.#builtinProcessors[processor];
                     if (processorFunc !== undefined) // Process user input
-                        value = processorFunc(value, ...parts.slice(1));
+                        value = processorFunc(prop, value, desc);
                     else // Unknown processor
                         throw `Unknown processor: ${processor}`;
                 } else {
