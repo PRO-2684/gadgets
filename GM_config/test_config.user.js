@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Test Config
 // @namespace    http://tampermonkey.net/
-// @version      1.1.4
+// @version      1.2.0
 // @description  This is an example to demostrate the usage of [GM_config](greasyfork.org/scripts/470224)
 // @author       PRO
 // @match        https://greasyfork.org/*
@@ -13,7 +13,7 @@
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
 // @grant        unsafeWindow
-// @require      https://update.greasyfork.org/scripts/470224/1498964/Tampermonkey%20Config.js
+// @require      https://update.greasyfork.org/scripts/470224/1499741/Tampermonkey%20Config.js
 // @license      gpl-3.0
 // ==/UserScript==
 
@@ -56,7 +56,8 @@
                 val: {
                     name: "Positive float",
                     value: 11.4,
-                    processor: "float_range-0-" // Convert to float in range [0, +∞)
+                    processor: "float", // Convert to float in range [0, +∞)
+                    min: 0 // Minimum value
                 },
                 someAction: {
                     name: "Some action",
@@ -67,11 +68,17 @@
         },
         someFolder: {
             name: "Some folder",
-            title: "This is a folder",
+            title: "This is a folder starting with `- `, with subfolders ending with `/`",
             type: "folder",
+            folderDisplay: {
+                prefix: "- "
+            },
             items: {
                 $default: {
-                    formatter: (name, value) => `${name}: ${value ? "✔" : "✘"} ~`
+                    formatter: (prop, value, desc) => `${desc.name}: ${value ? "✔" : "✘"} ~`,
+                    folderDisplay: {
+                        suffix: "/"
+                    }
                 },
                 item1: {
                     name: "Item 1",
@@ -79,6 +86,7 @@
                 },
                 folder: {
                     name: "Another nested folder",
+                    title: "My subfolders should also end with `/` (inherited from my parent)",
                     type: "folder",
                     items: {
                         inherited: {
@@ -91,6 +99,10 @@
                         nothing: {
                             name: "Nothing here",
                             type: "action"
+                        },
+                        yetAnotherFolder: {
+                            name: "Yet another folder",
+                            type: "folder"
                         }
                     }
                 }
@@ -100,9 +112,9 @@
             name: "Password", // Display name
             value: "tmp", // Default value
             input: "prompt", // How to get user input (Invoked when user clicks the menu command)
-            processor: (v) => {
-                if (v.length < 3) throw "Too short!";
-                return v;
+            processor: (prop, input, desc) => {
+                if (input.length < 3) throw "Too short!";
+                return input;
             }
         },
     }
@@ -135,4 +147,5 @@
         config.proxy["simple.val"] += 1; // Remember to validate the value before setting it
     }, 5000);
     unsafeWindow.config = config; // Export config object for debugging
+    // Try calling `config.down("someFolder")` in the console...
 })();
