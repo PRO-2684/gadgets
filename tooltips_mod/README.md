@@ -41,7 +41,7 @@ This is a mod version for the [Tooltips on android](https://userstyles.world/sty
 ## Mod Features
 
 - Migrated to Stylus
-- `z-index` set to `9999`, to ensure tooltips are always on top
+- `z-index` set to `2147483647`, to ensure tooltips are always on top
 - Place tooltips on corners of the screen, so as not to disrupt the content (Customizable with `Position`)
 - Built-in themes for Chrome and Edge-like tooltips, or customize your own
 - Set `text-decoration` for elements with `title` attribute
