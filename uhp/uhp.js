@@ -25,7 +25,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1448594/Tampermonkey%20Config.js
+// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js
 // @require      https://update.greasyfork.org/scripts/462234/1391948/Message.js
 // ==/UserScript==
 
@@ -51,78 +51,113 @@
             return list[(idx + 1) % list.length];
         }
     }
-    const configDescs = {
+    const configDesc = {
+        $default: {
+            autoClose: false,
+        },
         passport: {
-            "passport/enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-            "passport/recog_code": boolDesc("Code recognition", "Enable auto recognizing verification code"),
-            "passport/focus": boolDesc("Focus", "Automatically focuses on verification code or \"Login\" button"),
-            "passport/service": boolDesc("Service", "Hint service domain and its credibility"),
-            "passport/auto_login": boolDesc("Auto login", "Automatically clicks \"Login\" button (Official services only)"),
-            "passport/show_fingerprint": boolDesc("Show fingerprint", "Show current browser's fingerprint (DO NOT share this with others)", false),
-            "passport/fake_fingerprint": {
-                name: "Fake fingerprint",
-                value: "",
-                autoClose: false,
-                title: "Fake browser fingerprint to bypass device verification (Leave empty to disable)"
+            name: "Passport",
+            type: "folder",
+            items: {
+                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
+                "recog_code": boolDesc("Code recognition", "Enable auto recognizing verification code"),
+                "focus": boolDesc("Focus", "Automatically focuses on verification code or \"Login\" button"),
+                "service": boolDesc("Service", "Hint service domain and its credibility"),
+                "auto_login": boolDesc("Auto login", "Automatically clicks \"Login\" button (Official services only)"),
+                "show_fingerprint": boolDesc("Show fingerprint", "Show current browser's fingerprint (DO NOT share this with others)", false),
+                "fake_fingerprint": {
+                    name: "Fake fingerprint",
+                    value: "",
+                    autoClose: false,
+                    title: "Fake browser fingerprint to bypass device verification (Leave empty to disable)"
+                }
             }
         },
         mail: {
-            "mail/enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-            "mail/focus": boolDesc("Focus", "Automatically focuses on \"Login\" button"),
-            "mail/remove_watermark": boolDesc("Remove watermark", "Remove the annoying watermark"),
-            "mail/remove_background": boolDesc("Remove background", "Remove the background image"),
+            name: "Mail",
+            type: "folder",
+            items: {
+                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
+                "focus": boolDesc("Focus", "Automatically focuses on \"Login\" button"),
+                "remove_watermark": boolDesc("Remove watermark", "Remove the annoying watermark"),
+                "remove_background": boolDesc("Remove background", "Remove the background image"),
+            }
         },
         rec: {
-            "rec/enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-            "rec/autologin": boolDesc("Auto login", "Automatically clicks \"Login\" button"),
-            "rec/opencurrent": boolDesc("Open in current tab", "Set some links to be opened in current tab (Significantly improves performance)"),
+            name: "Rec",
+            type: "folder",
+            items: {
+                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
+                "autologin": boolDesc("Auto login", "Automatically clicks \"Login\" button"),
+                "opencurrent": boolDesc("Open in current tab", "Set some links to be opened in current tab (Significantly improves performance)"),
+            }
         },
         bb: {
-            "bb/enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-            "bb/autoauth": boolDesc("Auto authenticate", "Automatically authenticate when accessing outside school net"),
-            "bb/autologin": boolDesc("Auto login", "Automatically clicks \"Login\" button"),
-            "bb/showhwstatus": boolDesc("Show homework status", "Query all homework status (may consume some network traffic)"),
+            name: "BB",
+            type: "folder",
+            items: {
+                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
+                "autoauth": boolDesc("Auto authenticate", "Automatically authenticate when accessing outside school net"),
+                "autologin": boolDesc("Auto login", "Automatically clicks \"Login\" button"),
+                "showhwstatus": boolDesc("Show homework status", "Query all homework status (may consume some network traffic)"),
+            }
         },
         jw: {
-            "jw/enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-            "jw/login": {
-                name: "Login",
-                value: "focus",
-                input: values(['none', 'focus', 'click']),
-                autoClose: false,
-                title: "What to do to the login button: 'none', 'focus', 'click'"
-            },
-            "jw/shortcut": boolDesc("Shortcut", "Enable shortcut support"),
-            "jw/score_mask": boolDesc("Score mask", "Allows you to hide/reveal your scores with dblclick"),
-            "jw/detailed_time": boolDesc("Detailed time", "Show start/end time of each class"),
-            "jw/css": boolDesc("CSS improve", "Minor CSS improvements"),
-            "jw/privacy": boolDesc("Privacy", "Hides your personal information", false),
-            "jw/sum": boolDesc("Sum", "Show the sum of credit and period at course table"),
+            name: "JW",
+            type: "folder",
+            items: {
+                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
+                "login": {
+                    name: "Login",
+                    value: "focus",
+                    input: values(['none', 'focus', 'click']),
+                    autoClose: false,
+                    title: "What to do to the login button: 'none', 'focus', 'click'"
+                },
+                "shortcut": boolDesc("Shortcut", "Enable shortcut support"),
+                "score_mask": boolDesc("Score mask", "Allows you to hide/reveal your scores with dblclick"),
+                "detailed_time": boolDesc("Detailed time", "Show start/end time of each class"),
+                "css": boolDesc("CSS improve", "Minor CSS improvements"),
+                "privacy": boolDesc("Privacy", "Hides your personal information", false),
+                "sum": boolDesc("Sum", "Show the sum of credit and period at course table"),
+            }
         },
         young: {
-            "young/enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-            "young/auto_auth": boolDesc("Auto authenticate", "Automatically authenticate when accessing outside school net"),
-            "young/default_tab": {
-                name: "Default tab",
-                value: "/myproject/SignUp",
-                autoClose: false,
-                title: "The tab to be opened on entering"
-            },
-            "young/auto_tab": boolDesc("Auto tab", "Auto navigate to frequently-used submenu"),
-            "young/no_datascreen": boolDesc("No data screen", "Remove annoying data screen image"),
-            "young/shortcut": boolDesc("Shortcut", "Enable shortcut support")
+            name: "Young",
+            type: "folder",
+            items: {
+                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
+                "auto_auth": boolDesc("Auto authenticate", "Automatically authenticate when accessing outside school net"),
+                "default_tab": {
+                    name: "Default tab",
+                    value: "/myproject/SignUp",
+                    autoClose: false,
+                    title: "The tab to be opened on entering"
+                },
+                "auto_tab": boolDesc("Auto tab", "Auto navigate to frequently-used submenu"),
+                "no_datascreen": boolDesc("No data screen", "Remove annoying data screen image"),
+                "shortcut": boolDesc("Shortcut", "Enable shortcut support")
+            }
         },
         wvpn: {
-            "wvpn/enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-            "wvpn/custom_collection": boolDesc("Custom collection", "Allows you to fully customize your collection"),
+            name: "WVPN",
+            type: "folder",
+            items: {
+                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
+                "custom_collection": boolDesc("Custom collection", "Allows you to fully customize your collection"),
+            }
         },
         icourse: {
-            "icourse/enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-            "icourse/filelist": boolDesc("File list", "Show all uploaded files and name them properly"),
-            "icourse/linklist": boolDesc("Link list", "Show all links posted in the review section"),
-            "icourse/css": boolDesc("CSS improve", "Minor CSS improvements"),
-            "icourse/native_top": boolDesc("Native top", "Use native method to scroll to top"),
-            "icourse/shortcut": boolDesc("Shortcut", "Enable shortcut support"),
+            name: "iCourse",
+            type: "folder",
+            items: {
+                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
+                "filelist": boolDesc("File list", "Show all uploaded files and name them properly"),
+                "linklist": boolDesc("Link list", "Show all links posted in the review section"),
+                "css": boolDesc("CSS improve", "Minor CSS improvements"),
+                "native_top": boolDesc("Native top", "Use native method to scroll to top"),
+                "shortcut": boolDesc("Shortcut", "Enable shortcut support"),
+            }
         }
     };
     Qmsg.config({
@@ -234,17 +269,16 @@
         });
     }
 
-
+    const config = new GM_config(configDesc);
+    const configProxy = config.proxy;
     switch (window.location.host) {
         case 'mail.ustc.edu.cn': {
-            const configDesc = configDescs.mail;
-            const config = new GM_config(configDesc);
-            const configProxy = config.proxy;
-            if (!configProxy["mail/enabled"]) {
+            config.down("mail");
+            if (!configProxy["mail.enabled"]) {
                 console.info("[USTC Helper] 'mail' feature disabled.");
                 break;
             }
-            if (configProxy["mail/focus"]) {
+            if (configProxy["mail.focus"]) {
                 timer(() => {
                     const btn = $(".formLogin .submit");
                     if (btn) {
@@ -265,16 +299,15 @@
             break;
         }
         case 'passport.ustc.edu.cn': {
-            const configDesc = configDescs.passport;
-            const configProxy = new GM_config(configDesc).proxy;
+            config.down("passport");
             let is_official = false;
-            if (!configProxy["passport/enabled"]) {
+            if (!configProxy["passport.enabled"]) {
                 console.info("[USTC Helper] 'passport' feature disabled.");
                 break;
             }
             // Code recognition
             const img = $('img.validate-img');
-            if (configProxy["passport/recog_code"] && img) {
+            if (configProxy["passport.recog_code"] && img) {
                 // Adapted from https://greasyfork.org/scripts/431681 - Great thanks to the author @J-Paven!
                 const dim = [128, 32];
                 [img.style.width, img.style.height] = dim.map(x => x + 'px');
@@ -419,7 +452,7 @@
                 $("#footer")?.appendChild(notice);
             }
             function do_fingerprint() {
-                if (configProxy["passport/show_fingerprint"]) {
+                if (configProxy["passport.show_fingerprint"]) {
                     const fingerprint = $("#resultInput").value;
                     log("Original fingerprint: " + fingerprint);
                     document.head.appendChild(document.createElement("style")).textContent = `
@@ -440,8 +473,8 @@
                     notice.innerHTML = `Original fingerprint: <span class="hover-to-show" title="Original fingerprint">${fingerprint}</span>`;
                     $("#footer")?.appendChild(notice);
                 }
-                if (configProxy["passport/fake_fingerprint"]) {
-                    const fingerprint = configProxy["passport/fake_fingerprint"];
+                if (configProxy["passport.fake_fingerprint"]) {
+                    const fingerprint = configProxy["passport.fake_fingerprint"];
                     // Check if the fingerprint is valid (64 characters, consisting of 0-9 and a-f)
                     if (fingerprint.length !== 64 || !/^[0-9a-f]+$/.test(fingerprint)) {
                         log("Invalid fingerprint, ignored.");
@@ -456,9 +489,9 @@
                 }
             }
             function main() {
-                if (configProxy["passport/focus"]) focus();
-                if (configProxy["passport/service"]) hint_service();
-                if (configProxy["passport/auto_login"] && is_official) {
+                if (configProxy["passport.focus"]) focus();
+                if (configProxy["passport.service"]) hint_service();
+                if (configProxy["passport.auto_login"] && is_official) {
                     window.setTimeout(() => {
                         login();
                     }, 1000);
@@ -482,13 +515,12 @@
             break;
         }
         case 'rec.ustc.edu.cn': {
-            const configDesc = configDescs.rec;
-            const configProxy = new GM_config(configDesc).proxy;
-            if (!configProxy["rec/enabled"]) {
+            config.down("rec");
+            if (!configProxy["rec.enabled"]) {
                 console.info("[USTC Helper] 'rec' feature disabled.");
                 break;
             }
-            if (configProxy["rec/opencurrent"]) {
+            if (configProxy["rec.opencurrent"]) {
                 window.webpackJsonp.push_ = window.webpackJsonp.push;
                 window.webpackJsonp.push = (val) => {
                     if (val[0][0] !== "chunk-5ae262a1")
@@ -837,7 +869,7 @@
                     }
                 };
             }
-            if (configProxy["rec/autologin"] && document.location.pathname == '/') {
+            if (configProxy["rec.autologin"] && document.location.pathname == '/') {
                 const app = $("#app");
                 const options = {
                     childList: true,
@@ -852,7 +884,7 @@
                     }
                 });
                 observer.observe(app, options);
-            } else if (configProxy["rec/opencurrent"]) {
+            } else if (configProxy["rec.opencurrent"]) {
                 const app = $("#app");
                 const options = {
                     childList: true,
@@ -873,13 +905,12 @@
             break;
         }
         case 'recapi.ustc.edu.cn': {
-            const configDesc = configDescs.rec;
-            const configProxy = new GM_config(configDesc).proxy;
-            if (!configProxy["rec/enabled"]) {
+            config.down("rec");
+            if (!configProxy["rec.enabled"]) {
                 console.info("[USTC Helper] 'rec' feature disabled.");
                 break;
             }
-            if (configProxy["rec/autologin"]) {
+            if (configProxy["rec.autologin"]) {
                 const btn = $("#ltwo > div > button");
                 if (!btn) {
                     console.error("[USTC Helper] Login button not found!");
@@ -890,17 +921,16 @@
             break;
         }
         case 'www.bb.ustc.edu.cn': {
-            const configDesc = configDescs.bb;
-            const configProxy = new GM_config(configDesc).proxy;
-            if (!configProxy["bb/enabled"]) {
+            config.down("bb");
+            if (!configProxy["bb.enabled"]) {
                 console.info("[USTC Helper] 'bb' feature disabled.");
                 break;
             }
-            if (window.location.pathname == '/nginx_auth/' && configProxy["bb/autoauth"]) {
+            if (window.location.pathname == '/nginx_auth/' && configProxy["bb.autoauth"]) {
                 $('a')?.click();
-            } else if ((window.location.pathname == '/' || window.location.pathname == '/webapps/login/') && configProxy["bb/autologin"]) {
+            } else if ((window.location.pathname == '/' || window.location.pathname == '/webapps/login/') && configProxy["bb.autologin"]) {
                 $('#login > table > tbody > tr > td:nth-child(2) > span > a')?.click();
-            } else if (configProxy["bb/showhwstatus"] && window.location.pathname == '/webapps/blackboard/content/listContent.jsp' && document.getElementById('pageTitleText').children[0].textContent == '作业区') {
+            } else if (configProxy["bb.showhwstatus"] && window.location.pathname == '/webapps/blackboard/content/listContent.jsp' && document.getElementById('pageTitleText').children[0].textContent == '作业区') {
                 const css = document.createElement('style');
                 css.textContent = ".ustc-helper-bb-ignored { opacity: 0.4; } .ustc-helper-bb-ignored > .details { display: none; }";
                 document.head.appendChild(css);
@@ -1000,24 +1030,22 @@
             break;
         }
         case 'jw.ustc.edu.cn': {
-            const configDesc = configDescs.jw;
-            const config = new GM_config(configDesc, { immediate: false });
-            const configProxy = config.proxy;
-            if (!configProxy["jw/enabled"]) {
+            config.down("jw");
+            if (!configProxy["jw.enabled"]) {
                 console.info("[USTC Helper] 'jw' feature disabled.");
                 break;
             }
-            if (configProxy["jw/login"] && window.location.pathname == "/login") {
+            if (configProxy["jw.login"] && window.location.pathname == "/login") {
                 const btn = document.getElementById('login-unified-wrapper');
-                if (configProxy["jw/login"] == 'focus') {
+                if (configProxy["jw.login"] == 'focus') {
                     btn.focus();
-                } else if (configProxy["jw/login"] == 'click') {
+                } else if (configProxy["jw.login"] == 'click') {
                     btn.click();
                 } else {
-                    console.error(`[USTC Helper] Unknown option for jw.login: ${configProxy["jw/login"]}`);
+                    console.error(`[USTC Helper] Unknown option for jw.login: ${configProxy["jw.login"]}`);
                 }
             }
-            if (configProxy["jw/shortcut"] && window.location.pathname == "/home") {
+            if (configProxy["jw.shortcut"] && window.location.pathname == "/home") {
                 timer(() => {
                     const tabList = $("#e-home-tab-list");
                     if (!tabList) return false;
@@ -1051,7 +1079,7 @@
                     });
                 }
             }
-            if (configProxy["jw/score_mask"] && window.location.pathname == "/for-std/grade/sheet") {
+            if (configProxy["jw.score_mask"] && window.location.pathname == "/for-std/grade/sheet") {
                 function get_status(entry) {
                     // Status:
                     // false: Normal display
@@ -1165,7 +1193,7 @@
             };
             setupDynamicStyles("jw", config, jw_css);
             if (window.location.pathname.startsWith("/for-std/course-table")) {
-                if (configProxy["jw/sum"]) {
+                if (configProxy["jw.sum"]) {
                     const table = $("#lessons");
                     if (table) {
                         const rows = table.querySelectorAll("tbody > tr");
@@ -1186,13 +1214,12 @@
             break;
         }
         case 'young.ustc.edu.cn': {
-            const configDesc = configDescs.young;
-            const configProxy = new GM_config(configDesc, { immediate: false }).proxy;
-            if (!configProxy["young/enabled"]) {
+            config.down("young");
+            if (!configProxy["young.enabled"]) {
                 console.info("[USTC Helper] 'young' feature disabled.");
                 break;
             }
-            if (window.location.pathname == '/nginx_auth/' && configProxy["young/auto_auth"]) {
+            if (window.location.pathname == '/nginx_auth/' && configProxy["young.auto_auth"]) {
                 document.getElementsByTagName('a')[0].click();
                 return;
             }
@@ -1201,12 +1228,12 @@
             function main(mutations, observer) {
                 const menu = app.querySelector(".ant-menu-root");
                 if (!menu) return;
-                const default_tab = configProxy["young/default_tab"];
+                const default_tab = configProxy["young.default_tab"];
                 if (default_tab.length) router.push(default_tab);
                 const submenus = menu.querySelectorAll("li.ant-menu-submenu-horizontal:not(.ant-menu-overflowed-submenu) > div");
                 if (!submenus.length) return;
                 observer.disconnect();
-                if (configProxy["young/no_datascreen"]) {
+                if (configProxy["young.no_datascreen"]) {
                     app.querySelector("div.header-index-wide > a").remove();
                     function getCloseBtn() {
                         return app.querySelector("span[pagekey='/dataAnalysis/visual']")?.nextElementSibling;
@@ -1226,7 +1253,7 @@
                         log(success ? "Data screen closed." : "Failed to close data screen.");
                     });
                 }
-                if (configProxy["young/auto_tab"]) {
+                if (configProxy["young.auto_tab"]) {
                     submenus[0].onclick = (e) => {
                         router.push('/dataAnalysis/studentAnalysis');
                         e.stopImmediatePropagation();
@@ -1258,7 +1285,7 @@
                     //     }
                     // });
                 }
-                if (configProxy["young/shortcut"]) {
+                if (configProxy["young.shortcut"]) {
                     const tabList = $(".ant-tabs-nav-animated > div")
                     const tabs = tabList.children;
                     const nav = tabList.parentElement.parentElement;
@@ -1295,13 +1322,12 @@
             break;
         }
         case 'wvpn.ustc.edu.cn': {
-            const configDesc = configDescs.wvpn;
-            const configProxy = new GM_config(configDesc).proxy;
-            if (!configProxy["wvpn/enabled"]) {
+            config.down("wvpn");
+            if (!configProxy["wvpn.enabled"]) {
                 console.info("[USTC Helper] 'wvpn' feature disabled.");
                 break;
             }
-            if (configProxy["wvpn/custom_collection"]) {
+            if (configProxy["wvpn.custom_collection"]) {
                 // let element = $("div.portal-search-input-wrap");
                 const options = {
                     childList: true,
@@ -1498,10 +1524,8 @@
             break;
         }
         case 'icourse.club': {
-            const configDesc = configDescs.icourse;
-            const config = new GM_config(configDesc);
-            const configProxy = config.proxy;
-            if (!configProxy["icourse/enabled"]) {
+            config.down("icourse");
+            if (!configProxy["icourse.enabled"]) {
                 console.info("[USTC Helper] 'icourse' feature disabled.");
                 break;
             }
@@ -1551,20 +1575,20 @@
                 }
                 items.forEach(addItem);
             }
-            if (configProxy["icourse/filelist"]) {
+            if (configProxy["icourse.filelist"]) {
                 generateList("文件列表", "div.review-content a[href^='/uploads/files/']", true);
             }
-            if (configProxy["icourse/linklist"]) {
+            if (configProxy["icourse.linklist"]) {
                 generateList("链接列表", "div.review-content a:not([href^='/uploads/files/'])", false);
             }
-            if (configProxy["icourse/native_top"]) {
+            if (configProxy["icourse.native_top"]) {
                 const goTop = $("#gotop");
                 goTop?.addEventListener("click", (e) => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                     e.stopPropagation();
                 }, { capture: true });
             }
-            if (configProxy["icourse/shortcut"]) {
+            if (configProxy["icourse.shortcut"]) {
                 for (const textArea of $$("textarea")) { // Comment section
                     const submit = textArea.nextElementSibling.firstElementChild;
                     if (submit && submit.tagName == "BUTTON") {
