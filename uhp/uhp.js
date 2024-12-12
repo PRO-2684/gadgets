@@ -3,7 +3,7 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.3.4
+// @version      1.3.5
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
@@ -33,130 +33,110 @@
     'use strict';
     const window = unsafeWindow;
     const log = console.log.bind(console, "[USTC Helper]");
-    function boolDesc(name, title=null, defaultVal=true) {
-        return {
-            name: name,
-            value: defaultVal,
-            input: "current",
-            processor: "not",
-            formatter: "boolean",
-            autoClose: false,
-            title: title
-        };
-    }
-    function values(list) {
-        return function (prop, orig) {
-            const idx = list.indexOf(orig);
-            if (idx == -1) return list[0];
-            return list[(idx + 1) % list.length];
-        }
-    }
     const configDesc = {
         $default: {
             autoClose: false,
         },
         passport: {
-            name: "Passport",
+            name: "Unified Authentication",
             type: "folder",
             items: {
-                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-                "recog_code": boolDesc("Code recognition", "Enable auto recognizing verification code"),
-                "focus": boolDesc("Focus", "Automatically focuses on verification code or \"Login\" button"),
-                "service": boolDesc("Service", "Hint service domain and its credibility"),
-                "auto_login": boolDesc("Auto login", "Automatically clicks \"Login\" button (Official services only)"),
-                "show_fingerprint": boolDesc("Show fingerprint", "Show current browser's fingerprint (DO NOT share this with others)", false),
-                "fake_fingerprint": {
+                enabled: { name: "Enabled", title: "Whether to enable USTC Helper for Unified Authentication", type: "bool", value: true },
+                recog_code: { name: "Code recognition", title: "Enable auto recognizing verification code", type: "bool", value: true },
+                focus: { name: "Focus", title: "Automatically focuses on verification code or login button", type: "bool", value: true },
+                service: { name: "Service", title: "Hint service domain and its credibility", type: "bool", value: true },
+                auto_login: { name: "Auto login", title: "Automatically clicks login button (Official services only)", type: "bool", value: true },
+                show_fingerprint: { name: "Show fingerprint", title: "Show current browser's fingerprint (DO NOT share this with others)", type: "bool" },
+                fake_fingerprint: {
                     name: "Fake fingerprint",
                     value: "",
-                    autoClose: false,
                     title: "Fake browser fingerprint to bypass device verification (Leave empty to disable)"
                 }
             }
         },
         mail: {
-            name: "Mail",
+            name: "USTC Mail",
             type: "folder",
             items: {
-                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-                "focus": boolDesc("Focus", "Automatically focuses on \"Login\" button"),
-                "remove_watermark": boolDesc("Remove watermark", "Remove the annoying watermark"),
-                "remove_background": boolDesc("Remove background", "Remove the background image"),
+                enabled: { name: "Enabled", title: "Whether to enable USTC Helper for USTC Mail", type: "bool", value: true },
+                focus: { name: "Focus", title: "Automatically focuses on login button", type: "bool", value: true },
+                remove_watermark: { name: "Remove watermark", title: "Remove the annoying watermark", type: "bool", value: true },
+                remove_background: { name: "Remove background", title: "Remove the background image", type: "bool", value: true },
             }
         },
         rec: {
             name: "Rec",
             type: "folder",
             items: {
-                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-                "autologin": boolDesc("Auto login", "Automatically clicks \"Login\" button"),
-                "opencurrent": boolDesc("Open in current tab", "Set some links to be opened in current tab (Significantly improves performance)"),
+                enabled: { name: "Enabled", title: "Whether to enable USTC Helper for Rec", type: "bool", value: true },
+                autologin: { name: "Auto login", title: "Automatically clicks login button", type: "bool", value: true },
+                opencurrent: { name: "Open in current tab", title: "Set some links to be opened in current tab (Significantly improves performance)", type: "bool", value: true },
             }
         },
         bb: {
-            name: "BB",
+            name: "BB System",
             type: "folder",
             items: {
-                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-                "autoauth": boolDesc("Auto authenticate", "Automatically authenticate when accessing outside school net"),
-                "autologin": boolDesc("Auto login", "Automatically clicks \"Login\" button"),
-                "showhwstatus": boolDesc("Show homework status", "Query all homework status (may consume some network traffic)"),
+                enabled: { name: "Enabled", title: "Whether to enable USTC Helper for BB System", type: "bool", value: true },
+                autoauth: { name: "Auto authenticate", title: "Automatically authenticate when accessing outside school net", type: "bool", value: true },
+                autologin: { name: "Auto login", title: "Automatically clicks login button", type: "bool", value: true },
+                showhwstatus: { name: "Show homework status", title: "Query all homework status (may consume some network traffic)", type: "bool", value: true },
             }
         },
         jw: {
-            name: "JW",
+            name: "Education Administration System",
             type: "folder",
             items: {
-                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-                "login": {
+                enabled: { name: "Enabled", title: "Whether to enable USTC Helper for Education Administration System", type: "bool", value: true },
+                login: {
                     name: "Login",
-                    value: "focus",
-                    input: values(['none', 'focus', 'click']),
-                    autoClose: false,
-                    title: "What to do to the login button: 'none', 'focus', 'click'"
+                    type: "enum",
+                    value: 1,
+                    options: ['none', 'focus', 'click'],
+                    title: "What to do to the login button"
                 },
-                "shortcut": boolDesc("Shortcut", "Enable shortcut support"),
-                "score_mask": boolDesc("Score mask", "Allows you to hide/reveal your scores with dblclick"),
-                "detailed_time": boolDesc("Detailed time", "Show start/end time of each class"),
-                "css": boolDesc("CSS improve", "Minor CSS improvements"),
-                "privacy": boolDesc("Privacy", "Hides your personal information", false),
-                "sum": boolDesc("Sum", "Show the sum of credit and period at course table"),
+                shortcut: { name: "Shortcut", title: "Enable shortcut support", type: "bool", value: true },
+                score_mask: { name: "Score mask", title: "Allows you to hide/reveal your scores with dblclick", type: "bool", value: true },
+                detailed_time: { name: "Detailed time", title: "Show start/end time of each class", type: "bool", value: true },
+                css: { name: "CSS improve", title: "Minor CSS improvements", type: "bool", value: true },
+                privacy: { name: "Privacy", title: "Hides your personal information", type: "bool" },
+                sum: { name: "Sum", title: "Show the sum of credit and period at course table", type: "bool", value: true },
             }
         },
         young: {
-            name: "Young",
+            name: "Second Classroom",
             type: "folder",
             items: {
-                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-                "auto_auth": boolDesc("Auto authenticate", "Automatically authenticate when accessing outside school net"),
-                "default_tab": {
+                enabled: { name: "Enabled", title: "Whether to enable USTC Helper for Second Classroom", type: "bool", value: true },
+                auto_auth: { name: "Auto authenticate", title: "Automatically authenticate when accessing outside school net", type: "bool", value: true },
+                default_tab: {
                     name: "Default tab",
                     value: "/myproject/SignUp",
-                    autoClose: false,
                     title: "The tab to be opened on entering"
                 },
-                "auto_tab": boolDesc("Auto tab", "Auto navigate to frequently-used submenu"),
-                "no_datascreen": boolDesc("No data screen", "Remove annoying data screen image"),
-                "shortcut": boolDesc("Shortcut", "Enable shortcut support")
+                auto_tab: { name: "Auto tab", title: "Auto navigate to frequently-used submenu", type: "bool", value: true },
+                no_datascreen: { name: "No data screen", title: "Remove annoying data screen image", type: "bool", value: true },
+                shortcut: { name: "Shortcut", title: "Enable shortcut support", type: "bool", value: true }
             }
         },
         wvpn: {
-            name: "WVPN",
+            name: "Web VPN",
             type: "folder",
             items: {
-                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-                "custom_collection": boolDesc("Custom collection", "Allows you to fully customize your collection"),
+                enabled: { name: "Enabled", title: "Whether to enable USTC Helper for Web VPN", type: "bool", value: true },
+                custom_collection: { name: "Custom collection", title: "Allows you to fully customize your collection", type: "bool", value: true },
             }
         },
         icourse: {
-            name: "iCourse",
+            name: "Icourse",
             type: "folder",
             items: {
-                "enabled": boolDesc("Enabled", "Whether to enable USTC Helper for this site"),
-                "filelist": boolDesc("File list", "Show all uploaded files and name them properly"),
-                "linklist": boolDesc("Link list", "Show all links posted in the review section"),
-                "css": boolDesc("CSS improve", "Minor CSS improvements"),
-                "native_top": boolDesc("Native top", "Use native method to scroll to top"),
-                "shortcut": boolDesc("Shortcut", "Enable shortcut support"),
+                enabled: { name: "Enabled", title: "Whether to enable USTC Helper for Icourse", type: "bool", value: true },
+                filelist: { name: "File list", title: "Show all uploaded files and name them properly", type: "bool", value: true },
+                linklist: { name: "Link list", title: "Show all links posted in the review section", type: "bool", value: true },
+                css: { name: "CSS improve", title: "Minor CSS improvements", type: "bool", value: true },
+                native_top: { name: "Native top", title: "Use native method to scroll to top", type: "bool", value: true },
+                shortcut: { name: "Shortcut", title: "Enable shortcut support", type: "bool", value: true },
             }
         }
     };
@@ -195,11 +175,11 @@
             }
         }
         for (const name in styles) {
-            toggleCSS(name, config.proxy[`${host}/${name}`]);
+            toggleCSS(name, config.proxy[`${host}.${name}`]);
         }
         config.addEventListener("set", e => {
-            if (e.detail.prop.startsWith(`${host}/`)) {
-                const name = e.detail.prop.split("/")[1];
+            if (e.detail.prop.startsWith(`${host}.`)) {
+                const name = e.detail.prop.split(".")[1];
                 if (name in styles) {
                     toggleCSS(name, e.detail.after);
                 }
@@ -1037,11 +1017,11 @@
             }
             if (configProxy["jw.login"] && window.location.pathname == "/login") {
                 const btn = document.getElementById('login-unified-wrapper');
-                if (configProxy["jw.login"] == 'focus') {
+                if (configProxy["jw.login"] === 1) {
                     btn.focus();
-                } else if (configProxy["jw.login"] == 'click') {
+                } else if (configProxy["jw.login"] === 2) {
                     btn.click();
-                } else {
+                } else if (configProxy["jw.login"] !== 0) {
                     console.error(`[USTC Helper] Unknown option for jw.login: ${configProxy["jw.login"]}`);
                 }
             }
@@ -1493,7 +1473,7 @@
                                 "_isCollect": false,
                                 "_displayName": name,
                                 "_desc": desc,
-                                "_icon": {
+                                _icon: {
                                     "color": random_color(),
                                     "content": name[0]
                                 }

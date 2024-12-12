@@ -1,6 +1,6 @@
 # 🪄 Functions
 
-1. [Unified authentication](https://passport.ustc.edu.cn/)
+1. [Unified Authentication](https://passport.ustc.edu.cn/)
     - Auto recognize verification code (Adapted from [this script](https://greasyfork.org/scripts/431681) by [@J-Paven](https://greasyfork.org/users/810521))
     - Focus on the captcha input / login button (so you only need to hit `Enter` to login)
     - Prompt service domain, url and its credibility (If the service is provided by a student or teacher, you may contact him/her via email by clicking "Student" or "Staff")
@@ -16,7 +16,7 @@
     - Auto clicking into USTC CAS login page
     - Setting certain links to open at the current tab (can greatly improve performance)
 
-4. [BB System(Online Teaching Platform)](https://www.bb.ustc.edu.cn/)
+4. [BB System (Online Teaching Platform)](https://www.bb.ustc.edu.cn/)
     - Auto clicking login at both main page and the page asking for authentication if you access the site outside the campus network
     - Checking your homework status (Uploaded, Not uploaded, Error)
         - Allows for ignoring homeworks (Skips checking their status)
