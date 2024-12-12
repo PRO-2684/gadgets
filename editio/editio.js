@@ -2,7 +2,7 @@
 // @name         Editio
 // @name:zh-CN   Editio
 // @namespace    http://tampermonkey.net/
-// @version      0.2.1
+// @version      0.2.2
 // @description  Some Visual Studio Code's useful features ported to the web!
 // @description:zh-CN 将 Visual Studio Code 的部分实用功能移植到 Web 上！
 // @tag          productivity
@@ -18,7 +18,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1498964/Tampermonkey%20Config.js
+// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js
 // ==/UserScript==
 
 (function () {
@@ -60,7 +60,7 @@
                     title: "A list of characters that should be paired",
                     type: "str",
                     value: "()[]{}<>\"\"''``",
-                    processor: (input) => {
+                    processor: (prop, input, desc) => {
                         if (input.length % 2 !== 0) {
                             throw new TypeError(`The length should be even, but got ${input.length}`);
                         }
@@ -106,17 +106,17 @@
                     input: (prop, orig) => {
                         return prompt("🤔 Enter the recognized schemes separated by spaces, or leave empty for any", orig.join(" "));
                     },
-                    processor: (input) => {
+                    processor: (prop, input, desc) => {
                         if (input === null) throw new Error("User cancelled the operation");
                         return input.split(" ")
                             .map(s => s.trim())
                             .filter(s => s);
                     },
-                    formatter: (name, value) => {
+                    formatter: (prop, value, desc) => {
                         if (value.length === 0) {
-                            return `${name}: *ANY*`;
+                            return `${desc.name}: *ANY*`;
                         } else {
-                            return `${name}: ${value.join(" ")}`;
+                            return `${desc.name}: ${value.join(" ")}`;
                         }
                     }
                 }
@@ -137,15 +137,24 @@
                     name: "🎚️ Fast scroll sensitivity",
                     title: "Scrolling speed multiplier when pressing `Alt`",
                     type: "int",
+                    min: 1,
+                    max: 10,
                     value: 5,
-                    processor: "int_range-1-10"
                 },
                 consecutiveScrollThreshold: {
                     name: "⏱️ Consecutive scroll threshold",
                     title: "The threshold of time difference for the scroll to be considered consecutive",
                     type: "int",
+                    min: 1,
+                    max: 1000,
                     value: 200,
-                    processor: "int_range-0-1000"
+                },
+                detectionMethod: {
+                    name: "🔍 Detection method",
+                    title: "The method to detect whether an element can be scrolled",
+                    type: "enum",
+                    options: ["Normal", "Hacky", "Both"],
+                    value: 2,
                 }
             }
         },
@@ -369,13 +378,13 @@
         plus: true
     };
     /**
-     * Whether the element can be scrolled.
+     * Detect whether the element can be scrolled using the normal detection method.
      * @param {HTMLElement} el The element.
      * @param {boolean} vertical Whether the scroll is vertical.
      * @param {boolean} plus Whether the scroll is positive (down or right).
      * @returns {boolean} Whether the element can be scrolled.
      */
-    function canScroll(el, vertical = true, plus = true) {
+    function normalDetect(el, vertical = true, plus = true) {
         const style = window.getComputedStyle(el);
         const overflow = vertical ? style.overflowY : style.overflowX;
         const scrollSize = vertical ? el.scrollHeight : el.scrollWidth;
@@ -383,10 +392,37 @@
         const scrollPos = vertical ? el.scrollTop : el.scrollLeft;
         const isScrollable = scrollSize > clientSize;
         const canScrollFurther = plus ? (scrollPos + clientSize < scrollSize) : (scrollPos > 0);
-        if (isScrollable && canScrollFurther && !overflow.includes('visible') && !overflow.includes('hidden')) {
+        return isScrollable && canScrollFurther && !overflow.includes('visible') && !overflow.includes('hidden');
+    }
+    /**
+     * Detect whether the element can be scrolled using a hacky detection method.
+     * @param {HTMLElement} el The element.
+     * @param {boolean} vertical Whether the scroll is vertical.
+     * @param {boolean} plus Whether the scroll is positive (down or right).
+     * @returns {boolean} Whether the element can be scrolled.
+     */
+    function hackyDetect(el, vertical = true, plus = true) {
+        const attrs = vertical ? ["top", "scrollTop"] : ["left", "scrollLeft"];
+        const delta = plus ? 1 : -1;
+        const before = el[attrs[1]]; // Determine `scrollTop`/`scrollLeft` before trying to scroll
+        el.scrollBy({ [attrs[0]]: delta, behavior: "instant" }); // Try to scroll in the specified direction
+        const after = el[attrs[1]]; // Determine `scrollTop`/`scrollLeft` after we've scrolled
+        if (before === after) return false;
+        else {
+            el.scrollBy({ [attrs[0]]: -delta, behavior: "instant" }); // Scroll back if applicable
             return true;
         }
-        return false;
+    }
+    /**
+     * Determine whether the element can be scrolled in the specified direction, respecting user settings.
+     * @param {HTMLElement} el The element.
+     * @param {boolean} vertical Whether the scroll is vertical.
+     * @param {boolean} plus Whether the scroll is positive (down or right).
+     * @returns {boolean} Whether the element can be scrolled.
+     */
+    function canScroll(el, vertical = true, plus = true) {
+        const method = [normalDetect, hackyDetect, (...args) => normalDetect(...args) && hackyDetect(...args)][config.get("mouse.detectionMethod")];
+        return method(el, vertical, plus);
     }
     /**
      * Find the scrollable element that should handle the event.
