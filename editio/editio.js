@@ -2,7 +2,7 @@
 // @name         Editio
 // @name:zh-CN   Editio
 // @namespace    http://tampermonkey.net/
-// @version      0.2.2
+// @version      0.2.3
 // @description  Some Visual Studio Code's useful features ported to the web!
 // @description:zh-CN 将 Visual Studio Code 的部分实用功能移植到 Web 上！
 // @tag          productivity
@@ -18,7 +18,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js
+// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js#md5=525526b8f0b6b8606cedf08c651163c2
 // ==/UserScript==
 
 (function () {
