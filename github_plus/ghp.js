@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.3.1
+// @version      0.3.2
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -18,7 +18,7 @@
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
 // @grant        GM_addElement
-// @require      https://update.greasyfork.org/scripts/470224/1460555/Tampermonkey%20Config.js
+// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js#md5=525526b8f0b6b8606cedf08c651163c2
 // ==/UserScript==
 
 (function() {
@@ -61,22 +61,6 @@
         reset: -1
     };
 
-    function enumType(values) {
-        return { // The value actually stored is the index
-            value: 0, // Default value is the first one
-            input: (prop, orig) => {
-                return (orig + 1) % values.length; // Cycle through the values
-            },
-            processor: (input) => {
-                if (input >= values.length) throw new Error(`Invalid value: ${input}, expected to be less than ${values.length}`);
-                return input;
-            },
-            formatter: (name, value) => {
-                return `${name}: ${values[value]}`;
-            },
-        };
-    }
-
     // Configuration
     const configDesc = {
         $default: {
@@ -96,8 +80,8 @@
                     name: "➡️ Tab Size",
                     title: "Set Tab indentation size",
                     type: "int",
+                    min: 0,
                     value: 4,
-                    processor: "int_range-0-",
                 },
                 cursorBlink: {
                     name: "😉 Cursor Blink",
@@ -126,17 +110,20 @@
                 dashboard: {
                     name: "📰 Dashboard",
                     title: "Configures the dashboard",
-                    ...enumType(["Default", "Hide Copilot", "Hide Feed", "Mobile-Like"]),
+                    type: "enum",
+                    options: ["Default", "Hide Copilot", "Hide Feed", "Mobile-Like"],
                 },
                 leftSidebar: {
                     name: "↖️ Left Sidebar",
                     title: "Configures the left sidebar",
-                    ...enumType(["Default", "Hidden"]),
+                    type: "enum",
+                    options: ["Default", "Hidden"],
                 },
                 rightSidebar: {
                     name: "↗️ Right Sidebar",
                     title: "Configures the right sidebar",
-                    ...enumType(["Default", "Hide 'Latest changes'", "Hide 'Explore repositories'", "Hide Completely"]),
+                    type: "enum",
+                    options: ["Default", "Hide 'Latest changes'", "Hide 'Explore repositories'", "Hide Completely"],
                 },
             },
         },
@@ -275,9 +262,9 @@
 
     // CSS-related features
     const dynamicStyles = {
-        "code.cursorBlink": `[data-testid="navigation-cursor"] { animation: blink 1s step-end infinite; }`,
-        "code.cursorAnimation": `[data-testid="navigation-cursor"] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }`,
-        "code.fullWidth": `#copilot-button-positioner { padding-right: 0; }`,
+        "code.cursorBlink": "[data-testid='navigation-cursor'] { animation: blink 1s step-end infinite; }",
+        "code.cursorAnimation": "[data-testid='navigation-cursor'] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }",
+        "code.fullWidth": "#copilot-button-positioner { padding-right: 0; }",
     };
     for (const prop in dynamicStyles) {
         cssHelper(prop, config.get(prop));
