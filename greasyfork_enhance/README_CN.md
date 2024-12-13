@@ -68,6 +68,7 @@
     - **Sticky pagination**: 使分页栏浮动
     - **Flat layout**: 是否启用扁平布局
     - **Show version**: 在脚本列表中显示版本号
+    - **Navigation bar**: 覆盖导航栏样式 (`default`, `desktop`, `mobile`)
     - **Always show notification**: 总是显示通知小部件
 - **🔧 Other**
     - **Short link**: 展示当前脚本的短链

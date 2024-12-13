@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.8.9
+// @version      0.9.0
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
@@ -13,7 +13,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1498964/Tampermonkey%20Config.js
+// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js#md5=525526b8f0b6b8606cedf08c651163c2
 // @icon         https://raw.githubusercontent.com/greasyfork-org/greasyfork/main/public/images/blacklogo16.png
 // @icon64       https://raw.githubusercontent.com/greasyfork-org/greasyfork/main/public/images/blacklogo96.png
 // @license      gpl-3.0
@@ -22,16 +22,12 @@
 (function () {
     'use strict';
     // Judge if the script should run
-    const no_run = [".json", ".js"];
-    let is_run = true;
+    const { contentType } = document;
+    if (contentType !== "text/html") return;
+
     const idPrefix = "greasyfork-enhance-";
     const name = GM_info.script.name;
-    no_run.forEach((suffix) => {
-        if (window.location.pathname.endsWith(suffix)) {
-            is_run = false;
-        }
-    });
-    if (!is_run) return;
+
     // Config
     const configDesc = {
         $default: {
@@ -74,15 +70,15 @@
                     name: "Min rows to hide",
                     title: "Minimum number of rows to hide",
                     type: "int",
+                    min: 1,
                     value: 10,
-                    processor: "int_range-1-",
                 },
                 tabSize: {
                     name: "Tab size",
                     title: "Set Tab indentation size",
                     type: "int",
+                    min: 0,
                     value: 4,
-                    processor: "int_range-0-",
                 },
                 animation: {
                     name: "Animation",
@@ -126,12 +122,19 @@
                     type: "bool",
                     value: false,
                 },
+                navigationBar: {
+                    name: "Navigation bar",
+                    title: "Override navigation bar style",
+                    type: "enum",
+                    options: ["default", "desktop", "mobile"],
+                    value: 0,
+                },
                 alwaysShowNotification: {
                     name: "Always show notification",
                     title: "Always show the notification widget",
                     type: "bool",
                     value: false,
-                }
+                },
             },
         },
         other: {
@@ -173,7 +176,11 @@
     };
     const config = new GM_config(configDesc);
     // CSS
-    const dynamicStyle = {
+    /**
+     * Dynamic styles for the bool type.
+     * @type {Object<string, string>}
+     */
+    const dynamicStyles = {
         "codeblocks.animation": `
             /* Toggle code animation */
             pre > code { transition: height 0.5s ease-in-out 0s; }
@@ -235,6 +242,17 @@
             #additional-info { width: calc(100% - 2em - 2px); }
         `,
         "display.showVersion": `.script-list > li[data-script-version]::before { content: "@" attr(data-script-version); position: absolute; translate: 0 -1em; color: grey; font-size: smaller; }`,
+    };
+    /**
+     * Dynamic styles for the enum type.
+     * @type {Object<string, Array<string>>}
+     */
+    const enumStyles = {
+        "display.navigationBar": [
+            "/* Default */",
+            "/* Desktop */ #main-header { #site-nav { display: block; } #mobile-nav { display: none; } }",
+            "/* Mobile */ #main-header { #site-nav { display: none; } #mobile-nav { display: block; } }",
+        ]
     };
     // Functions
     const $ = document.querySelector.bind(document);
@@ -359,14 +377,27 @@
         const style = document.head.appendChild(document.createElement("style"));
         style.id = idPrefix + id;
         style.textContent = css;
+        return style;
     }
     function cssHelper(id, enable) {
         const current = document.getElementById(idPrefix + id);
         if (current) {
             current.disabled = !enable;
         } else if (enable) {
-            injectCSS(id, dynamicStyle[id]);
+            injectCSS(id, dynamicStyles[id]);
         }
+    }
+    /**
+     * Helper function to configure enum styles.
+     * @param {string} id The ID of the style.
+     * @param {string} mode The mode to set.
+     */
+    function enumStyleHelper(id, mode) {
+        const style = document.getElementById(idPrefix + id) ?? injectCSS(id, "");
+        style.textContent = enumStyles[id][mode];
+    }
+    for (const prop in enumStyles) {
+        enumStyleHelper(prop, config.get(prop));
     }
     // Basic css
     injectCSS("basic", `
@@ -986,7 +1017,7 @@
     }
 
     // Initialize css
-    for (const prop in dynamicStyle) {
+    for (const prop in dynamicStyles) {
         cssHelper(prop, config.get(prop));
     }
     // Dynamically respond to config changes
@@ -1003,12 +1034,15 @@
         "other.libAlternativeUrl": alternativeURLs,
     };
     config.addEventListener("set", e => {
+        if (e.detail.prop in dynamicStyles) {
+            cssHelper(e.detail.prop, e.detail.after);
+        }
+        if (e.detail.prop in enumStyles) {
+            enumStyleHelper(e.detail.prop, e.detail.after);
+        }
         const callback = callbacks[e.detail.prop];
         if (callback && (e.detail.before !== e.detail.after)) {
             callback(e.detail.after);
-        }
-        if (e.detail.prop in dynamicStyle) {
-            cssHelper(e.detail.prop, e.detail.after);
         }
     });
 })();

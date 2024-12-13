@@ -68,6 +68,7 @@
     - **Sticky pagination**: Make pagination bar sticky
     - **Flat layout**: Use flat layout for script list and descriptions
     - **Show version**: Show version number in script list
+    - **Navigation bar**: Override navigation bar style (`default`, `desktop`, `mobile`)
     - **Always show notification**: Always show the notification widget
 - **🔧 Other**
     - **Short link**: Display a shortened link to current script
