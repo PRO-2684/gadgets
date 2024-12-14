@@ -23,6 +23,8 @@
     - **↗️ Right Sidebar**: 配置右侧栏 (`Default`, `Hide 'Latest changes'`, `Hide 'Explore repositories'`, `Hide Completely`)
 - **📦 Release Features**
     - **⬆️ Release Uploader**: 显示 Release 中文件的上传者。
+        - 如果上传者是用户，则悬停时显示用户悬停卡片。
+        - 如果上传者是 GitHub App，则着色为绿。
     - **📥 Release Downloads**: 显示 Release 中文件的下载次数。
     - **📊 Release Histogram**: 显示 Release 中各文件的下载次数直方图。
         - 如果只有零个或一个 Release 文件，则不会显示。
@@ -40,9 +42,15 @@
 "Assests" 部分示例
 </summary>
 
-GitHub 上 [一个 Release](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0) "Assests" 部分的示例，启用了 `Release Downloads`, `Release Uploader` 和 `Release Histogram`
+下述 Release "Assests" 部分的示例均启用了 `Release Downloads`, `Release Uploader` 和 `Release Histogram`。
 
-![](./images/assets.jpg)
+[microsoft/terminal@v1.22.2702.0](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0):
+
+![microsoft/terminal@v1.22.2702.0](./images/assets-1.jpg)
+
+[PRO-2684/GM_config@v1.2.1](https://github.com/PRO-2684/GM_config/releases/tag/v1.2.1):
+
+![PRO-2684/GM_config@v1.2.1](./images/assets-2.jpg)
 
 </details>
 
@@ -69,7 +77,7 @@ GitHub 上 [一个 Release](https://github.com/microsoft/terminal/releases/tag/v
 个人访问令牌示例设置
 </summary>
 
-![](./token.jpeg)
+![](./images/token.jpeg)
 
 </details>
 

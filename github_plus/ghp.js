@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.3.2
+// @version      0.3.3
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -412,10 +412,20 @@
      */
     function createUploaderLink(uploader) {
         const link = document.createElement("a");
-        link.textContent = "@" + uploader.name;
         link.href = uploader.url;
-        link.title = `Uploaded by @${uploader.name}`;
-        link.setAttribute("class", "color-fg-muted text-sm-left flex-auto ml-md-3 nowrap");
+        link.setAttribute("class", "text-sm-left flex-auto ml-md-3 nowrap");
+        if (uploader.url.startsWith(`https://${topDomain}/apps/`)) {
+            link.classList.add("color-fg-success");
+            // Remove suffix `[bot]` from the name if exists
+            const name = uploader.name.endsWith("[bot]") ? uploader.name.slice(0, -5) : uploader.name;
+            link.title = `Uploaded by GitHub App @${name}`;
+            link.textContent = `@${name}`;
+        } else {
+            link.classList.add("color-fg-muted");
+            link.setAttribute("data-hovercard-url", `/users/${uploader.name}/hovercard`);
+            link.title = `Uploaded by @${uploader.name}`;
+            link.textContent = `@${uploader.name}`;
+        }
         return link;
     }
     /**

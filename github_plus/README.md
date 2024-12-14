@@ -23,6 +23,8 @@
     - **↗️ Right Sidebar**: Configures the right sidebar (`Default`, `Hide 'Latest changes'`, `Hide 'Explore repositories'`, `Hide Completely`)
 - **📦 Release Features**
     - **⬆️ Release Uploader**: Show uploader of release assets.
+        - Shows a user hover card on hover if the uploader is a user.
+        - Colored as green if the uploader is a GitHub App.
     - **📥 Release Downloads**: Show download counts of release assets.
     - **📊 Release Histogram**: Show a histogram of download counts for each release asset.
         - Does not show up if there is only zero or one release asset.
@@ -40,9 +42,15 @@
 Example "Assets" section
 </summary>
 
-Example "Assets" section of [a release](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0) on GitHub, with `Release Downloads`, `Release Uploader` and `Release Histogram` enabled
+Following example release "Assets" section has `Release Downloads`, `Release Uploader` and `Release Histogram` enabled.
 
-![](./images/assets.jpg)
+[microsoft/terminal@v1.22.2702.0](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0):
+
+![microsoft/terminal@v1.22.2702.0](./images/assets-1.jpg)
+
+[PRO-2684/GM_config@v1.2.1](https://github.com/PRO-2684/GM_config/releases/tag/v1.2.1):
+
+![PRO-2684/GM_config@v1.2.1](./images/assets-2.jpg)
 
 </details>
 
@@ -69,7 +77,7 @@ Example Dashboard, with `📰 Dashboard` set to `Mobile-Like`, `↖️ Left Side
 Example setup for personal access token
 </summary>
 
-![](./token.jpeg)
+![](./images/token.jpeg)
 
 </details>
 
