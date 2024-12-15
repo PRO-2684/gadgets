@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.9.0
+// @version      0.9.1
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
@@ -134,6 +134,37 @@
                     title: "Always show the notification widget",
                     type: "bool",
                     value: false,
+                },
+            },
+        },
+        credentials: {
+            name: "🔑 Credentials",
+            type: "folder",
+            items: {
+                autoLogin: {
+                    name: "*Auto login",
+                    title: "Automatically login to Greasy Fork, if not already (only support email/password login)",
+                    type: "enum",
+                    options: ["Never", "HomepageOnly", "Always"],
+                },
+                captureCredentials: {
+                    name: "Capture credentials",
+                    title: "Automatically save email and password after login attempt, overwriting existing values",
+                    type: "bool",
+                    value: false,
+                },
+                email: {
+                    name: "Email",
+                    title: "Email address for auto login",
+                    type: "text",
+                    value: "",
+                },
+                password: {
+                    name: "Password",
+                    title: "Password for auto login",
+                    type: "password",
+                    value: "",
+                    formatter: (prop, value, desc) => `${desc.name}: ${value ? "*".repeat(value.length) : ""}`,
                 },
             },
         },
@@ -926,6 +957,95 @@
     }
     alwaysShowNotification(config.get("display.alwaysShowNotification"));
 
+    // Credenials
+    // Auto login
+    async function login(email, password) {
+        log("Login:", email, "*".repeat(password.length));
+        const initReq = await fetch("/users/sign_in", {
+            method: "GET",
+            credentials: "same-origin",
+            headers: {
+                "Accept": "text/html",
+            }
+        });
+        const text = await initReq.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, "text/html");
+        const fd = new FormData(doc.querySelector("form#new_user"));
+        fd.set("user[email]", email);
+        fd.set("user[password]", password);
+        fd.set("user[remember_me]", "1");
+
+        const loginReq = await fetch(initReq.url, {
+            method: "POST",
+            credentials: "same-origin",
+            body: fd,
+            headers: {
+                "Accept": "text/html",
+            }
+        });
+        log("Login request:", loginReq);
+        return loginReq.ok;
+    }
+    function autoLogin(mode) {
+        if (mode === 0 || $("#nav-user-info .user-profile-link")) return; // Not enabled or already logged in
+        if (mode === 1 && !$("#home-script-nav")) return; // Not on the home page
+        // Validate credentials
+        const email = config.get("credentials.email");
+        const password = config.get("credentials.password");
+        if (!email || !password || !email.includes("@")) {
+            log("Invalid credentials - skipping auto login");
+            return;
+        }
+        // Login
+        const hint = $("#nav-user-info > .sign-in-link > a");
+        hint.textContent = "[GFE] Logging in...";
+        hint.title = `[${name}] Auto login in progress`;
+        hint.setAttribute("href", "javascript:void(0)");
+        if (login(email, password)) {
+            log("Auto login successful, will refresh in a moment");
+            hint.textContent = "[GFE] Logged in, refreshing...";
+            hint.title = `[${name}] Auto login successful, will refresh in a moment`;
+            setTimeout(() => {
+                location.reload();
+            }, 3000);
+        } else {
+            log("Login failed, auto login disabled");
+            hint.textContent = "[GFE] Login failed";
+            hint.title = `[${name}] Login failed, auto login disabled`;
+            config.set("credentials.autoLogin", 0);
+        }
+    }
+    autoLogin(config.get("credentials.autoLogin"));
+    // Capture credentials
+    function onSubmit(e) {
+        log("Login attempt detected");
+        e.preventDefault(); // DEBUG
+        const fd = new FormData(e.target);
+        // Extract email and password
+        const email = fd.get("user[email]");
+        const password = fd.get("user[password]");
+        // If both are present...
+        if (email && password) {
+            // ...then capture the credentials
+            log("Captured credentials");
+            config.set("credentials.email", email);
+            config.set("credentials.password", password);
+        }
+    }
+    let captureEnabled = false;
+    function captureCredentials(enable) {
+        if (!location.pathname.endsWith("/users/sign_in") || captureEnabled === enable) return;
+        const form = $("form#new_user");
+        if (!form) return;
+        if (enable) {
+            form.addEventListener("submit", onSubmit);
+        } else {
+            form.removeEventListener("submit", onSubmit);
+        }
+        captureEnabled = enable;
+    }
+    captureCredentials(config.get("credentials.captureCredentials"));
     // Other
     // Short link
     function shortLink(enable) {
@@ -1030,6 +1150,7 @@
         "codeblocks.metadata": metadata,
         "display.flatLayout": flatLayout,
         "display.alwaysShowNotification": alwaysShowNotification,
+        "credentials.captureCredentials": captureCredentials,
         "other.shortLink": shortLink,
         "other.libAlternativeUrl": alternativeURLs,
     };

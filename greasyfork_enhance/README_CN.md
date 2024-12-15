@@ -4,6 +4,7 @@
 
 ## 🪄 功能
 
+- 自动登录
 - 过滤 (隐藏) 名称与给定正则表达式匹配的脚本 (以下是一些示例)
     - `.{30,}`: 隐藏名称长度大于 30 的脚本
     - `网盘|网课|网购`: 隐藏包含 `网盘`、`网课` 或 `网购` 的脚本
@@ -70,6 +71,14 @@
     - **Show version**: 在脚本列表中显示版本号
     - **Navigation bar**: 覆盖导航栏样式 (`default`, `desktop`, `mobile`)
     - **Always show notification**: 总是显示通知小部件
+- **🔑 Credentials** (实验性功能)
+    - **\*Auto login**: 自动登录到 Greasy Fork (仅支持邮箱/密码登录)
+        - `Never`: 从不自动登录
+        - `HomepageOnly`: 仅在主页自动登录
+        - `Always`: 总是自动登录
+    - **Capture credentials**: 登录时自动保存邮箱和密码，覆盖现有值
+    - **Email**: 用于自动登录的邮箱地址
+    - **Password**: 用于自动登录的密码
 - **🔧 Other**
     - **Short link**: 展示当前脚本的短链
     - **Alternative URLs for library**: 展示库的其他可用网址

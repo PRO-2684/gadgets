@@ -4,6 +4,7 @@
 
 ## 🪄 Functions
 
+- Auto login
 - Filter out (hides) scripts whose name matches the given regular expression, disabled when left empty (examples listed below)
     - `.{30,}`: Hide scripts whose name length is greater than 30
     - `网盘|网课|网购`: Hide scripts containing `网盘`, `网课`, or `网购`
@@ -70,6 +71,14 @@
     - **Show version**: Show version number in script list
     - **Navigation bar**: Override navigation bar style (`default`, `desktop`, `mobile`)
     - **Always show notification**: Always show the notification widget
+- **🔑 Credentials** (Experimental)
+    - **\*Auto login**: Automatically login to Greasy Fork, if not already (only support email/password login)
+        - `Never`: Never auto login
+        - `HomepageOnly`: Auto login only on homepage
+        - `Always`: Always auto login
+    - **Capture credentials**: Automatically save email and password after login attempt, overwriting existing values
+    - **Email**: Email address for auto login
+    - **Password**: Password for auto login
 - **🔧 Other**
     - **Short link**: Display a shortened link to current script
     - **Alternative URLs for library**: Show a list of alternative URLs for a given library
