@@ -72,7 +72,7 @@
     - **Navigation bar**: Override navigation bar style (`default`, `desktop`, `mobile`)
     - **Always show notification**: Always show the notification widget
 - **🔑 Credentials** (Experimental)
-    - **\*Auto login**: Automatically login to Greasy Fork, if not already (only support email/password login)
+    - **\*Auto login**: Automatically login to Greasy Fork, if not already (only support email/password login, without 2FA)
         - `Never`: Never auto login
         - `HomepageOnly`: Auto login only on homepage
         - `Always`: Always auto login

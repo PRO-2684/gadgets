@@ -72,7 +72,7 @@
     - **Navigation bar**: 覆盖导航栏样式 (`default`, `desktop`, `mobile`)
     - **Always show notification**: 总是显示通知小部件
 - **🔑 Credentials** (实验性功能)
-    - **\*Auto login**: 自动登录到 Greasy Fork (仅支持邮箱/密码登录)
+    - **\*Auto login**: 自动登录到 Greasy Fork (仅支持无 2FA 的邮箱/密码登录)
         - `Never`: 从不自动登录
         - `HomepageOnly`: 仅在主页自动登录
         - `Always`: 总是自动登录
