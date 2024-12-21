@@ -1,0 +1,88 @@
+/* ==UserStyle==
+@name           Cinnamon
+@namespace      github.com/PRO-2684
+@version        0.1.0
+@description    A UserStyle for Cinny, the Matrix client.
+@author         PRO-2684
+@license     	gpl-3.0
+@preprocessor   stylus
+@var checkbox   HideQuickActions      "¶ Hide Quick Actions" 0
+@var checkbox   HideAllButtons        "¶ Hide All Buttons" 0
+@var checkbox   HideFormattingButton  "↣ Hide Formatting" 0
+@var checkbox   HideStickersButton    "↣ Hide Stickers" 0
+@var checkbox   HideEmojiButton       "↣ Hide Emoji" 0
+@var checkbox   HideSendButton        "↣ Hide Send" 0
+@var checkbox   HideFollowingHints    "¶ Hide Conversation Following Hints" 0
+==/UserStyle== */
+
+@-moz-document domain("app.cinny.in") {
+    #appBody > #root > div:first-of-type { /* App container */
+        > div:nth-of-type(1) { /* Navbar (Left-most) */
+        }
+        > div:nth-of-type(2) > div:first-of-type { /* Main container */
+            > div:nth-of-type(1) > div:first-of-type { /* Sidebar (Left) */
+            }
+            > div:nth-of-type(3) > div:first-of-type { /* Main Chat (Middle) */
+                > header { /* Chat header */
+                }
+                > div:nth-of-type(1) > div:first-of-type > div[data-x-scrollbar-width] > div:first-of-type  { /* Message container */
+                    > div[data-message-item][data-message-id] { /* Messages */
+                        if (HideQuickActions) {
+                            > div._1qcw1441 { /* Quick actions */
+                                display: none;
+                            }
+                        }
+                        > div.prxiv40.prxiv41 {
+                            > div:nth-of-type(1) { /* Avatar */
+                            }
+                            > div:nth-of-type(2) { /* Message content */
+                            }
+                        }
+                    }
+                }
+                > div:nth-of-type(2) {
+                    > div:first-of-type > div:first-of-type > div:first-of-type > div:first-of-type { /* Chat input container */
+                        > div:nth-of-type(1) { /* Upload button */
+                        }
+                        > div:nth-of-type(2) > div[data-editable-name="RoomInput"] { /* Input field */
+                        }
+                        > div:nth-of-type(3) { /* Buttons */
+                            if (HideAllButtons) {
+                                display: none;
+                            } else {
+                                > button { /* All buttons */
+                                    if (HideFormattingButton) {
+                                        &:nth-of-type(1) { /* Formatting */
+                                            display: none;
+                                        }
+                                    }
+                                    if (HideStickersButton) {
+                                        &:nth-of-type(2) { /* Stickers */
+                                            display: none;
+                                        }
+                                    }
+                                    if (HideEmojiButton) {
+                                        &:nth-of-type(3) { /* Emoji */
+                                            display: none;
+                                        }
+                                    }
+                                    if (HideSendButton) {
+                                        &:nth-of-type(4) { /* Send */
+                                            display: none;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (HideFollowingHints) {
+                        margin-bottom: 0.5em;
+                        > button:first-of-type { /* Conversation following hints */
+                            display: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

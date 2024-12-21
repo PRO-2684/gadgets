@@ -55,6 +55,7 @@
 ## 🚧 未发布
 
 - [`ccb_helper`](./ccb_helper)
+- [`cinnamon`](./cinnamon)
 - [`google_scholar_plus`](./google_scholar_plus)
 - [`kill_adobe`](./kill_adobe)
 - [`stickers_wiki_downloader`](./stickers_wiki_downloader)
