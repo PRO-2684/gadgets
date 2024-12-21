@@ -55,12 +55,15 @@
 > Config marked with `*` requires refreshing to take effect
 
 - **🔎 Filter and Search**
+    - **\*Anchor**: Show anchor for each heading
+    - **\*Outline**: Show an outline for the page, if your screen is wide enough
     - **Shortcut**: Enable keyboard shortcuts
     - **Regex filter**: Use regex to filter out matching scripts
     - **\*Search syntax**: Enable partial search syntax for Greasy Fork search bar
 - **📝 Code blocks**
-    - **Auto hide code**: Hide long code blocks by default
-    - **Min rows to hide**: Minimum number of rows to hide
+    - **\*Toolbar**: Show toolbar for code blocks, which allows copying and toggling code
+    - **Auto hide code**: Hide long code blocks by default (Need "\*Toolbar" to be enabled)
+    - **Min rows to hide**: Minimum number of rows to hide (Need "\*Toolbar" to be enabled)
     - **Tab size**: Set Tab indentation size
     - **Animation**: Enable animation for toggling code blocks
     - **Metadata**: Parses certain important script metadata and displays it on the script code page
@@ -69,7 +72,10 @@
     - **Sticky pagination**: Make pagination bar sticky
     - **Flat layout**: Use flat layout for script list and descriptions
     - **Show version**: Show version number in script list
-    - **Navigation bar**: Override navigation bar style (`default`, `desktop`, `mobile`)
+    - **Navigation bar**: Override navigation bar style
+        - `Default`: Use default style
+        - `Desktop`: Use desktop style
+        - `Mobile`: Use mobile style
     - **Always show notification**: Always show the notification widget
 - **🔑 Credentials** (Experimental)
     - **\*Auto login**: Automatically login to Greasy Fork, if not already (only support email/password login, without 2FA)

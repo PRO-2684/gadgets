@@ -55,12 +55,15 @@
 > 用 `*` 标记的配置项需要刷新以生效
 
 - **🔎 Filter and Search**
+    - **\*Anchor**: 为每一个标题展示锚点
+    - **\*Outline**: 为页面展示大纲，如果屏幕足够宽
     - **Shortcut**: 启用快捷键
     - **Regex filter**: 使用正则表达式过滤匹配的脚本
     - **\*Search syntax**: 启用搜索语法
 - **📝 Code blocks**
-    - **Auto hide code**: 是否自动隐藏长代码片段
-    - **Min rows to hide**: 自动隐藏的最小行数
+    - **\*Toolbar**: 在代码块上展示工具栏，允许你复制或隐藏代码
+    - **Auto hide code**: 是否自动隐藏长代码片段 (需要启用 "\*Toolbar")
+    - **Min rows to hide**: 自动隐藏的最小行数 (需要启用 "\*Toolbar")
     - **Tab size**: Tab 缩进大小
     - **Animation**: 启用动画
     - **Metadata**: 解析部分重要的脚本元数据并在脚本代码页显示
@@ -69,7 +72,10 @@
     - **Sticky pagination**: 使分页栏浮动
     - **Flat layout**: 是否启用扁平布局
     - **Show version**: 在脚本列表中显示版本号
-    - **Navigation bar**: 覆盖导航栏样式 (`default`, `desktop`, `mobile`)
+    - **Navigation bar**: 覆盖导航栏样式
+        - `Default`: 使用默认样式
+        - `Desktop`: 使用桌面样式
+        - `Mobile`: 使用移动样式
     - **Always show notification**: 总是显示通知小部件
 - **🔑 Credentials** (实验性功能)
     - **\*Auto login**: 自动登录到 Greasy Fork (仅支持无 2FA 的邮箱/密码登录)

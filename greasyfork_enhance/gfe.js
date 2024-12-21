@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.9.1
+// @version      0.9.2
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
@@ -37,6 +37,18 @@
             name: "🔎 Filter and Search",
             type: "folder",
             items: {
+                anchor: {
+                    name: "*Anchor",
+                    title: "Show anchor for each heading",
+                    type: "bool",
+                    value: true,
+                },
+                outline: {
+                    name: "*Outline",
+                    title: "Show an outline for the page, if your screen is wide enough",
+                    type: "bool",
+                    value: true,
+                },
                 shortcut: {
                     name: "Shortcut",
                     title: "Enable keyboard shortcuts",
@@ -60,6 +72,12 @@
             name: "📝 Code blocks",
             type: "folder",
             items: {
+                toolbar: {
+                    name: "*Toolbar",
+                    title: "Show toolbar for code blocks, which allows copying and toggling code",
+                    type: "bool",
+                    value: true,
+                },
                 autoHideCode: {
                     name: "Auto hide code",
                     title: "Hide long code blocks by default",
@@ -126,7 +144,7 @@
                     name: "Navigation bar",
                     title: "Override navigation bar style",
                     type: "enum",
-                    options: ["default", "desktop", "mobile"],
+                    options: ["Default", "Desktop", "Mobile"],
                     value: 0,
                 },
                 alwaysShowNotification: {
@@ -285,7 +303,7 @@
             "/* Mobile */ #main-header { #site-nav { display: none; } #mobile-nav { display: block; } }",
         ]
     };
-    // Functions
+    // Common Helper Functions
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
     const body = $("body");
@@ -293,116 +311,6 @@
         if (config.get("other.debug")) {
             console.log(`[${name}]`, ...args);
         }
-    }
-    function sanitify(s) {
-        // Remove emojis (such a headache)
-        s = s.replaceAll(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDEFF]|\uFE0F)/g, "");
-        // Trim spaces and newlines
-        s = s.trim();
-        // Replace spaces
-        s = s.replaceAll(" ", "-");
-        s = s.replaceAll("%20", "-");
-        // No more multiple "-"
-        s = s.replaceAll(/-+/g, "-");
-        return s;
-    }
-    function process(outline, node) { // Add anchor and assign id to given node; Add to outline. Return true if node is actually processed.
-        if (node.childElementCount > 1 || node.classList.length > 0) return false; // Ignore complex nodes
-        const text = node.textContent;
-        if (!node.id) { // If the node has no id
-            node.id = sanitify(text); // Then assign id
-        }
-        // Add anchors
-        const anchor = node.appendChild(document.createElement('a'));
-        anchor.className = 'anchor';
-        anchor.href = '#' + node.id;
-        const link = outline.appendChild(document.createElement("li"))
-            .appendChild(document.createElement("a"));
-        link.href = "#" + node.id;
-        link.text = text;
-        return true;
-    }
-    async function animate(node, animation) {
-        return new Promise((resolve, reject) => {
-            node.classList.add("animate__animated", "animate__" + animation);
-            if (node.getAnimations().length == 0) {
-                node.classList.remove("animate__animated", "animate__" + animation);
-                reject("No animation available");
-            }
-            node.addEventListener('animationend', e => {
-                e.stopPropagation();
-                node.classList.remove("animate__animated", "animate__" + animation);
-                resolve("Animation ended");
-            }, { once: true });
-        });
-    }
-    async function transition(node, height) {
-        return new Promise((resolve, reject) => {
-            node.style.height = height;
-            if (node.getAnimations().length == 0) {
-                resolve("No transition available");
-            }
-            node.addEventListener('transitionend', e => {
-                e.stopPropagation();
-                resolve("Transition ended");
-            }, { once: true });
-        });
-    }
-    function copyCode() {
-        const code = this.parentNode.nextElementSibling;
-        const text = code.textContent;
-        navigator.clipboard.writeText(text).then(() => {
-            this.textContent = "Copied!";
-            animate(this, "tada").then(() => {
-                this.textContent = "Copy code";
-            }, () => {
-                window.setTimeout(() => {
-                    this.textContent = "Copy code";
-                }, 1000);
-            });
-        });
-    }
-    function toggleCode() {
-        const code = this.parentNode.nextElementSibling;
-        if (code.style.height == "0px") {
-            code.style.willChange = "height";
-            transition(code, code.getAttribute("data-height")).then(() => {
-                code.style.willChange = "";
-            });
-            animate(this, "fadeOut").then(() => {
-                this.textContent = "Hide code";
-                animate(this, "fadeIn");
-            }, () => {
-                this.textContent = "Hide code";
-            });
-        } else {
-            code.style.willChange = "height";
-            transition(code, "0px").then(() => {
-                code.style.willChange = "";
-            });
-            animate(this, "fadeOut").then(() => {
-                this.textContent = "Show code";
-                animate(this, "fadeIn");
-            }, () => {
-                this.textContent = "Show code";
-            });
-        }
-    }
-    function createToolbar() {
-        const toolbar = document.createElement("div");
-        const copy = toolbar.appendChild(document.createElement("a"));
-        const toggle = toolbar.appendChild(document.createElement("a"));
-        copy.textContent = "Copy code";
-        copy.className = "code-operation";
-        copy.title = "Copy code to clipboard";
-        copy.addEventListener("click", copyCode);
-        toggle.textContent = "Hide code";
-        toggle.classList.add("code-operation", "animate__fastest");
-        toggle.title = "Toggle code display";
-        toggle.addEventListener("click", toggleCode);
-        // Css
-        toolbar.className = "code-toolbar";
-        return toolbar;
     }
     function injectCSS(id, css) {
         const style = document.head.appendChild(document.createElement("style"));
@@ -426,9 +334,6 @@
     function enumStyleHelper(id, mode) {
         const style = document.getElementById(idPrefix + id) ?? injectCSS(id, "");
         style.textContent = enumStyles[id][mode];
-    }
-    for (const prop in enumStyles) {
-        enumStyleHelper(prop, config.get(prop));
     }
     // Basic css
     injectCSS("basic", `
@@ -463,36 +368,7 @@
     .script-list > .regex-filtered { display: none; }
     #greasyfork-enhance-regex-filter-tip { float: right; color: grey; }
     @media screen and (max-width: 800px) { #greasyfork-enhance-regex-filter-tip { display: none; } }`);
-    // Aside panel & Anchors
-    const isScript = /^\/[^\/]+\/scripts/;
-    const isSpecificScript = /^\/[^\/]+\/scripts\/\d+/;
-    const isDisccussion = /^\/[^\/]+\/discussions/;
-    const path = window.location.pathname;
-    if ((!isScript.test(path) && !isDisccussion.test(path)) || isSpecificScript.test(path)) {
-        const panel = body.insertBefore(document.createElement("aside"), $("body > div.width-constraint"));
-        panel.className = "panel";
-        const reference_node = $("body > div.width-constraint > section");
-        const outline = panel.appendChild(document.createElement("ul"));
-        outline.classList.add("outline");
-        outline.classList.add("dynamic-opacity");
-        outline.style.top = reference_node ? getComputedStyle(reference_node).marginTop : "1em";
-        outline.style.marginTop = outline.style.top;
-        let flag = false;
-        $$("body > div.width-constraint h1, h2, h3, h4, h5, h6").forEach((node) => {
-            flag = process(outline, node) || flag; // Not `flag || process(node)`!
-        });
-        if (!flag) {
-            panel.remove();
-        }
-    }
-    // Navigate to hash
-    const hash = window.location.hash.slice(1);
-    if (hash) {
-        const ele = document.getElementById(decodeURIComponent(hash));
-        if (ele) {
-            ele.scrollIntoView();
-        }
-    }
+
     // Buttons
     const buttons = body.appendChild(document.createElement("div"));
     buttons.id = "float-buttons";
@@ -529,18 +405,77 @@
         text.textContent = "";
         text.appendChild(link2);
     }
-    // Toolbar for code blocks
-    const codeBlocks = document.getElementsByTagName("pre");
-    for (const codeBlock of codeBlocks) {
-        if (codeBlock.firstChild.tagName === "CODE") {
-            const height = getComputedStyle(codeBlock.firstChild).getPropertyValue("height");
-            codeBlock.firstChild.style.height = height;
-            codeBlock.firstChild.setAttribute("data-height", height);
-            codeBlock.insertAdjacentElement("afterbegin", createToolbar());
-        }
-    }
 
     // Filter and Search
+    // Anchor & Outline
+    if (config.get("filterAndSearch.anchor") || config.get("filterAndSearch.outline")) {
+        function sanitify(s) {
+            // Remove emojis (such a headache)
+            s = s.replaceAll(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDEFF]|\uFE0F)/g, "");
+            // Trim spaces and newlines
+            s = s.trim();
+            // Replace spaces
+            s = s.replaceAll(" ", "-");
+            s = s.replaceAll("%20", "-");
+            // No more multiple "-"
+            s = s.replaceAll(/-+/g, "-");
+            return s;
+        }
+        function process(outline, node) { // Add anchor and assign id to given node; Add to outline. Return true if node is actually processed.
+            if (node.childElementCount > 1 || node.classList.length > 0) return false; // Ignore complex nodes
+            const text = node.textContent;
+            if (!node.id) { // If the node has no id
+                node.id = sanitify(text); // Then assign id
+            }
+            // Add anchors
+            if (config.get("filterAndSearch.anchor")) {
+                const anchor = node.appendChild(document.createElement('a'));
+                anchor.className = 'anchor';
+                anchor.href = '#' + node.id;
+            }
+            if (outline) {
+                const link = outline.appendChild(document.createElement("li"))
+                    .appendChild(document.createElement("a"));
+                link.href = "#" + node.id;
+                link.text = text;
+            }
+            return true;
+        }
+
+        // Outline & Anchors
+        const isScript = /^\/[^\/]+\/scripts/;
+        const isSpecificScript = /^\/[^\/]+\/scripts\/\d+/;
+        const isDisccussion = /^\/[^\/]+\/discussions/;
+        const path = window.location.pathname;
+        if ((!isScript.test(path) && !isDisccussion.test(path)) || isSpecificScript.test(path)) {
+            let panel = null, outline = null;
+            if (config.get("filterAndSearch.outline")) {
+                panel = body.insertBefore(document.createElement("aside"), $("body > div.width-constraint"));
+                panel.className = "panel";
+                const referenceNode = $("body > div.width-constraint > section");
+                outline = panel.appendChild(document.createElement("ul"));
+                outline.classList.add("outline");
+                outline.classList.add("dynamic-opacity");
+                outline.style.top = referenceNode ? getComputedStyle(referenceNode).marginTop : "1em";
+                outline.style.marginTop = outline.style.top;
+            }
+            let flag = false;
+            $$("body > div.width-constraint h1, h2, h3, h4, h5, h6").forEach((node) => {
+                flag = process(outline, node) || flag; // Not `flag || process(node)`!
+            });
+            if (!flag) {
+                panel?.remove();
+            }
+        }
+        // Navigate to hash
+        const hash = window.location.hash.slice(1);
+        if (hash) {
+            const ele = document.getElementById(decodeURIComponent(hash));
+            if (ele) {
+                ele.scrollIntoView();
+            }
+        }
+    }
     // Shortcut
     function submitOnCtrlEnter(e) {
         const form = this.form;
@@ -749,8 +684,104 @@
     }
 
     // Code blocks
+    const codeBlocks = document.getElementsByTagName("pre");
+    // Toolbar
+    const toolbarEnabled = config.get("codeblocks.toolbar");
+    if (toolbarEnabled) {
+        async function animate(node, animation) {
+            return new Promise((resolve, reject) => {
+                node.classList.add("animate__animated", "animate__" + animation);
+                if (node.getAnimations().length == 0) {
+                    node.classList.remove("animate__animated", "animate__" + animation);
+                    reject("No animation available");
+                }
+                node.addEventListener('animationend', e => {
+                    e.stopPropagation();
+                    node.classList.remove("animate__animated", "animate__" + animation);
+                    resolve("Animation ended");
+                }, { once: true });
+            });
+        }
+        async function transition(node, height) {
+            return new Promise((resolve, reject) => {
+                node.style.height = height;
+                if (node.getAnimations().length == 0) {
+                    resolve("No transition available");
+                }
+                node.addEventListener('transitionend', e => {
+                    e.stopPropagation();
+                    resolve("Transition ended");
+                }, { once: true });
+            });
+        }
+        function copyCode() {
+            const code = this.parentNode.nextElementSibling;
+            const text = code.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                this.textContent = "Copied!";
+                animate(this, "tada").then(() => {
+                    this.textContent = "Copy code";
+                }, () => {
+                    window.setTimeout(() => {
+                        this.textContent = "Copy code";
+                    }, 1000);
+                });
+            });
+        }
+        function toggleCode() {
+            const code = this.parentNode.nextElementSibling;
+            if (code.style.height == "0px") {
+                code.style.willChange = "height";
+                transition(code, code.getAttribute("data-height")).then(() => {
+                    code.style.willChange = "";
+                });
+                animate(this, "fadeOut").then(() => {
+                    this.textContent = "Hide code";
+                    animate(this, "fadeIn");
+                }, () => {
+                    this.textContent = "Hide code";
+                });
+            } else {
+                code.style.willChange = "height";
+                transition(code, "0px").then(() => {
+                    code.style.willChange = "";
+                });
+                animate(this, "fadeOut").then(() => {
+                    this.textContent = "Show code";
+                    animate(this, "fadeIn");
+                }, () => {
+                    this.textContent = "Show code";
+                });
+            }
+        }
+        function createToolbar() {
+            const toolbar = document.createElement("div");
+            const copy = toolbar.appendChild(document.createElement("a"));
+            const toggle = toolbar.appendChild(document.createElement("a"));
+            copy.textContent = "Copy code";
+            copy.className = "code-operation";
+            copy.title = "Copy code to clipboard";
+            copy.addEventListener("click", copyCode);
+            toggle.textContent = "Hide code";
+            toggle.classList.add("code-operation", "animate__fastest");
+            toggle.title = "Toggle code display";
+            toggle.addEventListener("click", toggleCode);
+            // Css
+            toolbar.className = "code-toolbar";
+            return toolbar;
+        }
+        for (const codeBlock of codeBlocks) {
+            if (codeBlock.firstChild.tagName === "CODE") {
+                const height = getComputedStyle(codeBlock.firstChild).getPropertyValue("height");
+                codeBlock.firstChild.style.height = height;
+                codeBlock.firstChild.setAttribute("data-height", height);
+                codeBlock.insertAdjacentElement("afterbegin", createToolbar());
+            }
+        }
+    }
     // Auto hide code blocks
     function autoHide() {
+        if (!toolbarEnabled) return;
         if (!config.get("codeblocks.autoHideCode")) {
             for (const code_block of codeBlocks) {
                 const toggle = code_block.firstChild.lastChild;
@@ -1139,6 +1170,9 @@
     // Initialize css
     for (const prop in dynamicStyles) {
         cssHelper(prop, config.get(prop));
+    }
+    for (const prop in enumStyles) {
+        enumStyleHelper(prop, config.get(prop));
     }
     // Dynamically respond to config changes
     const callbacks = {
