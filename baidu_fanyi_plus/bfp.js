@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度翻译 Plus
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  一系列针对百度翻译的功能增强
 // @author       PRO-2684
 // @run-at       document-end
@@ -14,7 +14,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1498964/Tampermonkey%20Config.js
+// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js#md5=525526b8f0b6b8606cedf08c651163c2
 // ==/UserScript==
 
 (function() {
@@ -35,6 +35,11 @@
             type: "bool",
             value: true,
         },
+        oldVersion: {
+            name: "旧版页面",
+            title: "点击返回旧版翻译页面",
+            type: "action",
+        },
         debug: {
             name: "调试模式",
             title: "启用调试模式",
@@ -43,6 +48,23 @@
         }
     };
     const config = new GM_config(configDesc);
+    function oldVersion() {
+        document.cookie = "smallFlowVersion=old; path=/";
+        location.href = "https://fanyi.baidu.com/";
+    }
+    const actions = {
+        oldVersion,
+    };
+    config.addEventListener("get", (e) => {
+        const action = actions[e.detail.prop];
+        if (action) {
+            action();
+        }
+    });
+    if (location.pathname !== "/") {
+        return; // Not old version
+    }
+    // The following only run on old version
     const panel = document.querySelector(".translate-main > .trans-left");
     const wrap = panel.querySelector(".trans-input-wrap");
     const textarea = panel.querySelector("textarea");
@@ -99,5 +121,5 @@
         if (callback) {
             callback(e.detail.after);
         }
-    })
+    });
 })();
