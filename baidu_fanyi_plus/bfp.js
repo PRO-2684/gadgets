@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         百度翻译 Plus
 // @namespace    http://tampermonkey.net/
-// @version      0.1.3
+// @version      0.1.4
 // @description  一系列针对百度翻译的功能增强
 // @author       PRO-2684
 // @run-at       document-end
@@ -49,7 +49,9 @@
     };
     const config = new GM_config(configDesc);
     function oldVersion() {
-        document.cookie = "smallFlowVersion=old; path=/";
+        const date = new Date();
+        date.setFullYear(date.getFullYear() + 1); // Expires in 1 year
+        document.cookie = `smallFlowVersion=old; path=/; expires=${date.toUTCString()}`;
         location.href = "https://fanyi.baidu.com/";
     }
     const actions = {
