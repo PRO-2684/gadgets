@@ -1,0 +1,136 @@
+/* ==UserStyle==
+@name           SVG Darko
+@namespace      github.com/PRO-2684
+@version        0.1.0
+@description    Dark theme for SVG Repo & more
+@author         PRO-2684
+@license     	gpl-3.0
+@preprocessor   stylus
+@var checkbox   DarkMode              "Dark Mode"              1
+==/UserStyle== */
+
+@-moz-document domain("svgrepo.com") {
+    if (DarkMode) {
+        // General
+        html {
+            color-scheme: dark;
+        }
+        body, html, input, textarea {
+            color: invert(#333);
+        }
+
+        h1, h2 { // Heading
+            // color: #374957; // Original
+            color: #778896;
+        }
+        h1 span { // Heading tag
+            border: 2px solid invert(#f4f4f4);
+            background: invert(#f4f4f4);
+            color: invert(#666);
+        }
+        p.subtext { // Subtext
+            color: invert(#575b5d);
+        }
+        .button { // Button
+            background: invert(#fff);
+            color: invert(#555);
+            border-color: invert(#f1f1f1);
+            svg {
+                stroke: invert(#555);
+            }
+            &:hover {
+                background: invert(#fafafa);
+                color: invert(#111);
+                border-color: invert(#eee);
+                svg {
+                    stroke: invert(#111);
+                }
+            }
+        }
+        .tag { // Tag
+            background: invert(#fafafa);
+        }
+        // svg { // SVG
+        //     &[stroke="#333"] {
+        //         stroke: invert(#333) !important;
+        //     }
+        //     &[stroke="#8899a4"] {
+        //         stroke: invert(#8899a4) !important;
+        //     }
+        // }
+
+        [class^="style_header__"] > [class^="style_headerHolder__"] { // Site header
+            // Menu
+            > [class^="style_menu__"] > li {
+                color: invert(#000);
+                &:hover {
+                    color: invert(#444);
+                }
+            }
+        }
+        [class^="style_hero__"], [class^="style_footerCarrier__"] { // Main page header & footer
+            background: invert(#f1f5f9);
+        }
+        [class^="style_request__"] { // "No Ads here 🤗"
+            color: invert(#222);
+            > p[style*="background-color:#fafafa"] {
+                background: invert(#fafafa) !important;
+            }
+        }
+        [class^="style_CollectionImages__"] { // Collection preview
+            background: #bbbbbb; // Original: #fff
+            border-color: #bbbbbb; // Original: #fff
+            filter: brightness(0.8);
+            > [class^="style_title__"] {
+                color: black;
+            }
+        }
+        [class^="styles_mediaContent__"] { // Single SVG preview (large)
+            background: #bbbbbb; // Original: ##f8f9fc
+            filter: brightness(0.8);
+        }
+        [class^="style_Node__"] [class^="style_NodeImage__"] { // Single SVG preview (small)
+            background: #bbbbbb; // Original: #fff
+            border-color: #bbbbbb; // Original: #fff
+            filter: brightness(0.8);
+        }
+        [class^="style_editor__"] { // SVG editor
+            background: invert(#fcfcfc);
+        }
+        [class^="style_previewCarrier__"] { // SVG Editor - preview
+            filter: brightness(0.8);
+        }
+        [class^="style_exportCarrier__"] { // SVG Editor - export
+            background: invert(#fff);
+        }
+        [class^="style_slider__"] { // SVG Editor - slider
+            background-color: invert(#fff);
+        }
+        [class^="style_search__"] { // Search bar
+            > form > input {
+                background: invert(#f5f5f5);
+                border-color: invert(#f5f5f5);
+                &:focus {
+                    background: invert(#fff);
+                    border-color: #6b9bd2;
+                }
+            }
+            > [class^="style_pressEnter__"], > [class^="style_searchIndicator"] {
+                filter: invert(1);
+                color: #333;
+            }
+        }
+        [class^="style_pagingCarrier__"] { // Pagination
+            a:hover {
+                background: invert(#fafafa);
+                svg {
+                    stroke: invert(#333);
+                }
+            }
+        }
+        [class^="style_breadCrumbs__"] > [class^="style_breadCrumbsScroller__"] span { // Breadcrumbs
+            background-color: invert(#f3f3f3);
+            color: invert(#000);
+        }
+    }
+}
