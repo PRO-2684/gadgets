@@ -44,6 +44,7 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 | --- | --- |
 | [`bb_batch_reconcile`](./bb_batch_reconcile) * | Batch reconcile student grades in [Blackboard](https://www.blackboard.com/) system. |
 | [`checkbox_patch`](./checkbox_patch) * | Patches the property `checked` of a certain checkbox, so that a `change` event will be issued when the `checked` value is modified by other scripts. |
+| [`clean-vscode`](./clean-vscode) | Clean up unnecessary files and directories under `.vscode-server`. |
 | [`etag_server`](./etag_server) * | Simple HTTP server that serves files, but using `ETag` instead of `Last-Modified` for caching. |
 | [`hover_card`](./hover_card) * | Get Github hovercard for given repo. |
 | [`naive_jq`](./naive_jq) * | A naive implementation of `jq` in Node.js, only for quick testing. |
@@ -56,7 +57,6 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 
 - [`ccb_helper`](./ccb_helper)
 - [`cinnamon`](./cinnamon)
-- [`clean-vscode`](./clean-vscode)
 - [`google_scholar_plus`](./google_scholar_plus)
 - [`kill_adobe`](./kill_adobe)
 - [`stickers_wiki_downloader`](./stickers_wiki_downloader)
