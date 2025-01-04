@@ -39,6 +39,13 @@ clean_data() {
     else
         rm -rf $data_dir/logs/*
     fi
+    # Removes `User/History`
+    echo "    Removing file history..."
+    if [ "$dry_run" = true ]; then
+        echo "      rm -rf $data_dir/User/History/*"
+    else
+        rm -rf $data_dir/User/History/*
+    fi
     # TODO: Clean `User/workspaceStorage`
 }
 
