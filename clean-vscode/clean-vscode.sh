@@ -29,15 +29,15 @@ clean_data() {
         echo "      rm -rf $data_dir/CachedExtensionVSIXs"
         echo "      rm -rf $data_dir/CachedProfilesData"
     else
-        rm -rf "$data_dir/CachedExtensionVSIXs"
-        rm -rf "$data_dir/CachedProfilesData"
+        rm -rf $data_dir/CachedExtensionVSIXs
+        rm -rf $data_dir/CachedProfilesData
     fi
     # Removes `logs` directory
     echo "    Removing logs directory..."
     if [ "$dry_run" = true ]; then
         echo "      rm -rf $data_dir/logs/*"
     else
-        rm -rf "$data_dir/logs/*"
+        rm -rf $data_dir/logs/*
     fi
     # TODO: Clean `User/workspaceStorage`
 }
@@ -59,7 +59,7 @@ clean_extensions() {
             echo "      echo '{}' > $extensions_dir/.obsolete" # Empty the `.obsolete` file
         else
             for ext in $obsolete_extensions; do
-                rm -rf "$extensions_dir/$ext"
+                rm -rf $extensions_dir/$ext
             done
             echo '{}' > "$extensions_dir/.obsolete" # Empty the `.obsolete` file
         fi
@@ -88,23 +88,23 @@ clean_one() {
     # Removes `\.\w+{40}\.pid` and `\.\w+{40}\.token` files
     echo "  Removing pid & token files..."
     if [ "$dry_run" = true ]; then
-        find "$vscode_dir" -maxdepth 1 -type f -regextype egrep -regex '\./\.\w{40}\.(pid|token)' -exec echo "    rm {}" \;
+        find "$vscode_dir" -maxdepth 1 -type f -regextype egrep -regex '.+/\.\w{40}\.(pid|token)' -exec echo "    rm {}" \;
     else
-        find "$vscode_dir" -maxdepth 1 -type f -regextype egrep -regex '\./\.\w{40}\.(pid|token)' -exec rm {} \;
+        find "$vscode_dir" -maxdepth 1 -type f -regextype egrep -regex '.+/\.\w{40}\.(pid|token)' -exec rm {} \;
     fi
     # Removes `.+\.log` files
     echo "  Removing log files..."
     if [ "$dry_run" = true ]; then
-        find "$vscode_dir" -maxdepth 1 -type f -regextype egrep -regex '\./.+\.log' -exec echo "    rm {}" \;
+        find "$vscode_dir" -maxdepth 1 -type f -regextype egrep -regex '.+/.+\.log' -exec echo "    rm {}" \;
     else
-        find "$vscode_dir" -maxdepth 1 -type f -regextype egrep -regex '\./.+\.log' -exec rm {} \;
+        find "$vscode_dir" -maxdepth 1 -type f -regextype egrep -regex '.+/.+\.log' -exec rm {} \;
     fi
     # Removes `code-\w+{40}` files, KEEPING THE LATEST (by modification time)
     echo "  Removing old versions of vscode-server binary..."
     if [ "$dry_run" = true ]; then
-        find "$vscode_dir" -maxdepth 1 -type f -regextype egrep -regex '\./code-\w{40}' -exec stat --format="%Y %n" {} \; | sort -n | awk '{print $2}' | head -n -1 | xargs echo "    rm"
+        find "$vscode_dir" -maxdepth 1 -type f -regextype egrep -regex '.+/code-\w{40}' -exec stat --format="%Y %n" {} \; | sort -n | awk '{print $2}' | head -n -1 | xargs echo "    rm"
     else
-        find "$vscode_dir" -maxdepth 1 -type f -regextype egrep -regex '\./code-\w{40}' -exec stat --format="%Y %n" {} \; | sort -n | awk '{print $2}' | head -n -1 | xargs rm
+        find "$vscode_dir" -maxdepth 1 -type f -regextype egrep -regex '.+/code-\w{40}' -exec stat --format="%Y %n" {} \; | sort -n | awk '{print $2}' | head -n -1 | xargs rm
     fi
     # Clean `data` directory
     clean_data "$vscode_dir/data"
