@@ -18,9 +18,10 @@
     - **😉 Cursor Blink**: 启用光标闪烁。
     - **🌊 Cursor Animation**: 使光标平滑移动。
 - **🎨 Appearance**
-    - **📰 Dashboard**: 配置仪表盘 (`Default`, `Hide Copilot`, `Hide Feed`, `Mobile-Like`)
-    - **↖️ Left Sidebar**: 配置左侧栏 (`Default`, `Hidden`)
-    - **↗️ Right Sidebar**: 配置右侧栏 (`Default`, `Hide 'Latest changes'`, `Hide 'Explore repositories'`, `Hide Completely`)
+    - **📰 Dashboard**: 配置仪表盘。(`Default`, `Hide Copilot`, `Hide Feed`, `Mobile-Like`)
+    - **↖️ Left Sidebar**: 配置左侧栏。(`Default`, `Hidden`)
+    - **↗️ Right Sidebar**: 配置右侧栏。(`Default`, `Hide 'Latest changes'`, `Hide 'Explore repositories'`, `Hide Completely`)
+    - **📌 Sticky Avatar**: 使头像固定。(实验性功能，不适用于所有头像)
 - **📦 Release Features**
     - **⬆️ Release Uploader**: 显示 Release 中文件的上传者。
         - 如果上传者是用户，则悬停时显示用户悬停卡片。

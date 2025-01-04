@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.3.3
+// @version      0.3.4
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -124,6 +124,12 @@
                     title: "Configures the right sidebar",
                     type: "enum",
                     options: ["Default", "Hide 'Latest changes'", "Hide 'Explore repositories'", "Hide Completely"],
+                },
+                stickyAvatar: {
+                    name: "📌 Sticky Avatar",
+                    title: "Make the avatar sticky",
+                    type: "bool",
+                    value: false,
                 },
             },
         },
@@ -265,6 +271,25 @@
         "code.cursorBlink": "[data-testid='navigation-cursor'] { animation: blink 1s step-end infinite; }",
         "code.cursorAnimation": "[data-testid='navigation-cursor'] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }",
         "code.fullWidth": "#copilot-button-positioner { padding-right: 0; }",
+        "appearance.stickyAvatar": `
+            div.TimelineItem-avatar { /* .js-timeline-item > .TimelineItem > .TimelineItem-avatar */
+                position: relative;
+                margin-left: -40px;
+                left: -32px;
+                & > a[data-hovercard-type='user'] {
+                    position: sticky;
+                    top: 5em;
+                }
+            }
+            /* .page-responsive .timeline-comment--caret {
+                &::before, &::after {
+                    position: sticky;
+                    top: 4em;
+                    margin-top: -1em;
+                    transform: translate(-0.5em, 2em);
+                }
+            } */
+        `,
     };
     for (const prop in dynamicStyles) {
         cssHelper(prop, config.get(prop));

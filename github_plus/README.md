@@ -18,9 +18,10 @@
     - **😉 Cursor Blink**: Enable cursor blinking.
     - **🌊 Cursor Animation**: Make cursor move smoothly.
 - **🎨 Appearance**
-    - **📰 Dashboard**: Configures the dashboard (`Default`, `Hide Copilot`, `Hide Feed`, `Mobile-Like`)
-    - **↖️ Left Sidebar**: Configures the left sidebar (`Default`, `Hidden`)
-    - **↗️ Right Sidebar**: Configures the right sidebar (`Default`, `Hide 'Latest changes'`, `Hide 'Explore repositories'`, `Hide Completely`)
+    - **📰 Dashboard**: Configures the dashboard. (`Default`, `Hide Copilot`, `Hide Feed`, `Mobile-Like`)
+    - **↖️ Left Sidebar**: Configures the left sidebar. (`Default`, `Hidden`)
+    - **↗️ Right Sidebar**: Configures the right sidebar. (`Default`, `Hide 'Latest changes'`, `Hide 'Explore repositories'`, `Hide Completely`)
+    - **📌 Sticky Avatar**: Make the avatar sticky. (Experimental, does not work for all avatars)
 - **📦 Release Features**
     - **⬆️ Release Uploader**: Show uploader of release assets.
         - Shows a user hover card on hover if the uploader is a user.
