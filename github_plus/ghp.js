@@ -154,6 +154,11 @@
                     title: "Show a histogram of download counts for each release asset",
                     type: "bool",
                 },
+                hideArchives: {
+                    name: "🫥 Hide Archives",
+                    title: "Hide source code archives (zip, tar.gz) in the release assets",
+                    type: "bool",
+                },
             },
         },
         additional: {
@@ -483,7 +488,17 @@
      */
     async function addAdditionalInfoToRelease(el, info) {
         const entries = el.querySelectorAll("ul > li");
-        const assets = Array.from(entries).filter(asset => asset.querySelector("svg.octicon-package"));
+        const assets = [];
+        const hideArchives = config.get("release.hideArchives");
+        entries.forEach((asset) => {
+            if (asset.querySelector("svg.octicon-package")) {
+                // Release asset
+                assets.push(asset);
+            } else if (hideArchives) {
+                // Source code archive
+                asset.remove();
+            }
+        });
         const releaseData = await getReleaseData(info.owner, info.repo, info.version);
         if (!releaseData) return;
         const maxDownloads = Math.max(0, ...Object.values(releaseData).map(asset => asset.downloads));
@@ -535,7 +550,23 @@
         // IncludeFragmentElement: https://github.com/github/include-fragment-element/blob/main/src/include-fragment-element.ts
         const fragments = document.querySelectorAll('[data-hpc] details[data-view-component="true"] include-fragment');
         fragments.forEach(fragment => {
-            fragment.addEventListener("include-fragment-replace", onFragmentReplace, { once: true });
+            if (!fragment.hasAttribute("data-ghp-listening")) {
+                fragment.toggleAttribute("data-ghp-listening", true);
+                fragment.addEventListener("include-fragment-replace", onFragmentReplace, { once: true });
+                if (config.get("release.hideArchives")) {
+                    // Fix assets count
+                    const summary = fragment.parentElement.previousElementSibling;
+                    if (summary.tagName === "SUMMARY" && summary.firstElementChild.textContent === "Assets") {
+                        const counter = summary.querySelector("span.Counter");
+                        if (counter) {
+                            const count = parseInt(counter.textContent) - 2; // Exclude the source code archives
+                            log(counter, count + 2, count);
+                            counter.textContent = count.toString();
+                            counter.title = count.toString();
+                        }
+                    }
+                }
+            }
         });
     }
     if (location.hostname === topDomain) { // Only run on GitHub main site

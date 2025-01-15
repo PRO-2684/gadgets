@@ -30,6 +30,7 @@
     - **📊 Release Histogram**: Show a histogram of download counts for each release asset.
         - Does not show up if there is only zero or one release asset.
         - Does not show up if none of the release assets have been downloaded.
+    - **🫥 Hide Archives**: Hide source code archives (zip, tar.gz) in the release assets. (Experimental)
 - **🪄 Additional Features**
     - **🎭 Tracking Prevention**: Prevents some tracking by GitHub.
 - **⚙️ Advanced Settings**
