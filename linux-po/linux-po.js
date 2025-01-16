@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Linux.po
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  对 linux.do 的增强脚本
 // @author       PRO-2684
 // @match        https://linux.do/*
@@ -23,7 +23,62 @@
     const idPrefix = "linux-po-";
     const configDesc = {
         $default: {
-            autoClose: false
+            autoClose: false,
+        },
+        appearance: {
+            name: "🎨 外观",
+            title: "外观",
+            type: "folder",
+            items: {
+                sidebarManager: {
+                    name: "⬅️ 侧栏管理",
+                    title: "允许你隐藏侧栏中的各个部分",
+                    type: "folder",
+                    items: {
+                        $default: {
+                            value: false,
+                            title: (prop, value, desc) => desc.name,
+                            formatter: (prop, value, desc) => `${desc.name}: ${value ? "🫥" : "👀"}`,
+                        },
+                        customCategories: {
+                            name: "自定义板块",
+                            type: "bool",
+                        },
+                        externalLinks: {
+                            name: "外部链接",
+                            type: "bool",
+                        },
+                        categories: {
+                            name: "类别",
+                            type: "bool",
+                        },
+                        tags: {
+                            name: "标签",
+                            type: "bool",
+                        },
+                        messages: {
+                            name: "消息",
+                            type: "bool",
+                        },
+                        channels: {
+                            name: "频道",
+                            type: "bool",
+                        },
+                        directMessages: {
+                            name: "直接消息",
+                            type: "bool",
+                        },
+                        chat: {
+                            name: "聊天",
+                            type: "bool",
+                        },
+                        bottomMenu: {
+                            name: "底部菜单",
+                            type: "bool",
+                        },
+                    },
+                },
+            },
         },
         accessibility: {
             name: "♿ 辅助功能",
@@ -31,19 +86,19 @@
             type: "folder",
             items: {
                 largerClickArea: {
-                    name: "增大点击区域",
-                    title: "增大帖子列表等的可点击区域",
+                    name: "👆 增大点击区域",
+                    title: "增大帖子列表中各帖子的可点击区域 (仅支持左键)",
                     type: "bool",
-                    value: true
+                    value: true,
                 },
                 showPostsFloor: {
-                    name: "显示楼层",
+                    name: "🔢 显示楼层",
                     title: "在帖子中显示楼层",
                     type: "bool",
-                    value: false
+                    value: false,
                 },
-            }
-        }
+            },
+        },
     };
     const config = new GM_config(configDesc);
 
@@ -62,13 +117,29 @@
             injectCSS(id, dynamicStyles[id]);
         }
     }
+    /**
+     * Generates CSS for hiding given sidebar section.
+     */
+    function hideSidebarSection(section) {
+        return `#d-sidebar > .sidebar-sections div.sidebar-section[data-section-name="${section}"] { display: none; }`;
+    }
 
     // Dynamic styles
     const dynamicStyles = {
+        "appearance.sidebarManager.customCategories": hideSidebarSection("community"),
+        "appearance.sidebarManager.externalLinks": hideSidebarSection("外部链接"),
+        "appearance.sidebarManager.categories": hideSidebarSection("categories"),
+        "appearance.sidebarManager.tags": hideSidebarSection("tags"),
+        "appearance.sidebarManager.messages": hideSidebarSection("messages"),
+        "appearance.sidebarManager.channels": hideSidebarSection("chat-channels"),
+        "appearance.sidebarManager.directMessages": hideSidebarSection("chat-dms"),
+        "appearance.sidebarManager.chat": "#d-sidebar > button[data-key='chat'] { display: none; }",
+        "appearance.sidebarManager.bottomMenu": "#d-sidebar > div.sidebar-footer-wrapper { display: none; }",
         "accessibility.largerClickArea": ".topic-list-item > .main-link { cursor: pointer; }",
         "accessibility.showPostsFloor": `.post-stream > .topic-post > article[id^='post_']::after {
             content: attr(id) '#'; color: var(--primary-med-or-secondary-med);
-            position: absolute; bottom: 0.3em; text-indent: -2.4em; overflow: hidden; /* Dirty trick to hide leading "post_" */
+            position: absolute; right: 0; top: calc(0.8em + 1px);
+            text-indent: -2.4em; overflow: hidden; /* Dirty trick to hide leading "post_" */
         }`,
     };
     for (const prop in dynamicStyles) {
