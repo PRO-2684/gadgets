@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Linux.po
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  对 linux.do 的增强脚本
 // @author       PRO-2684
 // @match        https://linux.do/*
@@ -97,6 +97,12 @@
                     type: "bool",
                     value: false,
                 },
+                atBeforeUsername: {
+                    name: "👤 @用户名",
+                    title: "在用户名前添加 @ 符号",
+                    type: "bool",
+                    value: false,
+                },
             },
         },
     };
@@ -141,6 +147,10 @@
             position: absolute; right: 0; top: calc(0.8em + 1px);
             text-indent: -2.4em; overflow: hidden; /* Dirty trick to hide leading "post_" */
         }`,
+        "accessibility.atBeforeUsername": `
+            span.username > a::before { content: "@"; }
+            div.username::before { content: "@"; }
+        `,
     };
     for (const prop in dynamicStyles) {
         cssHelper(prop, config.get(prop));
