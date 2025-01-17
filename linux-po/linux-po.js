@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Linux.po
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  对 linux.do 的增强脚本
 // @author       PRO-2684
 // @match        https://linux.do/*
@@ -142,10 +142,16 @@
         "appearance.sidebarManager.chat": "#d-sidebar > button[data-key='chat'] { display: none; }",
         "appearance.sidebarManager.bottomMenu": "#d-sidebar > div.sidebar-footer-wrapper { display: none; }",
         "accessibility.largerClickArea": ".topic-list-item > .main-link { cursor: pointer; }",
-        "accessibility.showPostsFloor": `.post-stream > .topic-post > article[id^='post_']::after {
-            content: attr(id) '#'; color: var(--primary-med-or-secondary-med);
-            position: absolute; right: 0; top: calc(0.8em + 1px);
-            text-indent: -2.4em; overflow: hidden; /* Dirty trick to hide leading "post_" */
+        "accessibility.showPostsFloor": `.post-stream > .topic-post > article[id^='post_'] {
+            &::after {
+                content: attr(id) '#'; color: var(--primary-med-or-secondary-med);
+                position: absolute; right: 0; top: calc(0.8em + 1px);
+                text-indent: -2.4em; overflow: hidden; /* Dirty trick to hide leading "post_" */
+            }
+            .contents > .embedded-posts > .reply .post-link-arrow > a.post-info::after {
+                content: attr(href) '#'; display: inline-flex;
+                text-indent: -7.4em; overflow: hidden; /* Dirty trick to hide leading "/t/topic/\\d{6}/" */
+            }
         }`,
         "accessibility.atBeforeUsername": `
             span.username > a::before { content: "@"; }
