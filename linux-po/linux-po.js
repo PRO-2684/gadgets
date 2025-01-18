@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Linux.po
 // @namespace    http://tampermonkey.net/
-// @version      0.1.4
+// @version      0.1.5
 // @description  对 linux.do 的增强脚本
 // @author       PRO-2684
 // @match        https://linux.do/*
@@ -37,45 +37,20 @@
                     items: {
                         $default: {
                             value: false,
+                            input: "current",
+                            processor: "not",
                             title: (prop, value, desc) => desc.name,
                             formatter: (prop, value, desc) => `${desc.name}: ${value ? "🫥" : "👀"}`,
                         },
-                        customCategories: {
-                            name: "自定义板块",
-                            type: "bool",
-                        },
-                        externalLinks: {
-                            name: "外部链接",
-                            type: "bool",
-                        },
-                        categories: {
-                            name: "类别",
-                            type: "bool",
-                        },
-                        tags: {
-                            name: "标签",
-                            type: "bool",
-                        },
-                        messages: {
-                            name: "消息",
-                            type: "bool",
-                        },
-                        channels: {
-                            name: "频道",
-                            type: "bool",
-                        },
-                        directMessages: {
-                            name: "直接消息",
-                            type: "bool",
-                        },
-                        chat: {
-                            name: "聊天",
-                            type: "bool",
-                        },
-                        bottomMenu: {
-                            name: "底部菜单",
-                            type: "bool",
-                        },
+                        customCategories: { name: "自定义板块" },
+                        externalLinks: { name: "外部链接" },
+                        categories: { name: "类别" },
+                        tags: { name: "标签" },
+                        messages: { name: "消息" },
+                        channels: { name: "频道" },
+                        directMessages: { name: "直接消息" },
+                        chat: { name: "聊天" },
+                        bottomMenu: { name: "底部菜单" },
                     },
                 },
                 postManager: {
@@ -85,20 +60,21 @@
                     items: {
                         $default: {
                             value: false,
+                            input: "current",
+                            processor: "not",
                             title: (prop, value, desc) => desc.name,
                             formatter: (prop, value, desc) => `${desc.name}: ${value ? "🫥" : "👀"}`,
                         },
-                        secondaryName: {
-                            name: "次要名称",
-                            type: "bool",
+                        secondaryName: { name: "次要名称" },
+                        userTitle: { name: "头衔" },
+                        userStatus: { name: "自定义状态" },
+                        posterIcon: {
+                            name: "🍰",
+                            title: "加入社区纪念日以及生日图标 (discourse-cakeday)",
                         },
-                        userTitle: {
-                            name: "头衔",
-                            type: "bool",
-                        },
-                        userStatus: {
-                            name: "自定义状态",
-                            type: "bool",
+                        flair: {
+                            name: "资质",
+                            title: "展示在头像右下角",
                         },
                     },
                 },
@@ -174,6 +150,8 @@
         "appearance.postManager.secondaryName": hidePostSection("second"),
         "appearance.postManager.userTitle": hidePostSection("user-title"),
         "appearance.postManager.userStatus": hidePostSection("user-status-message-wrap"),
+        "appearance.postManager.posterIcon": hidePostSection("poster-icon"),
+        "appearance.postManager.flair": ".topic-avatar > .post-avatar > .avatar-flair { display: none; }",
         "accessibility.largerClickArea": ".topic-list-item > .main-link { cursor: pointer; }",
         "accessibility.showPostsFloor": `.post-stream > .topic-post > article[id^='post_'] {
             &::after {
