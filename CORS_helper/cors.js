@@ -2,7 +2,7 @@
 // @name         CORS Helper
 // @name:zh-CN   跨域助手
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  A simple script that helps bypass CORS restrictions
 // @description:zh-CN 简单的绕过 CORS 限制的脚本
 // @author       PRO-2684
@@ -12,7 +12,7 @@
 // @grant        GM.xmlHttpRequest
 // @grant        unsafeWindow
 // @connect      *
-// @require      https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.1.15
+// @require      https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.2.3
 // ==/UserScript==
 
 (function() {
