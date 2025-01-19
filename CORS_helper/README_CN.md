@@ -17,7 +17,7 @@
 
 ```javascript
 // ...
-// @require      https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.1.15
+// @require      https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@<version>
 // ...
 unsafeWindow.GM_fetch = GM_fetch;
 ```
