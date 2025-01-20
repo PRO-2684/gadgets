@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Linux.po
 // @namespace    http://tampermonkey.net/
-// @version      0.1.5
+// @version      0.1.6
 // @description  对 linux.do 的增强脚本
 // @author       PRO-2684
 // @match        https://linux.do/*
@@ -163,6 +163,10 @@
                 content: attr(href) '#'; display: inline-flex;
                 text-indent: -7.4em; overflow: hidden; /* Dirty trick to hide leading "/t/topic/\\d{6}/" */
             }
+        }
+        .timeline-container > .topic-timeline > .timeline-scrollarea-wrapper > .timeline-date-wrapper > .now-date[href^='/t/topic/']::after {
+            content: attr(href) '#'; display: inline-flex; margin-left: 0.2em;
+            text-indent: -7.4em; overflow: hidden; /* Dirty trick to hide leading "/t/topic/\\d{6}/" */
         }`,
         "accessibility.atBeforeUsername": `
             span.username > a::before { content: "@"; }
