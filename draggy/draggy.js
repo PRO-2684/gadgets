@@ -2,7 +2,7 @@
 // @name         Draggy
 // @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.2.5
+// @version      0.2.6
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
 // @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 // @tag          productivity
@@ -19,8 +19,9 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1459364/Tampermonkey%20Config.js
+// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js#md5=525526b8f0b6b8606cedf08c651163c2
 // ==/UserScript==
+
 (function () {
     "use strict";
     const { name, version } = GM.info.script;
@@ -39,7 +40,7 @@
                     value: 1,
                     input: (prop, orig) => (orig + 1) % 3,
                     processor: "same",
-                    formatter: (name, value) => name + ": " + ["Never", "Auto", "Always"][value],
+                    formatter: (prop, value, desc) => desc.name + ": " + ["Never", "Auto", "Always"][value],
                 },
             },
         },
@@ -69,8 +70,9 @@
                 minDistance: {
                     name: "Minimum drag distance",
                     title: "Minimum distance to trigger draggy.",
-                    type: "int",
-                    processor: "int_range-1-1000",
+                    type: "int", // 1-1000
+                    min: 1,
+                    max: 1000,
                     value: 50,
                 },
             },
@@ -126,8 +128,9 @@
                 maxTimeDelta: {
                     name: "Maximum time delta",
                     title: "Maximum time difference between esc/drop and dragend events to consider them as separate user gesture. Usually there's no need to change this value.",
-                    type: "int",
-                    processor: "int_range-1-100",
+                    type: "int", // 1-100
+                    min: 1,
+                    max: 100,
                     value: 10,
                 },
                 debug: {

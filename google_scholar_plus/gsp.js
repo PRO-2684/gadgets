@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Google Scholar Plus
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  Enhance Google Scholar with a bunch of features.
 // @author       PRO-2684
 // @match        https://scholar.google.com/*
@@ -13,7 +13,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://update.greasyfork.org/scripts/470224/1460555/Tampermonkey%20Config.js
+// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js#md5=525526b8f0b6b8606cedf08c651163c2
 // ==/UserScript==
 
 (function () {
@@ -27,7 +27,7 @@
         },
         arxivAbs: {
             name: "ArXiv Abstract",
-            title: "Swap ArXiv pdf link with abstract link",
+            title: "Replace ArXiv pdf link with abstract link",
             type: "bool",
             value: false
         }
