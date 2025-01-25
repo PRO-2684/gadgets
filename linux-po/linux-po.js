@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Linux.po
 // @namespace    http://tampermonkey.net/
-// @version      0.1.6
+// @version      0.1.7
 // @description  对 linux.do 的增强脚本
 // @author       PRO-2684
 // @match        https://linux.do/*
@@ -186,9 +186,9 @@
      */
     function largerClickAreaHandler(e) {
         if (e.defaultPrevented || !e.isTrusted) return;
-        e.preventDefault();
         const mainLink = e.target.closest(".topic-list-item > .main-link");
         if (mainLink) {
+            e.preventDefault();
             const title = mainLink.querySelector(".title.raw-link.raw-topic-link");
             title?.click();
         }
