@@ -2,7 +2,7 @@
 // @name         Draggy
 // @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.2.6
+// @version      0.2.7
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
 // @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 // @tag          productivity
@@ -133,6 +133,12 @@
                     max: 100,
                     value: 10,
                 },
+                processHandled: {
+                    name: "Process handled events",
+                    title: "Whether to process handled drag events. Note that this may lead to an event being handled multiple times.",
+                    type: "bool",
+                    value: false,
+                },
                 debug: {
                     name: "Debug mode",
                     title: "Enables debug mode.",
@@ -183,8 +189,8 @@
                 return selectedText;
             }
         },
-        handlers: (e) => e.dataTransfer.dropEffect === "none" && e.dataTransfer.effectAllowed === "uninitialized" && !e.defaultPrevented,
-        dropEvent: (e) => e.timeStamp - lastDrop > config.get("advanced.maxTimeDelta"),
+        handlers: (e) => config.get("advanced.processHandled") || e.dataTransfer.dropEffect === "none" && e.dataTransfer.effectAllowed === "uninitialized" && !e.defaultPrevented,
+        dropEvent: (e) => config.get("advanced.processHandled") || e.timeStamp - lastDrop > config.get("advanced.maxTimeDelta"),
     };
 
     /**
