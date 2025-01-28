@@ -38,6 +38,7 @@
 - **⚙️ Advanced settings**: Settings for advanced users or debugging.
     - **Allowed protocols**: Comma-separated list of allowed protocols for matched URI in texts. Leave it blank to allow all protocols.
     - **Maximum time delta**: Maximum time difference between esc/drop and dragend events to consider them as separate user gesture. *Usually there's no need to change this value.*
+    - **Process handled events**: Whether to process handled drag events. Note that this may lead to an event being handled multiple times.
     - **Debug mode**: Enables debug mode.
 
 ## 📃 Notes

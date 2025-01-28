@@ -38,6 +38,7 @@
 - **⚙️ Advanced settings**: 针对高级用户或调试的设置。
     - **Allowed protocols**: 允许的文本中匹配到的 URI 的协议，用逗号分隔。留空以允许所有协议。
     - **Maximum time delta**: esc/drop 和 dragend 事件之间的最大时间差，以将它们视为不同的用户手势。*通常不需要更改此值。*
+    - **Process handled events**: 是否处理已处理的拖拽事件。请注意，这可能导致事件被多次处理。
     - **Debug mode**: 启用调试模式。
 
 ## 📃 注意
