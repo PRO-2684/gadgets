@@ -2,7 +2,9 @@
 
 Show Ferris the crab on `docs.rs` code examples, just like on the Rust book.
 
-![demo](./images/demo.png)
+![compile_fail](./images/compile_fail.png)
+
+![should_panic](./images/should_panic.png)
 
 - [UserStyles.World](https://userstyles.world/style/20844) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://userstyles.world/api/style/20844.user.css)
 - [GitHub](https://github.com/PRO-2684/gadgets/raw/main/docs.rs-ferris/) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://github.com/PRO-2684/gadgets/raw/main/docs.rs-ferris/ferris.user.css)
