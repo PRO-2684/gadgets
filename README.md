@@ -26,6 +26,7 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 | ~~[`GM_config`](./GM_config)~~ | [#470224](https://greasyfork.org/scripts/470224) | Moved to [PRO-2684/GM_config](https://github.com/PRO-2684/GM_config). Simple config lib for Tampermonkey scripts. |
 | [`greasyfork_enhance`](./greasyfork_enhance) | [#467078](https://greasyfork.org/scripts/467078) | Enhance your experience at Greasyfork. |
 | [`linux-po`](./linux-po) | [#523904](https://greasyfork.org/scripts/523904) | Various enhancements for linux.do site. |
+| [`no-keywords`](./no-keywords) | [#523904](https://greasyfork.org/scripts/469656) | Get rid of fucking highlighted search keywords. |
 | [`purlfy_for_tm`](./purlfy_for_tm) | [#492480](https://greasyfork.org/scripts/492480) | The ultimate URL purifier - Tampermonkey version. |
 | [`uhp`](./uhp) | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more. |
 

@@ -26,6 +26,7 @@
 | ~~[`GM_config`](./GM_config)~~ | [#470224](https://greasyfork.org/scripts/470224) | 已迁移至 [PRO-2684/GM_config](https://github.com/PRO-2684/GM_config)。简易的 Tampermonkey 脚本配置库。 |
 | [`greasyfork_enhance`](./greasyfork_enhance) | [#467078](https://greasyfork.org/scripts/467078) | 增进 Greasyfork 浏览体验。 |
 | [`linux-po`](./linux-po) | [#523904](https://greasyfork.org/scripts/523904) | 对 linux.do 的增强脚本。 |
+| [`no-keywords`](./no-keywords) | [#523904](https://greasyfork.org/scripts/469656) | 去你妈的傻逼高亮搜索关键词。 |
 | [`purlfy_for_tm`](./purlfy_for_tm) | [#492480](https://greasyfork.org/scripts/492480) | 终极 URL 净化器 - Tampermonkey 版本。 |
 | [`uhp`](./uhp) | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - 为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。 |
 
@@ -36,6 +37,7 @@
 | [`ar5iv_plus`](./ar5iv_plus) | [#18946](https://userstyles.world/style/18946) | 为 `ar5iv.labs.arxiv.org/html/` 增加各种调整和改进。 |
 | [`arxiv_html_debloate`](./arxiv_html_debloate) | [#16559](https://userstyles.world/style/16559) | 隐藏 `arxiv.org/html/*` 上的不必要元素，让你拥有一个干净的阅读体验。 |
 | [`baidu_debloate`](./baidu_debloate) | [#17133](https://userstyles.world/style/17133) | 隐藏百度站点上的一些垃圾玩意儿，包括 `baike.baidu.com`，`jingyan.baidu.com`，`tieba.baidu.com` 和 `fanyi.baidu.com`。 |
+| [`docs_rs_ferris`](./docs_rs_ferris) | N/A | 在 `docs.rs` 的代码示例中显示 Ferris 螃蟹，就像 Rust Book 一样。 |
 | [`scrollbar_mod`](./scrollbar_mod) | [#16203](https://userstyles.world/style/16203) | 轻松定制你的滚动条。 |
 | [`tooltips_mod`](./tooltips_mod) | [#19461](https://userstyles.world/style/19461) | 在触摸屏设备上将 `title` 属性显示为工具提示。 |
 
