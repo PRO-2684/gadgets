@@ -2,7 +2,7 @@
 // @name         No Keywords
 // @name:zh-CN   移除搜索关键词
 // @namespace    http://tampermonkey.net/
-// @version      0.3.1
+// @version      0.3.2
 // @description  Get rid of fucking highlighted search keywords.
 // @description:zh-CN 去你妈的傻逼高亮搜索关键词。
 // @author       PRO
@@ -16,7 +16,8 @@
 
 (function () {
     'use strict';
-    const log = console.log.bind(console, "[No Keywords]");
+    const name = GM_info.script.name;
+    const log = console.log.bind(console, `[${name}]`);
     // Adapted from https://www.abeautifulsite.net/posts/querying-through-shadow-roots/
     function shadowQueryAll(selector, rootNode = document) {
         const selectors = String(selector).split('>>>');
@@ -63,7 +64,7 @@
             persistent: true
         },
         "blog.csdn.net": {
-            keywords: ["a.hl-1"],
+            keywords: ["a.hl-1", "span.words-blog.hl-git-1"],
             icons: [],
             persistent: false
         }
