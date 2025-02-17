@@ -2,7 +2,7 @@
 // @name         No Keywords
 // @name:zh-CN   移除搜索关键词
 // @namespace    http://tampermonkey.net/
-// @version      0.3.2
+// @version      0.3.3
 // @description  Get rid of fucking highlighted search keywords.
 // @description:zh-CN 去你妈的傻逼高亮搜索关键词。
 // @author       PRO
@@ -64,7 +64,7 @@
             persistent: true
         },
         "blog.csdn.net": {
-            keywords: ["a.hl-1", "span.words-blog.hl-git-1"],
+            keywords: ["a.hl-1", "span.edu-hl.hl-1", "span.words-blog.hl-git-1"],
             icons: [],
             persistent: false
         }
