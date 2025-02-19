@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Linux.po
 // @namespace    http://tampermonkey.net/
-// @version      0.1.7
+// @version      0.1.8
 // @description  对 linux.do 的增强脚本
 // @author       PRO-2684
 // @match        https://linux.do/*
@@ -71,6 +71,10 @@
                         posterIcon: {
                             name: "🍰",
                             title: "加入社区纪念日以及生日图标 (discourse-cakeday)",
+                        },
+                        postNotice: {
+                            name: "帖子通知",
+                            title: "新用户首次发言、回归用户等标识",
                         },
                         flair: {
                             name: "资质",
@@ -152,21 +156,22 @@
         "appearance.postManager.userStatus": hidePostSection("user-status-message-wrap"),
         "appearance.postManager.posterIcon": hidePostSection("poster-icon"),
         "appearance.postManager.flair": ".topic-avatar > .post-avatar > .avatar-flair { display: none; }",
+        "appearance.postManager.postNotice": ".post-stream > .topic-post > article .post-notice { display: none; }",
         "accessibility.largerClickArea": ".topic-list-item > .main-link { cursor: pointer; }",
         "accessibility.showPostsFloor": `.post-stream > .topic-post > article[id^='post_'] {
             &::after {
                 content: attr(id) '#'; color: var(--primary-med-or-secondary-med);
                 position: absolute; right: 0; top: calc(0.8em + 1px);
-                text-indent: -2.4em; overflow: hidden; /* Dirty trick to hide leading "post_" */
+                text-indent: -2.5em; overflow: hidden; /* Dirty trick to hide leading "post_" */
             }
             .embedded-posts > .reply .post-link-arrow > a.post-info::after {
                 content: attr(href) '#'; display: inline-flex;
-                text-indent: -7.4em; overflow: hidden; /* Dirty trick to hide leading "/t/topic/\\d{6}/" */
+                text-indent: -7.9em; overflow: hidden; /* Dirty trick to hide leading "/t/topic/\\d{6}/" */
             }
         }
         .timeline-container > .topic-timeline > .timeline-scrollarea-wrapper > .timeline-date-wrapper > .now-date[href^='/t/topic/']::after {
             content: attr(href) '#'; display: inline-flex; margin-left: 0.2em;
-            text-indent: -7.4em; overflow: hidden; /* Dirty trick to hide leading "/t/topic/\\d{6}/" */
+            text-indent: -7.9em; overflow: hidden; /* Dirty trick to hide leading "/t/topic/\\d{6}/" */
         }`,
         "accessibility.atBeforeUsername": `
             span.username > a::before { content: "@"; }
