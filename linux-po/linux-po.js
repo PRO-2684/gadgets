@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Linux.po
 // @namespace    http://tampermonkey.net/
-// @version      0.1.8
+// @version      0.1.9
 // @description  对 linux.do 的增强脚本
 // @author       PRO-2684
 // @match        https://linux.do/*
@@ -30,18 +30,18 @@
             title: "外观",
             type: "folder",
             items: {
+                $default: {
+                    value: false,
+                    input: "current",
+                    processor: "not",
+                    title: (prop, value, desc) => desc.name,
+                    formatter: (prop, value, desc) => `${desc.name}: ${value ? "🫥" : "👀"}`,
+                },
                 sidebarManager: {
                     name: "⬅️ 侧栏管理",
                     title: "允许你隐藏侧栏中的各个部分",
                     type: "folder",
                     items: {
-                        $default: {
-                            value: false,
-                            input: "current",
-                            processor: "not",
-                            title: (prop, value, desc) => desc.name,
-                            formatter: (prop, value, desc) => `${desc.name}: ${value ? "🫥" : "👀"}`,
-                        },
                         customCategories: { name: "自定义板块" },
                         externalLinks: { name: "外部链接" },
                         categories: { name: "类别" },
@@ -58,13 +58,6 @@
                     title: "允许你隐藏帖子的各个部分",
                     type: "folder",
                     items: {
-                        $default: {
-                            value: false,
-                            input: "current",
-                            processor: "not",
-                            title: (prop, value, desc) => desc.name,
-                            formatter: (prop, value, desc) => `${desc.name}: ${value ? "🫥" : "👀"}`,
-                        },
                         secondaryName: { name: "次要名称" },
                         userTitle: { name: "头衔" },
                         userStatus: { name: "自定义状态" },
@@ -79,6 +72,16 @@
                         flair: {
                             name: "资质",
                             title: "展示在头像右下角",
+                        },
+                    },
+                },
+                other: {
+                    name: "⚙️ 其他",
+                    title: "其他设置",
+                    type: "folder",
+                    items: {
+                        hideDashedBox: {
+                            name: "📢 隐藏虚线框",
                         },
                     },
                 },
@@ -157,6 +160,7 @@
         "appearance.postManager.posterIcon": hidePostSection("poster-icon"),
         "appearance.postManager.flair": ".topic-avatar > .post-avatar > .avatar-flair { display: none; }",
         "appearance.postManager.postNotice": ".post-stream > .topic-post > article .post-notice { display: none; }",
+        "appearance.other.hideDashedBox": ".discourse-cnpkv { display: none; }",
         "accessibility.largerClickArea": ".topic-list-item > .main-link { cursor: pointer; }",
         "accessibility.showPostsFloor": `.post-stream > .topic-post > article[id^='post_'] {
             &::after {
