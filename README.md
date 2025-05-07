@@ -29,6 +29,7 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 | [`no-keywords`](./no-keywords) | [#523904](https://greasyfork.org/scripts/469656) | Get rid of fucking highlighted search keywords. |
 | [`purlfy_for_tm`](./purlfy_for_tm) | [#492480](https://greasyfork.org/scripts/492480) | The ultimate URL purifier - Tampermonkey version. |
 | [`uhp`](./uhp) | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more. |
+| [`wechat-plus`](./wechat-plus) | N/A | Various enhancements for posts of WeChat official accounts. |
 
 ### 🎨 UserStyles
 

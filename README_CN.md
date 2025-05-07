@@ -40,6 +40,7 @@
 | [`docs.rs-ferris`](./docs.rs-ferris) | [#20844](https://userstyles.world/style/20844) | 在 `docs.rs` 的代码示例中显示 Ferris 螃蟹，就像 Rust Book 一样。 |
 | [`scrollbar_mod`](./scrollbar_mod) | [#16203](https://userstyles.world/style/16203) | 轻松定制你的滚动条。 |
 | [`tooltips_mod`](./tooltips_mod) | [#19461](https://userstyles.world/style/19461) | 在触摸屏设备上将 `title` 属性显示为工具提示。 |
+| [`wechat-plus`](./wechat-plus) | N/A | 针对微信公众号文章的增强脚本。 |
 
 ### 🛠️ 其他
 
