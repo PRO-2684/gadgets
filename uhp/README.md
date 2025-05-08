@@ -1,11 +1,9 @@
-# 🪄 Functions
+![Greasy Fork](https://img.shields.io/greasyfork/dt/453530) [![](https://img.shields.io/badge/Crazy%20Thur.-V%20me%2050-red?logo=kfc)](https://greasyfork.org/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaWZvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10e04ed7ed56ae18d22cec6d675b34fd579cecab/wechat.jpeg?locale=zh-CN)
 
-1. [Unified Authentication](https://passport.ustc.edu.cn/)
-    - Auto recognize verification code (Adapted from [this script](https://greasyfork.org/scripts/431681) by [@J-Paven](https://greasyfork.org/users/810521))
-    - Focus on the captcha input / login button (so you only need to hit `Enter` to login)
-    - Prompt service domain, url and its credibility (If the service is provided by a student or teacher, you may contact him/her via email by clicking "Student" or "Staff")
-    - Auto login (require previous one checked; official services only; clicks "login" after 5s)
-    - View/fake browser fingerprint to bypass device check
+## 🪄 Functions
+
+1. [Unified Authentication](https://id.ustc.edu.cn/)
+    - No features for now
 
 2. [USTC Mail](https://mail.ustc.edu.cn/)
     - Focus on the login button
@@ -51,14 +49,14 @@
 
 If you need a certain feature, leave a comment and I might add it as far as I can.
 
-# ⌨️ Shortcuts
+## ⌨️ Shortcuts
 
 - Left/Right arrow: Switching tabs
 - Numbers (1-9): Switch to given tab
 - x: Close current tab
 - Scroll wheel: Switch tabs
 
-# ⚙️ Configuation
+## ⚙️ Configuation
 
 Open the Tampermonkey menu when the script is running.
 

@@ -3,12 +3,12 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.3.6
+// @version      1.3.7
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
 // @match        https://mail.ustc.edu.cn/*
-// @match        https://passport.ustc.edu.cn/*
+// @match        https://id.ustc.edu.cn/*
 // @match        https://rec.ustc.edu.cn/*
 // @match        https://recapi.ustc.edu.cn/identity/other_login?*
 // @match        https://www.bb.ustc.edu.cn/*
@@ -17,7 +17,7 @@
 // @match        https://young.ustc.edu.cn/nginx_auth/*
 // @match        https://wvpn.ustc.edu.cn/*
 // @match        https://icourse.club/*
-// @icon         https://passport.ustc.edu.cn/images/favicon.ico
+// @icon         https://id.ustc.edu.cn/gate/linkid/api/image/download/login_favicon.png
 // @grant        unsafeWindow
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -26,7 +26,7 @@
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
 // @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js#md5=525526b8f0b6b8606cedf08c651163c2
-// @require      https://update.greasyfork.org/scripts/462234/1391948/Message.js
+// @require      https://update.greasyfork.org/scripts/462234/1569735/Message.js
 // ==/UserScript==
 
 (function () {
@@ -37,21 +37,11 @@
         $default: {
             autoClose: false,
         },
-        passport: {
+        id: {
             name: "Unified Authentication",
             type: "folder",
             items: {
                 enabled: { name: "Enabled", title: "Whether to enable USTC Helper for Unified Authentication", type: "bool", value: true },
-                recog_code: { name: "Code recognition", title: "Enable auto recognizing verification code", type: "bool", value: true },
-                focus: { name: "Focus", title: "Automatically focuses on verification code or login button", type: "bool", value: true },
-                service: { name: "Service", title: "Hint service domain and its credibility", type: "bool", value: true },
-                auto_login: { name: "Auto login", title: "Automatically clicks login button (Official services only)", type: "bool", value: true },
-                show_fingerprint: { name: "Show fingerprint", title: "Show current browser's fingerprint (DO NOT share this with others)", type: "bool" },
-                fake_fingerprint: {
-                    name: "Fake fingerprint",
-                    value: "",
-                    title: "Fake browser fingerprint to bypass device verification (Leave empty to disable)"
-                }
             }
         },
         mail: {
@@ -278,220 +268,8 @@
             setupDynamicStyles("mail", config, mail_css);
             break;
         }
-        case 'passport.ustc.edu.cn': {
-            config.down("passport");
-            let is_official = false;
-            if (!configProxy["passport.enabled"]) {
-                console.info("[USTC Helper] 'passport' feature disabled.");
-                break;
-            }
-            // Code recognition
-            const img = $('img.validate-img');
-            if (configProxy["passport.recog_code"] && img) {
-                // Adapted from https://greasyfork.org/scripts/431681 - Great thanks to the author @J-Paven!
-                const dim = [128, 32];
-                [img.style.width, img.style.height] = dim.map(x => x + 'px');
-                const canvas = document.createElement("canvas");
-                canvas.style.backgroundColor = "white";
-                const ctx = canvas.getContext("2d");
-                const input = $('#validate');
-                const template = [
-                    '00000001111110000000000001111111111000001000111111111111000000011111111111111000001111110000111111000011111000000111110000111110000001111100011111000000001111100111110000000011111001111100000000111110011111000000001111100111110000000011111001111100000000111110011111000000001111100111110000000011111000111110100001111100001111100000011111000011111100001111110000011111111111111000000011111111111100000000011111111110000000000011111110000000',
-                    '00000011111111000000000011111111110000000000111111111100000100001111111111000000000011100111110000001010000001111100000001000000011111000000000000000111110000000000000001111100000100000000011111000000000000000111110000000000000001111100000000000000011111000000000000000111110001000000000001111100000000000000011111000000000000000111110000000000000001111100000000001111111111111110000011111111111111100000111111111111111000001111111111111110',
-                    '00001111111110000000001111111111111000000011111111111111100000111111111111111000001111000001111111010010000000001111110000000000000001111100000000000000011111000000000000000111110000000000001011111100000000000001111110000000000000111111100000000000011111110000000000001111111000000000001111111100000000000111111110000000000011111111000000000001111111100000000000111111111111111100001111111111111111000011111111111111110000111111111111111100',
-                    '00000111111110000000010111111111111010000001111111111111000000011111111111111000000110000001111110000000000000001111100000000000000011111000000000000000111110000000000001011111000000000011111111110000000000111111110000000000001111111111000000000011111111111000000000000001111111000000000000000111110000000000000001111100001000000000011111000011100000011111110000111111111111111000001111111111111110000001111111111110000000000111111110000000',
-                    '00000000011111110000000000000111111100000000000011111111001000000001111111110000000000011101111100000000001111011111000000000111100111110000000001110001111100000000111101011111010000011110000111110100000111000001111100000011110000011111000001111000000111110000011100000001111100000111111111111111111001111111111111111110011111111111111111100111111111111111111000000000000111110000000000000001111100000000000000011111000000000000000111110000',
-                    '01011111111111110000000111111111111100000001111111111111000000011111111111110000000111110000000000000001111100000000000000011111000000000000000111111111110000000001111111111110000000011111111111110001000111111111111110000001110000011111110000010000000011111100000000000000011111000000000000010111110000000000000001111100001000000000111111000011100000011111100000111111111111111000001111111111111100000001111111111110000000000011111110000000',
-                    '00000001011111100000000000011111111110000000011111111111110000001111111111111100000011111100000111000001111100000000010000011111000000000000001111100111111000000011111111111111000000111111111111111000001111111111111111000011111100000111111000111110000000111110001111100000001111100011111000000011111000111110000000111110000111100000001111100001111100000111110000001111111111111110000001111111111110000000001111111111000000000000111111000000',
-                    '00111111111111111100001111111111111111000011111111111111110000111111111111111100000000001000111110000000000000001111100000000000000111111000000000000001111100000000000000111111000000000000001111100000000000000111111000000000000001111100000000000000111111000000000000001111100000000100000011111000000000000001111110000000000000011111000000000000001111110000000000000011111000000000000001111110000000000000011111000000000000001111110000000000',
-                    '00000001111111000001000001111111111100000000111111111111100000011111111111111100000111111000111111000001111100000111110000011111000001111100000111111000111111000000111111111111100000000111111111110000000001111111111100000101111111111111110000011111100001111100001111100000001111100011111000000011111000111110000000111110001111100000001111100011111100000111111000011111111111111100000111111111111111000000111111111111100000000001111111000000',
-                    '00000001111110000000000001111111111000000000111111111111000000011111111111111000000111110000011111000011111000000011110000111110000000111100001111100000001111100011111000000011111000111110000000111110001111110000011111100001111111111111111000001111111111111110000001111111111111100000001111110011111000000000000001111100000101000000011111000001110000011111100000011111111111111000000111111111111100000000111111111100000000000011111100000000'
-                ];
-                function recognize() {
-                    ctx.drawImage(img, 0, 0);
-                    const imgData = ctx.getImageData(0, 0, ...dim).data;
-                    let greenAverage = 0;
-                    for (let j = 0; j < 128 * 32; j++) {
-                        greenAverage += imgData[4 * j + 1];
-                    }
-                    greenAverage /= (128 * 32);
-                    let numbers = ["", "", "", ""];
-                    for (let i = 4; i < 26; i++) {
-                        for (let k = 0; k < 4; k++) {
-                            for (let j = 26 + 21 * k; j < 46 + 21 * k; j++) {
-                                const pixel = imgData[4 * (128 * i + j) + 1] > greenAverage ? '0' : '1';
-                                numbers[k] += pixel;
-                            }
-                        }
-                    }
-                    let code = "";
-                    for (let i = 0; i < 4; i++) {
-                        let index = '0';
-                        let minDiff = 440;
-                        for (let j = 0; j < 10; j++) {
-                            let diff = 0;
-                            for (let k = 0; k < 440; k++) {
-                                if (numbers[i].charAt(k) != template[j].charAt(k)) {
-                                    diff += 1;
-                                }
-                            }
-                            if (diff < minDiff) {
-                                minDiff = diff;
-                                index = j + '';
-                            }
-                        }
-                        code += index;
-                    }
-                    input.value = code;
-                }
-                img.addEventListener('load', recognize);
-                if (img.complete) recognize();
-            }
-            const form = $('.loginForm');
-            if (!form) {
-                log("Form not found!");
-                break;
-            }
-            form.removeAttribute("style");
-            const options = {
-                childList: true,
-                attributes: false,
-                subtree: true
-            }
-            function focus() {
-                $('#username')?.focus();
-                $('#password')?.focus();
-                const code = $('#validate');
-                if (code) {
-                    code.focus();
-                    if (code.value == '') return;
-                }
-                const btn = $('#login');
-                if (!btn) {
-                    console.error("[USTC Helper] Login button not found!");
-                    return;
-                }
-            }
-            function login() {
-                window.setTimeout(() => {
-                    const username = $('#username')?.value;
-                    const password = $('#password')?.value;
-                    log(`Auto login: ${username} ${password}`);
-                    if (username && password) $('#login')?.click();
-                    else console.error("[USTC Helper] Username or password not found!");
-                }, 4000);
-            }
-            function hint_service() {
-                const notice = document.createElement("span");
-                notice.classList.add("inline-block");
-                const params = new URL(window.location.href).searchParams;
-                let service_url = params.get("service");
-                if (!service_url) {
-                    is_official = true; // No service URL, simply login to CAS
-                    return;
-                }
-                service_url = decodeURIComponent(service_url);
-                const domain = service_url.split("/")[2];
-                let color;
-                let status; // Official Student/Staff Third-party
-                let suffix;
-                if (/.+\.ustc\.edu\.cn/.test(domain)) {
-                    if (domain == 'home.ustc.edu.cn') {
-                        status = "Student";
-                        color = "#d0d01b";
-                        suffix = "@mail.ustc.edu.cn";
-                    } else if (domain == 'staff.ustc.edu.cn') {
-                        status = "Staff";
-                        color = "#d0d01b";
-                        suffix = "@ustc.edu.cn";
-                    } else {
-                        status = "Official";
-                        color = "green";
-                        is_official = true;
-                    }
-                } else {
-                    status = "Third-party";
-                    color = "red";
-                }
-                console.info(`[USTC Helper] ${status} service: ${service_url}`);
-                if (color == "#d0d01b") {
-                    const regex = new RegExp(/https?:\/\/(home|staff)\.ustc\.edu\.cn\/~([^\/]+)/i);
-                    const match = service_url.match(regex);
-                    if (match) {
-                        const name = match[2];
-                        const email = name + suffix;
-                        log("Contact email: " + email);
-                        notice.innerHTML = `<a style="color: #d0d01b;" title="Contact" href="mailto:${email}">${status}</a> service: <span style="color: grey;" title="${service_url}">${domain}</span>&nbsp;`;
-                    } else {
-                        log("Unable to determine contact email!");
-                        notice.innerHTML = `<a style="color: #d0d01b;" title="Unrecognized">${status}</a> service: <span style="color: grey;" title="${service_url}">${domain}</span>&nbsp;`;
-                    }
-                } else {
-                    notice.innerHTML = `<span style="color: ${color};">${status}</span> service: <span style="color: grey;" title="${service_url}">${domain}</span>&nbsp;`;
-                }
-                $("#footer")?.appendChild(notice);
-            }
-            function do_fingerprint() {
-                if (configProxy["passport.show_fingerprint"]) {
-                    const fingerprint = $("#resultInput").value;
-                    log("Original fingerprint: " + fingerprint);
-                    document.head.appendChild(document.createElement("style")).textContent = `
-                    #footer {
-                        padding-top: 0;
-                        height: auto;
-                    }
-                    .hover-to-show {
-                        filter: blur(0.2em);
-                        transition: filter 0.2s ease-in-out;
-                        &:hover, &:focus {
-                            filter: blur(0);
-                        }
-                    }`;
-                    const notice = document.createElement("span");
-                    notice.classList.add("inline-block");
-                    notice.id = "ustc-helper-fingerprint";
-                    notice.innerHTML = `Original fingerprint: <span class="hover-to-show" title="Original fingerprint">${fingerprint}</span>`;
-                    $("#footer")?.appendChild(notice);
-                }
-                if (configProxy["passport.fake_fingerprint"]) {
-                    const fingerprint = configProxy["passport.fake_fingerprint"];
-                    // Check if the fingerprint is valid (64 characters, consisting of 0-9 and a-f)
-                    if (fingerprint.length !== 64 || !/^[0-9a-f]+$/.test(fingerprint)) {
-                        log("Invalid fingerprint, ignored.");
-                        return;
-                    }
-                    $("#resultInput").value = fingerprint;
-                    log("Fingerprint set to: " + fingerprint);
-                    const notice = $("#ustc-helper-fingerprint");
-                    if (notice) {
-                        notice.innerHTML += `<br>Faked fingerprint: <span class="hover-to-show" title="Faked fingerprint">${fingerprint}</span>`;
-                    }
-                }
-            }
-            function main() {
-                if (configProxy["passport.focus"]) focus();
-                if (configProxy["passport.service"]) hint_service();
-                if (configProxy["passport.auto_login"] && is_official) {
-                    window.setTimeout(() => {
-                        login();
-                    }, 1000);
-                }
-                const resultInput = $("#resultInput");
-                if (resultInput && resultInput.value) {
-                    do_fingerprint();
-                } else {
-                    const fingerprintObserver = new MutationObserver(() => {
-                        if (resultInput && resultInput.value) {
-                            fingerprintObserver.disconnect();
-                            do_fingerprint();
-                        }
-                    });
-                    fingerprintObserver.observe(resultInput, { childList: false, subtree: false, attributes: true });
-                }
-                observer.disconnect();
-            }
-            const observer = new MutationObserver(main);
-            observer.observe(form, options);
+        case 'id.ustc.edu.cn': {
+            config.down("id");
             break;
         }
         case 'rec.ustc.edu.cn': {
@@ -1320,9 +1098,7 @@
                     if (!input || !input.placeholder || !ele) return;
                     const v = ele.__vue__;
                     observer.disconnect();
-                    const loading = Qmsg.loading("📦 正在加载依赖库...");
-                    const node = document.createElement("script");
-                    node.src = "https://cdn.bootcdn.net/ajax/libs/aes-js/3.1.2/index.js";
+                    const loading = Qmsg.loading("📦 正在寻找 Aes-js...");
                     function fail(s, hint) {
                         console.error("[USTC Helper]", s);
                         Qmsg.error(hint);
@@ -1339,9 +1115,8 @@
                         console.warn("[USTC Helper] Invalid input!");
                         Qmsg.warning("你输入了一个不合法的值！🤔");
                     }
-                    node.onload = () => {
-                        loading.close();
-                        success("Aes-js loaded.", "成功加载依赖库！🥳");
+                    function setup(aesjs) {
+                        success("Aes-js found.", "成功找到 Aes-js！🥳");
                         input.placeholder = "点击五角星或 Ctrl+D 以收藏 🍻";
                         // Encryption, adapted from https://blog.csdn.net/lijiext/article/details/110931285
                         const utf8 = aesjs.utils.utf8;
@@ -1493,10 +1268,24 @@
                             }
                         });
                     }
-                    node.onerror = (e) => {
-                        fail("Failed to load Aes-js. You won't be able to use \"custom_collection\" feature.", "依赖库加载失败，您将无法使用自定义收藏功能！⚠️");
+                    function findAesJs() {
+                        for (const f of unsafeWindow.webpackJsonp[1][1]) {
+                            const s = f?.toString() || "";
+                            if (s.includes("0123456789abcdef")) {
+                                const receiver = new Object();
+                                f(receiver, null, null);
+                                return receiver.exports;
+                            }
+                        }
+                        return null;
                     }
-                    document.head.appendChild(node);
+                    const aesjs = findAesJs();
+                    loading.close();
+                    if (aesjs) {
+                        setup(aesjs);
+                    } else {
+                        fail("Failed to find Aes-js. You won't be able to use \"custom_collection\" feature.", "未能找到 Aes-js，您将无法使用自定义收藏功能！⚠️");
+                    }
                 }
                 const observer = new MutationObserver(callback);
                 observer.observe(document.body, options);

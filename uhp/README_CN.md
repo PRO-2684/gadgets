@@ -1,13 +1,9 @@
 ![Greasy Fork](https://img.shields.io/greasyfork/dt/453530) [![](https://img.shields.io/badge/Crazy%20Thur.-V%20me%2050-red?logo=kfc)](https://greasyfork.org/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaWZvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10e04ed7ed56ae18d22cec6d675b34fd579cecab/wechat.jpeg?locale=zh-CN)
 
-# 🪄 功能
+## 🪄 功能
 
 1. [统一身份认证](https://passport.ustc.edu.cn/)
-    - 自动识别验证码 (从 [@J-Paven](https://greasyfork.org/users/810521) 的 [这个脚本](https://greasyfork.org/scripts/431681) 改编而来)
-    - 将焦点置于验证码输入框/登录按钮（以便按下回车直接登录）
-    - 提示服务域名、网址及其可信度（若为学生/老师的服务，点击 "Student" 或 "Staff" 即可邮件联系）
-    - 自动登录 (要求上一条打开，仅限官方服务，五秒后点击登录按钮)
-    - 查看/伪造浏览器指纹，从而绕过设备检验
+    - 暂无功能
 
 2. [USTC 邮箱](https://mail.ustc.edu.cn/)
     - 将焦点置于登录按钮
@@ -53,14 +49,14 @@
 
 需要更多功能可添加评论，在我能力范围内可能会添加。
 
-# ⌨️ 快捷键
+## ⌨️ 快捷键
 
 - 左右箭头：切换 tab
 - 数字键 (1-9)：切换至指定的 tab
 - x：关闭当前 tab
 - 滚轮：切换 tab
 
-# ⚙️ 配置
+## ⚙️ 配置
 
 在生效的网站打开 Tampermonkey 菜单以更改配置。
 
