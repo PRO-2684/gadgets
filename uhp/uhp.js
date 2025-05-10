@@ -3,7 +3,7 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.3.7
+// @version      1.3.8
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
@@ -26,7 +26,6 @@
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
 // @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js#md5=525526b8f0b6b8606cedf08c651163c2
-// @require      https://update.greasyfork.org/scripts/462234/1569735/Message.js
 // ==/UserScript==
 
 (function () {
@@ -130,10 +129,6 @@
             }
         }
     };
-    Qmsg.config({
-        showClose: true,
-        timeout: 2000
-    });
 
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
@@ -1086,7 +1081,6 @@
                 break;
             }
             if (configProxy["wvpn.custom_collection"]) {
-                // let element = $("div.portal-search-input-wrap");
                 const options = {
                     childList: true,
                     attributes: false,
@@ -1098,25 +1092,19 @@
                     if (!input || !input.placeholder || !ele) return;
                     const v = ele.__vue__;
                     observer.disconnect();
-                    const loading = Qmsg.loading("📦 正在寻找 Aes-js...");
                     function fail(s, hint) {
                         console.error("[USTC Helper]", s);
-                        Qmsg.error(hint);
-                    }
-                    function success(s, hint) {
-                        console.info("[USTC Helper]", s);
-                        Qmsg.success(hint);
+                        alert(hint);
                     }
                     function cancel() {
                         console.info("[USTC Helper] User calcelled the operation.");
-                        Qmsg.info("你终止了收藏操作！😢");
+                        alert("你终止了收藏操作！😢");
                     }
                     function invalid() {
                         console.warn("[USTC Helper] Invalid input!");
-                        Qmsg.warning("你输入了一个不合法的值！🤔");
+                        alert("你输入了一个不合法的值！🤔");
                     }
                     function setup(aesjs) {
-                        success("Aes-js found.", "成功找到 Aes-js！🥳");
                         input.placeholder = "点击五角星或 Ctrl+D 以收藏 🍻";
                         // Encryption, adapted from https://blog.csdn.net/lijiext/article/details/110931285
                         const utf8 = aesjs.utils.utf8;
@@ -1280,7 +1268,6 @@
                         return null;
                     }
                     const aesjs = findAesJs();
-                    loading.close();
                     if (aesjs) {
                         setup(aesjs);
                     } else {
