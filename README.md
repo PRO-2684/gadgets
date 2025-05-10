@@ -28,9 +28,9 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 | [`linux-po`](./linux-po) | [#523904](https://greasyfork.org/scripts/523904) | Various enhancements for linux.do site. |
 | [`no-keywords`](./no-keywords) | [#523904](https://greasyfork.org/scripts/469656) | Get rid of fucking highlighted search keywords. |
 | [`purlfy_for_tm`](./purlfy_for_tm) | [#492480](https://greasyfork.org/scripts/492480) | The ultimate URL purifier - Tampermonkey version. |
-| [`telegraphio`](./telegraphio) | N/A | Various enhancements for [Telegraph](https://telegra.ph/). |
+| [`telegraphio`](./telegraphio) | [#535483](https://greasyfork.org/scripts/535483) | Various enhancements for [Telegraph](https://telegra.ph/). |
 | [`uhp`](./uhp) | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more. |
-| [`wechat-plus`](./wechat-plus) | N/A | Various enhancements for posts of WeChat official accounts. |
+| [`wechat-plus`](./wechat-plus) | [#535482](https://greasyfork.org/scripts/535482) | Various enhancements for posts of WeChat official accounts. |
 
 ### 🎨 UserStyles
 
