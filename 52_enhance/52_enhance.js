@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         52 Enhance
 // @namespace    http://tampermonkey.net/
-// @version      0.8.0
+// @version      0.8.1
 // @description  52 破解论坛增强脚本
 // @author       PRO
 // @run-at       document-start
@@ -150,7 +150,7 @@
             .popupcredit { .pc_l, .pc_c, .pc_inner, .pc_r { background: none; } tr { background: #ff7400; display: block; border-radius: 1em; } }
             /* img[src="https://static.52pojie.cn/static/image/common/collapsed_no.gif"] */`,
     };
-    // Helper function for css
+    // Helper functions
     function injectCSS(id, css) {
         const style = document.head.appendChild(document.createElement("style"));
         style.id = idPrefix + id;
@@ -164,6 +164,25 @@
         } else if (enable) {
             injectCSS(id, dynamicStyles[id]);
         }
+    }
+    function notify(type, text) {
+        // [Noty](https://ned.im/noty/options)
+        // `type` (`noty_type__`): alert, love, post, normal, warn, credit, hide
+        new Noty({
+            text,
+            type,
+            layout: 'topCenter',
+            theme: 'mint',
+            closeWith: ['click'],
+            timeout: 2000,
+            progressBar: true,
+            visibilityControl: true,
+            animation: {
+                open: 'noty_effects_bottom_open',
+                close: 'noty_effects_bottom_close'
+            },
+            callbacks: {},
+        }).show();
     }
     // Regex filter
     function regexFilterOne(regex, thread) {
@@ -360,6 +379,7 @@
             const sign2 = $("#res-sign > a");
             const url = sign1?.parentElement?.href;
             if (!sign1 || !sign2 || !url || !url.startsWith("https://www.52pojie.cn/home.php?mod=task")) return;
+            notify("normal", "后台签到中...");
             const waf = "https://www.52pojie.cn/waf_text_verify.html";
             const iframe = document.body.appendChild(document.createElement("iframe"));
             iframe.src = url;
@@ -378,6 +398,7 @@
                 const curr = iframe.contentWindow.location.href;
                 let msg;
                 if (curr === "https://www.52pojie.cn/home.php?mod=task&item=new" || curr.match(/^https:\/\/www\.52pojie\.cn\/*$/)) {
+                    notify("normal", "签到成功！");
                     iframe.remove();
                     msg = "签到成功！";
                     sign1.src = "https://static.52pojie.cn/static/image/common/wbs.png";
@@ -385,6 +406,7 @@
                         sign2.remove();
                     }, 2000);
                 } else if (curr.startsWith(waf)) {
+                    notify("warn", "触发了防火墙，请稍后刷新页面检查是否签到成功。");
                     msg = "触发了防火墙，请稍后刷新页面检查是否签到成功。";
                     sign1.src = "https://static.52pojie.cn/static/image/common/qds.png";
                     sign1.parentElement.href = url;
@@ -440,6 +462,7 @@
         }
         infiniteScrollEnabled = enable;
     }
+
     // CSS injection
     for (const prop in dynamicStyles) {
         cssHelper(prop, configProxy[prop]);
