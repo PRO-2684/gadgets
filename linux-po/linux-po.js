@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Linux.po
 // @namespace    http://tampermonkey.net/
-// @version      0.1.9
+// @version      0.2.0
 // @description  对 linux.do 的增强脚本
 // @author       PRO-2684
 // @match        https://linux.do/*
@@ -160,7 +160,7 @@
         "appearance.postManager.posterIcon": hidePostSection("poster-icon"),
         "appearance.postManager.flair": ".topic-avatar > .post-avatar > .avatar-flair { display: none; }",
         "appearance.postManager.postNotice": ".post-stream > .topic-post > article .post-notice { display: none; }",
-        "appearance.other.hideDashedBox": ".discourse-cnpkv { display: none; }",
+        "appearance.other.hideDashedBox": ".discourse-cnpkv, .topic-above-suggested-outlet, .discovery-list-container-top-outlet, .topic-above-post-stream-outlet { display: none; }",
         "accessibility.largerClickArea": ".topic-list-item > .main-link { cursor: pointer; }",
         "accessibility.showPostsFloor": `.post-stream > .topic-post > article[id^='post_'] {
             &::after {
