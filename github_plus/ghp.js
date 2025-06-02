@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.3.5
+// @version      0.3.6
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -582,8 +582,8 @@
         //   - If using `DOMParser`, the same HTML would be parsed twice
         injectCSS("release", `
             @media (min-width: 1012px) { /* Making more room for the additional info */
-                .ghp-release-asset .col-lg-9 {
-                    width: 60%; /* Originally ~75% */
+                .ghp-release-asset .col-lg-6 {
+                    width: 40%; /* Originally ~50% */
                 }
             }
             .nowrap { /* Preventing text wrapping */
