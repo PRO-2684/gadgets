@@ -2,7 +2,7 @@
 // @name         Telegraphio
 // @name:zh-CN   Telegraphio
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  Various enhancements for Telegraph
 // @description:zh-CN 对 Telegraph 的各种增强
 // @tag          productivity
@@ -90,7 +90,7 @@
             shortKey: true,
             shiftKey: true,
         }, function (range, context) {
-            this.quill.formatText(range.index, range.length, "strike", true, Quill.sources.USER);
+            this.quill.format("strike", !context.format.strike, Quill.sources.USER);
         });
     }
     if (config.get("shortcutPlus")) {

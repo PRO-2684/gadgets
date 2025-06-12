@@ -8,7 +8,7 @@ Various enhancements for [Telegraph](https://telegra.ph/).
     - `#` for headers, `##` for sub headers. An extra space is required.
     - `>` for quotes. An extra space is required.
 - **Format +**: Enable extended formatting support.
-    - `Ctrl` + `Shift` + `X` for strikethrough.
+    - `Ctrl` + `Shift` + `X` for strikethrough. (`Meta` + `Shift` + `X` on macOS)
 - **Shortcut +**: Enable extended shortcut support.
     - Paste links into text.
 
