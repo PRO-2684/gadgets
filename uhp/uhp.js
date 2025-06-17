@@ -3,7 +3,7 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.3.8
+// @version      1.3.9
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
@@ -81,7 +81,7 @@
                     name: "Login",
                     type: "enum",
                     value: 1,
-                    options: ['none', 'focus', 'click'],
+                    options: ["none", "focus", "click"],
                     title: "What to do to the login button"
                 },
                 shortcut: { name: "Shortcut", title: "Enable shortcut support", type: "bool", value: true },
@@ -189,9 +189,7 @@
         }
         document.addEventListener("keydown", (e) => {
             const active = document.activeElement;
-            if (active.nodeName === "INPUT" || active.nodeName === "TEXTAREA") {
-                return;
-            }
+            if (active.nodeName === "INPUT" || active.nodeName === "TEXTAREA") return;
             const count = actions.count();
             const current = actions.current();
             switch (e.key) {
@@ -235,15 +233,14 @@
     }
 
     const config = new GM_config(configDesc);
-    const configProxy = config.proxy;
     switch (window.location.host) {
         case 'mail.ustc.edu.cn': {
             config.down("mail");
-            if (!configProxy["mail.enabled"]) {
+            if (!config.get("mail.enabled")) {
                 console.info("[USTC Helper] 'mail' feature disabled.");
                 break;
             }
-            if (configProxy["mail.focus"]) {
+            if (config.get("mail.focus")) {
                 timer(() => {
                     const btn = $(".formLogin .submit");
                     if (btn) {
@@ -269,11 +266,11 @@
         }
         case 'rec.ustc.edu.cn': {
             config.down("rec");
-            if (!configProxy["rec.enabled"]) {
+            if (!config.get("rec.enabled")) {
                 console.info("[USTC Helper] 'rec' feature disabled.");
                 break;
             }
-            if (configProxy["rec.opencurrent"]) {
+            if (config.get("rec.opencurrent")) {
                 window.webpackJsonp.push_ = window.webpackJsonp.push;
                 window.webpackJsonp.push = (val) => {
                     if (val[0][0] !== "chunk-5ae262a1")
@@ -622,7 +619,7 @@
                     }
                 };
             }
-            if (configProxy["rec.autologin"] && document.location.pathname == '/') {
+            if (config.get("rec.autologin") && document.location.pathname == '/') {
                 const app = $("#app");
                 const options = {
                     childList: true,
@@ -637,7 +634,7 @@
                     }
                 });
                 observer.observe(app, options);
-            } else if (configProxy["rec.opencurrent"]) {
+            } else if (config.get("rec.opencurrent")) {
                 const app = $("#app");
                 const options = {
                     childList: true,
@@ -659,11 +656,11 @@
         }
         case 'recapi.ustc.edu.cn': {
             config.down("rec");
-            if (!configProxy["rec.enabled"]) {
+            if (!config.get("rec.enabled")) {
                 console.info("[USTC Helper] 'rec' feature disabled.");
                 break;
             }
-            if (configProxy["rec.autologin"]) {
+            if (config.get("rec.autologin")) {
                 const btn = $("#ltwo > div > button");
                 if (!btn) {
                     console.error("[USTC Helper] Login button not found!");
@@ -675,15 +672,15 @@
         }
         case 'www.bb.ustc.edu.cn': {
             config.down("bb");
-            if (!configProxy["bb.enabled"]) {
+            if (!config.get("bb.enabled")) {
                 console.info("[USTC Helper] 'bb' feature disabled.");
                 break;
             }
-            if (window.location.pathname == '/nginx_auth/' && configProxy["bb.autoauth"]) {
+            if (window.location.pathname == '/nginx_auth/' && config.get("bb.autoauth")) {
                 $('a')?.click();
-            } else if ((window.location.pathname == '/' || window.location.pathname == '/webapps/login/') && configProxy["bb.autologin"]) {
+            } else if ((window.location.pathname == '/' || window.location.pathname == '/webapps/login/') && config.get("bb.autologin")) {
                 $('#login > table > tbody > tr > td:nth-child(2) > span > a')?.click();
-            } else if (configProxy["bb.showhwstatus"] && window.location.pathname == '/webapps/blackboard/content/listContent.jsp' && document.getElementById('pageTitleText').children[0].textContent == '作业区') {
+            } else if (config.get("bb.showhwstatus") && window.location.pathname == '/webapps/blackboard/content/listContent.jsp' && document.getElementById('pageTitleText').children[0].textContent == '作业区') {
                 const css = document.createElement('style');
                 css.textContent = ".ustc-helper-bb-ignored { opacity: 0.4; } .ustc-helper-bb-ignored > .details { display: none; }";
                 document.head.appendChild(css);
@@ -784,55 +781,64 @@
         }
         case 'jw.ustc.edu.cn': {
             config.down("jw");
-            if (!configProxy["jw.enabled"]) {
+            if (!config.get("jw.enabled")) {
                 console.info("[USTC Helper] 'jw' feature disabled.");
                 break;
             }
-            if (configProxy["jw.login"] && window.location.pathname == "/login") {
+            if (config.get("jw.login") && window.location.pathname == "/login") {
                 const btn = document.getElementById('login-unified-wrapper');
-                if (configProxy["jw.login"] === 1) {
+                if (config.get("jw.login") === 1) {
                     btn.focus();
-                } else if (configProxy["jw.login"] === 2) {
+                } else if (config.get("jw.login") === 2) {
                     btn.click();
-                } else if (configProxy["jw.login"] !== 0) {
-                    console.error(`[USTC Helper] Unknown option for jw.login: ${configProxy["jw.login"]}`);
+                } else if (config.get("jw.login") !== 0) {
+                    console.error(`[USTC Helper] Unknown option for jw.login: ${config.get("jw.login")}`);
                 }
             }
-            if (configProxy["jw.shortcut"] && window.location.pathname == "/home") {
-                timer(() => {
-                    const tabList = $("#e-home-tab-list");
-                    if (!tabList) return false;
-                    const tabs = tabList?.children;
-                    const home = $("#e-top-home-page > li > a > div.home-logo");
-                    const header = tabList.parentElement;
-                    const actions = {
-                        select: (index) => tabs[index]?.querySelector("span.tabTitle")?.click(),
-                        close: (index) => tabs[index]?.querySelector("a > i.fa-times")?.click(),
-                        count: () => tabs.length,
-                        current: () => {
-                            for (let i = 0; i < tabs.length; i++) {
-                                if (tabs[i].classList.contains('active')) return i;
-                            }
-                            return -1;
-                        },
-                        special: () => home?.click()
-                    };
-                    setupShortcuts(header, actions);
-                    return true;
-                }).then((success) => {
-                    log(success ? "Shortcuts have been setup." : "Failed to setup shortcuts.");
-                });
-                const list = $("#primaryCarousel > .carousel-inner");
-                if (list) {
-                    const left = $("#primaryCarousel > a.left[data-slide='prev']");
-                    const right = $("#primaryCarousel > a.right[data-slide='next']");
-                    setupScroll(list, (delta) => {
-                        if (delta < 0) left.click();
-                        else right.click();
+            if (config.get("jw.shortcut")) {
+                if (window.location.pathname == "/home") { // Top frame
+                    timer(() => {
+                        const tabList = $("#e-home-tab-list");
+                        if (!tabList) return false;
+                        const tabs = tabList?.children;
+                        const home = $("#e-top-home-page > li > a > div.home-logo");
+                        const header = tabList.parentElement;
+                        const actions = {
+                            select: (index) => tabs[index]?.querySelector("span.tabTitle")?.click(),
+                            close: (index) => tabs[index]?.querySelector("a > i.fa-times")?.click(),
+                            count: () => tabs.length,
+                            current: () => {
+                                for (let i = 0; i < tabs.length; i++) {
+                                    if (tabs[i].classList.contains('active')) return i;
+                                }
+                                return -1;
+                            },
+                            special: () => home?.click()
+                        };
+                        setupShortcuts(header, actions);
+                        return true;
+                    }).then((success) => {
+                        log(success ? "Shortcuts have been setup." : "Failed to setup shortcuts.");
+                    });
+                    const list = $("#primaryCarousel > .carousel-inner");
+                    if (list) {
+                        const left = $("#primaryCarousel > a.left[data-slide='prev']");
+                        const right = $("#primaryCarousel > a.right[data-slide='next']");
+                        setupScroll(list, (delta) => {
+                            if (delta < 0) left.click();
+                            else right.click();
+                        });
+                    }
+                } else { // Bubble key events up
+                    document.addEventListener("keydown", (e) => {
+                        const active = document.activeElement;
+                        if (active.nodeName === "INPUT" || active.nodeName === "TEXTAREA") return;
+                        window.parent.document.dispatchEvent(new KeyboardEvent(e.type, e));
+                        e.stopPropagation();
                     });
                 }
             }
-            if (configProxy["jw.score_mask"] && window.location.pathname == "/for-std/grade/sheet") {
+            if (config.get("jw.score_mask") && window.location.pathname == "/for-std/grade/sheet") {
                 function get_status(entry) {
                     // Status:
                     // false: Normal display
@@ -946,7 +952,7 @@
             };
             setupDynamicStyles("jw", config, jw_css);
             if (window.location.pathname.startsWith("/for-std/course-table")) {
-                if (configProxy["jw.sum"]) {
+                if (config.get("jw.sum")) {
                     const table = $("#lessons");
                     if (table) {
                         const rows = table.querySelectorAll("tbody > tr");
@@ -968,11 +974,11 @@
         }
         case 'young.ustc.edu.cn': {
             config.down("young");
-            if (!configProxy["young.enabled"]) {
+            if (!config.get("young.enabled")) {
                 console.info("[USTC Helper] 'young' feature disabled.");
                 break;
             }
-            if (window.location.pathname == '/nginx_auth/' && configProxy["young.auto_auth"]) {
+            if (window.location.pathname == '/nginx_auth/' && config.get("young.auto_auth")) {
                 document.getElementsByTagName('a')[0].click();
                 return;
             }
@@ -981,12 +987,12 @@
             function main(mutations, observer) {
                 const menu = app.querySelector(".ant-menu-root");
                 if (!menu) return;
-                const default_tab = configProxy["young.default_tab"];
+                const default_tab = config.get("young.default_tab");
                 if (default_tab.length) router.push(default_tab);
                 const submenus = menu.querySelectorAll("li.ant-menu-submenu-horizontal:not(.ant-menu-overflowed-submenu) > div");
                 if (!submenus.length) return;
                 observer.disconnect();
-                if (configProxy["young.no_datascreen"]) {
+                if (config.get("young.no_datascreen")) {
                     app.querySelector("div.header-index-wide > a").remove();
                     function getCloseBtn() {
                         return app.querySelector("span[pagekey='/dataAnalysis/visual']")?.nextElementSibling;
@@ -1006,7 +1012,7 @@
                         log(success ? "Data screen closed." : "Failed to close data screen.");
                     });
                 }
-                if (configProxy["young.auto_tab"]) {
+                if (config.get("young.auto_tab")) {
                     submenus[0].onclick = (e) => {
                         router.push('/dataAnalysis/studentAnalysis');
                         e.stopImmediatePropagation();
@@ -1038,7 +1044,7 @@
                     //     }
                     // });
                 }
-                if (configProxy["young.shortcut"]) {
+                if (config.get("young.shortcut")) {
                     const tabList = $(".ant-tabs-nav-animated > div")
                     const tabs = tabList.children;
                     const nav = tabList.parentElement.parentElement;
@@ -1076,11 +1082,11 @@
         }
         case 'wvpn.ustc.edu.cn': {
             config.down("wvpn");
-            if (!configProxy["wvpn.enabled"]) {
+            if (!config.get("wvpn.enabled")) {
                 console.info("[USTC Helper] 'wvpn' feature disabled.");
                 break;
             }
-            if (configProxy["wvpn.custom_collection"]) {
+            if (config.get("wvpn.custom_collection")) {
                 const options = {
                     childList: true,
                     attributes: false,
@@ -1281,7 +1287,7 @@
         }
         case 'icourse.club': {
             config.down("icourse");
-            if (!configProxy["icourse.enabled"]) {
+            if (!config.get("icourse.enabled")) {
                 console.info("[USTC Helper] 'icourse' feature disabled.");
                 break;
             }
@@ -1331,20 +1337,20 @@
                 }
                 items.forEach(addItem);
             }
-            if (configProxy["icourse.filelist"]) {
+            if (config.get("icourse.filelist")) {
                 generateList("文件列表", "div.review-content a[href^='/uploads/files/']", true);
             }
-            if (configProxy["icourse.linklist"]) {
+            if (config.get("icourse.linklist")) {
                 generateList("链接列表", "div.review-content a:not([href^='/uploads/files/'])", false);
             }
-            if (configProxy["icourse.native_top"]) {
+            if (config.get("icourse.native_top")) {
                 const goTop = $("#gotop");
                 goTop?.addEventListener("click", (e) => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                     e.stopPropagation();
                 }, { capture: true });
             }
-            if (configProxy["icourse.shortcut"]) {
+            if (config.get("icourse.shortcut")) {
                 for (const textArea of $$("textarea")) { // Comment section
                     const submit = textArea.nextElementSibling.firstElementChild;
                     if (submit && submit.tagName == "BUTTON") {
