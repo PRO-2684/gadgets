@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.9.2
+// @version      0.9.3
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
@@ -287,7 +287,7 @@
                 }
             }
             .showing-all-languages .badge-js, .showing-all-languages .badge-css, .script-type { display: none; }
-            #script-info .script-meta-block { float: right; column-count: 1; max-width: 300px; border-left: 1px solid #DDDDDD; margin-left: 1em; padding-left: 1em; }
+            #script-info .script-meta-block { float: right; column-count: 1; max-width: 300px; border-left: 1px solid var(--content-border-color); margin-left: 1em; padding-left: 1em; }
             #additional-info { width: calc(100% - 2em - 2px); }
         `,
         "display.showVersion": `.script-list > li[data-script-version]::before { content: "@" attr(data-script-version); position: absolute; translate: 0 -1em; color: grey; font-size: smaller; }`,
@@ -354,14 +354,14 @@
     input[type=file]:hover { border-color: black; background: rgba(169, 169, 169, 0.6); }
     input[type=file]::file-selector-button { border: 1px solid; border-radius: 0.3em; transition: background 0.25s ease-in-out; background: rgba(169, 169, 169, 0.7); }
     input[type=file]::file-selector-button:hover { background: rgba(169, 169, 169, 1); }
-    table { border: 1px solid #8d8d8d; border-collapse: collapse; width: auto; }
-    table td, table th { padding: 0.5em 0.75em; vertical-align: middle; border: 1px solid #8d8d8d; }
+    table { border: 1px solid var(--content-border-color); border-collapse: collapse; width: auto; }
+    table td, table th { padding: 0.5em 0.75em; vertical-align: middle; border: 1px solid var(--content-border-color); }
     @media (any-hover: none) { .dynamic-opacity { opacity: 0.8; } .dynamic-opacity:hover { opacity: 0.8; } }
     @media screen and (min-width: 767px) {
         aside.panel { display: contents; line-height: 1.5; }
-        ul.outline { position: sticky; float: right; padding: 0 0 0 0.5em; margin: 0 0.5em -99vh; max-height: 80vh; border: 1px solid #BBBBBB; border-left: 2px solid #F2E5E5; box-shadow: 0 0 5px #ddd; background: linear-gradient(to right, #fcf1f1, #FFF 1em); list-style: none; width: 10.5%; color: gray; border-radius: 5px; overflow-y: scroll; z-index: 1; }
+        ul.outline { position: sticky; float: right; padding: 0 0 0 0.5em; margin: 0 0.5em -99vh; max-height: 80vh; border: 1px solid var(--content-border-color); box-shadow: 0 0 5px var(--content-box-shadow-color); background: var(--content-background-color); list-style: none; width: 10.5%; color: var(--overall-text-color); border-radius: 5px; overflow-y: scroll; z-index: 1; }
         ul.outline > li { overflow: hidden; text-overflow: ellipsis; }
-        ul.outline > li > a { color: gray; white-space: nowrap; text-decoration: none; }
+        ul.outline > li > a { color: var(--overall-text-color); white-space: nowrap; text-decoration: none; }
     }
     pre > code { overflow: hidden; display: block; }
     ul { padding-left: 1.5em; }

@@ -3,8 +3,8 @@
 // @name:zh-CN   Editio
 // @namespace    http://tampermonkey.net/
 // @version      0.2.3
-// @description  Some Visual Studio Code's useful features ported to the web!
-// @description:zh-CN 将 Visual Studio Code 的部分实用功能移植到 Web 上！
+// @description  Some Visual Studio Code's useful features ported to the web, including pairing brackets and quotes, tabbing out, pasting URLs into selections, and fast scrolling etc
+// @description:zh-CN 将 Visual Studio Code 的部分实用功能移植到 Web 上，包括匹配括号和引号，tab out，将 URL 粘贴至选区以及快速滚动等
 // @tag          productivity
 // @author       PRO-2684
 // @match        *://*/*
