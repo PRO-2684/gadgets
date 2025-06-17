@@ -16,8 +16,7 @@
 | 用户脚本 | GreasyFork | 描述 |
 | --- | --- | --- |
 | [`52_enhance`](./52_enhance) | [#469051](https://greasyfork.org/scripts/469051) | 52 破解论坛增强脚本。 |
-| [`auto_grading`](./auto_grading) | [#457282](https://greasyfork.org/scripts/457282) | 自动评教 `tqm.ustc.edu.cn`。 |
-| [`baidu_fanyi_plus`](./baidu_fanyi_plus) | N/A | 一系列针对百度翻译的功能增强。 |
+| [`baidu_fanyi_plus`](./baidu_fanyi_plus) | [#539757](https://greasyfork.org/scripts/539757) | 一系列针对百度翻译的功能增强。 |
 | [`CORS_helper`](./CORS_helper) | [#508769](https://greasyfork.org/scripts/508769) | 一个简单的、可自定义的脚本，帮助你绕过 CORS 限制。 |
 | [`draggy`](./draggy) | [#511154](https://greasyfork.org/scripts/511154) | 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。 |
 | [`editio`](./editio) | [#519147](https://greasyfork.org/scripts/519147) | 一个简单的脚本，为输入框和文本框添加一些额外功能，灵感来自 Visual Studio Code。 |
@@ -29,8 +28,9 @@
 | [`no-keywords`](./no-keywords) | [#523904](https://greasyfork.org/scripts/469656) | 去你妈的傻逼高亮搜索关键词。 |
 | [`purlfy_for_tm`](./purlfy_for_tm) | [#492480](https://greasyfork.org/scripts/492480) | 终极 URL 净化器 - Tampermonkey 版本。 |
 | [`telegraphio`](./telegraphio) | [#535483](https://greasyfork.org/scripts/535483) | 对 [Telegraph](https://telegra.ph/) 的各种增强。 |
-| [`uhp`](./uhp) | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - 为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。 |
 | [`wechat-plus`](./wechat-plus) | [#535482](https://greasyfork.org/zh-CN/scripts/535482) | 针对微信公众号文章的增强脚本。 |
+| [`auto_grading`](./auto_grading) * | [#457282](https://greasyfork.org/scripts/457282) | 自动评教 `tqm.ustc.edu.cn`。 |
+| [`uhp`](./uhp) * | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - 为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。 |
 
 ### 🎨 用户样式
 
