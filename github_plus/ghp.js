@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.3.6
+// @version      0.3.7
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -508,9 +508,6 @@
             const assetInfo = releaseData[downloadLink];
             if (!assetInfo) return;
             asset.classList.add("ghp-release-asset");
-            const size = statistics.querySelector("span.flex-auto");
-            size.classList.remove("flex-auto");
-            size.classList.add("flex-shrink-0", "flex-grow-0");
             if (config.get("release.downloads")) {
                 const downloadCount = createDownloadCount(assetInfo.downloads);
                 statistics.prepend(downloadCount);
