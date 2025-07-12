@@ -2,7 +2,7 @@
 // @name         Telegraphio
 // @name:zh-CN   Telegraphio
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  Various enhancements for Telegraph
 // @description:zh-CN 对 Telegraph 的各种增强
 // @tag          productivity
@@ -49,7 +49,7 @@
     };
     const config = new GM_config(configDesc);
 
-    const { quill, Quill } = unsafeWindow;
+    const { quill, Quill, updateEditable, savePage } = unsafeWindow;
     if (!quill || !Quill) {
         error("Quill not found");
         return;
@@ -117,6 +117,25 @@
         quill.clipboard.addMatcher("A", function (node, delta) {
             const link = delta.ops.at(-1)?.attributes?.link;
             return applyLinkToSelection(delta, link);
+        });
+
+        // Ctrl + E to edit
+        // Quill is not activated, so set up listener using addEventListener
+        document.addEventListener("keydown", e => {
+            if ((e.ctrlKey || e.metaKey) && e.key === "e" && !quill.isEnabled()) {
+                e.preventDefault();
+                updateEditable(true);
+            }
+        });
+
+        // Ctrl + S to publish
+        quill.keyboard.addBinding({
+            key: "S",
+            shortKey: true,
+        }, function (_range, _context) {
+            if (quill.isEnabled()) {
+                savePage();
+            }
         });
     }
 })();

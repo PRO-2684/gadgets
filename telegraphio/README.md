@@ -11,6 +11,8 @@ Various enhancements for [Telegraph](https://telegra.ph/).
     - `Ctrl` + `Shift` + `X` for strikethrough. (`Meta` + `Shift` + `X` on macOS)
 - **Shortcut +**: Enable extended shortcut support.
     - Paste links into text.
+    - `Ctrl + E` to edit your article.
+    - `Ctrl + S` to publish your article.
 
 ## 📖 Side Notes
 
