@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         52 Enhance
 // @namespace    http://tampermonkey.net/
-// @version      0.8.1
+// @version      0.8.2
 // @description  52 破解论坛增强脚本
 // @author       PRO
 // @run-at       document-start
@@ -36,6 +36,7 @@
             items: {
                 oneClick: { name: "* 一键隐藏", title: "为旧版代码块添加“隐藏代码”的按钮；一键隐藏所有置顶帖；添加隐藏回复的按钮", type: "bool", value: true },
                 warning: { name: "隐藏提醒", title: "隐藏所有提醒", type: "bool", value: false },
+                avatar: { name: "隐藏头像", title: "隐藏帖子内用户头像", type: "bool", value: false },
                 avatarDetail: { name: "隐藏头像详情", title: "隐藏头像下的详情 (统计信息、各类奖章、收听按钮)", type: "bool", value: false },
                 rating: { name: "隐藏评分", title: "隐藏所有评分", type: "bool", value: false },
                 comment: { name: "隐藏点评", title: "隐藏所有点评", type: "bool", value: false },
@@ -53,6 +54,7 @@
                 regexFilter: { name: "正则过滤", title: "使用正则表达式过滤帖子", type: "str" },
                 cssFix: { name: "CSS 修复", title: "动态透明度；图标上光标不显示为 pointer", type: "bool", value: true },
                 imageMaxHeight: { name: "限制图片最大高度", title: "将帖子图片的最大高度限制为 70vh", type: "bool", value: false },
+                removeMinHeight: { name: "移除最小高度限制", title: "移除帖子的最小高度限制", type: "bool", value: false },
                 nativeTip: { name: "* 原生提示", title: "使用原生提示框", type: "bool", value: false },
                 modernize: { name: "现代化", title: "使论坛更现代化", type: "bool", value: false },
             }
@@ -79,6 +81,7 @@
     };
     const dynamicStyles = {
         "hide.warning": ".vw50_kfc_pb, .vw50_kfc_pt, .vw50_kfc_f { display: none; }",
+        "hide.avatar": "td.pls > .pls.favatar .avatar { display: none; }",
         "hide.avatarDetail": "div.tns.xg2, dl.credit-list, p.md_ctrl, p.xg1, ul.xl.xl2.o.cl { display: none; }",
         "hide.rating": "div.pcb > h3.psth.xs1, dl.rate { display: none; }",
         "hide.comment": "div.pcb > div.cm { display: none; }",
@@ -97,6 +100,7 @@
             }
             html { scroll-behavior: smooth; }`,
         "display.imageMaxHeight": "#postlist .plc .t_f img, #postlist .plc .tattl img { max-height: 70vh; }",
+        "display.removeMinHeight": ".pcb > .t_fsz { min-height: auto; }",
         "display.modernize": `.scbar_icon_td, .scbar_txt_td, .scbar_type_td, .nvhm { background: none; }
             .scbar_type_td > a::after { content: " ▼"; }
             .scbar_btn_td { background: none; > button#scbar_btn { &::after { content: " 🔍"; } > strong { display: none; }}}
