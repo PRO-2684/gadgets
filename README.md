@@ -17,6 +17,7 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 | --- | --- | --- |
 | [`52_enhance`](./52_enhance) | [#469051](https://greasyfork.org/scripts/469051) | 52 forum enhancement script. |
 | [`baidu_fanyi_plus`](./baidu_fanyi_plus) | [#539757](https://greasyfork.org/scripts/539757) | Enhance Baidu Fanyi with additional features. |
+| [`better-recaptcha`](./better-recaptcha) | N/A | Various QoL improvements to reCAPTCHA. |
 | [`CORS_helper`](./CORS_helper) | [#508769](https://greasyfork.org/scripts/508769) | A simple, customizable script that helps you to bypass CORS restrictions. |
 | [`draggy`](./draggy) | [#511154](https://greasyfork.org/scripts/511154) | Drag a link to open in a new tab, drag a piece of text to search in a new tab. |
 | [`editio`](./editio) | [#519147](https://greasyfork.org/scripts/519147) | A simple script that adds some extra features to inputs and textareas, inspired by Visual Studio Code. |

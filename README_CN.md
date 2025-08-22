@@ -16,6 +16,7 @@
 | 用户脚本 | GreasyFork | 描述 |
 | --- | --- | --- |
 | [`52_enhance`](./52_enhance) | [#469051](https://greasyfork.org/scripts/469051) | 52 破解论坛增强脚本。 |
+| [`better-recaptcha`](./better-recaptcha) | N/A | 一些对 reCAPTCHA 的 QoL 提升。 |
 | [`baidu_fanyi_plus`](./baidu_fanyi_plus) | [#539757](https://greasyfork.org/scripts/539757) | 一系列针对百度翻译的功能增强。 |
 | [`CORS_helper`](./CORS_helper) | [#508769](https://greasyfork.org/scripts/508769) | 一个简单的、可自定义的脚本，帮助你绕过 CORS 限制。 |
 | [`draggy`](./draggy) | [#511154](https://greasyfork.org/scripts/511154) | 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。 |
