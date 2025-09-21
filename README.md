@@ -31,6 +31,7 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 | [`telegraphio`](./telegraphio) | [#535483](https://greasyfork.org/scripts/535483) | Various enhancements for [Telegraph](https://telegra.ph/). |
 | [`wechat-plus`](./wechat-plus) | [#535482](https://greasyfork.org/scripts/535482) | Various enhancements for posts of WeChat official accounts. |
 | [`auto_grading`](./auto_grading) * | [#457282](https://greasyfork.org/scripts/457282) | Auto grading for `tqm.ustc.edu.cn`. |
+| [`ucas-helper`](./ucas-helper/) | N/A | A helper script for UCAS online systems. |
 | [`uhp`](./uhp) * | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more. |
 
 ### 🎨 UserStyles

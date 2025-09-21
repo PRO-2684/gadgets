@@ -31,6 +31,7 @@
 | [`telegraphio`](./telegraphio) | [#535483](https://greasyfork.org/scripts/535483) | 对 [Telegraph](https://telegra.ph/) 的各种增强。 |
 | [`wechat-plus`](./wechat-plus) | [#535482](https://greasyfork.org/zh-CN/scripts/535482) | 针对微信公众号文章的增强脚本。 |
 | [`auto_grading`](./auto_grading) * | [#457282](https://greasyfork.org/scripts/457282) | 自动评教 `tqm.ustc.edu.cn`。 |
+| [`ucas-helper`](./ucas-helper/) | N/A | UCAS 在线系统的辅助脚本。 |
 | [`uhp`](./uhp) * | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - 为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。 |
 
 ### 🎨 用户样式
