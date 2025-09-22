@@ -2,7 +2,7 @@
 // @name         Editio
 // @name:zh-CN   Editio
 // @namespace    http://tampermonkey.net/
-// @version      0.2.3
+// @version      0.2.4
 // @description  Some Visual Studio Code's useful features ported to the web, including pairing brackets and quotes, tabbing out, pasting URLs into selections, and fast scrolling etc
 // @description:zh-CN 将 Visual Studio Code 的部分实用功能移植到 Web 上，包括匹配括号和引号，tab out，将 URL 粘贴至选区以及快速滚动等
 // @tag          productivity
@@ -449,12 +449,14 @@
         }
         return document.scrollingElement;
     }
+    let shouldPrevent = false;
     /**
      * Handle the mousewheel event.
      * @param {WheelEvent} e The WheelEvent.
      */
     function onWheel(e) {
         if (!e.altKey || e.deltaMode !== WheelEvent.DOM_DELTA_PIXEL) return;
+        shouldPrevent = true;
         e.preventDefault();
         e.stopImmediatePropagation();
         const { deltaY } = e;
@@ -469,14 +471,29 @@
         });
     }
     /**
+     * Handle the keydown event. Prevent the default behavior of the Alt key if necessary, so as to avoid triggering menu bars in some applications.
+     * @param {KeyboardEvent} e The KeyboardEvent.
+     */
+    function onKeyUp(e) {
+        if (e.key === "Alt" && shouldPrevent) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            shouldPrevent = false;
+        }
+    }
+
+    /**
      * Enable or disable the fast scroll feature.
      * @param {boolean} enabled Whether the fast scroll feature is enabled.
      */
     function fastScroll(enabled) {
+        const capture = config.get("advanced.capture");
         if (enabled) {
-            document.addEventListener("wheel", onWheel, { capture: config.get("advanced.capture"), passive: false });
+            document.addEventListener("wheel", onWheel, { capture, passive: false });
+            window.addEventListener("keyup", onKeyUp, { capture, passive: false });
         } else {
-            document.removeEventListener("wheel", onWheel, { capture: config.get("advanced.capture"), passive: false });
+            document.removeEventListener("wheel", onWheel, { capture, passive: false });
+            window.removeEventListener("keyup", onKeyUp, { capture, passive: false });
         }
     }
 
