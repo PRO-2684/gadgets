@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
@@ -43,6 +43,14 @@
                     // Focus: Focus on the first unfilled field (username, password or captcha), or the submit button if all filled
                     // Auto: Automatically submit the form when all fields are filled, otherwise focus on the first unfilled field
                     value: 1, // Default to "Focus"
+                },
+                autoFillTimeout: {
+                    name: "⏳ Auto fill timeout",
+                    title: "Waiting time for potential browser auto-fill (in milliseconds)",
+                    type: "int",
+                    value: 500,
+                    min: 0,
+                    max: 10000,
                 },
                 cleanerUI: {
                     name: "🧼 Cleaner UI",
@@ -119,7 +127,7 @@
                                 }
                             }
                         }
-                    }, 200);
+                    }, config.get("sep.autoFillTimeout"));
                     function getFirstUnfilled() {
                         // https://stackoverflow.com/a/70182698/16468609
                         if (!(username.value || username.matches(":autofill"))) return username;
