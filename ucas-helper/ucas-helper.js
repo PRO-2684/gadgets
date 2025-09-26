@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
@@ -41,7 +41,7 @@
                     options: ["None", "Focus", "Auto"],
                     // None: Do nothing
                     // Focus: Focus on the first unfilled field (username, password or captcha), or the submit button if all filled
-                    // Auto: Automatically submit the form when all fields are filled, otherwise focus on the first unfilled field
+                    // Auto: Automatically submit the form when all fields are filled, otherwise focus on the first unfilled field; Not working due to browser security policy
                     value: 1, // Default to "Focus"
                 },
                 autoFillTimeout: {
@@ -55,6 +55,12 @@
                 cleanerUI: {
                     name: "🧼 Cleaner UI",
                     title: "Make the navigation page cleaner (appStoreStudent)",
+                    type: "bool",
+                    value: false,
+                },
+                extendedEntries: {
+                    name: "📂 Extended entries",
+                    title: "Add more entries in flyout menus (appStoreStudent)",
                     type: "bool",
                     value: false,
                 },
@@ -145,6 +151,42 @@
                             .leftMenu .absolute { background-image: none !important; }
                         `,
                     });
+                    let addedEntries = [];
+                    if (config.get("sep.extendedEntries")) {
+                        const obs = new MutationObserver(mutations => {
+                            obs.disconnect();
+                            addEntries();
+                        });
+                        obs.observe($("#businessMenuDivId"), { childList: true });
+                    }
+                    config.addEventListener("set", e => {
+                        if (e.detail.prop === "sep.extendedEntries") {
+                            if (e.detail.after) {
+                                addEntries();
+                            } else {
+                                for (const entry of addedEntries) {
+                                    entry.remove();
+                                }
+                                addedEntries = [];
+                            }
+                        }
+                    });
+                    /**
+                     * @param {string} name Entry name
+                     * @param {string} href Entry URL
+                     * @param {string} afterUrl Insert after this link
+                     */
+                    function addEntry(name, href, afterUrl) {
+                        const base = $(`ul > a[href="${afterUrl}"]`);
+                        const copied = base.cloneNode(false);
+                        copied.href = href;
+                        copied.textContent = name;
+                        addedEntries.push(copied);
+                        base.insertAdjacentElement("afterend", copied);
+                    }
+                    function addEntries() {
+                        addEntry("考勤系统", "https://sep.ucas.ac.cn/portal/site/539/001/1", "https://sep.ucas.ac.cn/portal/site/218/1252"); // After 在线学习 - 实景课堂
+                    }
                     break;
                 }
                 default:
