@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
 // @match        http://xkgo.ucas.ac.cn:3000/*
+// @match        https://mooc.mooc.ucas.edu.cn/mooc-ans/js/*
 // @icon         http://ucas.ac.cn/favicon.ico
 // @license      gpl-3.0
 // @grant        unsafeWindow
@@ -15,7 +16,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js#md5=525526b8f0b6b8606cedf08c651163c2
+// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
 // ==/UserScript==
 
 (function() {
@@ -68,7 +69,7 @@
         },
         courseSelection: {
             name: "🪶 Course Selection",
-            title: "Course selection system related helpers",
+            title: "Course selection system related helpers (xkgo.ucas.ac.cn)",
             type: "folder",
             items: {
                 courseIDs: {
@@ -100,6 +101,19 @@
                     max: 600,
                 },
             }
+        },
+        mooc: {
+            name: "🎓 MOOC",
+            title: "MOOC system related helpers (mooc.mooc.ucas.edu.cn)",
+            type: "folder",
+            items: {
+                nativeSelector: {
+                    name: "📂 Native selector",
+                    title: "Use the native file selector instead of the custom one, allowing drag-and-drop",
+                    type: "bool",
+                    value: false,
+                },
+            },
         },
     };
     const config = new GM_config(configDesc);
@@ -288,6 +302,54 @@
                     .catch(err => {
                         error("Keep alive error:", err);
                     });
+            }
+            break;
+        }
+        case "mooc.mooc.ucas.edu.cn": {
+            config.down("mooc");
+            switch (location.pathname) {
+                case "/mooc-ans/js/editor20150812/dialogs/attachment_new/attachment.html": { // Answer upload page
+                    setupDynamicStyles("mooc", config, {
+                        nativeSelector: `
+                            #filePickerReady {
+                                > .webuploader-pick { display: none !important; }
+                                > div[id^="rt_rt_"] {
+                                    position: static !important;
+                                    width: auto !important;
+                                    height: auto !important;
+                                    > input.webuploader-element-invisible {
+                                        position: static !important;
+                                        clip: auto;
+                                        border-color: gray;
+                                        border-style: dashed;
+                                        border-radius: 0.5em;
+                                        padding: 0.5em;
+                                        transition: border-color 0.2s ease-in-out;
+                                        &:focus, &:hover {
+                                            border-color: black;
+                                        }
+                                        &::file-selector-button {
+                                            background-color: transparent;
+                                            border-radius: 8px;
+                                            color: black;
+                                            border: 1px solid;
+                                            border-color: gray;
+                                            height: 2em;
+                                            transition: background-color 0.2s ease-in-out;
+                                        }
+                                        &::file-selector-button:hover {
+                                            background-color: lightgray;
+                                        }
+                                    }
+                                }
+                            }
+                        `,
+                    });
+                    break;
+                }
+                default:
+                    debug("No actions for this page:", location.href);
+                    break;
             }
             break;
         }

@@ -19,3 +19,11 @@
             2. If available, it will check them and invert its color for you
             3. If at least one is available, it will focus on the captcha input and mark it red
     - 🟢 Keep Alive
+- [🎓 MOOC](https://i.mooc.ucas.edu.cn/space/index.shtml)
+    - 📂 Native selector: Use the native file selector instead of the custom one, allowing drag-and-drop
+
+## 🖼️ Screenshots
+
+### Native selector
+
+![nativeSelector](nativeSelector.png)
