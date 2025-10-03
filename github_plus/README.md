@@ -97,7 +97,7 @@ Example setup for personal access token
 
 ### `Tracking Prevention` Feature
 
-By investigating source code (thanks for the source mapping) and setting breakpoints, we can find out that GitHub initializes tracking endpoints from certain `<meta>` tags. By removing these tags, we can prevent some tracking. For more details, please refer to the source code, or read [this thread (in Chinese)](https://www.52pojie.cn/forum.php?mod=viewthread&tid=1969514).
+By investigating source code (thanks for the source mapping) and setting breakpoints, we can find out that GitHub initializes tracking endpoints from certain `<meta>` tags. By clearing these tags' `content` property, we can prevent some tracking. For more details, please refer to the source code, or read [this thread (in Chinese)](https://www.52pojie.cn/forum.php?mod=viewthread&tid=1969514).
 
 ## 🤔 Known Issues
 
