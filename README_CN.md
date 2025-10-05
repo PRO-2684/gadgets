@@ -26,6 +26,7 @@
 | ~~[`GM_config`](./GM_config)~~ | [#470224](https://greasyfork.org/scripts/470224) | 已迁移至 [PRO-2684/GM_config](https://github.com/PRO-2684/GM_config)。简易的 Tampermonkey 脚本配置库。 |
 | [`greasyfork_enhance`](./greasyfork_enhance) | [#467078](https://greasyfork.org/scripts/467078) | 增进 Greasyfork 浏览体验。 |
 | [`linux-po`](./linux-po) | [#523904](https://greasyfork.org/scripts/523904) | 对 linux.do 的增强脚本。 |
+| [`minecraft-helper-rev`](./minecraft-helper-rev) | N/A | 针对 Minecraft 玩家的辅助脚本。 |
 | [`no-keywords`](./no-keywords) | [#523904](https://greasyfork.org/scripts/469656) | 去你妈的傻逼高亮搜索关键词。 |
 | [`purlfy_for_tm`](./purlfy_for_tm) | [#492480](https://greasyfork.org/scripts/492480) | 终极 URL 净化器 - Tampermonkey 版本。 |
 | [`telegraphio`](./telegraphio) | [#535483](https://greasyfork.org/scripts/535483) | 对 [Telegraph](https://telegra.ph/) 的各种增强。 |
