@@ -257,7 +257,7 @@
                 const router = document.getElementById("__nuxt").__vue_app__.$nuxt.$router;
                 if (router.currentRoute.value.name === "type-id") {
                     const path = router.currentRoute.value.path;
-                    router.replace({
+                    router.push({
                         path: path + "/versions", query: {
                             "l": config.get("modrinth.filter.loader"),
                             "g": config.get("modrinth.filter.version"),
