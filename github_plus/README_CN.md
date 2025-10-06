@@ -41,10 +41,10 @@
 ## 🖼️ 效果展示
 
 <details><summary>
-"Assests" 部分示例
+"Assets" 部分示例
 </summary>
 
-下述 Release "Assests" 部分的示例均启用了 `Release Downloads`, `Release Uploader` 和 `Release Histogram`。
+下述 Release "Assets" 部分的示例均启用了 `Release Downloads`, `Release Uploader` 和 `Release Histogram`。
 
 [microsoft/terminal@v1.22.2702.0](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0):
 

@@ -50,7 +50,7 @@
 - Metadata parsing
 - ... and more
 
-## ⚙️ Configuation
+## ⚙️ Configuration
 
 > Config marked with `*` requires refreshing to take effect
 

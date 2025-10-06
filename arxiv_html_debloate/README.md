@@ -7,7 +7,7 @@ Hides unnecessary elements on `arxiv.org/html/*`, giving you a clean view.
 
 ## 🪄 Features & Configuration
 
-- `Hide "Reprot Issue"`: Hides the "Report Issue" button present on the bottom right corner of the page.
+- `Hide "Report Issue"`: Hides the "Report Issue" button present on the bottom right corner of the page.
 - `Hide "Report Issue for Selection"`: Hides the "Report Issue for Selection" button that appears when you select some text.
 - `Hide Beta banner`: Hides the beta banner on the top left corner of the page.
 - `Hide License and Watermark`: Hides the license and watermark before the actual content.

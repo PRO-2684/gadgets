@@ -4,7 +4,7 @@
 
 Editio is a simple script that ports some features from Visual Studio Code to the web. It's lightweight and (theoretically) runs on all websites.
 
-## 🪄 Features & Configuation
+## 🪄 Features & Configuration
 
 - **🖇️ Pairing**: Pairing brackets and quotes
     - **➕ Auto close**: Autoclose brackets and quotes (Similar to [`editor.autoClosingBrackets`](https://pro-2684.github.io/?page=redirect&url=vscode%3A%2F%2Fsettings%2Feditor.autoClosingBrackets) in VSCode)

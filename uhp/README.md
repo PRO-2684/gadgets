@@ -1,5 +1,7 @@
 ![Greasy Fork](https://img.shields.io/greasyfork/dt/453530) [![](https://img.shields.io/badge/Crazy%20Thur.-V%20me%2050-red?logo=kfc)](https://greasyfork.org/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaWZvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10e04ed7ed56ae18d22cec6d675b34fd579cecab/wechat.jpeg?locale=zh-CN)
 
+> 🎓 Since I have graduated, this script may no longer receive any updates. Thanks for using this script!
+
 ## 🪄 Functions
 
 1. [Unified Authentication](https://id.ustc.edu.cn/)
@@ -17,7 +19,7 @@
 4. [BB System (Online Teaching Platform)](https://www.bb.ustc.edu.cn/)
     - Auto clicking login at both main page and the page asking for authentication if you access the site outside the campus network
     - Checking your homework status (Uploaded, Not uploaded, Error)
-        - Allows for ignoring homeworks (Skips checking their status)
+        - Allows for ignoring homework (Skips checking their status)
 
 5. [Education Administration System](https://jw.ustc.edu.cn)
     - Auto focus on or click login button.
@@ -42,7 +44,7 @@
     - Allows for customize your collections.
 
 8. [Icourse](https://icourse.club/)
-    - Display all uploaded files/attachments and aoto naming
+    - Display all uploaded files/attachments and auto naming
     - Display all mentioned links
     - Certain CSS improvements; Use native go to top method
     - Anti filtering: See [this script](https://greasyfork.org/scripts/494053)
@@ -56,7 +58,7 @@ If you need a certain feature, leave a comment and I might add it as far as I ca
 - x: Close current tab
 - Scroll wheel: Switch tabs
 
-## ⚙️ Configuation
+## ⚙️ Configuration
 
 Open the Tampermonkey menu when the script is running.
 
@@ -76,7 +78,7 @@ Open the Tampermonkey menu when the script is running.
     - **Enabled**: ...
     - **Auto login**: Whether automatically clicks login (USTC cas login)
     - **Open in current tab**: Whether open links in current tab (Significantly improves performance)
-- BB System(Online Teaching Platform)
+- BB System (Online Teaching Platform)
     - **Enabled**: ...
     - **Auto authenticate**: Whether automatically authenticate when accessing outside school net
     - **Auto login**: Whether automatically clicks login

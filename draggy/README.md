@@ -9,7 +9,7 @@
 - Todo list
     - Using `Esc` to interrupt draggy (might not be possible to detect)
 
-## ⚙️ Configuation
+## ⚙️ Configuration
 
 - **🎨 Appearance settings**: Settings for the appearance of Draggy overlay.
     - **Circle overlay**: When to show the circle overlay。

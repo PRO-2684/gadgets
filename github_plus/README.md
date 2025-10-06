@@ -10,7 +10,7 @@
     - You need to add the mirror site to **this script's `User matches` list**
     - `Dashboard` - `Installed Userscripts` - `GitHub Plus` - `Settings` - `Includes/Excludes` - `User matches` - `Add...`
 
-## ⚙️ Configuation
+## ⚙️ Configuration
 
 - **🔢 Code Features**
     - **📥 Clone Full Command**: Append `git clone ` before `https` and `git@` URLs under the code tab. (Experimental, may or may not work)

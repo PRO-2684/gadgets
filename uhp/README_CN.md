@@ -1,5 +1,7 @@
 ![Greasy Fork](https://img.shields.io/greasyfork/dt/453530) [![](https://img.shields.io/badge/Crazy%20Thur.-V%20me%2050-red?logo=kfc)](https://greasyfork.org/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaWZvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10e04ed7ed56ae18d22cec6d675b34fd579cecab/wechat.jpeg?locale=zh-CN)
 
+> 🎓 由于本人已毕业，此脚本将不再及时更新。感谢您的使用！
+
 ## 🪄 功能
 
 1. [统一身份认证](https://passport.ustc.edu.cn/)
@@ -77,7 +79,7 @@
     - **Auto login**: 是否自动点击登录按钮（仅限统一身份认证登录）
     - **Open in current tab**: 是否在当前标签页打开部分支持的链接（可显著提高加载速度）
 - BB 系统(网络教学平台)
-    - **Enabled**: 若为 false, 将禁用针对 www.bb.ustc.edu.cn 的所有功能
+    - **Enabled**: ...
     - **Auto authenticate**: 是否在校园网外访问要求验证身份时自动点击登录
     - **Auto login**: 是否在主界面自动登录
     - **Show homework status**: 是否展示作业状态（可能消耗更多流量）
@@ -86,7 +88,7 @@
     - **Login**: 登录按钮的动作: 'none', 'focus', 'click'
     - **Shortcut**: 快捷键支持
     - **Score mask**: 双击以遮挡/显示成绩
-    - **Detaild time**: 显示每节课的上下课时间
+    - **Detailed time**: 显示每节课的上下课时间
     - **CSS improve**: 一些 CSS 改进
     - **Sum**: 课表界面展示学分学时的总和
     - **Privacy**: 隐藏个人/敏感信息

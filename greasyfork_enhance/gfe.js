@@ -13,7 +13,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js#md5=525526b8f0b6b8606cedf08c651163c2
+// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
 // @icon         https://raw.githubusercontent.com/greasyfork-org/greasyfork/main/public/images/blacklogo16.png
 // @icon64       https://raw.githubusercontent.com/greasyfork-org/greasyfork/main/public/images/blacklogo96.png
 // @license      gpl-3.0
@@ -445,9 +445,9 @@
         // Outline & Anchors
         const isScript = /^\/[^\/]+\/scripts/;
         const isSpecificScript = /^\/[^\/]+\/scripts\/\d+/;
-        const isDisccussion = /^\/[^\/]+\/discussions/;
+        const isDiscussion = /^\/[^\/]+\/discussions/;
         const path = window.location.pathname;
-        if ((!isScript.test(path) && !isDisccussion.test(path)) || isSpecificScript.test(path)) {
+        if ((!isScript.test(path) && !isDiscussion.test(path)) || isSpecificScript.test(path)) {
             let panel = null, outline = null;
             if (config.get("filterAndSearch.outline")) {
                 panel = body.insertBefore(document.createElement("aside"), $("body > div.width-constraint"));

@@ -7,7 +7,7 @@
 
 ## 🪄 功能 & 配置
 
-- `Hide "Reprot Issue"`: 隐藏页面右下角的 "Report Issue" 按钮。
+- `Hide "Report Issue"`: 隐藏页面右下角的 "Report Issue" 按钮。
 - `Hide "Report Issue for Selection"`: 隐藏选中文本后出现的 "Report Issue for Selection" 按钮。
 - `Hide Beta banner`: 隐藏页面左上角的 beta 横幅。
 - `Hide License and Watermark`: 隐藏正文前的许可证和水印。

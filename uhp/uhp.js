@@ -3,7 +3,7 @@
 // @name:zh-CN   USTC 助手
 // @license      gpl-3.0
 // @namespace    http://tampermonkey.net/
-// @version      1.3.9
+// @version      1.4.0
 // @description  Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more.
 // @description:zh-CN  为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。
 // @author       PRO
@@ -25,7 +25,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js#md5=525526b8f0b6b8606cedf08c651163c2
+// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
 // ==/UserScript==
 
 (function () {
@@ -177,9 +177,9 @@
      * @param {Object} actions The actions for switching & closing tabs
      * @param {Function} actions.select The function to switch to a tab at given index, starting from 0
      * @param {Function} actions.close The function to close a tab at given index, starting from 0
-     * @param {Function} actions.count The funtion to determine total number of tabs
-     * @param {Function} actions.current The funtion to determine current index of the tab
-     * @param {Function} [actions.special] The funtion to handle key ``` ` ```
+     * @param {Function} actions.count The function to determine total number of tabs
+     * @param {Function} actions.current The function to determine current index of the tab
+     * @param {Function} [actions.special] The function to handle key
      */
     function setupShortcuts(el, actions) {
         function delta(n) {
@@ -441,7 +441,7 @@
                                                 }),
                                                     !1;
                                             // Instead of opening in new tab, we prefer to use vue's solution
-                                            // Modifiy start
+                                            // Modify start
                                             this.$router.replace({
                                                 name: e,
                                                 params: {
