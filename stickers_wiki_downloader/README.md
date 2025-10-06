@@ -1,9 +1,11 @@
 # `stickers_wiki_downloader`
 
 ## 🪄 Function
+
 Download the whole set of stickers from [stickers.wiki](https://stickers.wiki/).
 
 ## 📖 Usage
+
 ```text
 usage: swd.py [-h] [--type TYPE] --id ID [--output OUTPUT]
 
@@ -22,8 +24,10 @@ python swd.py -i ymypm1
 ```
 
 ## ⚠️ Warning
+
 - This script is for educational purposes only. Do not use it for any commercial purposes.
 - Only tested with Telegram stickers.
 
 ## 🌐 Reference
+
 What I have found useful/enlightening related to the snippet.

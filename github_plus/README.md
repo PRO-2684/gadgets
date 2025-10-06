@@ -13,7 +13,7 @@
 ## ⚙️ Configuration
 
 - **🔢 Code Features**
-    - **📥 Clone Full Command**: Append `git clone ` before `https` and `git@` URLs under the code tab. (Experimental, may or may not work)
+    - **📥 Clone Full Command**: Append `git clone` before `https` and `git@` URLs under the code tab. (Experimental, may or may not work)
     - **➡️ Tab Size**: Set Tab indentation size.
     - **😉 Cursor Blink**: Enable cursor blinking.
     - **🌊 Cursor Animation**: Make cursor move smoothly.

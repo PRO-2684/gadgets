@@ -13,7 +13,7 @@
 ## ⚙️ 配置
 
 - **🔢 Code Features**
-    - **📥 Clone Full Command**: 在代码标签下的 `https` 和 `git@` URL 前附加 `git clone `。(实验性功能，可能有效也可能无效)
+    - **📥 Clone Full Command**: 在代码标签下的 `https` 和 `git@` URL 前附加 `git clone`。(实验性功能，可能有效也可能无效)
     - **➡️ Tab Size**: 设置 Tab 缩进大小。
     - **😉 Cursor Blink**: 启用光标闪烁。
     - **🌊 Cursor Animation**: 使光标平滑移动。

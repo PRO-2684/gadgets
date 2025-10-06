@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         百度翻译 Plus
+// @name         百度翻译 Plus (Deprecated)
 // @namespace    http://tampermonkey.net/
-// @version      0.1.4
+// @version      0.1.5
 // @description  一系列针对百度翻译的功能增强
 // @author       PRO-2684
 // @run-at       document-end
@@ -14,7 +14,7 @@
 // @grant        GM_registerMenuCommand
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
-// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.1/config.min.js#md5=525526b8f0b6b8606cedf08c651163c2
+// @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
 // ==/UserScript==
 
 (function() {

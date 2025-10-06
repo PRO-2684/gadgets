@@ -1,0 +1,21 @@
+// https://github.com/DavidAnson/vscode-markdownlint
+{
+    // Prefer 4 spaces
+    "ul-indent": { "indent": 4 },
+    "ol-indent": { "indent": 4 },
+    // Browsers and editors will wrap anyway
+    "line-length": false,
+    // Need badges on the beginning
+    "first-line-h1": false,
+    // No alt text for badges
+    "no-alt-text": false,
+    "no-inline-html": { "allowed_elements": [
+        "img", // Need customizing some images' position
+        "details", // Hiding some details by default
+        "summary",
+        "kbd", // For keyboard keys in docs
+        "span" // For coloring text and adding tooltips
+    ] },
+    // Have described them in the text
+    "descriptive-link-text": false
+}

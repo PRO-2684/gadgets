@@ -1,0 +1,7 @@
+# https://github.com/crate-ci/typos
+[files]
+extend-exclude = [
+    # Archived and includes code by others, which contains a LOT of typos
+    "auto_grading/auto_grading.js",
+    "uhp/uhp.js",
+]

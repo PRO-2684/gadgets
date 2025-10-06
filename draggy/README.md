@@ -28,12 +28,12 @@
     - **Search engine (up)**: Search engine used when dragging text up. Leave it blank to use the default search engine.
     - **Search engine (down)**: Search engine used when dragging text down. Leave it blank to use the default search engine.
     - <details><summary>Author's configuration</summary>
-        <ul>
-            <li><strong>Search engine (left)</strong>: <code>https://www.deepl.com/zh/translator#en/zh-hans/{}</code> (DeepL Translation)</li>
-            <li><strong>Search engine (right)</strong>: <code>https://opnxng.com/search?q={50}</code> (OpnXng Search)</li>
-            <li><strong>Search engine (up)</strong>: <code>https://www.google.com/search?q={50}</code> (Google Search)</li>
-            <li><strong>Search engine (down)</strong>: <code>https://www.bing.com/search?q={50}</code> (Bing Search)</li>
-        </ul>
+
+        - **Search engine (left)**: `https://www.deepl.com/zh/translator#en/zh-hans/{}` (DeepL Translation)
+        - **Search engine (right)**: `https://opnxng.com/search?q={50}` (OpnXng Search)
+        - **Search engine (up)**: `https://www.google.com/search?q={50}` (Google Search)
+        - **Search engine (down)**: `https://www.bing.com/search?q={50}` (Bing Search)
+
     </details>
 - **⚙️ Advanced settings**: Settings for advanced users or debugging.
     - **Allowed protocols**: Comma-separated list of allowed protocols for matched URI in texts. Leave it blank to allow all protocols.

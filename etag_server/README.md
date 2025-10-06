@@ -1,9 +1,11 @@
 # `etag_server`
 
 ## 🪄 Function
+
 Simple HTTP server that serves files, but using `ETag` instead of `Last-Modified` for caching.
 
 ## 📖 Usage
+
 ```text
 usage: etag_server.py [-h] [--port PORT] [--directory DIRECTORY]
 

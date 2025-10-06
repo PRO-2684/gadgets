@@ -1,6 +1,7 @@
 # `url_summary`
 
 ## 🪄 Function
+
 Get the summary information of the given URL, including:
 
 - Favicon (not guaranteed to exist, largest size when available)
@@ -9,6 +10,7 @@ Get the summary information of the given URL, including:
 - Keywords
 
 ## 📖 Usage
+
 ```javascript
 summary(url, doc); // url: URL, doc: web document object
 // Return value

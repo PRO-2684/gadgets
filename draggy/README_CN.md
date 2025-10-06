@@ -28,12 +28,12 @@
     - **Search engine (up)**: 向上拖拽文本时使用的搜索引擎。留空以使用默认搜索引擎。
     - **Search engine (down)**: 向下拖拽文本时使用的搜索引擎。留空以使用默认搜索引擎。
     - <details><summary>作者的配置</summary>
-        <ul>
-            <li><strong>Search engine (left)</strong>: <code>https://www.deepl.com/zh/translator#en/zh-hans/{}</code> (DeepL 翻译)</li>
-            <li><strong>Search engine (right)</strong>: <code>https://opnxng.com/search?q={50}</code> (OpnXng 搜索)</li>
-            <li><strong>Search engine (up)</strong>: <code>https://www.google.com/search?q={50}</code> (Google 搜索)</li>
-            <li><strong>Search engine (down)</strong>: <code>https://www.bing.com/search?q={50}</code> (Bing 搜索)</li>
-        </ul>
+
+        - **Search engine (left)**: `https://www.deepl.com/zh/translator#en/zh-hans/{}` (DeepL 翻译)
+        - **Search engine (right)**: `https://opnxng.com/search?q={50}` (OpnXng 搜索)
+        - **Search engine (up)**: `https://www.google.com/search?q={50}` (Google 搜索)
+        - **Search engine (down)**: `https://www.bing.com/search?q={50}` (Bing 搜索)
+
     </details>
 - **⚙️ Advanced settings**: 针对高级用户或调试的设置。
     - **Allowed protocols**: 允许的文本中匹配到的 URI 的协议，用逗号分隔。留空以允许所有协议。
