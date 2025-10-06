@@ -2,6 +2,8 @@
 
 ## 🪄 Functions
 
+> Items marked with an asterisk requires reloading the page for the changes to take effect.
+
 - [🔑 SEP](https://sep.ucas.ac.cn/)
     - 🔐 Auto login*: Choose auto login strategy, works best with browser auto-fill
         - `None`: Do nothing
@@ -21,6 +23,8 @@
     - 🟢 Keep Alive
 - [🎓 MOOC](https://i.mooc.ucas.edu.cn/space/index.shtml)
     - 📂 Native selector: Use the native file selector instead of the custom one, allowing drag-and-drop
+    - 🏁 Force finish*: Allows you to forcibly mark the file as finished, useful if you got stuck on certain files. Currently supported file type(s):
+        - PDF
 
 ## 🖼️ Screenshots
 

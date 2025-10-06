@@ -7,6 +7,7 @@
 // @match        https://sep.ucas.ac.cn/*
 // @match        http://xkgo.ucas.ac.cn:3000/*
 // @match        https://mooc.mooc.ucas.edu.cn/mooc-ans/js/*
+// @match        https://mooc.mooc.ucas.edu.cn/ananas/modules/pdf/index.html*
 // @icon         http://ucas.ac.cn/favicon.ico
 // @license      gpl-3.0
 // @grant        unsafeWindow
@@ -110,6 +111,12 @@
                 nativeSelector: {
                     name: "📂 Native selector",
                     title: "Use the native file selector instead of the custom one, allowing drag-and-drop",
+                    type: "bool",
+                    value: false,
+                },
+                forceFinish: {
+                    name: "🏁 Force finish*",
+                    title: "Allows you to forcibly mark the file as finished, useful if you got stuck on certain files",
                     type: "bool",
                     value: false,
                 },
@@ -345,6 +352,24 @@
                             }
                         `,
                     });
+                    break;
+                }
+                case "/ananas/modules/pdf/index.html": { // PDF viewer page
+                    if (config.get("mooc.forceFinish")) {
+                        const anchor = $("#docContainer");
+                        const button = document.createElement("button");
+                        button.textContent = "🏁 Force finish";
+                        button.style.position = "fixed";
+                        button.style.bottom = "0.5em";
+                        button.style.left = "0.5em";
+                        button.addEventListener("click", () => {
+                            const message = new MessageEvent("message", { data: { isFinished: 1 } });
+                            unsafeWindow.parent.dispatchEvent(message);
+                            button.disabled = true;
+                            button.textContent = "✅ Finished";
+                        });
+                        anchor.insertAdjacentElement("afterend", button);
+                    }
                     break;
                 }
                 default:
