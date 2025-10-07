@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1.3
+// @version      0.1.4
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
@@ -363,10 +363,15 @@
                         button.style.bottom = "0.5em";
                         button.style.left = "0.5em";
                         button.addEventListener("click", () => {
-                            const message = new MessageEvent("message", { data: { isFinished: 1 } });
-                            unsafeWindow.parent.dispatchEvent(message);
-                            button.disabled = true;
-                            button.textContent = "✅ Finished";
+                            // Don't know why, but they inverted the logic
+                            // See https://mooc.mooc.ucas.edu.cn/ananas/modules/pdf/index.html and search for `!checkJobFinish() && finishJob()`
+                            if (!unsafeWindow.checkJobFinish()) {
+                                unsafeWindow.finishJob();
+                                button.disabled = true;
+                                button.textContent = "✅ Finished";
+                            } else {
+                                alert("Cannot finish yet. Please make sure you have viewed all pages.");
+                            }
                         });
                         anchor.insertAdjacentElement("afterend", button);
                     }
