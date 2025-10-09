@@ -14,7 +14,7 @@
 - **🎨 Appearance settings**: Settings for the appearance of Draggy overlay.
     - **Circle overlay**: When to show the circle overlay。
         - Always: Always show the circle overlay when dragging is detected
-        - Auto: Show the circle overlay only when the detected dragging is targeting text selection or links
+        - Auto: Show the circle overlay only when the dragging target is supported
         - Never: Never show the circle overlay
 - **🛠️ Operation settings**: Settings for the operation of Draggy.
     - **Open tab in background**: Whether to open new tabs in the background。

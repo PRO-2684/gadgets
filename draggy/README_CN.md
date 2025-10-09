@@ -14,7 +14,7 @@
 - **🎨 Appearance settings**: Draggy 覆盖层的外观设置。
     - **Circle overlay**: 何时展示圆形覆盖层。
         - Always: 当检测到拖拽时始终显示圆形覆盖层
-        - Auto: 仅当检测到的拖拽以文本选择或链接为对象时显示圆形覆盖层
+        - Auto: 仅当检测到的拖拽对象受支持时显示圆形覆盖层
         - Never: 从不显示圆形覆盖层
 - **🛠️ Operation settings**: Draggy 的操作设置。
     - **Open tab in background**: 是否在后台打开新标签页。

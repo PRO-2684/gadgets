@@ -2,7 +2,7 @@
 // @name         Draggy
 // @name:zh-CN   Draggy
 // @namespace    http://tampermonkey.net/
-// @version      0.2.8
+// @version      0.2.9
 // @description  Drag a link to open in a new tab; drag a piece of text to search in a new tab.
 // @description:zh-CN 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。
 // @tag          productivity
@@ -37,10 +37,13 @@
                 circleOverlay: {
                     name: "Circle overlay",
                     title: "When to show the circle overlay.",
+                    type: "enum",
+                    options: [
+                        "Never",
+                        "Auto",
+                        "Always",
+                    ],
                     value: 1,
-                    input: (prop, orig) => (orig + 1) % 3,
-                    processor: "same",
-                    formatter: (prop, value, desc) => desc.name + ": " + ["Never", "Auto", "Always"][value],
                 },
             },
         },
@@ -85,31 +88,26 @@
                 default: {
                     name: "Search engine (default)",
                     title: "Default search engine used when dragging text.",
-                    type: "string",
                     value: "https://www.google.com/search?q={50}",
                 },
                 left: {
                     name: "Search engine (left)",
                     title: "Search engine used when dragging text left. Leave it blank to use the default search engine.",
-                    type: "string",
                     value: ""
                 },
                 right: {
                     name: "Search engine (right)",
                     title: "Search engine used when dragging text right. Leave it blank to use the default search engine.",
-                    type: "string",
                     value: ""
                 },
                 up: {
                     name: "Search engine (up)",
                     title: "Search engine used when dragging text up. Leave it blank to use the default search engine.",
-                    type: "string",
                     value: ""
                 },
                 down: {
                     name: "Search engine (down)",
                     title: "Search engine used when dragging text down. Leave it blank to use the default search engine.",
-                    type: "string",
                     value: ""
                 },
             },
@@ -122,7 +120,6 @@
                 allowedProtocols: {
                     name: "Allowed protocols",
                     title: "Comma-separated list of allowed protocols for matched URI in texts. Leave it blank to allow all protocols.",
-                    type: "string",
                     value: "http,https,ftp,mailto,tel",
                 },
                 maxTimeDelta: {
