@@ -21,7 +21,8 @@
             2. If available, it will check them and invert its color for you
             3. If at least one is available, it will focus on the captcha input and mark it red
     - 🟢 Keep Alive
-- [🎓 MOOC](https://i.mooc.ucas.edu.cn/space/index.shtml)
+- [🎓 MOOC](https://mooc.ucas.edu.cn/)
+    - ☁️ Auto space: Automatically go to personal space when entering the portal
     - 📂 Native selector: Use the native file selector instead of the custom one, allowing drag-and-drop
     - 🏁 Force finish*: Allows you to forcibly mark the file as finished, useful if you got stuck on certain files. Currently supported file type(s):
         - PDF

@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1.4
+// @version      0.1.5
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
 // @match        http://xkgo.ucas.ac.cn:3000/*
+// @match        https://mooc.ucas.edu.cn/portal
 // @match        https://mooc.mooc.ucas.edu.cn/mooc-ans/js/*
 // @match        https://mooc.mooc.ucas.edu.cn/ananas/modules/pdf/index.html*
 // @icon         http://ucas.ac.cn/favicon.ico
@@ -105,9 +106,15 @@
         },
         mooc: {
             name: "🎓 MOOC",
-            title: "MOOC system related helpers (mooc.mooc.ucas.edu.cn)",
+            title: "MOOC system related helpers (mooc.ucas.edu.cn)",
             type: "folder",
             items: {
+                autoSpace: {
+                    name: "☁️ Auto space",
+                    title: "Automatically go to personal space when entering the portal",
+                    type: "bool",
+                    value: false,
+                },
                 nativeSelector: {
                     name: "📂 Native selector",
                     title: "Use the native file selector instead of the custom one, allowing drag-and-drop",
@@ -309,6 +316,20 @@
                     .catch(err => {
                         error("Keep alive error:", err);
                     });
+            }
+            break;
+        }
+        case "mooc.ucas.edu.cn": {
+            config.down("mooc");
+            switch (location.pathname) {
+                case "/portal": { // Portal page
+                    if (config.get("mooc.autoSpace")) {
+                        location.href = "http://i.mooc.ucas.edu.cn/";
+                    }
+                }
+                default:
+                    debug("No actions for this page:", location.href);
+                    break;
             }
             break;
         }
