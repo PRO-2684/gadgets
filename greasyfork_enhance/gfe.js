@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.9.3
+// @version      0.9.4
 // @description  Enhance your experience at Greasyfork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
@@ -20,13 +20,20 @@
 // ==/UserScript==
 
 (function () {
-    'use strict';
+    "use strict";
     // Judge if the script should run
     const { contentType } = document;
     if (contentType !== "text/html") return;
 
     const idPrefix = "greasyfork-enhance-";
     const name = GM_info.script.name;
+
+    GM_config.extend("password", {
+        value: "",
+        input: "prompt",
+        processor: "same",
+        formatter: (prop, value, desc) => `${desc.name}: ${value ? "*".repeat(value.length) : ""}`,
+    });
 
     // Config
     const configDesc = {
@@ -182,7 +189,6 @@
                     title: "Password for auto login",
                     type: "password",
                     value: "",
-                    formatter: (prop, value, desc) => `${desc.name}: ${value ? "*".repeat(value.length) : ""}`,
                 },
             },
         },
@@ -391,7 +397,7 @@
         link.appendChild(tab.firstChild);
     }
     const parts = window.location.pathname.split("/");
-    if (parts.length <= 2 || (parts.length == 3 && parts[2] === '')) {
+    if (parts.length <= 2 || (parts.length == 3 && parts[2] === "")) {
         const banner = $("header#main-header div#site-name");
         const img = banner.querySelector("img");
         const text = banner.querySelector("#site-name-text > h1");
@@ -429,9 +435,9 @@
             }
             // Add anchors
             if (config.get("filterAndSearch.anchor")) {
-                const anchor = node.appendChild(document.createElement('a'));
-                anchor.className = 'anchor';
-                anchor.href = '#' + node.id;
+                const anchor = node.appendChild(document.createElement("a"));
+                anchor.className = "anchor";
+                anchor.href = "#" + node.id;
             }
             if (outline) {
                 const link = outline.appendChild(document.createElement("li"))
@@ -594,8 +600,9 @@
         "js": "",
         "javascript": "",
         "css": "css",
+        "*": "all",
         "any": "all",
-        "all": "all"
+        "all": "all",
     };
     const sorts = {
         "rel": "",
@@ -626,11 +633,11 @@
             // Extract all key:value pairs
             const pairs = input.match(regex) || [];
             // Remove the pairs from the input string
-            const cleanedString = input.replace(regex, '').replace(/\s{2,}/g, ' ').trim();
+            const cleanedString = input.replace(regex, "").replace(/\s{2,}/g, " ").trim();
 
             // Convert pairs to an object
             const parsedPairs = pairs.reduce((acc, pair) => {
-                const [key, value] = pair.split(':');
+                const [key, value] = pair.split(":");
                 acc[key.toLowerCase()] = value.toLowerCase(); // Case-insensitive
                 return acc;
             }, {});
@@ -695,7 +702,7 @@
                     node.classList.remove("animate__animated", "animate__" + animation);
                     reject("No animation available");
                 }
-                node.addEventListener('animationend', e => {
+                node.addEventListener("animationend", e => {
                     e.stopPropagation();
                     node.classList.remove("animate__animated", "animate__" + animation);
                     resolve("Animation ended");
@@ -708,7 +715,7 @@
                 if (node.getAnimations().length == 0) {
                     resolve("No transition available");
                 }
-                node.addEventListener('transitionend', e => {
+                node.addEventListener("transitionend", e => {
                     e.stopPropagation();
                     resolve("Transition ended");
                 }, { once: true });
@@ -822,7 +829,7 @@
         const match = code.match(userScriptRegex);
         if (match) {// If the UserScript block is found
             const content = match[1];// Extract the content within the UserScript block
-            const lines = content.split('\n'); // Split the content by newline
+            const lines = content.split("\n"); // Split the content by newline
 
             lines.forEach(line => {
                 // Regular expression to match "// @name value" pattern

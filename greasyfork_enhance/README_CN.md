@@ -31,7 +31,7 @@
     - `lang:`: 指定编程语言 (仅支持脚本搜索)
         - `js`, `javascript`: JavaScript (默认)
         - `css`: CSS
-        - `any`, `all`: 所有语言
+        - `*`, `any`, `all`: 所有语言
     - `sort:`: 指定排序方式 (仅支持脚本搜索)
         - `rel`, `relevant`, `relevance`: 按相关性排序 (指定搜索词时默认)
         - `day`, `daily`, `daily_install`, `daily_installs`: 按日安装量排序 (未指定搜索词时默认)

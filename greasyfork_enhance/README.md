@@ -31,7 +31,7 @@
     - `lang:`: Specify programming language (Only for script search)
         - `js`, `javascript`: JavaScript (default)
         - `css`: CSS
-        - `any`, `all`: All languages
+        - `*`, `any`, `all`: All languages
     - `sort:`: Specify sorting method (Only for script search)
         - `rel`, `relevant`, `relevance`: Sort by relevance (default when query is given)
         - `day`, `daily`, `daily_install`, `daily_installs`: Sort by daily installs (default when no query is given)
