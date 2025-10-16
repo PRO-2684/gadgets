@@ -28,12 +28,12 @@
 | [`linux-po`](./linux-po) | [#523904](https://greasyfork.org/scripts/523904) | 对 linux.do 的增强脚本。 |
 | [`minecraft-helper-rev`](./minecraft-helper-rev) | [#551621](https://greasyfork.org/scripts/551621) | 针对 Minecraft 玩家的辅助脚本。 |
 | [`no-keywords`](./no-keywords) | [#523904](https://greasyfork.org/scripts/469656) | 去你妈的傻逼高亮搜索关键词。 |
-| [`open-in-current`](./open-in-current) | N/A | 总是在当前窗口打开页面，而非打开弹窗。 |
+| [`open-in-current`](./open-in-current) | [#552802](https://greasyfork.org/scripts/552802) | 总是在当前窗口打开页面，而非打开弹窗。 |
 | [`purlfy_for_tm`](./purlfy_for_tm) | [#492480](https://greasyfork.org/scripts/492480) | 终极 URL 净化器 - Tampermonkey 版本。 |
 | [`telegraphio`](./telegraphio) | [#535483](https://greasyfork.org/scripts/535483) | 对 [Telegraph](https://telegra.ph/) 的各种增强。 |
 | [`wechat-plus`](./wechat-plus) | [#535482](https://greasyfork.org/zh-CN/scripts/535482) | 针对微信公众号文章的增强脚本。 |
 | [`auto_grading`](./auto_grading) * | [#457282](https://greasyfork.org/scripts/457282) | 自动评教 `tqm.ustc.edu.cn`。 |
-| [`ucas-helper`](./ucas-helper/) | N/A | UCAS 在线系统的辅助脚本。 |
+| [`ucas-helper`](./ucas-helper/) | [#552801](https://greasyfork.org/scripts/552801) | UCAS 在线系统的辅助脚本。 |
 | [`uhp`](./uhp) * | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - 为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。 |
 
 ### 🎨 用户样式

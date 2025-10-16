@@ -28,12 +28,12 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 | [`linux-po`](./linux-po) | [#523904](https://greasyfork.org/scripts/523904) | Various enhancements for linux.do site. |
 | [`minecraft-helper-rev`](./minecraft-helper-rev) | [#551621](https://greasyfork.org/scripts/551621) | Helpful script dedicated to Minecraft players. |
 | [`no-keywords`](./no-keywords) | [#523904](https://greasyfork.org/scripts/469656) | Get rid of fucking highlighted search keywords. |
-| [`open-in-current`](./open-in-current) | N/A | Always open pages in the current window, instead of creating a popup. |
+| [`open-in-current`](./open-in-current) | [#552802](https://greasyfork.org/scripts/552802) | Always open pages in the current window, instead of creating a popup. |
 | [`purlfy_for_tm`](./purlfy_for_tm) | [#492480](https://greasyfork.org/scripts/492480) | The ultimate URL purifier - Tampermonkey version. |
 | [`telegraphio`](./telegraphio) | [#535483](https://greasyfork.org/scripts/535483) | Various enhancements for [Telegraph](https://telegra.ph/). |
 | [`wechat-plus`](./wechat-plus) | [#535482](https://greasyfork.org/scripts/535482) | Various enhancements for posts of WeChat official accounts. |
 | [`auto_grading`](./auto_grading) * | [#457282](https://greasyfork.org/scripts/457282) | Auto grading for `tqm.ustc.edu.cn`. |
-| [`ucas-helper`](./ucas-helper/) | N/A | A helper script for UCAS online systems. |
+| [`ucas-helper`](./ucas-helper/) | [#552801](https://greasyfork.org/scripts/552801) | A helper script for UCAS online systems. |
 | [`uhp`](./uhp) * | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more. |
 
 ### 🎨 UserStyles
