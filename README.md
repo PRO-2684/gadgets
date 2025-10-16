@@ -28,6 +28,7 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 | [`linux-po`](./linux-po) | [#523904](https://greasyfork.org/scripts/523904) | Various enhancements for linux.do site. |
 | [`minecraft-helper-rev`](./minecraft-helper-rev) | [#551621](https://greasyfork.org/scripts/551621) | Helpful script dedicated to Minecraft players. |
 | [`no-keywords`](./no-keywords) | [#523904](https://greasyfork.org/scripts/469656) | Get rid of fucking highlighted search keywords. |
+| [`open-in-current`](./open-in-current) | N/A | Always open pages in the current window, instead of creating a popup. |
 | [`purlfy_for_tm`](./purlfy_for_tm) | [#492480](https://greasyfork.org/scripts/492480) | The ultimate URL purifier - Tampermonkey version. |
 | [`telegraphio`](./telegraphio) | [#535483](https://greasyfork.org/scripts/535483) | Various enhancements for [Telegraph](https://telegra.ph/). |
 | [`wechat-plus`](./wechat-plus) | [#535482](https://greasyfork.org/scripts/535482) | Various enhancements for posts of WeChat official accounts. |
@@ -63,7 +64,6 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 
 ## 🚧 Unreleased
 
-- [`ccb_helper`](./ccb_helper)
 - [`cinnamon`](./cinnamon)
 - [`google_scholar_plus`](./google_scholar_plus)
 - [`kill_adobe`](./kill_adobe)
@@ -76,17 +76,22 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 # `<snippet name>`
 
 ## 🪄 Function
+
 Briefly describe the functions of the snippet. i.e. what it can do.
 
 ## 📖 Usage
+
 Briefly describe how to use the snippet.
 
 ## 🍻 Example
+
 Minimum working example(s).
 
 ## ⚠️ Warning
+
 Some errors or consequences that the snippet might bring about.
 
 ## 🌐 Reference
+
 What I have found useful/enlightening related to the snippet.
 ```
