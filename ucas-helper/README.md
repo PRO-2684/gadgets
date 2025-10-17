@@ -21,6 +21,9 @@
             2. If available, it will check them and invert its color for you
             3. If at least one is available, it will focus on the captcha input and mark it red
     - 🟢 Keep Alive
+- 📝 Course Evaluation (`https://xkcts.ucas.ac.cn:8443/evaluate/*`)
+    - 📐 Larger click area*: Clicking on the cell will be treated as clicking the radio button inside, and clicking on the header will select all options in that column
+    - ⏎ Enter to submit*: Pressing Enter in the validation code field will submit the form
 - [🎓 MOOC](https://mooc.ucas.edu.cn/)
     - ☁️ Auto space: Automatically go to personal space when entering the portal
     - 📂 Native selector: Use the native file selector instead of the custom one, allowing drag-and-drop

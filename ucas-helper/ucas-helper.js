@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1.5
+// @version      0.1.6
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
 // @match        http://xkgo.ucas.ac.cn:3000/*
+// @match        https://xkcts.ucas.ac.cn:8443/evaluate/*
 // @match        https://mooc.ucas.edu.cn/portal
 // @match        https://mooc.mooc.ucas.edu.cn/mooc-ans/js/*
 // @match        https://mooc.mooc.ucas.edu.cn/ananas/modules/pdf/index.html*
@@ -24,9 +25,10 @@
 (function() {
     'use strict';
     const { name, version } = GM_info.script;
+    const identifier = `${name}@${version}`;
     const $ = document.querySelector.bind(document);
-    const debug = console.debug.bind(console, `[${name}@${version}]`);
-    const error = console.error.bind(console, `[${name}@${version}]`);
+    const debug = console.debug.bind(console, `[${identifier}]`);
+    const error = console.error.bind(console, `[${identifier}]`);
 
     const configDesc = {
         "$default": {
@@ -103,6 +105,25 @@
                     max: 600,
                 },
             }
+        },
+        courseEvaluation: {
+            name: "📝 Course Evaluation",
+            title: "Course evaluation system related helpers (xkcts.ucas.ac.cn)",
+            type: "folder",
+            items: {
+                largerClickArea: {
+                    name: "📐 Larger click area*",
+                    title: "Clicking on the cell will be treated as clicking the radio button inside, and clicking on the header will select all options in that column",
+                    type: "bool",
+                    value: true,
+                },
+                enterSubmit: {
+                    name: "⏎ Enter to submit*",
+                    title: "Pressing Enter in the validation code field will submit the form",
+                    type: "bool",
+                    value: false,
+                },
+            },
         },
         mooc: {
             name: "🎓 MOOC",
@@ -316,6 +337,65 @@
                     .catch(err => {
                         error("Keep alive error:", err);
                     });
+            }
+            break;
+        }
+        case "xkcts.ucas.ac.cn:8443": {
+            config.down("courseEvaluation");
+            const firstPart = location.pathname.split("/").filter(s => s)[0];
+            if (firstPart !== "evaluate") {
+                debug("No actions for this page:", location.href);
+                break;
+            }
+            const form = $("#regfrm");
+            const table = form?.querySelector?.("table");
+            if (!table) {
+                debug("No table found, skipping...");
+                break;
+            }
+            if (config.get("courseEvaluation.largerClickArea")) {
+                const rows = Array.from(table.rows);
+                const headerRow = rows.splice(0, 1)[0];
+                const columns = Array.from(headerRow.cells).map(() => []);
+                // Click on cell to select the radio button inside
+                for (let r = 0; r < rows.length; r++) {
+                    const row = rows[r];
+                    for (let c = 0; c < headerRow.cells.length; c++) {
+                        const cell = row.cells[c];
+                        const radio = cell?.querySelector?.("input[type=radio]");
+                        if (radio) {
+                            columns[c].push(radio);
+                            cell.style.cursor = "pointer";
+                            cell.addEventListener("click", () => {
+                                radio.click();
+                            });
+                        }
+                    }
+                }
+                // Click on header to select all in that column
+                for (let c = 0; c < headerRow.cells.length; c++) {
+                    const headerCell = headerRow.cells[c];
+                    const count = columns[c].length;
+                    if (count > 0) {
+                        headerCell.title = `Click to select all ${count} options in this column`;
+                        headerCell.style.cursor = "pointer";
+                        headerCell.addEventListener("click", () => {
+                            for (const radio of columns[c]) {
+                                radio.click();
+                            }
+                        });
+                    }
+                }
+            }
+            const vcode = $("#adminValidateCode");
+            const submit = $("#sb1");
+            if (vcode && config.get("courseEvaluation.enterSubmit")) {
+                vcode.addEventListener("keydown", e => {
+                    if (e.key === "Enter") {
+                        e.preventDefault();
+                        submit.click();
+                    }
+                });
             }
             break;
         }
