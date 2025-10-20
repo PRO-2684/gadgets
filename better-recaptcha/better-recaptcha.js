@@ -1,11 +1,13 @@
 // ==UserScript==
 // @name         Better reCAPTCHA
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  Various QoL improvements to reCAPTCHA.
 // @author       PRO
 // @run-at       document-end
 // @match        https://www.google.com/recaptcha/api2/*
+// @match        https://google.com/recaptcha/api2/*
+// @match        https://recaptcha.google.cn/recaptcha/api2/*
 // @icon         https://www.gstatic.com/recaptcha/api2/logo_48.png
 // @license      gpl-3.0
 // @grant        GM_setValue
@@ -69,6 +71,7 @@
         obs.observe(div, { childList: true, subtree: false });
     }
     function trySetupSlideSelect() {
+        // TODO: Fix sliding st it works for multiple challenges
         const body = $("#rc-imageselect-target > table > tbody");
         if (!body) {
             return false;
