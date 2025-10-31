@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1.6
+// @version      0.1.7
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
@@ -120,6 +120,12 @@
                 enterSubmit: {
                     name: "⏎ Enter to submit*",
                     title: "Pressing Enter in the validation code field will submit the form",
+                    type: "bool",
+                    value: false,
+                },
+                addSpaces: {
+                    name: "➕ Add spaces*",
+                    title: "Add spaces after your answers to circumvent the 15 characters requirement",
                     type: "bool",
                     value: false,
                 },
@@ -396,6 +402,20 @@
                         submit.click();
                     }
                 });
+            }
+            const textareas = form.querySelectorAll("textarea");
+            const minimumChars = 15;
+            if (textareas.length > 0 && config.get("courseEvaluation.addSpaces")) {
+                for (const textarea of textareas) {
+                    textarea.addEventListener("change", e => {
+                        const toAdd = minimumChars - textarea.value.length;
+                        if (toAdd > 0) {
+                            textarea.value += " ".repeat(toAdd);
+                            // Trigger re-validation (no need)
+                            // unsafeWindow.jQuery(form).validate().element(textarea);
+                        }
+                    });
+                }
             }
             break;
         }
