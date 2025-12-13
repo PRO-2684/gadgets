@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Minecraft Helper Rev
 // @namespace    http://tampermonkey.net/
-// @version      0.1.0
+// @version      0.1.1
 // @description  Helpful script dedicated to Minecraft players.
 // @author       PRO
 // @license      gpl-3.0
@@ -205,7 +205,7 @@
         debug("⚙️ Shortcuts installed!");
     }
     switch (window.location.host) {
-        case 'www.minecraft.net': {
+        case "www.minecraft.net": {
             config.down("minecraft");
             if (config.get("minecraft.autoStay")) {
                 let attempts = 16;
@@ -223,13 +223,13 @@
             }
             break;
         }
-        case 'www.curseforge.com': {
+        case "www.curseforge.com": {
             config.down("curseforge");
             if (config.get("curseforge.autoMod") && window.location.pathname == '/') {
                 debug("🛣️ Navigating to mc mods...");
                 window.location.pathname = "/minecraft/mc-mods";
             }
-            const tabs = document.getElementsByClassName("tabs");
+            const tabs = document.getElementsByClassName("project-tabs");
             let fileTab = undefined;
             if (tabs.length) {
                 for (const tab of tabs[0].children) {
@@ -251,7 +251,7 @@
             config.down("modrinth");
             if (window.location.pathname == "/" && config.get("modrinth.autoMod")) {
                 debug("🛣️ Navigating to mod search page...");
-                tryClick("a[href='/mods']");
+                tryClick("a[href='/discover/mods']");
             }
             function filter() {
                 const router = document.getElementById("__nuxt").__vue_app__.$nuxt.$router;
