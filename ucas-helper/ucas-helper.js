@@ -1,16 +1,16 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1.7
+// @version      0.1.8
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
-// @match        http://xkgo.ucas.ac.cn:3000/*
-// @match        https://xkcts.ucas.ac.cn:8443/evaluate/*
+// @match        https://xkgodj.ucas.ac.cn/*
+// @match        https://jwxk.ucas.ac.cn/evaluate/*
 // @match        https://mooc.ucas.edu.cn/portal
 // @match        https://mooc.mooc.ucas.edu.cn/mooc-ans/js/*
 // @match        https://mooc.mooc.ucas.edu.cn/ananas/modules/pdf/index.html*
-// @icon         http://ucas.ac.cn/favicon.ico
+// @icon         https://ucas.ac.cn/publish/xww/images/icon1.png
 // @license      gpl-3.0
 // @grant        unsafeWindow
 // @grant        GM_setValue
@@ -22,8 +22,8 @@
 // @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
 // ==/UserScript==
 
-(function() {
-    'use strict';
+(function () {
+    "use strict";
     const { name, version } = GM_info.script;
     const identifier = `${name}@${version}`;
     const $ = document.querySelector.bind(document);
@@ -31,8 +31,8 @@
     const error = console.error.bind(console, `[${identifier}]`);
 
     const configDesc = {
-        "$default": {
-            autoClose: false
+        $default: {
+            autoClose: false,
         },
         sep: {
             name: "🔑 SEP",
@@ -80,9 +80,12 @@
                     name: "📃 Course IDs*",
                     title: "Desired courses by ID, separated by space",
                     value: [],
-                    input: (_prop, orig, desc) => prompt(desc.title, orig.join(" ")),
-                    processor: (_prop, input, _desc) => input.split(" ").filter(s => s),
-                    formatter: (_prop, value, desc) => `${desc.name}: ${value.length} selected.`,
+                    input: (_prop, orig, desc) =>
+                        prompt(desc.title, orig.join(" ")),
+                    processor: (_prop, input, _desc) =>
+                        input.split(" ").filter((s) => s),
+                    formatter: (_prop, value, desc) =>
+                        `${desc.name}: ${value.length} selected.`,
                 },
                 selectFollowed: {
                     name: "☑️ Select followed*",
@@ -104,7 +107,7 @@
                     min: 1,
                     max: 600,
                 },
-            }
+            },
         },
         courseEvaluation: {
             name: "📝 Course Evaluation",
@@ -163,23 +166,29 @@
         case "sep.ucas.ac.cn": {
             config.down("sep");
             switch (location.pathname) {
-                case "/": { // Login page
-                    document.head.appendChild(document.createElement("style")).textContent = `
+                case "/": {
+                    // Login page
+                    document.head.appendChild(
+                        document.createElement("style"),
+                    ).textContent = `
                         .btn:focus { outline: thin dotted !important; }`;
                     const username = $("#userName1");
                     const password = $("#pwd1");
                     const captcha = $("#certCode1"); // Optional, may not exist
                     const submit = $("#sb1");
-                    setTimeout(() => { // Wait for potential auto-fill
+                    setTimeout(() => {
+                        // Wait for potential auto-fill
                         switch (config.get("sep.autoLogin")) {
                             case 0: // None
                                 break;
-                            case 1: { // Focus
+                            case 1: {
+                                // Focus
                                 const toFocus = getFirstUnfilled() || submit;
                                 toFocus.focus();
                                 break;
                             }
-                            case 2: { // Auto
+                            case 2: {
+                                // Auto
                                 const toFocus = getFirstUnfilled();
                                 if (toFocus) {
                                     toFocus.focus();
@@ -191,14 +200,17 @@
                     }, config.get("sep.autoFillTimeout"));
                     function getFirstUnfilled() {
                         // https://stackoverflow.com/a/70182698/16468609
-                        if (!(username.value || username.matches(":autofill"))) return username;
-                        if (!(password.value || password.matches(":autofill"))) return password;
+                        if (!(username.value || username.matches(":autofill")))
+                            return username;
+                        if (!(password.value || password.matches(":autofill")))
+                            return password;
                         if (captcha && !captcha.value) return captcha;
                         return null;
                     }
                     break;
                 }
-                case "/appStoreStudent": { // Navigation page
+                case "/appStoreStudent": {
+                    // Navigation page
                     setupDynamicStyles("sep", config, {
                         cleanerUI: `
                             #page-topbar, #footer, .footer, .leftServer { display: none; }
@@ -208,13 +220,15 @@
                     });
                     let addedEntries = [];
                     if (config.get("sep.extendedEntries")) {
-                        const obs = new MutationObserver(mutations => {
+                        const obs = new MutationObserver((mutations) => {
                             obs.disconnect();
                             addEntries();
                         });
-                        obs.observe($("#businessMenuDivId"), { childList: true });
+                        obs.observe($("#businessMenuDivId"), {
+                            childList: true,
+                        });
                     }
-                    config.addEventListener("set", e => {
+                    config.addEventListener("set", (e) => {
                         if (e.detail.prop === "sep.extendedEntries") {
                             if (e.detail.after) {
                                 addEntries();
@@ -240,7 +254,11 @@
                         base.insertAdjacentElement("afterend", copied);
                     }
                     function addEntries() {
-                        addEntry("考勤系统", "https://sep.ucas.ac.cn/portal/site/539/001/1", "https://sep.ucas.ac.cn/portal/site/218/1252"); // After 在线学习 - 实景课堂
+                        addEntry(
+                            "考勤系统",
+                            "https://sep.ucas.ac.cn/portal/site/539/001/1",
+                            "https://sep.ucas.ac.cn/portal/site/218/1252",
+                        ); // After 在线学习 - 实景课堂
                     }
                     break;
                 }
@@ -250,13 +268,16 @@
             }
             break;
         }
-        case "xkgo.ucas.ac.cn:3000": {
+        case "xkgodj.ucas.ac.cn": {
             config.down("courseSelection");
             switch (location.pathname) {
-                case "/courseManage/selectCourse": { // Course selection page
+                case "/courseManage/selectCourse": {
+                    // Course selection page
                     const listing = $("#courseinfo");
                     const courses = config.get("courseSelection.courseIDs");
-                    const selectFollowed = config.get("courseSelection.selectFollowed");
+                    const selectFollowed = config.get(
+                        "courseSelection.selectFollowed",
+                    );
 
                     let newly_selected = false;
                     for (const row of listing.rows) {
@@ -266,7 +287,7 @@
                         focus();
                     }
 
-                    const obs = new MutationObserver(mutations => {
+                    const obs = new MutationObserver((mutations) => {
                         let newly_selected = false;
                         for (const mutation of mutations) {
                             for (const row of mutation.addedNodes) {
@@ -279,15 +300,23 @@
                             focus();
                         }
                     });
-                    obs.observe(listing, { childList: true, subtree: false, attributes: false });
+                    obs.observe(listing, {
+                        childList: true,
+                        subtree: false,
+                        attributes: false,
+                    });
 
                     function checkRow(row) {
-                        const id = row.querySelector("[id^=courseCode_]")?.textContent;
-                        const followed = row.querySelector("[id^=fid_]")?.checked;
-                        const concerned = courses.includes(id) ||
+                        const id =
+                            row.querySelector("[id^=courseCode_]")?.textContent;
+                        const followed =
+                            row.querySelector("[id^=fid_]")?.checked;
+                        const concerned =
+                            courses.includes(id) ||
                             (selectFollowed && followed);
                         if (concerned) {
-                            const checkbox = row.querySelector("input[name='sids']");
+                            const checkbox =
+                                row.querySelector("input[name='sids']");
                             const name = row.children[4].textContent;
                             if (checkbox.checked) {
                                 debug("Already selected:", id, name);
@@ -313,42 +342,60 @@
 
             let timer = null;
             if (config.get("courseSelection.keepAlive")) {
-                timer = setInterval(heartbeat, config.get("courseSelection.keepAliveInterval") * 1000); // Every 4 minutes
+                timer = setInterval(
+                    heartbeat,
+                    config.get("courseSelection.keepAliveInterval") * 1000,
+                ); // Every 4 minutes
             }
-            config.addEventListener("set", e => {
-                if (e.detail.prop === "courseSelection.keepAlive" ||
-                    e.detail.prop === "courseSelection.keepAliveInterval") {
+            config.addEventListener("set", (e) => {
+                if (
+                    e.detail.prop === "courseSelection.keepAlive" ||
+                    e.detail.prop === "courseSelection.keepAliveInterval"
+                ) {
                     const keepAlive = config.get("courseSelection.keepAlive");
-                    const interval = config.get("courseSelection.keepAliveInterval");
+                    const interval = config.get(
+                        "courseSelection.keepAliveInterval",
+                    );
                     if (keepAlive && !timer) {
                         timer = setInterval(heartbeat, interval * 1000);
                     } else if (!keepAlive && timer) {
                         clearInterval(timer);
                         timer = null;
-                    } else if (keepAlive && timer && e.detail.prop === "courseSelection.keepAliveInterval") {
+                    } else if (
+                        keepAlive &&
+                        timer &&
+                        e.detail.prop === "courseSelection.keepAliveInterval"
+                    ) {
                         clearInterval(timer);
                         timer = setInterval(heartbeat, interval * 1000);
                     }
                 }
             });
             function heartbeat() {
-                unsafeWindow.fetch("http://xkgo.ucas.ac.cn:3000/courseManage/main", { credentials: "include" })
-                    .then(res => {
+                unsafeWindow
+                    .fetch("http://xkgo.ucas.ac.cn:3000/courseManage/main", {
+                        credentials: "include",
+                    })
+                    .then((res) => {
                         if (res.ok) {
                             debug("Keep alive successful.");
                         } else {
-                            error("Keep alive failed:", res.status, res.statusText);
+                            error(
+                                "Keep alive failed:",
+                                res.status,
+                                res.statusText,
+                            );
                         }
                     })
-                    .catch(err => {
+                    .catch((err) => {
                         error("Keep alive error:", err);
                     });
             }
             break;
         }
-        case "xkcts.ucas.ac.cn:8443": {
+        case "jwxk.ucas.ac.cn": {
             config.down("courseEvaluation");
-            const firstPart = location.pathname.split("/").filter(s => s)[0];
+            const firstPart = location.pathname.split("/").filter((s) => s)[0];
             if (firstPart !== "evaluate") {
                 debug("No actions for this page:", location.href);
                 break;
@@ -368,7 +415,8 @@
                     const row = rows[r];
                     for (let c = 0; c < headerRow.cells.length; c++) {
                         const cell = row.cells[c];
-                        const radio = cell?.querySelector?.("input[type=radio]");
+                        const radio =
+                            cell?.querySelector?.("input[type=radio]");
                         if (radio) {
                             columns[c].push(radio);
                             cell.style.cursor = "pointer";
@@ -396,7 +444,7 @@
             const vcode = $("#adminValidateCode");
             const submit = $("#sb1");
             if (vcode && config.get("courseEvaluation.enterSubmit")) {
-                vcode.addEventListener("keydown", e => {
+                vcode.addEventListener("keydown", (e) => {
                     if (e.key === "Enter") {
                         e.preventDefault();
                         submit.click();
@@ -405,9 +453,12 @@
             }
             const textareas = form.querySelectorAll("textarea");
             const minimumChars = 15;
-            if (textareas.length > 0 && config.get("courseEvaluation.addSpaces")) {
+            if (
+                textareas.length > 0 &&
+                config.get("courseEvaluation.addSpaces")
+            ) {
                 for (const textarea of textareas) {
-                    textarea.addEventListener("change", e => {
+                    textarea.addEventListener("change", (e) => {
                         const toAdd = minimumChars - textarea.value.length;
                         if (toAdd > 0) {
                             textarea.value += " ".repeat(toAdd);
@@ -422,7 +473,8 @@
         case "mooc.ucas.edu.cn": {
             config.down("mooc");
             switch (location.pathname) {
-                case "/portal": { // Portal page
+                case "/portal": {
+                    // Portal page
                     if (config.get("mooc.autoSpace")) {
                         location.href = "http://i.mooc.ucas.edu.cn/";
                     }
@@ -436,7 +488,8 @@
         case "mooc.mooc.ucas.edu.cn": {
             config.down("mooc");
             switch (location.pathname) {
-                case "/mooc-ans/js/editor20150812/dialogs/attachment_new/attachment.html": { // Answer upload page
+                case "/mooc-ans/js/editor20150812/dialogs/attachment_new/attachment.html": {
+                    // Answer upload page
                     setupDynamicStyles("mooc", config, {
                         nativeSelector: `
                             #filePickerReady {
@@ -475,7 +528,8 @@
                     });
                     break;
                 }
-                case "/ananas/modules/pdf/index.html": { // PDF viewer page
+                case "/ananas/modules/pdf/index.html": {
+                    // PDF viewer page
                     if (config.get("mooc.forceFinish")) {
                         const anchor = $("#docContainer");
                         const button = document.createElement("button");
@@ -491,7 +545,9 @@
                                 button.disabled = true;
                                 button.textContent = "✅ Finished";
                             } else {
-                                alert("Cannot finish yet. Please make sure you have viewed all pages.");
+                                alert(
+                                    "Cannot finish yet. Please make sure you have viewed all pages.",
+                                );
                             }
                         });
                         anchor.insertAdjacentElement("afterend", button);
@@ -526,9 +582,14 @@
     }
     function setupDynamicStyles(prefix, config, styles) {
         for (const name in styles) {
-            toggleCSS(prefix, name, styles[name], config.proxy[`${prefix}.${name}`]);
+            toggleCSS(
+                prefix,
+                name,
+                styles[name],
+                config.proxy[`${prefix}.${name}`],
+            );
         }
-        config.addEventListener("set", e => {
+        config.addEventListener("set", (e) => {
             if (e.detail.prop.startsWith(`${prefix}.`)) {
                 const name = e.detail.prop.split(".")[1];
                 if (name in styles) {
