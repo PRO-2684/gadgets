@@ -21,8 +21,9 @@
 // @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
 // ==/UserScript==
 
-(function() {
-    'use strict';
+// $$("[class^='ListItem-module__listItem']").forEach(e => console.log(e.__reactProps$8h4h1f32xkn.children[3].props.children.props.deferredData.signatureInformation))
+(function () {
+    "use strict";
     const { name, version } = GM_info.script;
     const idPrefix = "ghp-"; // Prefix for the IDs of the elements
     /**
@@ -43,7 +44,9 @@
     /**
      * Regular expression to match the expanded assets URL. (https://<host>/<username>/<repo>/releases/expanded_assets/<version>)
      */
-    const expandedAssetsRegex = new RegExp(`https://${topDomain.replaceAll(".", "\\.")}/([^/]+)/([^/]+)/releases/expanded_assets/([^/]+)`);
+    const expandedAssetsRegex = new RegExp(
+        `https://${topDomain.replaceAll(".", "\\.")}/([^/]+)/([^/]+)/releases/expanded_assets/([^/]+)`,
+    );
     /**
      * Data about the release. Maps `owner`, `repo` and `version` to the details of a release. Details are `Promise` objects if exist.
      */
@@ -58,24 +61,18 @@
     let rateLimit = {
         limit: -1,
         remaining: -1,
-        reset: -1
+        reset: -1,
     };
 
     // Configuration
     const configDesc = {
         $default: {
-            autoClose: false
+            autoClose: false,
         },
         code: {
             name: "🔢 Code Features",
             type: "folder",
             items: {
-                cloneFullCommand: {
-                    name: "📥 Clone Full Command",
-                    title: "Append `git clone ` before `https` and `git@` URLs under the code tab",
-                    type: "bool",
-                    value: false,
-                },
                 tabSize: {
                     name: "➡️ Tab Size",
                     title: "Set Tab indentation size",
@@ -111,7 +108,12 @@
                     name: "📰 Dashboard",
                     title: "Configures the dashboard",
                     type: "enum",
-                    options: ["Default", "Hide Copilot", "Hide Feed", "Mobile-Like"],
+                    options: [
+                        "Default",
+                        "Hide Copilot",
+                        "Hide Feed",
+                        "Mobile-Like",
+                    ],
                 },
                 leftSidebar: {
                     name: "↖️ Left Sidebar",
@@ -123,7 +125,12 @@
                     name: "↗️ Right Sidebar",
                     title: "Configures the right sidebar",
                     type: "enum",
-                    options: ["Default", "Hide 'Latest changes'", "Hide 'Explore repositories'", "Hide Completely"],
+                    options: [
+                        "Default",
+                        "Hide 'Latest changes'",
+                        "Hide 'Explore repositories'",
+                        "Hide Completely",
+                    ],
                 },
                 stickyAvatar: {
                     name: "📌 Sticky Avatar",
@@ -167,7 +174,9 @@
             items: {
                 trackingPrevention: {
                     name: "🎭 Tracking Prevention",
-                    title: () => { return `Prevent some tracking by GitHub (${name} has prevented tracking ${GM_getValue("trackingPrevented", 0)} time(s))`; },
+                    title: () => {
+                        return `Prevent some tracking by GitHub (${name} has prevented tracking ${GM_getValue("trackingPrevented", 0)} time(s))`;
+                    },
                     type: "bool",
                     value: true,
                 },
@@ -199,7 +208,9 @@
 
     // Helper function for css
     function injectCSS(id, css) {
-        const style = document.head.appendChild(document.createElement("style"));
+        const style = document.head.appendChild(
+            document.createElement("style"),
+        );
         style.id = idPrefix + id;
         style.textContent = css;
         return style;
@@ -220,14 +231,25 @@
      * @param {...any} args The arguments to log.
      */
     function log(...args) {
-        if (config.get("advanced.debug")) console.log(`%c[${name}]%c`, `color:${themeColor};`, "color: unset;", ...args);
+        if (config.get("advanced.debug"))
+            console.log(
+                `%c[${name}]%c`,
+                `color:${themeColor};`,
+                "color: unset;",
+                ...args,
+            );
     }
     /**
      * Warn the given arguments.
      * @param {...any} args The arguments to warn.
      */
     function warn(...args) {
-        console.warn(`%c[${name}]%c`, `color:${themeColor};`, "color: unset;", ...args);
+        console.warn(
+            `%c[${name}]%c`,
+            `color:${themeColor};`,
+            "color: unset;",
+            ...args,
+        );
     }
     /**
      * Replace the domain of the given URL with the top domain if needed.
@@ -235,7 +257,12 @@
      * @returns {string} The fixed URL.
      */
     function fixDomain(url) {
-        return (topDomain === officialDomain) ? url : url.replace(`https://${officialDomain}/`, `https://${topDomain}/`); // Replace top domain
+        return topDomain === officialDomain
+            ? url
+            : url.replace(
+                  `https://${officialDomain}/`,
+                  `https://${topDomain}/`,
+              ); // Replace top domain
     }
     /**
      * Fetch the given URL with the personal access token, if given. Also updates rate limit.
@@ -262,8 +289,11 @@
             rateLimit[key] = parseRateLimit(key); // Case-insensitive
         }
         const resetDate = new Date(rateLimit.reset * 1000).toLocaleString();
-        log(`Rate limit: remaining ${rateLimit.remaining}/${rateLimit.limit}, resets at ${resetDate}`);
-        if (r.status === 403 || r.status === 429) { // If we get 403 or 429, we've hit the rate limit.
+        log(
+            `Rate limit: remaining ${rateLimit.remaining}/${rateLimit.limit}, resets at ${resetDate}`,
+        );
+        if (r.status === 403 || r.status === 429) {
+            // If we get 403 or 429, we've hit the rate limit.
             throw new Error(`Rate limit exceeded! Will reset at ${resetDate}`);
         } else if (rateLimit.remaining === 0) {
             warn(`Rate limit has been exhausted! Will reset at ${resetDate}`);
@@ -273,8 +303,10 @@
 
     // CSS-related features
     const dynamicStyles = {
-        "code.cursorBlink": "[data-testid='navigation-cursor'] { animation: blink 1s step-end infinite; }",
-        "code.cursorAnimation": "[data-testid='navigation-cursor'] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }",
+        "code.cursorBlink":
+            "[data-testid='navigation-cursor'] { animation: blink 1s step-end infinite; }",
+        "code.cursorAnimation":
+            "[data-testid='navigation-cursor'] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }",
         "code.fullWidth": "#copilot-button-positioner { padding-right: 0; }",
         "appearance.stickyAvatar": `
             div.TimelineItem-avatar { /* .js-timeline-item > .TimelineItem > .TimelineItem-avatar */
@@ -301,51 +333,6 @@
     }
 
     // Code features
-    /**
-     * Show the full command to clone a repository.
-     * @param {HTMLElement} [target] The target element to search for the embedded data.
-     */
-    function cloneFullCommand(target = document.body) {
-        document.currentScript?.remove(); // Self-remove
-        const embeddedData = target.querySelector('react-partial[partial-name="repos-overview"] > script[data-target="react-partial.embeddedData"]'); // The element containing the repository information
-        if (!embeddedData) {
-            log("Full clone command not enabled - no embedded data found");
-            return false;
-        }
-        const data = JSON.parse(embeddedData?.textContent);
-        const protocolInfo = data.props?.initialPayload?.overview?.codeButton?.local?.protocolInfo;
-        if (!protocolInfo) {
-            log("Full clone command not enabled - no protocol information found");
-            return false;
-        }
-        function prefix(uri) {
-            return !uri || uri.startsWith("git clone ") ? uri : "git clone " + uri;
-        }
-        protocolInfo.httpUrl = prefix(protocolInfo.httpUrl);
-        protocolInfo.sshUrl = prefix(protocolInfo.sshUrl);
-        embeddedData.textContent = JSON.stringify(data);
-        log("Full clone command enabled");
-        return true;
-    }
-    if (config.get("code.cloneFullCommand")) {
-        // document.addEventListener("DOMContentLoaded", cloneFullCommand, { once: true }); // Doesn't work, since our script is running too late, after `embeddedData` is accessed by GitHub. Need to add the script in the head so as to defer DOM parsing.
-        const dataPresent = $('react-partial[partial-name="repos-overview"] > script[data-target="react-partial.embeddedData"]');
-        if (dataPresent) {
-            cloneFullCommand();
-        } else {
-            // https://a.opnxng.com/exchange/stackoverflow.com/questions/41394983/how-to-defer-inline-javascript
-            const logDef = config.get("advanced.debug") ? `const log = (...args) => console.log("%c[${name}]%c", "color:${themeColor};", "color: unset;", ...args);\n` : "const log = () => {};\n"; // Define the `log` function, respecting the debug mode
-            const scriptText = logDef + "const target = document.body;\n" + cloneFullCommand.toString().replace(/^.*?{|}$/g, ""); // Get the function body
-            const wrapped = `(function() {${scriptText}})();`; // Wrap the function in an IIFE so as to prevent polluting the global scope
-            GM_addElement(document.head, "script", { textContent: wrapped, type: "module" }); // Use `GM_addElement` instead of native `appendChild` to bypass CSP
-            // Utilize data URI and set `defer` attribute to defer the script execution (can't bypass CSP)
-            // GM_addElement(document.head, "script", { src: `data:text/javascript,${encodeURIComponent(wrapped)}`, defer: true });
-        }
-        // Adapt to dynamic loading
-        document.addEventListener("turbo:before-render", e => {
-            cloneFullCommand(e.detail.newBody.querySelector("[data-turbo-body]") ?? e.detail.newBody);
-        });
-    }
     /**
      * Set the tab size for the code blocks.
      * @param {number} size The tab size to set.
@@ -393,7 +380,8 @@
      * @param {string} mode The mode to set.
      */
     function enumStyleHelper(id, mode) {
-        const style = document.getElementById(idPrefix + id) ?? injectCSS(id, "");
+        const style =
+            document.getElementById(idPrefix + id) ?? injectCSS(id, "");
         style.textContent = enumStyles[id][mode];
     }
     for (const prop in enumStyles) {
@@ -413,23 +401,29 @@
         if (!releaseData[owner][repo]) releaseData[owner][repo] = {};
         if (!releaseData[owner][repo][version]) {
             const url = `https://api.${topDomain}/repos/${owner}/${repo}/releases/tags/${version}`;
-            const promise = fetchWithToken(url).then(
-                response => response.json()
-            ).then(data => {
-                log(`Fetched release data for ${owner}/${repo}@${version}:`, data);
-                const assets = {};
-                for (const asset of data.assets) {
-                    assets[fixDomain(asset.browser_download_url)] = {
-                        downloads: asset.download_count,
-                        uploader: {
-                            name: asset.uploader.login,
-                            url: fixDomain(asset.uploader.html_url)
-                        }
-                    };
-                }
-                log(`Processed release data for ${owner}/${repo}@${version}:`, assets);
-                return assets;
-            });
+            const promise = fetchWithToken(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    log(
+                        `Fetched release data for ${owner}/${repo}@${version}:`,
+                        data,
+                    );
+                    const assets = {};
+                    for (const asset of data.assets) {
+                        assets[fixDomain(asset.browser_download_url)] = {
+                            downloads: asset.download_count,
+                            uploader: {
+                                name: asset.uploader.login,
+                                url: fixDomain(asset.uploader.html_url),
+                            },
+                        };
+                    }
+                    log(
+                        `Processed release data for ${owner}/${repo}@${version}:`,
+                        assets,
+                    );
+                    return assets;
+                });
             releaseData[owner][repo][version] = promise;
         }
         return releaseData[owner][repo][version];
@@ -447,12 +441,17 @@
         if (uploader.url.startsWith(`https://${topDomain}/apps/`)) {
             link.classList.add("color-fg-success");
             // Remove suffix `[bot]` from the name if exists
-            const name = uploader.name.endsWith("[bot]") ? uploader.name.slice(0, -5) : uploader.name;
+            const name = uploader.name.endsWith("[bot]")
+                ? uploader.name.slice(0, -5)
+                : uploader.name;
             link.title = `Uploaded by GitHub App @${name}`;
             link.textContent = `@${name}`;
         } else {
             link.classList.add("color-fg-muted");
-            link.setAttribute("data-hovercard-url", `/users/${uploader.name}/hovercard`);
+            link.setAttribute(
+                "data-hovercard-url",
+                `/users/${uploader.name}/hovercard`,
+            );
             link.title = `Uploaded by @${uploader.name}`;
             link.textContent = `@${uploader.name}`;
         }
@@ -466,7 +465,10 @@
         const downloadCount = document.createElement("span");
         downloadCount.textContent = `${downloads} DL`;
         downloadCount.title = `${downloads} downloads`;
-        downloadCount.setAttribute("class", "color-fg-muted text-sm-left flex-shrink-0 flex-grow-0 ml-md-3 nowrap");
+        downloadCount.setAttribute(
+            "class",
+            "color-fg-muted text-sm-left flex-shrink-0 flex-grow-0 ml-md-3 nowrap",
+        );
         return downloadCount;
     }
     /**
@@ -476,7 +478,7 @@
      * @param {number} max The maximum download count of all assets.
      */
     function showHistogram(asset, value, max) {
-        asset.style.setProperty("--percent", `${value / max * 100}%`);
+        asset.style.setProperty("--percent", `${(value / max) * 100}%`);
     }
     /**
      * Adding additional info (download count) to the release entries under the given element.
@@ -499,10 +501,17 @@
                 asset.remove();
             }
         });
-        const releaseData = await getReleaseData(info.owner, info.repo, info.version);
+        const releaseData = await getReleaseData(
+            info.owner,
+            info.repo,
+            info.version,
+        );
         if (!releaseData) return;
-        const maxDownloads = Math.max(0, ...Object.values(releaseData).map(asset => asset.downloads));
-        assets.forEach(asset => {
+        const maxDownloads = Math.max(
+            0,
+            ...Object.values(releaseData).map((asset) => asset.downloads),
+        );
+        assets.forEach((asset) => {
             const downloadLink = asset.children[0].querySelector("a")?.href;
             const statistics = asset.children[1];
             const assetInfo = releaseData[downloadLink];
@@ -516,7 +525,11 @@
                 const uploaderLink = createUploaderLink(assetInfo.uploader);
                 statistics.prepend(uploaderLink);
             }
-            if (config.get("release.histogram") && maxDownloads > 0 && assets.length > 1) {
+            if (
+                config.get("release.histogram") &&
+                maxDownloads > 0 &&
+                assets.length > 1
+            ) {
                 showHistogram(asset, assetInfo.downloads, maxDownloads);
             }
         });
@@ -543,17 +556,32 @@
      */
     function setupListeners() {
         log("Calling setupListeners");
-        if (!config.get("release.downloads") && !config.get("release.uploader") && !config.get("release.histogram")) return; // No need to run
+        if (
+            !config.get("release.downloads") &&
+            !config.get("release.uploader") &&
+            !config.get("release.histogram")
+        )
+            return; // No need to run
         // IncludeFragmentElement: https://github.com/github/include-fragment-element/blob/main/src/include-fragment-element.ts
-        const fragments = document.querySelectorAll('[data-hpc] details[data-view-component="true"] include-fragment');
-        fragments.forEach(fragment => {
+        const fragments = document.querySelectorAll(
+            '[data-hpc] details[data-view-component="true"] include-fragment',
+        );
+        fragments.forEach((fragment) => {
             if (!fragment.hasAttribute("data-ghp-listening")) {
                 fragment.toggleAttribute("data-ghp-listening", true);
-                fragment.addEventListener("include-fragment-replace", onFragmentReplace, { once: true });
+                fragment.addEventListener(
+                    "include-fragment-replace",
+                    onFragmentReplace,
+                    { once: true },
+                );
                 if (config.get("release.hideArchives")) {
                     // Fix assets count
-                    const summary = fragment.parentElement.previousElementSibling;
-                    if (summary.tagName === "SUMMARY" && summary.firstElementChild.textContent === "Assets") {
+                    const summary =
+                        fragment.parentElement.previousElementSibling;
+                    if (
+                        summary.tagName === "SUMMARY" &&
+                        summary.firstElementChild.textContent === "Assets"
+                    ) {
                         const counter = summary.querySelector("span.Counter");
                         if (counter) {
                             const count = parseInt(counter.textContent) - 2; // Exclude the source code archives
@@ -566,8 +594,11 @@
             }
         });
     }
-    if (location.hostname === topDomain) { // Only run on GitHub main site
-        document.addEventListener("DOMContentLoaded", setupListeners, { once: true });
+    if (location.hostname === topDomain) {
+        // Only run on GitHub main site
+        document.addEventListener("DOMContentLoaded", setupListeners, {
+            once: true,
+        });
         // Examine event listeners on `document`, and you can see the event listeners for the `turbo:*` events. (Remember to check `Framework Listeners`)
         document.addEventListener("turbo:load", setupListeners);
         // Other possible approaches and reasons against them:
@@ -577,7 +608,9 @@
         //   - Monkey-patching
         //   - If using regex to modify the response, it would be tedious to maintain
         //   - If using `DOMParser`, the same HTML would be parsed twice
-        injectCSS("release", `
+        injectCSS(
+            "release",
+            `
             @media (min-width: 1012px) { /* Making more room for the additional info */
                 .ghp-release-asset .col-lg-6 {
                     width: 40%; /* Originally ~50% */
@@ -591,7 +624,8 @@
             .ghp-release-asset { /* Styling the histogram */
                 background: linear-gradient(to right, var(--bgColor-accent-muted) var(--percent, 0%), transparent 0);
             }
-        `);
+        `,
+        );
     }
 
     // Tracking prevention
@@ -610,16 +644,19 @@
             // Search for this function in the current script, and you will find that it is only called once by function `flushStats`
             // `url` parameter is set in this function, by: `const url = ssrSafeDocument?.head?.querySelector<HTMLMetaElement>('meta[name="browser-stats-url"]')?.content`
             // After removing the meta tag, the script will return, so we can remove this meta tag to prevent tracking.
-            $("meta[name=browser-stats-url]")
+            $("meta[name=browser-stats-url]"),
         ];
-        elements.forEach(el => {
+        elements.forEach((el) => {
             if (el) {
                 log("Preventing tracking:", el.name, el.content);
                 el.content = "";
             }
         }); // Clear contents instead of removing, to prevent potential issues
-        if (elements.some(el => el)) {
-            GM_setValue("trackingPrevented", GM_getValue("trackingPrevented", 0) + 1);
+        if (elements.some((el) => el)) {
+            GM_setValue(
+                "trackingPrevented",
+                GM_getValue("trackingPrevented", 0) + 1,
+            );
         }
     }
     if (config.get("additional.trackingPrevention")) {
@@ -631,9 +668,18 @@
 
     // Debugging
     if (config.get("advanced.debug")) {
-        const events = ["turbo:before-render", "turbo:before-morph-element", "turbo:before-frame-render", "turbo:load", "turbo:render", "turbo:morph", "turbo:morph-element", "turbo:frame-render"];
-        events.forEach(event => {
-            document.addEventListener(event, e => log(`Event: ${event}`, e));
+        const events = [
+            "turbo:before-render",
+            "turbo:before-morph-element",
+            "turbo:before-frame-render",
+            "turbo:load",
+            "turbo:render",
+            "turbo:morph",
+            "turbo:morph-element",
+            "turbo:frame-render",
+        ];
+        events.forEach((event) => {
+            document.addEventListener(event, (e) => log(`Event: ${event}`, e));
         });
     }
 
@@ -649,7 +695,9 @@
     config.addEventListener("get", (e) => {
         if (e.detail.prop === "advanced.rateLimit") {
             const resetDate = new Date(rateLimit.reset * 1000).toLocaleString();
-            alert(`Rate limit: remaining ${rateLimit.remaining}/${rateLimit.limit}, resets at ${resetDate}.\nIf you see -1, it means the rate limit has not been fetched yet, or GitHub has not provided the rate limit information.`);
+            alert(
+                `Rate limit: remaining ${rateLimit.remaining}/${rateLimit.limit}, resets at ${resetDate}.\nIf you see -1, it means the rate limit has not been fetched yet, or GitHub has not provided the rate limit information.`,
+            );
         }
     });
     config.addEventListener("set", (e) => {
