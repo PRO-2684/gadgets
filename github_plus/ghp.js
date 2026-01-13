@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.3.8
+// @version      0.3.9
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -21,7 +21,6 @@
 // @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
 // ==/UserScript==
 
-// $$("[class^='ListItem-module__listItem']").forEach(e => console.log(e.__reactProps$8h4h1f32xkn.children[3].props.children.props.deferredData.signatureInformation))
 (function () {
     "use strict";
     const { name, version } = GM_info.script;
@@ -165,6 +164,18 @@
                     name: "🫥 Hide Archives",
                     title: "Hide source code archives (zip, tar.gz) in the release assets",
                     type: "bool",
+                },
+            },
+        },
+        extendedSearch: {
+            name: "🔍 Extended Search",
+            type: "folder",
+            items: {
+                goTo: {
+                    name: "🚀 Go To",
+                    title: "Add items for going to repositories, issues etc. in search suggestions",
+                    type: "bool",
+                    value: false,
                 },
             },
         },
@@ -626,6 +637,175 @@
             }
         `,
         );
+    }
+
+    // Extended search features
+    // Go To provider
+    const REF_REGEX =
+        /^@?(?<owner>[A-Za-z0-9_.-]+)?(?:\/(?<repo>[A-Za-z0-9_.-]+))?(?:#(?<number>\d+))?$/;
+    class GoToProvider extends EventTarget {
+        priority = 1;
+        icon = "rocket";
+        name = "Go to..."; // plural group name (i.e. "repositories" or "teams") - will be the visual header
+        description = "Go to...";
+        singularItemName = "go to"; // singular name for an item (i.e. "repository" or "team") to construct a meaningful aria-label, doesn't appear visually
+        value = "go-to"; // visual name of the filter (i.e. "is:")
+        type = "search";
+        constructor(queryBuilder, input) {
+            super();
+            queryBuilder.addEventListener("query", (e) => {
+                this.handleEvent(e);
+            });
+            this.input = input;
+        }
+        /**
+         * Parses a reference string like:
+         * - `@owner`
+         * - `owner/repo`
+         * - `@owner/repo#123`
+         * - `#123`
+         *
+         * Returns:
+         *   { owner: string|null, repo: string|null, number: number|null }
+         *  or null if no valid parts are found.
+         */
+        parseRef(str) {
+            const match = str.match(REF_REGEX);
+            const { owner, repo, number } = match?.groups || {};
+            const result = {
+                owner: owner ?? null,
+                repo: repo ?? null,
+                number: number ? Number(number) : null,
+            };
+            // Filling missing owner/repo from the current page if possible
+            const owner_present = Boolean(owner);
+            const repo_present = Boolean(repo);
+            const number_present = Boolean(number);
+            switch (true) {
+                // 000 No valid parts
+                case !owner_present && !repo_present && !number_present:
+                // 101 Only owner and number
+                case owner_present && !repo_present && number_present:
+                    return null;
+                // 11x owner/repo provided
+                case owner_present && repo_present:
+                    return result;
+                // 100 Only owner - Check leading `@`
+                case owner_present && !repo_present && !number_present: {
+                    if (str.startsWith("@")) {
+                        return result;
+                    } else {
+                        return null;
+                    }
+                }
+                // case [false, true, true]:
+                // case [false, true, false]: {
+                // 01x Repo (and number) provided - try to get owner
+                case !owner_present && repo_present: {
+                    const owner =
+                        this.input.getAttribute("data-current-owner") ||
+                        this.input.getAttribute("data-current-org");
+                    if (owner) {
+                        result.owner = owner;
+                        return result;
+                    } else {
+                        return null;
+                    }
+                }
+                // 001 Only number provided - try to get owner/repo
+                case !owner_present && !repo_present && number_present: {
+                    const owner_repo = this.input.getAttribute(
+                        "data-current-repository",
+                    );
+                    if (owner_repo) {
+                        const [owner, repo] = owner_repo.split("/");
+                        result.owner = owner;
+                        result.repo = repo;
+                        return result;
+                    } else {
+                        return null;
+                    }
+                }
+            }
+        }
+        handleEvent(event) {
+            const query = event.rawQuery.trim();
+            log("GoToProvider handling query event:", event);
+            this.handleQuery(query);
+        }
+        handleQuery(query) {
+            const ref = this.parseRef(query);
+            if (!ref) return;
+            let value, url, icon;
+            if (ref.number) {
+                // Issue or PR
+                value = `${ref.owner}/${ref.repo}#${ref.number}`;
+                url = `/${value}`;
+                icon = "issue-opened"; // Use issue icon for both issues and PRs
+            } else if (ref.repo) {
+                // Repository
+                value = `${ref.owner}/${ref.repo}`;
+                url = `/${value}`;
+                icon = "repo";
+            } else {
+                // User or Organization
+                value = `@${ref.owner}`;
+                url = `/${ref.owner}`;
+                icon = "team"; // The person icon does not show up, so we use the team icon instead
+            }
+            this.dispatchEvent(
+                new SearchItem({
+                    value,
+                    url,
+                    priority: 1,
+                    icon,
+                }),
+            );
+        }
+    }
+    class SearchItem extends Event {
+        constructor({
+            value,
+            url,
+            priority = 1,
+            description = "",
+            icon = undefined, // Octicon
+            scope = "DEFAULT", // SearchScopeText
+            prefixText = undefined,
+            prefixColor = undefined,
+            isFallbackSuggestion = undefined,
+            isUpdate = undefined,
+        }) {
+            super(isUpdate ? "update-item" : "search-item");
+            this.value = value;
+            this.action = { url };
+            this.priority = priority;
+            this.description = description;
+            this.icon = icon;
+            this.scope = scope;
+            this.prefixText = prefixText;
+            this.prefixColor = prefixColor;
+            this.isFallbackSuggestion = isFallbackSuggestion || false;
+        }
+    }
+    async function setupGoTo() {
+        // Attach provider
+        const input = $("qbsearch-input");
+        const qb = input.queryBuilder;
+        const provider = new GoToProvider(qb, input);
+        qb.addEventListener(
+            "query-builder:request-provider",
+            (e) => {
+                qb.attachProvider(provider);
+            },
+            { once: true },
+        );
+        await qb.requestProviders();
+    }
+    if (config.get("extendedSearch.goTo")) {
+        document.addEventListener("qbsearch-input:expand", setupGoTo, {
+            once: true,
+        });
     }
 
     // Tracking prevention

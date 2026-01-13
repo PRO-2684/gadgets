@@ -30,6 +30,13 @@
         - Does not show up if there is only zero or one release asset.
         - Does not show up if none of the release assets have been downloaded.
     - **🫥 Hide Archives**: Hide source code archives (zip, tar.gz) in the release assets. (Experimental)
+- **🔍 Extended Search**
+    - **🚀 Go To**: Add items for going to repositories, issues etc. in search suggestions, like:
+        - `@owner`: go to owner's profile
+        - `/repo`: go to repository of current owner (if any)
+        - `owner/repo`: go to repository
+        - `@owner/repo#123`: go to issue/PR number 123 in the repository
+        - `#123`: go to issue/PR number 123 in the current repository (if any)
 - **🪄 Additional Features**
     - **🎭 Tracking Prevention**: Prevents some tracking by GitHub.
 - **⚙️ Advanced Settings**
