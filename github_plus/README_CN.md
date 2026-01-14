@@ -72,6 +72,16 @@
 
 </details>
 
+<details><summary>
+搜索建议中跳转 Issue/PR 示例
+</summary>
+
+从搜索建议中跳转到 Issue 的示例，方法是在搜索框中输入 `#1`。
+
+![](./images/go-to-issue.png)
+
+</details>
+
 ## 🔑 个人访问令牌 (PAT)
 
 - 没有 PAT，每小时只允许 $60$ 次请求；有 PAT，每小时允许 $5000$ 次请求，对大多数用户来说足够了。

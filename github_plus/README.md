@@ -72,6 +72,16 @@ Example Dashboard, with `📰 Dashboard` set to `Mobile-Like`, `↖️ Left Side
 
 </details>
 
+<details><summary>
+Go to Issue/PR from Search Suggestions
+</summary>
+
+Example of going to an issue from search suggestions by typing `#1` in the search box.
+
+![](./images/go-to-issue.png)
+
+</details>
+
 ## 🔑 Personal Access Token (PAT)
 
 - Without a PAT, only $60$ requests per hour are allowed; with a PAT, $5000$ requests per hour are allowed, which suffices for most users.
