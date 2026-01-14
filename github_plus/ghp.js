@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.3.9
+// @version      0.4.0
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -740,7 +740,7 @@
             if (ref.number) {
                 // Issue or PR
                 value = `${ref.owner}/${ref.repo}#${ref.number}`;
-                url = `/${value}`;
+                url = `/${ref.owner}/${ref.repo}/issues/${ref.number}`;
                 icon = "issue-opened"; // Use issue icon for both issues and PRs
             } else if (ref.repo) {
                 // Repository
