@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1.9
+// @version      0.2.0
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
+// @match        https://xkgo.ucas.ac.cn/*
 // @match        https://xkgodj.ucas.ac.cn/*
-// @match        https://jwxk.ucas.ac.cn/evaluate/*
-// @match        https://xkcts.ucas.ac.cn:8443/evaluate/*
+// @match        https://jwxk.ucas.ac.cn/*
+// @match        https://xkcts.ucas.ac.cn:8443/*
 // @match        https://mooc.ucas.edu.cn/portal
 // @match        https://mooc.mooc.ucas.edu.cn/mooc-ans/js/*
 // @match        https://mooc.mooc.ucas.edu.cn/ananas/modules/pdf/index.html*
@@ -74,7 +75,7 @@
         },
         courseSelection: {
             name: "🪶 Course Selection",
-            title: "Course selection system related helpers (xkgo.ucas.ac.cn)",
+            title: "Course selection system related helpers (xkgo(dj).ucas.ac.cn)",
             type: "folder",
             items: {
                 courseIDs: {
@@ -110,9 +111,22 @@
                 },
             },
         },
+        courseSchedule: {
+            name: "📅 Course Schedule",
+            title: "Course schedule system related helpers (jwxk/xkcts.ucas.ac.cn)",
+            type: "folder",
+            items: {
+                enterQuery: {
+                    name: "⏎ Enter to query*",
+                    title: "Pressing Enter in the fields will trigger the query",
+                    type: "bool",
+                    value: true,
+                },
+            },
+        },
         courseEvaluation: {
             name: "📝 Course Evaluation",
-            title: "Course evaluation system related helpers (xkcts.ucas.ac.cn)",
+            title: "Course evaluation system related helpers (jwxk/xkcts.ucas.ac.cn)",
             type: "folder",
             items: {
                 largerClickArea: {
@@ -269,6 +283,7 @@
             }
             break;
         }
+        case "xkgo.ucas.ac.cn":
         case "xkgodj.ucas.ac.cn": {
             config.down("courseSelection");
             switch (location.pathname) {
@@ -396,81 +411,103 @@
         }
         case "jwxk.ucas.ac.cn":
         case "xkcts.ucas.ac.cn:8443": {
-            config.down("courseEvaluation");
-            const firstPart = location.pathname.split("/").filter((s) => s)[0];
-            if (firstPart !== "evaluate") {
-                debug("No actions for this page:", location.href);
-                break;
-            }
-            const form = $("#regfrm");
-            const table = form?.querySelector?.("table");
-            if (!table) {
-                debug("No table found, skipping...");
-                break;
-            }
-            if (config.get("courseEvaluation.largerClickArea")) {
-                const rows = Array.from(table.rows);
-                const headerRow = rows.splice(0, 1)[0];
-                const columns = Array.from(headerRow.cells).map(() => []);
-                // Click on cell to select the radio button inside
-                for (let r = 0; r < rows.length; r++) {
-                    const row = rows[r];
-                    for (let c = 0; c < headerRow.cells.length; c++) {
-                        const cell = row.cells[c];
-                        const radio =
-                            cell?.querySelector?.("input[type=radio]");
-                        if (radio) {
-                            columns[c].push(radio);
-                            cell.style.cursor = "pointer";
-                            cell.addEventListener("click", () => {
-                                radio.click();
-                            });
+            const paths = location.pathname.split("/").slice(1);
+            switch (paths[0]) {
+                case "evaluate": {
+                    config.down("courseEvaluation");
+                    const firstPart = location.pathname
+                        .split("/")
+                        .filter((s) => s)[0];
+                    if (firstPart !== "evaluate") {
+                        debug("No actions for this page:", location.href);
+                        break;
+                    }
+                    const form = $("#regfrm");
+                    const table = form?.querySelector?.("table");
+                    if (!table) {
+                        debug("No table found, skipping...");
+                        break;
+                    }
+                    if (config.get("courseEvaluation.largerClickArea")) {
+                        const rows = Array.from(table.rows);
+                        const headerRow = rows.splice(0, 1)[0];
+                        const columns = Array.from(headerRow.cells).map(
+                            () => [],
+                        );
+                        // Click on cell to select the radio button inside
+                        for (let r = 0; r < rows.length; r++) {
+                            const row = rows[r];
+                            for (let c = 0; c < headerRow.cells.length; c++) {
+                                const cell = row.cells[c];
+                                const radio =
+                                    cell?.querySelector?.("input[type=radio]");
+                                if (radio) {
+                                    columns[c].push(radio);
+                                    cell.style.cursor = "pointer";
+                                    cell.addEventListener("click", () => {
+                                        radio.click();
+                                    });
+                                }
+                            }
+                        }
+                        // Click on header to select all in that column
+                        for (let c = 0; c < headerRow.cells.length; c++) {
+                            const headerCell = headerRow.cells[c];
+                            const count = columns[c].length;
+                            if (count > 0) {
+                                headerCell.title = `Click to select all ${count} options in this column`;
+                                headerCell.style.cursor = "pointer";
+                                headerCell.addEventListener("click", () => {
+                                    for (const radio of columns[c]) {
+                                        radio.click();
+                                    }
+                                });
+                            }
                         }
                     }
-                }
-                // Click on header to select all in that column
-                for (let c = 0; c < headerRow.cells.length; c++) {
-                    const headerCell = headerRow.cells[c];
-                    const count = columns[c].length;
-                    if (count > 0) {
-                        headerCell.title = `Click to select all ${count} options in this column`;
-                        headerCell.style.cursor = "pointer";
-                        headerCell.addEventListener("click", () => {
-                            for (const radio of columns[c]) {
-                                radio.click();
+                    const vcode = $("#adminValidateCode");
+                    const submit = $("#sb1");
+                    if (vcode && config.get("courseEvaluation.enterSubmit")) {
+                        vcode.addEventListener("keydown", (e) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                submit.click();
                             }
                         });
                     }
-                }
-            }
-            const vcode = $("#adminValidateCode");
-            const submit = $("#sb1");
-            if (vcode && config.get("courseEvaluation.enterSubmit")) {
-                vcode.addEventListener("keydown", (e) => {
-                    if (e.key === "Enter") {
-                        e.preventDefault();
-                        submit.click();
-                    }
-                });
-            }
-            const textareas = form.querySelectorAll("textarea");
-            const minimumChars = 15;
-            if (
-                textareas.length > 0 &&
-                config.get("courseEvaluation.addSpaces")
-            ) {
-                for (const textarea of textareas) {
-                    textarea.addEventListener("change", (e) => {
-                        const toAdd = minimumChars - textarea.value.length;
-                        if (toAdd > 0) {
-                            textarea.value += " ".repeat(toAdd);
-                            // Trigger re-validation (no need)
-                            // unsafeWindow.jQuery(form).validate().element(textarea);
+                    const textareas = form.querySelectorAll("textarea");
+                    const minimumChars = 15;
+                    if (
+                        textareas.length > 0 &&
+                        config.get("courseEvaluation.addSpaces")
+                    ) {
+                        for (const textarea of textareas) {
+                            textarea.addEventListener("change", (e) => {
+                                const toAdd =
+                                    minimumChars - textarea.value.length;
+                                if (toAdd > 0) {
+                                    textarea.value += " ".repeat(toAdd);
+                                    // Trigger re-validation (no need)
+                                    // unsafeWindow.jQuery(form).validate().element(textarea);
+                                }
+                            });
                         }
-                    });
+                    }
+                    break;
                 }
+                case "course": {
+                    config.down("courseSchedule");
+                    if (config.get("courseSchedule.enterQuery")) {
+                        // When the form has a submit button, pressing Enter in any field triggers the submit
+                        // But this page uses buttons with type="button", so we just change it to "submit"
+                        const btn = $("button[onclick='query()']");
+                        btn.type = "submit";
+                    }
+                    break;
+                }
+                default:
+                    break;
             }
-            break;
         }
         case "mooc.ucas.edu.cn": {
             config.down("mooc");
