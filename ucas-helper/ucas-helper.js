@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.1.8
+// @version      0.1.9
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
 // @match        https://xkgodj.ucas.ac.cn/*
 // @match        https://jwxk.ucas.ac.cn/evaluate/*
+// @match        https://xkcts.ucas.ac.cn:8443/evaluate/*
 // @match        https://mooc.ucas.edu.cn/portal
 // @match        https://mooc.mooc.ucas.edu.cn/mooc-ans/js/*
 // @match        https://mooc.mooc.ucas.edu.cn/ananas/modules/pdf/index.html*
@@ -393,7 +394,8 @@
             }
             break;
         }
-        case "jwxk.ucas.ac.cn": {
+        case "jwxk.ucas.ac.cn":
+        case "xkcts.ucas.ac.cn:8443": {
             config.down("courseEvaluation");
             const firstPart = location.pathname.split("/").filter((s) => s)[0];
             if (firstPart !== "evaluate") {
