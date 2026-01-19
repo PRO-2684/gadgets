@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.2.0
+// @version      0.2.1
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
@@ -296,11 +296,13 @@
                     );
 
                     let newly_selected = false;
+                    let focused = false;
                     for (const row of listing.rows) {
                         newly_selected ||= checkRow(row);
                     }
-                    if (newly_selected) {
+                    if (newly_selected && !focused) {
                         focus();
+                        focused = true;
                     }
 
                     const obs = new MutationObserver((mutations) => {
@@ -312,8 +314,9 @@
                                 }
                             }
                         }
-                        if (newly_selected) {
+                        if (newly_selected && !focused) {
                             focus();
+                            focused = true;
                         }
                     });
                     obs.observe(listing, {
@@ -350,6 +353,7 @@
                     }
                     function focus() {
                         const verification = $("#vcode");
+                        verification.scrollIntoView({ behavior: "instant" });
                         verification.focus();
                         verification.style.background = "red";
                     }
