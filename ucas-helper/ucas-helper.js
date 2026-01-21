@@ -177,7 +177,7 @@
     };
     const config = new GM_config(configDesc);
 
-    switch (location.host) {
+    switch (location.hostname) {
         case "sep.ucas.ac.cn": {
             config.down("sep");
             switch (location.pathname) {
@@ -414,7 +414,7 @@
             break;
         }
         case "jwxk.ucas.ac.cn":
-        case "xkcts.ucas.ac.cn:8443": {
+        case "xkcts.ucas.ac.cn": {
             const paths = location.pathname.split("/").slice(1);
             switch (paths[0]) {
                 case "evaluate": {
