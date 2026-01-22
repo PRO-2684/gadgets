@@ -25,6 +25,7 @@
 | [`github_plus`](./github_plus) | [#510742](https://greasyfork.org/scripts/510742) | 为 GitHub 增加额外的功能。 |
 | ~~[`GM_config`](./GM_config)~~ | [#470224](https://greasyfork.org/scripts/470224) | 已迁移至 [PRO-2684/GM_config](https://github.com/PRO-2684/GM_config)。简易的 Tampermonkey 脚本配置库。 |
 | [`greasyfork_enhance`](./greasyfork_enhance) | [#467078](https://greasyfork.org/scripts/467078) | 增进 Greasyfork 浏览体验。 |
+| [`latex-copy`](./latex-copy) | N/A | 一个用户脚本，使您能够从网页上渲染的公式中复制 LaTeX 代码。 |
 | [`linux-po`](./linux-po) | [#523904](https://greasyfork.org/scripts/523904) | 对 linux.do 的增强脚本。 |
 | [`minecraft-helper-rev`](./minecraft-helper-rev) | [#551621](https://greasyfork.org/scripts/551621) | 针对 Minecraft 玩家的辅助脚本。 |
 | [`no-keywords`](./no-keywords) | [#523904](https://greasyfork.org/scripts/469656) | 去你妈的傻逼高亮搜索关键词。 |
