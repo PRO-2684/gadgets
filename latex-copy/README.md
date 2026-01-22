@@ -9,9 +9,29 @@ A userscript that enables copying LaTeX code from rendered equations on web page
 
 ## Supported Rendering Engines
 
-- [KaTeX](https://katex.org/)
+- [KaTeX](https://katex.org/): Best supported.
+- [MathJax](https://www.mathjax.org/)
+    - V2 is supported.
+    - V3 and V4 won't be supported, because they intercept double-click events for their own purposes.
 
-Future support for MathJax and other rendering engines may be added.
+Future support for other rendering engines may be added.
+
+## Supported & Unsupported Sites
+
+> [!NOTE]
+> These lists are far from exhaustive. They are just some examples where the script has been tested.
+
+These sites are known to work with the script:
+
+- [KaTeX](https://katex.org/)
+- [ChatGPT](https://chatgpt.com/)
+- [Math Stack Exchange](https://math.stackexchange.com/)
+- ...
+
+And these sites are known not to work:
+
+- [GitHub](https://github.com)
+- ...
 
 ## FAQ
 

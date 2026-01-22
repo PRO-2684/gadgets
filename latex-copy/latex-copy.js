@@ -29,6 +29,10 @@
             container: ".katex",
             code: ".katex-mathml semantics annotation[encoding='application/x-tex']",
         },
+        MathJaxV2: {
+            container: ".math-container",
+            code: "script[type='math/tex'], script[type='math/tex; mode=display']",
+        },
     };
 
     /**
