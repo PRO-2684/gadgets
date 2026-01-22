@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.2.1
+// @version      0.2.2
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
@@ -393,7 +393,7 @@
             });
             function heartbeat() {
                 unsafeWindow
-                    .fetch("http://xkgo.ucas.ac.cn:3000/courseManage/main", {
+                    .fetch("/courseManage/main", {
                         credentials: "include",
                     })
                     .then((res) => {
