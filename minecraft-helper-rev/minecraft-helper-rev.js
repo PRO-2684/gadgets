@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Minecraft Helper Rev
 // @namespace    http://tampermonkey.net/
-// @version      0.1.1
+// @version      0.1.2
 // @description  Helpful script dedicated to Minecraft players.
 // @author       PRO
 // @license      gpl-3.0
@@ -26,13 +26,14 @@
 
     GM_config.extend("list", {
         value: [],
-        processor: (_prop, input, _desc) => input.split(",").map((s) => s.trim()),
+        processor: (_prop, input, _desc) =>
+            input.split(",").map((s) => s.trim()),
         formatter: (_prop, value, desc) => `${desc.name}: ${value.join(", ")}`,
     });
 
     const configDesc = {
-        "$default": {
-            autoClose: false
+        $default: {
+            autoClose: false,
         },
         general: {
             name: "⚙️ General",
@@ -138,47 +139,60 @@
     };
     const config = new GM_config(configDesc);
     /**
-     * Try to click an element.
-     * @param {string} selector The query selector.
+     * Try to click an element or execute the function.
+     * @param {string | Function} target The query selector or function.
+     * @returns {boolean} Whether the action was successful.
      */
-    function tryClick(selector) {
-        const ele = document.querySelector(selector);
-        if (ele) {
-            ele.click();
-            return true;
+    function clickOrExecute(target) {
+        if (typeof target === "string") {
+            const ele = document.querySelector(target);
+            if (ele) {
+                ele.click();
+                return true;
+            }
+            return false;
+        } else if (typeof target === "function") {
+            return target() || false;
         }
         return false;
     }
     /**
      * Setup shortcuts.
-     * @param {string[]} selectors The selectors. [left, right, pre-search, search]
+     * @param {string[]} targets The selectors or functions. [left, right, pre-search, search]
      * @param {Function} filter The filter function.
      * @param {number} timeout Timeout in milliseconds.
      */
-    function setupShortcuts(selectors, filter, timeout) {
+    function setupShortcuts(targets, filter, timeout) {
         const nodeNames = ["INPUT", "TEXTAREA"];
         document.addEventListener("keydown", (e) => {
-            if (!nodeNames.includes(document.activeElement.nodeName)
-                && !e.altKey && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+            if (
+                !nodeNames.includes(document.activeElement.nodeName) &&
+                !e.altKey &&
+                !e.ctrlKey &&
+                !e.metaKey &&
+                !e.shiftKey
+            ) {
                 switch (e.key) {
                     case "ArrowLeft":
-                        tryClick(selectors[0]);
+                        clickOrExecute(targets[0]);
                         break;
                     case "ArrowRight":
-                        tryClick(selectors[1]);
+                        clickOrExecute(targets[1]);
                         break;
                     case "f":
                         filter();
                         break;
                     case "s":
-                        if (selectors[2].length) {
-                            tryClick(selectors[2]);
+                        if (targets[2]) {
+                            clickOrExecute(targets[2]);
                             window.setTimeout(() => {
-                                const search = document.querySelector(selectors[3]);
+                                const search = document.querySelector(
+                                    targets[3],
+                                );
                                 if (search) search.focus();
                             }, timeout);
                         } else {
-                            const search = document.querySelector(selectors[3]);
+                            const search = document.querySelector(targets[3]);
                             if (search) search.focus();
                         }
                         e.preventDefault();
@@ -192,16 +206,16 @@
                         document.activeElement.blur();
                         break;
                     case "ArrowLeft":
-                        tryClick(selectors[0]);
+                        clickOrExecute(targets[0]);
                         break;
                     case "ArrowRight":
-                        tryClick(selectors[1]);
+                        clickOrExecute(targets[1]);
                         break;
                     default:
                         break;
                 }
             }
-        })
+        });
         debug("⚙️ Shortcuts installed!");
     }
     switch (window.location.host) {
@@ -210,8 +224,10 @@
             if (config.get("minecraft.autoStay")) {
                 let attempts = 16;
                 const timer = window.setInterval(() => {
-                    const success = tryClick("button[data-aem-contentname='close-icon']")
-                        || tryClick("button.btn.btn-link#popup-btn");
+                    const success =
+                        clickOrExecute(
+                            "button[data-aem-contentname='close-icon']",
+                        ) || clickOrExecute("button.btn.btn-link#popup-btn");
                     if (success) {
                         debug("✋ Auto stayed!");
                         window.clearInterval(timer);
@@ -225,7 +241,10 @@
         }
         case "www.curseforge.com": {
             config.down("curseforge");
-            if (config.get("curseforge.autoMod") && window.location.pathname == '/') {
+            if (
+                config.get("curseforge.autoMod") &&
+                window.location.pathname == "/"
+            ) {
                 debug("🛣️ Navigating to mc mods...");
                 window.location.pathname = "/minecraft/mc-mods";
             }
@@ -239,35 +258,61 @@
                     }
                 }
             }
-            if (config.get("curseforge.highlightFiles") && window.location.pathname != "/") {
+            if (
+                config.get("curseforge.highlightFiles") &&
+                window.location.pathname != "/"
+            ) {
                 fileTab.style.border = config.get("curseforge.highlightBorder");
             }
             if (config.get("curseforge.shortcut")) {
-                setupShortcuts([".btn-prev", ".btn-next", "", "input.search-input-field"], () => { fileTab?.firstElementChild?.click(); });
+                setupShortcuts(
+                    [".btn-prev", ".btn-next", "", "input.search-input-field"],
+                    () => {
+                        fileTab?.firstElementChild?.click();
+                    },
+                );
             }
             break;
         }
         case "modrinth.com": {
             config.down("modrinth");
-            if (window.location.pathname == "/" && config.get("modrinth.autoMod")) {
+            if (
+                window.location.pathname == "/" &&
+                config.get("modrinth.autoMod")
+            ) {
                 debug("🛣️ Navigating to mod search page...");
-                tryClick("a[href='/discover/mods']");
+                clickOrExecute("a[href='/discover/mods']");
             }
             function filter() {
-                const router = document.getElementById("__nuxt").__vue_app__.$nuxt.$router;
+                const router =
+                    document.getElementById("__nuxt").__vue_app__.$nuxt.$router;
                 if (router.currentRoute.value.name === "type-id") {
                     const path = router.currentRoute.value.path;
                     router.push({
-                        path: path + "/versions", query: {
-                            "l": config.get("modrinth.filter.loader"),
-                            "g": config.get("modrinth.filter.version"),
-                            "c": config.get("modrinth.filter.channel"),
-                        }
+                        path: path + "/versions",
+                        query: {
+                            l: config.get("modrinth.filter.loader"),
+                            g: config.get("modrinth.filter.version"),
+                            c: config.get("modrinth.filter.channel"),
+                        },
                     });
                 }
             }
             if (config.get("modrinth.shortcut")) {
-                setupShortcuts([".btn-wrapper > a[aria-label='Previous Page']", ".btn-wrapper > a[aria-label='Next Page']", "a[href='/mods']", "input[placeholder='Search mods...']"], filter);
+                setupShortcuts(
+                    [
+                        ".btn-wrapper > a[aria-label='Previous Page']",
+                        ".btn-wrapper > a[aria-label='Next Page']",
+                        () => {
+                            const router =
+                                document.getElementById("__nuxt").__vue_app__
+                                    .$nuxt.$router;
+                            router.push("/discover/mods");
+                        },
+                        "input[placeholder='Search mods...']",
+                    ],
+                    filter,
+                );
             }
             break;
         }
