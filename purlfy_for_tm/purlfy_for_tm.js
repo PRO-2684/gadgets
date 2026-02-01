@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.5.6
+// @version      0.5.7
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -38,7 +38,7 @@
     const window = unsafeWindow;
     const configDesc = {
         $default: {
-            autoClose: false
+            autoClose: false,
         },
         rules: {
             name: "📖 Rules Settings",
@@ -150,7 +150,8 @@
             type: "folder",
             items: {
                 $default: {
-                    input: (prop, orig) => confirm(`Reset "${prop}"?`) ? 0 : orig,
+                    input: (prop, orig) =>
+                        confirm(`Reset "${prop}"?`) ? 0 : orig,
                     processor: "same",
                     formatter: "normal",
                 },
@@ -213,23 +214,25 @@
                     title: "Enable debug mode",
                     type: "bool",
                     value: false,
-                }
+                },
             },
         },
     };
     const config = new GM_config(configDesc);
     function log(...args) {
-        if (config.get("advanced.debug")) console.log("[pURLfy for Tampermonkey]", ...args);
+        if (config.get("advanced.debug"))
+            console.log("[pURLfy for Tampermonkey]", ...args);
     }
     // Initialize pURLfy core
     const purifier = new Purlfy({
         fetchEnabled: true,
         lambdaEnabled: true,
         fetch: GM_fetch,
-        log: config.get("advanced.debug") ? undefined : () => { },
+        log: config.get("advanced.debug") ? undefined : () => {},
     });
     async function purify(url) {
-        if (config.get("rules.removeTextFragment")) { // Remove Text Fragment
+        if (config.get("rules.removeTextFragment")) {
+            // Remove Text Fragment
             const index = url.indexOf("#:~:");
             if (index !== -1) url = url.slice(0, index);
         }
@@ -248,60 +251,82 @@
     const senseless = config.get("advanced.senseless");
     log(`Senseless mode is ${senseless ? "enabled" : "disabled"}.`);
     // Statistics listener
-    purifier.addEventListener("statisticschange", e => {
+    purifier.addEventListener("statisticschange", (e) => {
         log("Statistics increment:", e.detail);
         for (const [key, increment] of Object.entries(e.detail)) {
-            config.set(`statistics.${key}`, config.get(`statistics.${key}`) + increment);
+            config.set(
+                `statistics.${key}`,
+                config.get(`statistics.${key}`) + increment,
+            );
         }
     });
     // Hooks
     const hooks = [];
-    class Hook { // Dummy class for hooks
+    class Hook {
+        // Dummy class for hooks
         name;
         enabled;
-        constructor(name) { // Register a hook
+        constructor(name) {
+            // Register a hook
             this.name = name;
             // hooks.set(name, this);
             hooks.push(this);
             this.enabled = config.get(`hooks.${name}`);
         }
-        toast(content) { // Indicate that a URL has been intercepted
+        toast(content) {
+            // Indicate that a URL has been intercepted
             log(`Hook "${this.name}": ${content}`);
         }
-        async enable() { // Enable the hook
+        async enable() {
+            // Enable the hook
             throw new Error("Over-ride me!");
         }
-        async disable() { // Disable the hook
+        async disable() {
+            // Disable the hook
             throw new Error("Over-ride me!");
         }
     }
     // Check location.href (not really a hook, actually)
     const locationHook = new Hook("locationHref");
-    locationHook.enable = async function () { // Intercept location.href
+    locationHook.enable = async function () {
+        // Intercept location.href
         const original = location.href;
         const purified = (await purify(original)).url;
         if (original !== purified) {
-            window.stop(); // Stop loading
             this.toast(`Redirect: "${original}" -> "${purified}"`);
-            location.replace(purified);
+            if (senseless) {
+                history.replaceState(null, "", purified);
+            } else {
+                window.stop(); // Stop loading
+                location.replace(purified);
+            }
         }
     }.bind(locationHook);
-    locationHook.disable = async function () { } // Do nothing
+    locationHook.disable = async function () {}; // Do nothing
     // Mouse-related hooks
     const tagNames = new Set(["A", "AREA"]);
-    function cloneAndStop(e) { // Clone an event and stop the original
+    function cloneAndStop(e) {
+        // Clone an event and stop the original
         const newEvt = new e.constructor(e.type, e);
         e.preventDefault();
         e.stopImmediatePropagation();
         return newEvt;
     }
-    async function mouseHandler(e) { // Intercept mouse events
-        const ele = e.composedPath().find(ele => tagNames.has(ele.tagName));
-        if (ele && !ele.hasAttribute(tag2) && ele.href && !ele.getAttribute("href").startsWith("#")) {
+    async function mouseHandler(e) {
+        // Intercept mouse events
+        const ele = e.composedPath().find((ele) => tagNames.has(ele.tagName));
+        if (
+            ele &&
+            !ele.hasAttribute(tag2) &&
+            ele.href &&
+            !ele.getAttribute("href").startsWith("#")
+        ) {
             ele.removeAttribute("ping"); // Remove `ping` attribute
             const href = ele.href;
-            if (!href.startsWith("https://") && !href.startsWith("http://")) return; // Ignore non-HTTP(S) URLs
-            if (!ele.hasAttribute(tag1)) { // The first to intercept
+            if (!href.startsWith("https://") && !href.startsWith("http://"))
+                return; // Ignore non-HTTP(S) URLs
+            if (!ele.hasAttribute(tag1)) {
+                // The first to intercept
                 ele.toggleAttribute(tag1, true);
                 const newEvt = senseless ? null : cloneAndStop(e);
                 this.toast(`Intercepted: "${href}"`);
@@ -309,9 +334,12 @@
                 if (purified.url !== href) {
                     ele.href = purified.url;
                     // if (ele.innerHTML === href) ele.innerHTML = purified.url; // Update the text
-                    if (ele.childNodes?.length === 1
-                        && ele.firstChild.nodeType === Node.TEXT_NODE
-                        && ele.firstChild.textContent === href) { // Update the text
+                    if (
+                        ele.childNodes?.length === 1 &&
+                        ele.firstChild.nodeType === Node.TEXT_NODE &&
+                        ele.firstChild.textContent === href
+                    ) {
+                        // Update the text
                         ele.firstChild.textContent = purified.url;
                     }
                     this.toast(`Processed: "${ele.href}"`);
@@ -321,15 +349,22 @@
                 ele.toggleAttribute(tag2, true);
                 ele.removeAttribute(tag1);
                 senseless || ele.dispatchEvent(newEvt);
-                ele.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
-            } else { // Someone else has intercepted
+                ele.dispatchEvent(
+                    new Event(eventName, { bubbles: false, cancelable: true }),
+                );
+            } else {
+                // Someone else has intercepted
                 if (!senseless) {
                     const newEvt = cloneAndStop(e);
                     this.toast(`Waiting: "${ele.href}"`);
-                    ele.addEventListener(eventName, function () {
-                        log(`Waited: "${ele.href}"`);
-                        ele.dispatchEvent(newEvt);
-                    }, { once: true });
+                    ele.addEventListener(
+                        eventName,
+                        function () {
+                            log(`Waited: "${ele.href}"`);
+                            ele.dispatchEvent(newEvt);
+                        },
+                        { once: true },
+                    );
                 }
             }
         }
@@ -339,18 +374,26 @@
         hook.handler = mouseHandler.bind(hook);
         hook.enable = async function () {
             document.addEventListener(name, this.handler, { capture: true });
-        }
+        };
         hook.disable = async function () {
             document.removeEventListener(name, this.handler, { capture: true });
-        }
+        };
     });
     // Listen to `touchstart` event
-    async function touchstartHandler(e) { // Always "senseless"
-        const ele = e.composedPath().find(ele => tagNames.has(ele.tagName));
-        if (ele && !ele.hasAttribute(tag1) && !ele.hasAttribute(tag2) && ele.href && !ele.getAttribute("href").startsWith("#")) {
+    async function touchstartHandler(e) {
+        // Always "senseless"
+        const ele = e.composedPath().find((ele) => tagNames.has(ele.tagName));
+        if (
+            ele &&
+            !ele.hasAttribute(tag1) &&
+            !ele.hasAttribute(tag2) &&
+            ele.href &&
+            !ele.getAttribute("href").startsWith("#")
+        ) {
             ele.removeAttribute("ping"); // Remove `ping` attribute
             const href = ele.href;
-            if (!href.startsWith("https://") && !href.startsWith("http://")) return; // Ignore non-HTTP(S) URLs
+            if (!href.startsWith("https://") && !href.startsWith("http://"))
+                return; // Ignore non-HTTP(S) URLs
             ele.toggleAttribute(tag1, true);
             this.toast(`Intercepted: "${href}"`);
             const purified = await purify(href);
@@ -363,17 +406,23 @@
             }
             ele.toggleAttribute(tag2, true);
             ele.removeAttribute(tag1);
-            ele.dispatchEvent(new Event(eventName, { bubbles: false, cancelable: true }));
+            ele.dispatchEvent(
+                new Event(eventName, { bubbles: false, cancelable: true }),
+            );
         }
     }
     const touchstartHook = new Hook("touchstart");
     touchstartHook.handler = touchstartHandler.bind(touchstartHook);
     touchstartHook.enable = async function () {
-        document.addEventListener("touchstart", this.handler, { capture: true });
-    }
+        document.addEventListener("touchstart", this.handler, {
+            capture: true,
+        });
+    };
     touchstartHook.disable = async function () {
-        document.removeEventListener("touchstart", this.handler, { capture: true });
-    }
+        document.removeEventListener("touchstart", this.handler, {
+            capture: true,
+        });
+    };
     // Hook form submit
     // function submitHandler(e) { // Always "senseless"
     //     let submitter = e.submitter;
@@ -435,11 +484,16 @@
     // Intercept window.open
     const openHook = new Hook("windowOpen");
     openHook.original = window.open.bind(window);
-    openHook.patched = function (url, target, features) { // Intercept window.open
+    openHook.patched = function (url, target, features) {
+        // Intercept window.open
         url = url?.toString() ?? "about:blank";
-        if (url && url !== "about:blank" && (url.startsWith("http://") || url.startsWith("https://"))) {
+        if (
+            url &&
+            url !== "about:blank" &&
+            (url.startsWith("http://") || url.startsWith("https://"))
+        ) {
             this.toast(`Intercepted: "${url}"`);
-            purify(url).then(purified => {
+            purify(url).then((purified) => {
                 this.toast(`Processed: "${purified.url}"`);
                 this.original(purified.url, target, features);
             });
@@ -450,17 +504,25 @@
     }.bind(openHook);
     openHook.enable = async function () {
         window.open = this.patched;
-    }
+    };
     openHook.disable = async function () {
         window.open = this.original;
-    }
-    function patch(orig) { // Patch history functions
+    };
+    function patch(orig) {
+        // Patch history functions
         function patched(...args) {
             const url = args[2];
-            if (url && (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("//") || url.startsWith("/") || url.startsWith("?"))) {
+            if (
+                url &&
+                (url.startsWith("http://") ||
+                    url.startsWith("https://") ||
+                    url.startsWith("//") ||
+                    url.startsWith("/") ||
+                    url.startsWith("?"))
+            ) {
                 this.toast(`Intercepted: "${url}"`);
                 const resolved = new URL(url, location.href).href;
-                purify(resolved).then(purified => {
+                purify(resolved).then((purified) => {
                     this.toast(`Processed: "${purified.url}"`);
                     args[2] = purified.url;
                     orig.apply(history, args);
@@ -476,39 +538,49 @@
     pushStateHook.patched = patch(pushStateHook.original).bind(pushStateHook);
     pushStateHook.enable = async function () {
         history.pushState = pushStateHook.patched;
-    }
+    };
     pushStateHook.disable = async function () {
         history.pushState = pushStateHook.original;
-    }
+    };
     const replaceStateHook = new Hook("replaceState");
     replaceStateHook.original = history.replaceState;
-    replaceStateHook.patched = patch(replaceStateHook.original).bind(replaceStateHook);
+    replaceStateHook.patched = patch(replaceStateHook.original).bind(
+        replaceStateHook,
+    );
     replaceStateHook.enable = async function () {
         history.replaceState = replaceStateHook.patched;
-    }
+    };
     replaceStateHook.disable = async function () {
         history.replaceState = replaceStateHook.original;
-    }
+    };
     // Site-specific hooks
     switch (location.hostname) {
         case "www.bing.com":
-        case "cn.bing.com": { // Bing
+        case "cn.bing.com": {
+            // Bing
             // Hook `addEventListener`
             const bingHook = new Hook("bing");
-            bingHook.blacklist = { "A": new Set(["mouseenter", "mouseleave", "mousedown"]), "P": new Set(["mouseover", "mouseout", "click"]) }
+            bingHook.blacklist = {
+                A: new Set(["mouseenter", "mouseleave", "mousedown"]),
+                P: new Set(["mouseover", "mouseout", "click"]),
+            };
             bingHook.original = HTMLElement.prototype.addEventListener;
             bingHook.patched = function (type, listener, options) {
-                if (bingHook.blacklist[this.tagName] && bingHook.blacklist[this.tagName].has(type)) { // Block events
+                if (
+                    bingHook.blacklist[this.tagName] &&
+                    bingHook.blacklist[this.tagName].has(type)
+                ) {
+                    // Block events
                     return;
                 }
                 return bingHook.original.call(this, type, listener, options);
             };
             bingHook.enable = async function () {
                 HTMLElement.prototype.addEventListener = bingHook.patched;
-            }
+            };
             bingHook.disable = async function () {
                 HTMLElement.prototype.addEventListener = bingHook.original;
-            }
+            };
             break;
         }
         default: {
@@ -519,9 +591,12 @@
     // Enable hooks
     const promises = [];
     for (const hook of hooks) {
-        hook.enabled && promises.push(hook.enable().then(() => {
-            log(`Hook "${hook.name}" enabled.`);
-        }));
+        hook.enabled &&
+            promises.push(
+                hook.enable().then(() => {
+                    log(`Hook "${hook.name}" enabled.`);
+                }),
+            );
     }
     Promise.all(promises).then(() => {
         log(`[core ${Purlfy.version}] Initialized successfully! 🎉`);
@@ -538,17 +613,20 @@
         });
     }
     // Manual purify
-    function trim(url) { // Leave at most 100 characters
+    function trim(url) {
+        // Leave at most 100 characters
         return url.length > 100 ? url.slice(0, 100) + "..." : url;
     }
     function showPurify() {
         const url = prompt("Enter the URL to purify:", location.href);
         if (!url) return;
-        purify(url).then(result => {
+        purify(url).then((result) => {
             GM_setClipboard(result.url);
-            alert(`Original: ${trim(url)}\nResult (copied): ${trim(result.url)}\nMatched rule: ${result.rule}`);
+            alert(
+                `Original: ${trim(url)}\nResult (copied): ${trim(result.url)}\nMatched rule: ${result.rule}`,
+            );
         });
-    };
+    }
     config.addEventListener("get", (e) => {
         if (e.detail.prop === "advanced.purify") {
             showPurify();

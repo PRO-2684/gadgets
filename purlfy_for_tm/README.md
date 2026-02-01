@@ -18,9 +18,9 @@ Simply navigate to [Greasy Fork](https://greasyfork.org/scripts/492480) and clic
     - **Shortener**: Rules for restoring shortened links
     - **Alternative**: Redirects you from some websites to their better alternatives
     - **Other**: Rules for purifying other types of links
-    - **Remove Text Fragment**: Remove Text Fragments from URL
+    - **Remove Text Fragment**: Remove [Text Fragments](https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Fragment/Text_fragments) from URL
 - **🪝 Hooks Settings**: Enable or disable hooks
-    - **location.href**: Check location.href
+    - **location.href**: Check `location.href`
     - **click**: Intercept `click` events
     - **mousedown**: Intercept `mousedown` events
     - **auxclick**: Intercept `auxclick` events
@@ -38,10 +38,30 @@ Simply navigate to [Greasy Fork](https://greasyfork.org/scripts/492480) and clic
     - **Character**: Number of characters deleted
 - **⚙️ Advanced options**: Advanced options
     - **Purify URL**: Manually purify a URL
-    - **Senseless Mode**: Enable senseless mode
+    - **Senseless Mode**: Enable [senseless mode](#senseless-mode)
     - **Disable Beacon**: Overwrite [`navigator.sendBeacon`](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon) to a no-op function
         - Try out this feature on [Ping Spotter](https://apps.armin.dev/ping-spotter/#) - the "Beacon API" section will show "Request blocked"
     - **Debug Mode**: Enable debug mode
+
+## Senseless Mode
+
+By default, "Senseless Mode" is enabled, and the script will adopt a lenient approach to URL purification, prioritizing user experience over strict URL cleansing. This may help reduce interruptions and maintain website functionality while still providing a level of URL purification.
+
+You can disable it in the advanced options. By doing so, you're switching to "Strict Mode", where this script will take radical measures to ensure that URLs are purified before they are used. However, in some cases, this may lead to noticeable interruptions or even break certain functionalities on some websites.
+
+Here's a table comparing the two modes:
+
+| Feature                   | Strict Mode    | Senseless Mode |
+|---------------------------|----------------|----------------|
+| URL Purification Priority | High           | Medium         |
+| Privacy Protection Level  | Strict         | Moderate       |
+| Potential Interruptions   | Possible       | Less Likely    |
+| Target Audience           | Advanced Users | General Users  |
+
+Technical details:
+
+- In strict mode, this script will stop mouse events and re-dispatch them after the url is cleaned to ensure the cleaned URL is used. In senseless mode, the script will not stop the event, which may lead to the original URL being used in some cases.
+- In strict mode, this script will immediately change `location.href` when it detects an uncleaned URL, causing a page reload or even leading to infinite reloads in some cases. In senseless mode, the script will just call `history.replaceState` to change the URL without reloading the page.
 
 ## Updating rules
 

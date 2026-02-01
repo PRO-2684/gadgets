@@ -10,6 +10,59 @@
 
 只需前往 [Greasy Fork](https://greasyfork.org/scripts/492480) 并点击 "Install this script" 按钮。
 
+## 配置
+
+- **📖 Rules Settings**: 启用/禁用规则
+    - **Tracking**: 启用/禁用净化跟踪链接的规则
+    - **Outgoing**: 启用/禁用净化外链的规则
+    - **Shortener**: 启用/禁用短链还原的规则
+    - **Alternative**: 启用/禁用跳转到更好替代品的规则
+    - **Other**: 启用/禁用其他规则
+    - **Remove Text Fragment**: 从网址中去除 [Text Fragments](https://developer.mozilla.org/zh-CN/docs/Web/URI/Reference/Fragment/Text_fragments)
+- **🪝 Hooks Settings**: 启用/禁用特定 Hook
+    - **location.href**: 检查 `location.href`
+    - **click**: 劫持 `click` 事件
+    - **mousedown**: 劫持 `mousedown` 事件
+    - **auxclick**: 劫持 `auxclick` 事件
+    - **touchstart**: 劫持 `touchstart` 事件
+    - **window.open**: Hook `window.open` 调用
+    - **pushState**: Hook `history.pushState` 调用
+    - **replaceState**: Hook `history.replaceState` 调用
+    - **Bing**: 对于必应的特殊 Hook
+- **📊 Statistics**: 展示统计信息
+    - **URL**: 净化网址的数量
+    - **Parameter**: 删除参数的数量
+    - **Decoded**: 解码网址的数量 (`param` 模式)
+    - **Redirected**: 重定向网站的数量 (`redirect` 模式)
+    - **Visited**: 访问网址的数量 (`visit` 模式)
+    - **Character**: 删除字符的数量
+- **⚙️ Advanced options**: 高级选项
+    - **Purify URL**: 手动净化一个网址
+    - **Senseless Mode**: 启用 [无感模式](#无感模式)
+    - **Disable Beacon**: 覆写 [`navigator.sendBeacon`](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon) 为一个空操作函数
+        - 您可以在 [Ping Spotter](https://apps.armin.dev/ping-spotter/#) 测试此功能 - "Beacon API" 一节会展示 "Request blocked"
+    - **Debug Mode**: 启用调试模式
+
+## 无感模式
+
+默认情况下，“无感模式”处于启用状态，脚本将对链接净化采取宽松策略，优先保障用户体验而非严格的链接清理。这有助于减少打扰并维持网站功能，同时仍能实现基础的链接净化效果。
+
+您可在高级选项中禁用该模式。禁用后将切换至“严格模式”，脚本将采取极端措施确保链接在使用前完成净化。但需注意，此模式可能导致某些网站出现明显中断甚至功能故障。
+
+以下为两种模式对比表：
+
+| 功能         | 严格模式   | 无感模式 |
+|-------------|-----------|---------|
+| URL净化优先级 | 高        | 中      |
+| 隐私保护级别  | 严格       | 中等    |
+| 潜在故障风险  | 可能发生   | 极低概率 |
+| 目标用户群体  | 高级用户   | 普通用户 |
+
+技术细节：
+
+- 严格模式下，脚本会拦截鼠标事件，待净化完成后重新触发，从而确保使用的是净化后的网址。无感模式则不会拦截事件，而这可能导致原始链接被使用。
+- 严格模式下，检测到未净化网址时脚本将立即修改 `location.href`，导致页面重新加载，某些情况下甚至可能会引发无限循环的加载。无感模式下，脚本仅调用`history.replaceState` 修改网址而不触发页面刷新。
+
 ## 规则更新
 
 ### 配置规则的更新间隔
