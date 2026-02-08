@@ -28,7 +28,7 @@
     - **window.open**: Hook `window.open` 调用
     - **pushState**: Hook `history.pushState` 调用
     - **replaceState**: Hook `history.replaceState` 调用
-    - **Bing**: 对于必应的特殊 Hook
+    - **Bing**: 对于必应的特殊 Hook，目前似乎没有必要
 - **📊 Statistics**: 展示统计信息
     - **URL**: 净化网址的数量
     - **Parameter**: 删除参数的数量

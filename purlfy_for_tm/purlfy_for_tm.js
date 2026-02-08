@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.5.7
+// @version      0.5.8
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -138,9 +138,9 @@
                 },
                 bing: {
                     name: "Bing",
-                    title: "Site-specific hook for Bing",
+                    title: "Site-specific hook for Bing, seems to be unnecessary for now",
                     type: "bool",
-                    value: true,
+                    value: false,
                 },
             },
         },

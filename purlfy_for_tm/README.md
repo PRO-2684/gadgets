@@ -28,7 +28,7 @@ Simply navigate to [Greasy Fork](https://greasyfork.org/scripts/492480) and clic
     - **window.open**: Hook `window.open` calls
     - **pushState**: Hook `history.pushState` calls
     - **replaceState**: Hook `history.replaceState` calls
-    - **Bing**: Site-specific hook for Bing
+    - **Bing**: Site-specific hook for Bing, seems to be unnecessary for now
 - **📊 Statistics**: Show statistics
     - **URL**: Number of links purified
     - **Parameter**: Number of parameters removed
