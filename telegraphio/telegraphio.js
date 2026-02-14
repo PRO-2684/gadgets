@@ -2,7 +2,7 @@
 // @name         Telegraphio
 // @name:zh-CN   Telegraphio
 // @namespace    http://tampermonkey.net/
-// @version      0.1.3
+// @version      0.1.4
 // @description  Various enhancements for Telegraph
 // @description:zh-CN 对 Telegraph 的各种增强
 // @tag          productivity
@@ -28,8 +28,8 @@
     const error = console.error.bind(console, `[${name}@${version}]`);
 
     const configDesc = {
-        "$default": {
-            autoClose: false
+        $default: {
+            autoClose: false,
         },
         mdPlus: {
             name: "Markdown +",
@@ -59,16 +59,25 @@
     if (config.get("mdPlus")) {
         // Helper function for prefix-based bindings
         function addPrefixBinding(prefixRegex, formatName) {
-            quill.keyboard.addBinding({
-                key: " ",
-                prefix: prefixRegex,
-            }, function (range, context) {
-                const prefixLength = context.prefix.length;
-                const position = range.index - prefixLength;
-                this.quill.scroll.deleteAt(position, prefixLength);
-                this.quill.formatLine(position, 1, formatName, true, Quill.sources.USER);
-                this.quill.setSelection(position, Quill.sources.SILENT);
-            });
+            quill.keyboard.addBinding(
+                {
+                    key: " ",
+                    prefix: prefixRegex,
+                },
+                function (range, context) {
+                    const prefixLength = context.prefix.length;
+                    const position = range.index - prefixLength;
+                    this.quill.scroll.deleteAt(position, prefixLength);
+                    this.quill.formatLine(
+                        position,
+                        1,
+                        formatName,
+                        true,
+                        Quill.sources.USER,
+                    );
+                    this.quill.setSelection(position, Quill.sources.SILENT);
+                },
+            );
         }
         // Header (`# `)
         addPrefixBinding(/^#$/, "blockHeader");
@@ -85,13 +94,20 @@
     }
     if (config.get("formatPlus")) {
         // Strikethrough
-        quill.keyboard.addBinding({
-            key: "X",
-            shortKey: true,
-            shiftKey: true,
-        }, function (range, context) {
-            this.quill.format("strike", !context.format.strike, Quill.sources.USER);
-        });
+        quill.keyboard.addBinding(
+            {
+                key: "X",
+                shortKey: true,
+                shiftKey: true,
+            },
+            function (range, context) {
+                this.quill.format(
+                    "strike",
+                    !context.format.strike,
+                    Quill.sources.USER,
+                );
+            },
+        );
     }
     if (config.get("shortcutPlus")) {
         //  Helper function for pasting link into text
@@ -119,23 +135,63 @@
             return applyLinkToSelection(delta, link);
         });
 
+        // Ctrl + - to toggle unordered list
+        quill.keyboard.addBinding(
+            {
+                // key: "-",
+                // Use event key code instead - Quill doesn't seem to recognize "-" properly
+                key: 189,
+                shortKey: true,
+            },
+            function (_range, context) {
+                this.quill.format(
+                    "list",
+                    context.format.list === "bullet" ? false : "bullet",
+                    Quill.sources.USER,
+                );
+            },
+        );
+
+        // Ctrl + . to toggle ordered list
+        quill.keyboard.addBinding(
+            {
+                // key: ".",
+                key: 190,
+                shortKey: true,
+            },
+            function (_range, context) {
+                this.quill.format(
+                    "list",
+                    context.format.list === "ordered" ? false : "ordered",
+                    Quill.sources.USER,
+                );
+            },
+        );
+
         // Ctrl + E to edit
         // Quill is not activated, so set up listener using addEventListener
-        document.addEventListener("keydown", e => {
-            if ((e.ctrlKey || e.metaKey) && e.key === "e" && !quill.isEnabled()) {
+        document.addEventListener("keydown", (e) => {
+            if (
+                (e.ctrlKey || e.metaKey) &&
+                e.key === "e" &&
+                !quill.isEnabled()
+            ) {
                 e.preventDefault();
                 updateEditable(true);
             }
         });
 
         // Ctrl + S to publish
-        quill.keyboard.addBinding({
-            key: "S",
-            shortKey: true,
-        }, function (_range, _context) {
-            if (quill.isEnabled()) {
-                savePage();
-            }
-        });
+        quill.keyboard.addBinding(
+            {
+                key: "S",
+                shortKey: true,
+            },
+            function (_range, _context) {
+                if (quill.isEnabled()) {
+                    savePage();
+                }
+            },
+        );
     }
 })();
