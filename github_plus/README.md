@@ -21,6 +21,7 @@
     - **↖️ Left Sidebar**: Configures the left sidebar. (`Default`, `Hidden`)
     - **↗️ Right Sidebar**: Configures the right sidebar. (`Default`, `Hide 'Latest changes'`, `Hide 'Explore repositories'`, `Hide Completely`)
     - **📌 Sticky Avatar**: Make the avatar sticky. (Experimental, does not work for all avatars)
+    - **🫥 Hide Header Underline**: Hide the underline of the header. (the border below the header)
 - **📦 Release Features**
     - **⬆️ Release Uploader**: Show uploader of release assets.
         - Shows a user hover card on hover if the uploader is a user.

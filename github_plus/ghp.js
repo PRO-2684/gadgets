@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.4.0
+// @version      0.4.1
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -134,6 +134,12 @@
                 stickyAvatar: {
                     name: "📌 Sticky Avatar",
                     title: "Make the avatar sticky",
+                    type: "bool",
+                    value: false,
+                },
+                hideHeaderUnderline: {
+                    name: "🫥 Hide Header Underline",
+                    title: "Hide the underline of the header (the border below the header)",
                     type: "bool",
                     value: false,
                 },
@@ -338,6 +344,7 @@
                 }
             } */
         `,
+        "appearance.hideHeaderUnderline": `.markdown-heading > .heading-element { border-bottom: none; }`,
     };
     for (const prop in dynamicStyles) {
         cssHelper(prop, config.get(prop));
