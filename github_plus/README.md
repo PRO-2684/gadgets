@@ -100,6 +100,11 @@ Example setup for personal access token
 
 </details>
 
+## ❓ FAQ
+
+- Q: Even when **↗️ Right Sidebar** is not set to `Hide Completely`, the sidebar is still hidden. How can I fix this?
+    - A: Your ad-blocker or some other extension might be blocking the elements. Most notably, [this commit to `easylist`](https://github.com/easylist/easylist/commit/c1ffc815f15c78cbee9c32694acb8bd80c54fb64) has introduced the rule `github.com##.dashboard-changelog:has-text(Latest from our changelog)`, which blocks the whole section. You can try to disable the ad-blocker on GitHub or add an exception for this rule.
+
 ## 🤔 Known Issues
 
 - The added information might not align well.
