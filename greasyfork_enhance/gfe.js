@@ -3,7 +3,7 @@
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
 // @version      0.9.4
-// @description  Enhance your experience at Greasyfork.
+// @description  Enhance your experience at GreasyFork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
 // @author       PRO
@@ -32,7 +32,8 @@
         value: "",
         input: "prompt",
         processor: "same",
-        formatter: (prop, value, desc) => `${desc.name}: ${value ? "*".repeat(value.length) : ""}`,
+        formatter: (prop, value, desc) =>
+            `${desc.name}: ${value ? "*".repeat(value.length) : ""}`,
     });
 
     // Config
@@ -117,7 +118,7 @@
                     type: "bool",
                     value: false,
                 },
-            }
+            },
         },
         display: {
             name: "🎨 Display",
@@ -226,8 +227,8 @@
                     type: "bool",
                     value: false,
                 },
-            }
-        }
+            },
+        },
     };
     const config = new GM_config(configDesc);
     // CSS
@@ -307,7 +308,7 @@
             "/* Default */",
             "/* Desktop */ #main-header { #site-nav { display: block; } #mobile-nav { display: none; } }",
             "/* Mobile */ #main-header { #site-nav { display: none; } #mobile-nav { display: block; } }",
-        ]
+        ],
     };
     // Common Helper Functions
     const $ = document.querySelector.bind(document);
@@ -319,7 +320,9 @@
         }
     }
     function injectCSS(id, css) {
-        const style = document.head.appendChild(document.createElement("style"));
+        const style = document.head.appendChild(
+            document.createElement("style"),
+        );
         style.id = idPrefix + id;
         style.textContent = css;
         return style;
@@ -338,11 +341,14 @@
      * @param {string} mode The mode to set.
      */
     function enumStyleHelper(id, mode) {
-        const style = document.getElementById(idPrefix + id) ?? injectCSS(id, "");
+        const style =
+            document.getElementById(idPrefix + id) ?? injectCSS(id, "");
         style.textContent = enumStyles[id][mode];
     }
     // Basic css
-    injectCSS("basic", `
+    injectCSS(
+        "basic",
+        `
     html { scroll-behavior: smooth; }
     a.anchor::before { content: "#"; }
     a.anchor { opacity: 0; text-decoration: none; padding: 0px 0.5em; transition: all 0.25s ease-in-out; }
@@ -373,7 +379,8 @@
     ul { padding-left: 1.5em; }
     .script-list > .regex-filtered { display: none; }
     #greasyfork-enhance-regex-filter-tip { float: right; color: grey; }
-    @media screen and (max-width: 800px) { #greasyfork-enhance-regex-filter-tip { display: none; } }`);
+    @media screen and (max-width: 800px) { #greasyfork-enhance-regex-filter-tip { display: none; } }`,
+    );
 
     // Buttons
     const buttons = body.appendChild(document.createElement("div"));
@@ -414,10 +421,16 @@
 
     // Filter and Search
     // Anchor & Outline
-    if (config.get("filterAndSearch.anchor") || config.get("filterAndSearch.outline")) {
+    if (
+        config.get("filterAndSearch.anchor") ||
+        config.get("filterAndSearch.outline")
+    ) {
         function sanitify(s) {
             // Remove emojis (such a headache)
-            s = s.replaceAll(/([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDEFF]|\uFE0F)/g, "");
+            s = s.replaceAll(
+                /([\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2580-\u27BF]|\uD83E[\uDD10-\uDEFF]|\uFE0F)/g,
+                "",
+            );
             // Trim spaces and newlines
             s = s.trim();
             // Replace spaces
@@ -427,10 +440,13 @@
             s = s.replaceAll(/-+/g, "-");
             return s;
         }
-        function process(outline, node) { // Add anchor and assign id to given node; Add to outline. Return true if node is actually processed.
-            if (node.childElementCount > 1 || node.classList.length > 0) return false; // Ignore complex nodes
+        function process(outline, node) {
+            // Add anchor and assign id to given node; Add to outline. Return true if node is actually processed.
+            if (node.childElementCount > 1 || node.classList.length > 0)
+                return false; // Ignore complex nodes
             const text = node.textContent;
-            if (!node.id) { // If the node has no id
+            if (!node.id) {
+                // If the node has no id
                 node.id = sanitify(text); // Then assign id
             }
             // Add anchors
@@ -440,7 +456,8 @@
                 anchor.href = "#" + node.id;
             }
             if (outline) {
-                const link = outline.appendChild(document.createElement("li"))
+                const link = outline
+                    .appendChild(document.createElement("li"))
                     .appendChild(document.createElement("a"));
                 link.href = "#" + node.id;
                 link.text = text;
@@ -453,22 +470,35 @@
         const isSpecificScript = /^\/[^\/]+\/scripts\/\d+/;
         const isDiscussion = /^\/[^\/]+\/discussions/;
         const path = window.location.pathname;
-        if ((!isScript.test(path) && !isDiscussion.test(path)) || isSpecificScript.test(path)) {
-            let panel = null, outline = null;
+        if (
+            (!isScript.test(path) && !isDiscussion.test(path)) ||
+            isSpecificScript.test(path)
+        ) {
+            let panel = null,
+                outline = null;
             if (config.get("filterAndSearch.outline")) {
-                panel = body.insertBefore(document.createElement("aside"), $("body > div.width-constraint"));
+                panel = body.insertBefore(
+                    document.createElement("aside"),
+                    $("body > div.width-constraint"),
+                );
                 panel.className = "panel";
-                const referenceNode = $("body > div.width-constraint > section");
+                const referenceNode = $(
+                    "body > div.width-constraint > section",
+                );
                 outline = panel.appendChild(document.createElement("ul"));
                 outline.classList.add("outline");
                 outline.classList.add("dynamic-opacity");
-                outline.style.top = referenceNode ? getComputedStyle(referenceNode).marginTop : "1em";
+                outline.style.top = referenceNode
+                    ? getComputedStyle(referenceNode).marginTop
+                    : "1em";
                 outline.style.marginTop = outline.style.top;
             }
             let flag = false;
-            $$("body > div.width-constraint h1, h2, h3, h4, h5, h6").forEach((node) => {
-                flag = process(outline, node) || flag; // Not `flag || process(node)`!
-            });
+            $$("body > div.width-constraint h1, h2, h3, h4, h5, h6").forEach(
+                (node) => {
+                    flag = process(outline, node) || flag; // Not `flag || process(node)`!
+                },
+            );
             if (!flag) {
                 panel?.remove();
             }
@@ -498,7 +528,11 @@
             return;
         }
         // Do not interfere with input elements
-        if (ele.tagName === "INPUT" || ele.tagName === "TEXTAREA" || ele.getAttribute("contenteditable") === "true") {
+        if (
+            ele.tagName === "INPUT" ||
+            ele.tagName === "TEXTAREA" ||
+            ele.getAttribute("contenteditable") === "true"
+        ) {
             if (e.key === "Escape") {
                 e.preventDefault();
                 ele.blur(); // Escape to blur
@@ -512,7 +546,10 @@
         // Focus on search bar
         switch (e.key) {
             case "Enter": {
-                const input = $("input[type=search]") || $("input[type=text]") || $("textarea");
+                const input =
+                    $("input[type=search]") ||
+                    $("input[type=text]") ||
+                    $("textarea");
                 if (input) {
                     e.preventDefault();
                     input.focus();
@@ -546,8 +583,9 @@
     }
     shortcut(config.get("filterAndSearch.shortcut"));
     // Regex filter
-    const regexFilterTip = $(".sidebarred > .sidebarred-main-content > .script-list#browse-script-list")
-        ?.previousElementSibling?.appendChild?.(document.createElement("span"));
+    const regexFilterTip = $(
+        ".sidebarred > .sidebarred-main-content > .script-list#browse-script-list",
+    )?.previousElementSibling?.appendChild?.(document.createElement("span"));
     if (regexFilterTip) {
         regexFilterTip.id = idPrefix + "regex-filter-tip";
         regexFilterTip.title = `[${name}] Number of scripts filtered by regex`;
@@ -572,14 +610,16 @@
         const debug = config.get("other.debug");
         const scripts = $$(".script-list > li");
         if (regexStr === "" || scripts.length === 0) {
-            scripts.forEach(script => script.classList.remove("regex-filtered"));
+            scripts.forEach((script) =>
+                script.classList.remove("regex-filtered"),
+            );
             setRegexFilterTip("");
             return;
         }
         const regex = new RegExp(regexStr, "i");
         let count = 0;
         debug && console.groupCollapsed(`[${name}] Regex filtered scripts`);
-        scripts.forEach(script => {
+        scripts.forEach((script) => {
             if (regexFilterOne(regex, script)) {
                 count++;
             }
@@ -590,41 +630,41 @@
     regexFilter(config.get("filterAndSearch.regexFilter"));
     // Search syntax
     const types = {
-        "script": "scripts",
-        "lib": "scripts/libraries",
-        "library": "scripts/libraries",
+        script: "scripts",
+        lib: "scripts/libraries",
+        library: "scripts/libraries",
         // "code": "scripts/code-search", // It uses a different search parameter `c` instead of `q`
-        "user": "users"
+        user: "users",
     };
     const langs = {
-        "js": "",
-        "javascript": "",
-        "css": "css",
+        js: "",
+        javascript: "",
+        css: "css",
         "*": "all",
-        "any": "all",
-        "all": "all",
+        any: "all",
+        all: "all",
     };
     const sorts = {
-        "rel": "",
-        "relevant": "",
-        "relevance": "",
-        "day": "daily_installs",
-        "daily": "daily_installs",
-        "daily_install": "daily_installs",
-        "daily_installs": "daily_installs",
-        "total": "total_installs",
-        "total_install": "total_installs",
-        "total_installs": "total_installs",
-        "score": "ratings",
-        "rate": "ratings",
-        "rating": "ratings",
-        "ratings": "ratings",
-        "created": "created",
-        "created_at": "created",
-        "updated": "updated",
-        "updated_at": "updated",
-        "name": "name",
-        "title": "name",
+        rel: "",
+        relevant: "",
+        relevance: "",
+        day: "daily_installs",
+        daily: "daily_installs",
+        daily_install: "daily_installs",
+        daily_installs: "daily_installs",
+        total: "total_installs",
+        total_install: "total_installs",
+        total_installs: "total_installs",
+        score: "ratings",
+        rate: "ratings",
+        rating: "ratings",
+        ratings: "ratings",
+        created: "created",
+        created_at: "created",
+        updated: "updated",
+        updated_at: "updated",
+        name: "name",
+        title: "name",
     };
     if (config.get("filterAndSearch.searchSyntax")) {
         function parseString(input) {
@@ -633,7 +673,10 @@
             // Extract all key:value pairs
             const pairs = input.match(regex) || [];
             // Remove the pairs from the input string
-            const cleanedString = input.replace(regex, "").replace(/\s{2,}/g, " ").trim();
+            const cleanedString = input
+                .replace(regex, "")
+                .replace(/\s{2,}/g, " ")
+                .trim();
 
             // Convert pairs to an object
             const parsedPairs = pairs.reduce((acc, pair) => {
@@ -650,22 +693,27 @@
                 return;
             }
             form.addEventListener("submit", (e) => {
-                const { cleanedString, parsedPairs } = parseString(search.value);
+                const { cleanedString, parsedPairs } = parseString(
+                    search.value,
+                );
                 if (cleanedString === search.value) return;
                 search.value = cleanedString;
                 if (!parsedPairs) return;
                 e.preventDefault();
                 const url = new URL(form.action, window.location.href);
                 url.searchParams.set("q", cleanedString);
-                if (parsedPairs["site"]) { // site:site-name
+                if (parsedPairs["site"]) {
+                    // site:site-name
                     url.pathname = `/scripts/by-site/${parsedPairs["site"]}`;
-                } else if (parsedPairs["type"]) { // type:type, including "script", "lib"/"library", "code", "user"
+                } else if (parsedPairs["type"]) {
+                    // type:type, including "script", "lib"/"library", "code", "user"
                     const typeUrl = types[parsedPairs["type"]];
                     if (typeUrl) {
                         url.pathname = `/${typeUrl}`;
                     }
                 }
-                if (parsedPairs["lang"]) { // lang:language
+                if (parsedPairs["lang"]) {
+                    // lang:language
                     const lang = langs[parsedPairs["lang"]];
                     if (lang === "") {
                         url.searchParams.delete("language");
@@ -673,9 +721,13 @@
                         url.searchParams.set("language", lang);
                     }
                 }
-                if (parsedPairs["sort"]) { // sort:sort-by
+                if (parsedPairs["sort"]) {
+                    // sort:sort-by
                     const sort = sorts[parsedPairs["sort"]];
-                    if (sort === "" || sort === "daily_installs" && cleanedString === "") {
+                    if (
+                        sort === "" ||
+                        (sort === "daily_installs" && cleanedString === "")
+                    ) {
                         url.searchParams.delete("sort");
                     } else if (sort) {
                         url.searchParams.set("sort", sort);
@@ -697,16 +749,29 @@
     if (toolbarEnabled) {
         async function animate(node, animation) {
             return new Promise((resolve, reject) => {
-                node.classList.add("animate__animated", "animate__" + animation);
+                node.classList.add(
+                    "animate__animated",
+                    "animate__" + animation,
+                );
                 if (node.getAnimations().length == 0) {
-                    node.classList.remove("animate__animated", "animate__" + animation);
+                    node.classList.remove(
+                        "animate__animated",
+                        "animate__" + animation,
+                    );
                     reject("No animation available");
                 }
-                node.addEventListener("animationend", e => {
-                    e.stopPropagation();
-                    node.classList.remove("animate__animated", "animate__" + animation);
-                    resolve("Animation ended");
-                }, { once: true });
+                node.addEventListener(
+                    "animationend",
+                    (e) => {
+                        e.stopPropagation();
+                        node.classList.remove(
+                            "animate__animated",
+                            "animate__" + animation,
+                        );
+                        resolve("Animation ended");
+                    },
+                    { once: true },
+                );
             });
         }
         async function transition(node, height) {
@@ -715,10 +780,14 @@
                 if (node.getAnimations().length == 0) {
                     resolve("No transition available");
                 }
-                node.addEventListener("transitionend", e => {
-                    e.stopPropagation();
-                    resolve("Transition ended");
-                }, { once: true });
+                node.addEventListener(
+                    "transitionend",
+                    (e) => {
+                        e.stopPropagation();
+                        resolve("Transition ended");
+                    },
+                    { once: true },
+                );
             });
         }
         function copyCode() {
@@ -726,13 +795,16 @@
             const text = code.textContent;
             navigator.clipboard.writeText(text).then(() => {
                 this.textContent = "Copied!";
-                animate(this, "tada").then(() => {
-                    this.textContent = "Copy code";
-                }, () => {
-                    window.setTimeout(() => {
+                animate(this, "tada").then(
+                    () => {
                         this.textContent = "Copy code";
-                    }, 1000);
-                });
+                    },
+                    () => {
+                        window.setTimeout(() => {
+                            this.textContent = "Copy code";
+                        }, 1000);
+                    },
+                );
             });
         }
         function toggleCode() {
@@ -742,23 +814,29 @@
                 transition(code, code.getAttribute("data-height")).then(() => {
                     code.style.willChange = "";
                 });
-                animate(this, "fadeOut").then(() => {
-                    this.textContent = "Hide code";
-                    animate(this, "fadeIn");
-                }, () => {
-                    this.textContent = "Hide code";
-                });
+                animate(this, "fadeOut").then(
+                    () => {
+                        this.textContent = "Hide code";
+                        animate(this, "fadeIn");
+                    },
+                    () => {
+                        this.textContent = "Hide code";
+                    },
+                );
             } else {
                 code.style.willChange = "height";
                 transition(code, "0px").then(() => {
                     code.style.willChange = "";
                 });
-                animate(this, "fadeOut").then(() => {
-                    this.textContent = "Show code";
-                    animate(this, "fadeIn");
-                }, () => {
-                    this.textContent = "Show code";
-                });
+                animate(this, "fadeOut").then(
+                    () => {
+                        this.textContent = "Show code";
+                        animate(this, "fadeIn");
+                    },
+                    () => {
+                        this.textContent = "Show code";
+                    },
+                );
             }
         }
         function createToolbar() {
@@ -779,7 +857,9 @@
         }
         for (const codeBlock of codeBlocks) {
             if (codeBlock.firstChild.tagName === "CODE") {
-                const height = getComputedStyle(codeBlock.firstChild).getPropertyValue("height");
+                const height = getComputedStyle(
+                    codeBlock.firstChild,
+                ).getPropertyValue("height");
                 codeBlock.firstChild.style.height = height;
                 codeBlock.firstChild.setAttribute("data-height", height);
                 codeBlock.insertAdjacentElement("afterbegin", createToolbar());
@@ -804,20 +884,30 @@
                 const toggle = codeBlock.firstChild.lastChild;
                 if (!toggle) continue;
                 const hidden = toggle.textContent === "Show code";
-                if (rows >= config.get("codeblocks.autoHideRows") && !hidden || rows < config.get("codeblocks.autoHideRows") && hidden) {
+                if (
+                    (rows >= config.get("codeblocks.autoHideRows") &&
+                        !hidden) ||
+                    (rows < config.get("codeblocks.autoHideRows") && hidden)
+                ) {
                     codeBlock.firstChild.lastChild.click(); // Click the toggle button
                 }
             }
         }
     }
-    document.addEventListener("readystatechange", (e) => {
-        if (e.target.readyState === "complete") {
-            autoHide();
-        }
-    }, { once: true });
+    document.addEventListener(
+        "readystatechange",
+        (e) => {
+            if (e.target.readyState === "complete") {
+                autoHide();
+            }
+        },
+        { once: true },
+    );
     // Tab size
     function tabSize(value) {
-        const style = $("style#" + idPrefix + "tab-size") ?? document.head.appendChild(document.createElement("style"));
+        const style =
+            $("style#" + idPrefix + "tab-size") ??
+            document.head.appendChild(document.createElement("style"));
         style.id = idPrefix + "tab-size";
         style.textContent = `pre { tab-size: ${value}; }`;
     }
@@ -825,13 +915,15 @@
     // Metadata
     function extractUserScriptMetadata(code) {
         const result = {};
-        const userScriptRegex = /\/\/\s*=+\s*UserScript\s*=+\s*([\s\S]*?)\s*=+\s*\/UserScript\s*=+\s*/;
+        const userScriptRegex =
+            /\/\/\s*=+\s*UserScript\s*=+\s*([\s\S]*?)\s*=+\s*\/UserScript\s*=+\s*/;
         const match = code.match(userScriptRegex);
-        if (match) {// If the UserScript block is found
-            const content = match[1];// Extract the content within the UserScript block
+        if (match) {
+            // If the UserScript block is found
+            const content = match[1]; // Extract the content within the UserScript block
             const lines = content.split("\n"); // Split the content by newline
 
-            lines.forEach(line => {
+            lines.forEach((line) => {
                 // Regular expression to match "// @name value" pattern
                 const matchLine = line.trim().match(/^\/\/\s*@(\S+)\s+(.+)$/);
                 if (matchLine) {
@@ -859,18 +951,32 @@
         if (current && !enable) {
             current.remove();
         } else if (!current && enable) {
-            const scriptCodeBlock = document.querySelector(".code-container > pre.prettyprint.lang-js");
+            const scriptCodeBlock = document.querySelector(
+                ".code-container > pre.prettyprint.lang-js",
+            );
             const description = $("div#script-content");
-            if (!window.location.pathname.endsWith("/code") || !scriptCodeBlock || !description) return;
+            if (
+                !window.location.pathname.endsWith("/code") ||
+                !scriptCodeBlock ||
+                !description
+            )
+                return;
             const metaBlock = document.createElement("ul");
             description.prepend(metaBlock);
             metaBlock.id = id;
-            const script = scriptCodeBlock.querySelector("ol") ? Array.from(scriptCodeBlock.querySelectorAll("ol > li")).map(li => li.textContent).join("\n") : scriptCodeBlock.textContent;
+            const script = scriptCodeBlock.querySelector("ol")
+                ? Array.from(scriptCodeBlock.querySelectorAll("ol > li"))
+                      .map((li) => li.textContent)
+                      .join("\n")
+                : scriptCodeBlock.textContent;
             const metadata = extractUserScriptMetadata(script);
             const commonHosts = {
-                GreasyFork: /^https?:\/\/update\.greasyfork\.org\/scripts\/\d+\/(?<ver>\d+)\/(?<name>.+?)\.js$/,
-                JsDelivr: /^https?:\/\/cdn\.jsdelivr\.net\/(?<reg>\w+)\/(@[^/]+\/)?(?<name>[^@]+)@(?<ver>[^/]+)/,
-                Cloudflare: /^https?:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/(?<name>[^/]+)\/(?<ver>[^/]+)/,
+                GreasyFork:
+                    /^https?:\/\/update\.greasyfork\.org\/scripts\/\d+\/(?<ver>\d+)\/(?<name>.+?)\.js$/,
+                JsDelivr:
+                    /^https?:\/\/cdn\.jsdelivr\.net\/(?<reg>\w+)\/(@[^/]+\/)?(?<name>[^@]+)@(?<ver>[^/]+)/,
+                Cloudflare:
+                    /^https?:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\/(?<name>[^/]+)\/(?<ver>[^/]+)/,
             };
             const commonRegistries = {
                 npm: "NPM",
@@ -893,7 +999,7 @@
                         } else {
                             return valueCode;
                         }
-                    }
+                    },
                 },
                 connect: {
                     brief: "Allowed URLs to connect",
@@ -901,7 +1007,7 @@
                         const valueCode = document.createElement("code");
                         valueCode.textContent = value;
                         return valueCode;
-                    }
+                    },
                 },
                 require: {
                     brief: "External libraries",
@@ -909,17 +1015,21 @@
                         const valueLink = document.createElement("a");
                         valueLink.href = value;
                         valueLink.textContent = value;
-                        for (const [host, regex] of Object.entries(commonHosts)) {
+                        for (const [host, regex] of Object.entries(
+                            commonHosts,
+                        )) {
                             const match = value.match(regex);
                             if (match) {
                                 const { name, ver, reg } = match.groups;
-                                const optionalRegistry = commonRegistries[reg] ? `${commonRegistries[reg]} on ` : "";
+                                const optionalRegistry = commonRegistries[reg]
+                                    ? `${commonRegistries[reg]} on `
+                                    : "";
                                 valueLink.textContent = `${decodeURIComponent(name)}@${ver} (${optionalRegistry}${host})`;
                                 break;
                             }
                         }
                         return valueLink;
-                    }
+                    },
                 },
                 resource: {
                     brief: "External resources",
@@ -931,12 +1041,14 @@
                         valueLink.href = link.trim();
                         valueCode.textContent = name.trim();
                         return valueLink;
-                    }
-                }
+                    },
+                },
             };
             for (const key in interestedKeys) {
                 const values = metadata[key] ?? [];
-                interestedMetadata[key] = Array.isArray(values) ? values : [values];
+                interestedMetadata[key] = Array.isArray(values)
+                    ? values
+                    : [values];
             }
             log("Interested Metadata:", interestedMetadata);
             // Display
@@ -947,11 +1059,15 @@
                 keyLink.href = `https://www.tampermonkey.net/documentation.php#meta:${key}`;
                 keyLink.title = keyInfo.brief;
                 keyLink.textContent = `@${key}`;
-                const separator = li.appendChild(document.createElement("span"));
+                const separator = li.appendChild(
+                    document.createElement("span"),
+                );
                 separator.textContent = ": ";
                 for (const value of values) {
                     li.appendChild(keyInfo.display(value));
-                    const separator = li.appendChild(document.createElement("span"));
+                    const separator = li.appendChild(
+                        document.createElement("span"),
+                    );
                     separator.textContent = ", ";
                 }
                 if (values.length > 0) {
@@ -967,13 +1083,17 @@
     // Display
     // Flat layout
     function flatLayout(enable) {
-        const meta_orig = $("#script-info > #script-content .script-meta-block");
+        const meta_orig = $(
+            "#script-info > #script-content .script-meta-block",
+        );
         const meta_mod = $("#script-info > .script-meta-block");
         if (enable && meta_orig) {
             const header = $("#script-info > header");
             header.before(meta_orig);
         } else if (!enable && meta_mod) {
-            const additional = $("#script-info > #script-content #additional-info");
+            const additional = $(
+                "#script-info > #script-content #additional-info",
+            );
             additional.before(meta_mod);
         }
     }
@@ -983,12 +1103,17 @@
         const nav = $("#nav-user-info");
         const profile = nav?.querySelector(".user-profile-link");
         const existing = nav.querySelector(".notification-widget");
-        if (!nav || !profile || existing && existing.textContent !== "0") return; // There's unread notification or user is not logged in
+        if (!nav || !profile || (existing && existing.textContent !== "0"))
+            return; // There's unread notification or user is not logged in
         if (enable && !existing) {
-            const notification = nav.insertBefore(document.createElement("a"), profile);
+            const notification = nav.insertBefore(
+                document.createElement("a"),
+                profile,
+            );
             notification.className = "notification-widget";
             notification.textContent = "0";
-            notification.href = profile.querySelector("a").href + "/notifications";
+            notification.href =
+                profile.querySelector("a").href + "/notifications";
         } else if (!enable && existing) {
             existing.remove();
         }
@@ -1003,8 +1128,8 @@
             method: "GET",
             credentials: "same-origin",
             headers: {
-                "Accept": "text/html",
-            }
+                Accept: "text/html",
+            },
         });
         const text = await initReq.text();
         const parser = new DOMParser();
@@ -1019,8 +1144,8 @@
             credentials: "same-origin",
             body: fd,
             headers: {
-                "Accept": "text/html",
-            }
+                Accept: "text/html",
+            },
         });
         log("Login request:", loginReq);
         return loginReq.ok;
@@ -1073,7 +1198,11 @@
     }
     let captureEnabled = false;
     function captureCredentials(enable) {
-        if (!location.pathname.endsWith("/users/sign_in") || captureEnabled === enable) return;
+        if (
+            !location.pathname.endsWith("/users/sign_in") ||
+            captureEnabled === enable
+        )
+            return;
         const form = $("form#new_user");
         if (!form) return;
         if (enable) {
@@ -1097,7 +1226,10 @@
             current.remove();
         } else if (!current && enable) {
             const short = `https://greasyfork.org/scripts/${scriptId}`;
-            const p = description.insertAdjacentElement("beforebegin", document.createElement("p"));
+            const p = description.insertAdjacentElement(
+                "beforebegin",
+                document.createElement("p"),
+            );
             p.id = id;
             p.textContent = "Short link: ";
             const link = p.appendChild(document.createElement("a"));
@@ -1122,7 +1254,12 @@
     shortLink(config.get("other.shortLink"));
     // Alternative URLs for library
     function alternativeURLs(enable) {
-        if ($(".remove-attachments") || !$("div#script-content") || $("div#script-content > div#install-area")) return; // Not a library
+        if (
+            $(".remove-attachments") ||
+            !$("div#script-content") ||
+            $("div#script-content > div#install-area")
+        )
+            return; // Not a library
         const id = idPrefix + "lib-alternative-url";
         const current = document.getElementById(id);
         if (current && !enable) {
@@ -1138,18 +1275,32 @@
             const scriptVersion = parts[5];
             const fileName = parts[6];
             const URLs = [
-                [`// @require https://update.greasyfork.org/scripts/${scriptId}/${fileName}`, "Latest version"],
-                [`// @require https://greasyfork.org/scripts/${scriptId}/code/${fileName}?version=${scriptVersion}`, "Current version (Legacy)"],
-                [`// @require https://greasyfork.org/scripts/${scriptId}/code/${fileName}`, "Latest version (Legacy)"],
+                [
+                    `// @require https://update.greasyfork.org/scripts/${scriptId}/${fileName}`,
+                    "Latest version",
+                ],
+                [
+                    `// @require https://greasyfork.org/scripts/${scriptId}/code/${fileName}?version=${scriptVersion}`,
+                    "Current version (Legacy)",
+                ],
+                [
+                    `// @require https://greasyfork.org/scripts/${scriptId}/code/${fileName}`,
+                    "Latest version (Legacy)",
+                ],
             ];
 
-            const detail = document.createElement("p").appendChild(document.createElement("details"));
+            const detail = document
+                .createElement("p")
+                .appendChild(document.createElement("details"));
             description.after(detail.parentElement);
             detail.parentElement.id = id;
-            detail.appendChild(document.createElement("summary")).textContent = "Alternative URLs";
+            detail.appendChild(document.createElement("summary")).textContent =
+                "Alternative URLs";
             const list = detail.appendChild(document.createElement("ul"));
             for (const [url, text] of URLs) {
-                const link = list.appendChild(document.createElement("li")).appendChild(document.createElement("code"));
+                const link = list
+                    .appendChild(document.createElement("li"))
+                    .appendChild(document.createElement("code"));
                 link.textContent = url;
                 link.title = text;
             }
@@ -1159,7 +1310,9 @@
     // Image proxy
     if (config.get("other.imageProxy")) {
         const PROXY = "https://wsrv.nl/?url=";
-        const images = $$("a[href^='/rails/active_storage/blobs/redirect/'] > img[src^='https://greasyfork.']");
+        const images = $$(
+            "a[href^='/rails/active_storage/blobs/redirect/'] > img[src^='https://greasyfork.']",
+        );
         for (const img of images) {
             img.src = PROXY + img.src;
             const link = img.parentElement;
@@ -1195,7 +1348,7 @@
         "other.shortLink": shortLink,
         "other.libAlternativeUrl": alternativeURLs,
     };
-    config.addEventListener("set", e => {
+    config.addEventListener("set", (e) => {
         if (e.detail.prop in dynamicStyles) {
             cssHelper(e.detail.prop, e.detail.after);
         }
@@ -1203,7 +1356,7 @@
             enumStyleHelper(e.detail.prop, e.detail.after);
         }
         const callback = callbacks[e.detail.prop];
-        if (callback && (e.detail.before !== e.detail.after)) {
+        if (callback && e.detail.before !== e.detail.after) {
             callback(e.detail.after);
         }
     });
