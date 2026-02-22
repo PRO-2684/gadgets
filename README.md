@@ -22,6 +22,7 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 | [`draggy`](./draggy) | [#511154](https://greasyfork.org/scripts/511154) | Drag a link to open in a new tab, drag a piece of text to search in a new tab. |
 | [`editio`](./editio) | [#519147](https://greasyfork.org/scripts/519147) | A simple script that adds some extra features to inputs and textareas, inspired by Visual Studio Code. |
 | [`export_cookies`](./export_cookies) | [#517291](https://greasyfork.org/scripts/517291) | Export cookies of current tab to a file. |
+| [`favio`](./favio) | N/A | List the favicons of the current page in one click. |
 | [`github_plus`](./github_plus) | [#510742](https://greasyfork.org/scripts/510742) | Enhance GitHub with additional features. |
 | ~~[`GM_config`](./GM_config)~~ | [#470224](https://greasyfork.org/scripts/470224) | Moved to [PRO-2684/GM_config](https://github.com/PRO-2684/GM_config). Simple config lib for Tampermonkey scripts. |
 | [`greasyfork_enhance`](./greasyfork_enhance) | [#467078](https://greasyfork.org/scripts/467078) | Enhance your experience at Greasyfork. |

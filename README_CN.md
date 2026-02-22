@@ -22,6 +22,7 @@
 | [`draggy`](./draggy) | [#511154](https://greasyfork.org/scripts/511154) | 拖拽链接以在新标签页中打开，拖拽文本以在新标签页中搜索。 |
 | [`editio`](./editio) | [#519147](https://greasyfork.org/scripts/519147) | 一个简单的脚本，为输入框和文本框添加一些额外功能，灵感来自 Visual Studio Code。 |
 | [`export_cookies`](./export_cookies) | [#517291](https://greasyfork.org/scripts/517291) | 将当前标签页的 cookies 导出到文件。 |
+| [`favio`](./favio) | N/A | 一键列出当前页面的所有 favicon。 |
 | [`github_plus`](./github_plus) | [#510742](https://greasyfork.org/scripts/510742) | 为 GitHub 增加额外的功能。 |
 | ~~[`GM_config`](./GM_config)~~ | [#470224](https://greasyfork.org/scripts/470224) | 已迁移至 [PRO-2684/GM_config](https://github.com/PRO-2684/GM_config)。简易的 Tampermonkey 脚本配置库。 |
 | [`greasyfork_enhance`](./greasyfork_enhance) | [#467078](https://greasyfork.org/scripts/467078) | 增进 Greasyfork 浏览体验。 |
