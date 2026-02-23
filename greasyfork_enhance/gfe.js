@@ -671,6 +671,11 @@
         "<": "lt",
         "=": "eq",
     };
+    const invalidReasons = Object.freeze({
+        NAN: "Failed to parse",
+        INVALID: "Invalid value",
+        OPERATOR: "Invalid operator",
+    });
     if (config.get("filterAndSearch.searchSyntax")) {
         function parseString(input) {
             // Regular expression to match key:value pairs, allowing for non-word characters in values
@@ -738,9 +743,9 @@
                         url.searchParams.set("sort", sort);
                     }
                 }
-                // total:>1000, daily:<1000, rating:=0.8, etc.
+                // total:>1000, daily:<1000, rating:=0.8, created:>2024-01-01, etc.
                 // When no operator is provided, default to ">".
-                const numericFilters = [
+                const rangeFilters = [
                     {
                         key: "total",
                         operatorParam: "total_installs_operator",
@@ -759,30 +764,81 @@
                         valueParam: "ratings",
                         parse: Number.parseFloat,
                         validate: (n) => n >= 0 && n <= 1,
+                        allowedOperators: ["gt", "lt"],
+                    },
+                    {
+                        key: "created",
+                        operatorParam: "created_operator",
+                        valueParam: "created",
+                        parse: Date.parse,
+                        allowedOperators: ["gt", "lt"],
+                    },
+                    {
+                        key: "updated",
+                        operatorParam: "updated_operator",
+                        valueParam: "updated",
+                        parse: Date.parse,
+                        allowedOperators: ["gt", "lt"],
                     },
                 ];
+                const invalid = [];
                 for (const {
                     key,
                     operatorParam,
                     valueParam,
                     parse,
                     validate,
-                } of numericFilters) {
+                    allowedOperators,
+                } of rangeFilters) {
                     if (parsedPairs[key]) {
                         const raw = parsedPairs[key];
                         const operator = operators[raw.slice(0, 1)];
-                        const number = raw.slice(operator ? 1 : 0);
-                        const parsed = parse(number);
-                        if (!isNaN(parsed) && (!validate || validate(parsed))) {
+                        const value = raw.slice(operator ? 1 : 0);
+                        const parsed = parse(value);
+                        const resolvedOperator = operator || "gt";
+                        if (isNaN(parsed)) {
+                            invalid.push({
+                                key,
+                                reason: invalidReasons.NAN,
+                                value,
+                            });
+                        } else if (validate && !validate(parsed)) {
+                            invalid.push({
+                                key,
+                                reason: invalidReasons.INVALID,
+                                value,
+                            });
+                        } else if (
+                            allowedOperators &&
+                            !allowedOperators.includes(resolvedOperator)
+                        ) {
+                            invalid.push({
+                                key,
+                                reason: invalidReasons.OPERATOR,
+                                value: operator,
+                            });
+                        } else {
                             url.searchParams.set(
                                 operatorParam,
-                                operator || "gt",
+                                resolvedOperator,
                             );
-                            url.searchParams.set(valueParam, number);
+                            url.searchParams.set(valueParam, value);
                         }
                     }
                 }
-                window.location.href = url.href;
+                if (invalid.length > 0) {
+                    alert(
+                        "Invalid search parameters:\n" +
+                            invalid
+                                .map(
+                                    (item) =>
+                                        `${item.key}: ${item.reason} (${item.value})`,
+                                )
+                                .join("\n"),
+                    );
+                } else {
+                    window.location.href = url.href;
+                }
             });
         }
         const searches = $$("input[type=search][name=q]");
