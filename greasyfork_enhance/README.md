@@ -89,7 +89,14 @@ Note that this is **case-insensitive**, and specifiers (other than `type`) are o
     - `=200`: Only show scripts with exactly 200 total installs
     - By omitting the operator, it defaults to `>`, e.g. `total:100` is equivalent to `total:>100`
 - `daily:`: Filter scripts by daily installs, with the same syntax as `total:`
-- `rating:`: Filter scripts by rating. The syntax is the same as `total:`, but the value can be a decimal number between 0 and 1, e.g. `rating:>0.9`
+- `rating:`: Filter scripts by rating. The syntax is the same as `total:`, but the value can be a decimal number between 0 and 1, and `=` operator is not supported, e.g. `rating:0.9` is equivalent to `rating:>0.9`
+- `created:`: Filter scripts by creation time
+    - `>2026-01-01T01:23:45`: Only show scripts created after January 1st, 2026, 01:23:45
+    - `<2026-01-01`: Only show scripts created before January 1st, 2026, 0:00:00
+    - By omitting the operator, it defaults to `>`, e.g. `created:2026-01-01` is equivalent to `created:>2026-01-01`
+    - Note that `=` operator is not supported here
+    - See [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date#date_time_string_format) for supported datetime formats
+- `updated:`: Filter scripts by update time, with the same syntax as `created:`
 
 ### Shortcut
 
