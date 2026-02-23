@@ -738,49 +738,48 @@
                         url.searchParams.set("sort", sort);
                     }
                 }
-                if (parsedPairs["total"]) {
-                    // total:>1000, total:<1000, total:=1000, total:1000
-                    const totalInstalls = parsedPairs["total"];
-                    const operator = operators[totalInstalls.slice(0, 1)];
-                    const number = totalInstalls.slice(operator ? 1 : 0);
-                    if (operator && !isNaN(Number.parseInt(number))) {
-                        url.searchParams.set(
-                            "total_installs_operator",
-                            operator || "gt",
-                        );
-                        url.searchParams.set("total_installs", number);
-                    }
-                }
-                if (parsedPairs["daily"]) {
-                    // daily:>1000, daily:<1000, daily:=1000, daily:1000
-                    const totalInstalls = parsedPairs["daily"];
-                    const operator = operators[totalInstalls.slice(0, 1)];
-                    const number = totalInstalls.slice(operator ? 1 : 0);
-                    if (operator && !isNaN(Number.parseInt(number))) {
-                        url.searchParams.set(
-                            "daily_installs_operator",
-                            operator || "gt",
-                        );
-                        url.searchParams.set("daily_installs", number);
-                    }
-                }
-                if (parsedPairs["rating"]) {
-                    // rating:>0.8, rating:<0.8, rating:=0.8, rating:0.8
-                    const totalInstalls = parsedPairs["rating"];
-                    const operator = operators[totalInstalls.slice(0, 1)];
-                    const number = totalInstalls.slice(operator ? 1 : 0);
-                    const parsed = Number.parseFloat(number);
-                    if (
-                        operator &&
-                        !isNaN(parsed) &&
-                        parsed >= 0 &&
-                        parsed <= 1
-                    ) {
-                        url.searchParams.set(
-                            "ratings_operator",
-                            operator || "gt",
-                        );
-                        url.searchParams.set("ratings", number);
+                // total:>1000, daily:<1000, rating:=0.8, etc.
+                // When no operator is provided, default to ">".
+                const numericFilters = [
+                    {
+                        key: "total",
+                        operatorParam: "total_installs_operator",
+                        valueParam: "total_installs",
+                        parse: Number.parseInt,
+                    },
+                    {
+                        key: "daily",
+                        operatorParam: "daily_installs_operator",
+                        valueParam: "daily_installs",
+                        parse: Number.parseInt,
+                    },
+                    {
+                        key: "rating",
+                        operatorParam: "ratings_operator",
+                        valueParam: "ratings",
+                        parse: Number.parseFloat,
+                        validate: (n) => n >= 0 && n <= 1,
+                    },
+                ];
+                for (const {
+                    key,
+                    operatorParam,
+                    valueParam,
+                    parse,
+                    validate,
+                } of numericFilters) {
+                    if (parsedPairs[key]) {
+                        const raw = parsedPairs[key];
+                        const operator = operators[raw.slice(0, 1)];
+                        const number = raw.slice(operator ? 1 : 0);
+                        const parsed = parse(number);
+                        if (!isNaN(parsed) && (!validate || validate(parsed))) {
+                            url.searchParams.set(
+                                operatorParam,
+                                operator || "gt",
+                            );
+                            url.searchParams.set(valueParam, number);
+                        }
                     }
                 }
                 window.location.href = url.href;
