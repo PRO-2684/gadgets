@@ -690,8 +690,10 @@
 
             // Convert pairs to an object
             const parsedPairs = pairs.reduce((acc, pair) => {
-                const [key, value] = pair.split(":");
-                acc[key.toLowerCase()] = value.toLowerCase(); // Case-insensitive
+                const colonIndex = pair.indexOf(":");
+                const key = pair.slice(0, colonIndex);
+                const value = pair.slice(colonIndex + 1);
+                acc[key.toLowerCase()] = value;
                 return acc;
             }, {});
 
@@ -717,14 +719,14 @@
                     url.pathname = `/scripts/by-site/${parsedPairs["site"]}`;
                 } else if (parsedPairs["type"]) {
                     // type:type, including "script", "lib"/"library", "code", "user"
-                    const typeUrl = types[parsedPairs["type"]];
+                    const typeUrl = types[parsedPairs["type"].toLowerCase()];
                     if (typeUrl) {
                         url.pathname = `/${typeUrl}`;
                     }
                 }
                 if (parsedPairs["lang"]) {
                     // lang:language
-                    const lang = langs[parsedPairs["lang"]];
+                    const lang = langs[parsedPairs["lang"].toLowerCase()];
                     if (lang === "") {
                         url.searchParams.delete("language");
                     } else if (lang) {
@@ -733,7 +735,7 @@
                 }
                 if (parsedPairs["sort"]) {
                     // sort:sort-by
-                    const sort = sorts[parsedPairs["sort"]];
+                    const sort = sorts[parsedPairs["sort"].toLowerCase()];
                     if (
                         sort === "" ||
                         (sort === "daily_installs" && cleanedString === "")
