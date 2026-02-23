@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.9.4
+// @version      0.9.5
 // @description  Enhance your experience at GreasyFork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
