@@ -666,6 +666,11 @@
         name: "name",
         title: "name",
     };
+    const operators = {
+        ">": "gt",
+        "<": "lt",
+        "=": "eq",
+    };
     if (config.get("filterAndSearch.searchSyntax")) {
         function parseString(input) {
             // Regular expression to match key:value pairs, allowing for non-word characters in values
@@ -731,6 +736,51 @@
                         url.searchParams.delete("sort");
                     } else if (sort) {
                         url.searchParams.set("sort", sort);
+                    }
+                }
+                if (parsedPairs["total"]) {
+                    // total:>1000, total:<1000, total:=1000, total:1000
+                    const totalInstalls = parsedPairs["total"];
+                    const operator = operators[totalInstalls.slice(0, 1)];
+                    const number = totalInstalls.slice(operator ? 1 : 0);
+                    if (operator && !isNaN(Number.parseInt(number))) {
+                        url.searchParams.set(
+                            "total_installs_operator",
+                            operator || "gt",
+                        );
+                        url.searchParams.set("total_installs", number);
+                    }
+                }
+                if (parsedPairs["daily"]) {
+                    // daily:>1000, daily:<1000, daily:=1000, daily:1000
+                    const totalInstalls = parsedPairs["daily"];
+                    const operator = operators[totalInstalls.slice(0, 1)];
+                    const number = totalInstalls.slice(operator ? 1 : 0);
+                    if (operator && !isNaN(Number.parseInt(number))) {
+                        url.searchParams.set(
+                            "daily_installs_operator",
+                            operator || "gt",
+                        );
+                        url.searchParams.set("daily_installs", number);
+                    }
+                }
+                if (parsedPairs["rating"]) {
+                    // rating:>0.8, rating:<0.8, rating:=0.8, rating:0.8
+                    const totalInstalls = parsedPairs["rating"];
+                    const operator = operators[totalInstalls.slice(0, 1)];
+                    const number = totalInstalls.slice(operator ? 1 : 0);
+                    const parsed = Number.parseFloat(number);
+                    if (
+                        operator &&
+                        !isNaN(parsed) &&
+                        parsed >= 0 &&
+                        parsed <= 1
+                    ) {
+                        url.searchParams.set(
+                            "ratings_operator",
+                            operator || "gt",
+                        );
+                        url.searchParams.set("ratings", number);
                     }
                 }
                 window.location.href = url.href;

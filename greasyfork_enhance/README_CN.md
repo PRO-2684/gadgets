@@ -63,7 +63,7 @@
 
 ### Search syntax 搜索语法
 
-注意：此功能 **不区分大小写**。
+注意：此功能 **不区分大小写**，并且下述约束 (除 `type` 外) 仅适用于脚本搜索。
 
 - `site:`: 将结果限定在支持指定网站的脚本，例如查询 `ad site:youtube.com`，会将你导航至 `https://greasyfork.org/scripts/by-site/youtube.com?q=ad`
 - `type:`: 在指定类型中搜索，包括如下类型：
@@ -71,11 +71,11 @@
     - `lib`, `library`: 库搜索
     - ~~`code`: 代码搜索~~
     - `user`: 用户搜索
-- `lang:`: 指定编程语言 (仅支持脚本搜索)
+- `lang:`: 指定编程语言
     - `js`, `javascript`: JavaScript (默认)
     - `css`: CSS
     - `*`, `any`, `all`: 所有语言
-- `sort:`: 指定排序方式 (仅支持脚本搜索)
+- `sort:`: 指定排序方式
     - `rel`, `relevant`, `relevance`: 按相关性排序 (指定搜索词时默认)
     - `day`, `daily`, `daily_install`, `daily_installs`: 按日安装量排序 (未指定搜索词时默认)
     - `total`, `total_install`, `total_installs`: 按总安装量排序
@@ -83,6 +83,13 @@
     - `created`, `created_at`: 按创建时间排序
     - `updated`, `updated_at`: 按更新时间排序
     - `name`, `title`: 按名称排序
+- `total:`: 按总安装量过滤脚本
+    - `>100`: 仅显示总安装量大于 100 的脚本
+    - `<50`: 仅显示总安装量小于 50 的脚本
+    - `=200`: 仅显示总安装量等于 200 的脚本
+    - 若操作符省略，则默认为 `>`，例如 `total:100` 等价于 `total:>100`
+- `daily:`: 按日安装量过滤脚本，语法同 `total:`
+- `rating:`: 按评分过滤脚本。语法同 `total:`，但数字取值为 0-1 之间的小数，例如 `rating:>0.9`
 
 ### 快捷键
 

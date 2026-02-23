@@ -63,7 +63,7 @@ Filter out (hides) scripts whose name matches the given regular expression, disa
 
 ### Search syntax
 
-Note that this is **case-insensitive**.
+Note that this is **case-insensitive**, and specifiers (other than `type`) are only for script search.
 
 - `site:`: Only display scripts for given site, e.g. query `ad site:youtube.com` will navigate you to `https://greasyfork.org/scripts/by-site/youtube.com?q=ad`
 - `type:`: Search in specified type, including:
@@ -71,11 +71,11 @@ Note that this is **case-insensitive**.
     - `lib`, `library`: Library search
     - ~~`code`: Code search~~
     - `user`: User search
-- `lang:`: Specify programming language (Only for script search)
+- `lang:`: Specify programming language
     - `js`, `javascript`: JavaScript (default)
     - `css`: CSS
     - `*`, `any`, `all`: All languages
-- `sort:`: Specify sorting method (Only for script search)
+- `sort:`: Specify sorting method
     - `rel`, `relevant`, `relevance`: Sort by relevance (default when query is given)
     - `day`, `daily`, `daily_install`, `daily_installs`: Sort by daily installs (default when no query is given)
     - `total`, `total_install`, `total_installs`: Sort by total installs
@@ -83,6 +83,13 @@ Note that this is **case-insensitive**.
     - `created`, `created_at`: Sort by creation time
     - `updated`, `updated_at`: Sort by update time
     - `name`, `title`: Sort by name
+- `total:`: Filter scripts by total installs
+    - `>100`: Only show scripts with more than 100 total installs
+    - `<50`: Only show scripts with less than 50 total installs
+    - `=200`: Only show scripts with exactly 200 total installs
+    - By omitting the operator, it defaults to `>`, e.g. `total:100` is equivalent to `total:>100`
+- `daily:`: Filter scripts by daily installs, with the same syntax as `total:`
+- `rating:`: Filter scripts by rating. The syntax is the same as `total:`, but the value can be a decimal number between 0 and 1, e.g. `rating:>0.9`
 
 ### Shortcut
 
