@@ -143,6 +143,12 @@
                     type: "bool",
                     value: false,
                 },
+                catppuccinIcons: {
+                    name: "🐱 Catppuccin Icons",
+                    title: "Use catppuccin icons for folders and files (HIGHLY EXPERIMENTAL)",
+                    type: "bool",
+                    value: false,
+                },
             },
         },
         release: {
@@ -405,6 +411,46 @@
     for (const prop in enumStyles) {
         enumStyleHelper(prop, config.get(prop));
     }
+    // Catppuccin icons
+    function updateIcons() {
+        const selectors = [
+            {
+                // Main file explorer
+                rows: ".react-directory-row .react-directory-filename-column",
+                icon: "svg.octicon",
+                filename: ".react-directory-filename-cell a",
+            },
+            {
+                // Sidebar file explorer
+                rows: ".PRIVATE_TreeView-item > .PRIVATE_TreeView-item-container > .PRIVATE_TreeView-item-content",
+                icon: ".PRIVATE_TreeView-item-visual > svg.octicon",
+                filename: ".PRIVATE_TreeView-item-content-text",
+            },
+        ];
+        selectors.forEach(({ rows, icon, filename }) => {
+            $$(rows).forEach((row) => {
+                const iconEl = row.querySelector(icon);
+                const filenameEl = row.querySelector(filename);
+                if (!iconEl || !filenameEl) return;
+                const name = filenameEl.textContent.trim();
+                log(name, iconEl);
+            });
+        });
+    }
+    document.addEventListener("soft-nav:end", () => {
+        if (config.get("appearance.catppuccinIcons")) {
+            updateIcons();
+        }
+    });
+    document.addEventListener(
+        "turbo:load",
+        () => {
+            if (config.get("appearance.catppuccinIcons")) {
+                updateIcons();
+            }
+        },
+        { once: true },
+    );
 
     // Release features
     /**

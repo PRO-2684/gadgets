@@ -58,3 +58,44 @@ $$("[class^='ListItem-module__listItem']").forEach(e => console.log(e.__reactPro
             }, {once: true});
             await qb.requestProviders();
             ```
+
+### Loading State Detection
+
+```javascript
+document.addEventListener("soft-nav:start", console.log);
+navigation.addEventListener("navigate", console.log);
+document.addEventListener("soft-nav:end", console.log);
+```
+
+### Webpack Chunk Patching
+
+```javascript
+if (config.get("appearance.catppuccinIcons")) {
+    const HOOK_POINT = "webpackChunk_github_ui_github_ui";
+    const CHUNK_NAME = "46358"; // Content of the first array
+    const MODULE_ID = 59663; // The module ID that contains the target function
+
+    const chunks = [];
+    unsafeWindow[HOOK_POINT] = chunks;
+    const originalPush = Array.prototype.push;
+    chunks.push = function (...args) {
+        // Check if the chunk contains the target module
+        for (const chunk of args) {
+            console.log("Push chunk:", chunk[0][0]);
+            if (chunk[0][0] === CHUNK_NAME) {
+                console.log("Found target chunk:", chunk);
+                // Patch the target module
+                chunk[1][MODULE_ID] = patchedFunction;
+                // TODO: Revert the patch after use
+                // chunks.push = originalPush;
+                break;
+            }
+        }
+        return originalPush.apply(this, args);
+    };
+
+    function patchedFunction(exports, module, require) {
+        // todo
+    }
+}
+```
