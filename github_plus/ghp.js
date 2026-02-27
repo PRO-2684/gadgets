@@ -481,7 +481,7 @@
             {
                 // Sidebar file explorer
                 rows: ".PRIVATE_TreeView-item > .PRIVATE_TreeView-item-container > .PRIVATE_TreeView-item-content",
-                icon: ".PRIVATE_TreeView-item-visual > svg.octicon",
+                icon: ".PRIVATE_TreeView-item-visual svg.octicon",
                 filename: ".PRIVATE_TreeView-item-content-text",
             },
         ];
@@ -521,6 +521,8 @@
         },
         { once: true },
     );
+    // FIXME: Directory icon?
+    // FIXME: Going back doesn't update the icons
 
     // Release features
     /**
