@@ -490,7 +490,7 @@
         // Fallback
         return "_file";
     }
-    function updateIcons() {
+    function updateIcons(body = document.body) {
         const selectors = [
             {
                 // Main file explorer
@@ -512,7 +512,7 @@
             },
         ];
         selectors.forEach(({ rows, icon, filename }) => {
-            $$(rows).forEach((row) => {
+            body.querySelectorAll(rows).forEach((row) => {
                 const iconEl = row.querySelector(icon);
                 const filenameEl = row.querySelector(filename);
                 if (!iconEl || !filenameEl) return;
@@ -552,22 +552,23 @@
             });
         });
     }
-    document.addEventListener("soft-nav:end", () => {
+    document.addEventListener("soft-nav:render", () => {
         if (config.get("appearance.catppuccinIcons")) {
             updateIcons();
         }
     });
-    document.addEventListener(
-        "turbo:load",
-        () => {
-            if (config.get("appearance.catppuccinIcons")) {
-                updateIcons();
-            }
-        },
-        { once: true },
-    );
-    // FIXME: Directory icon?
-    // FIXME: Going back doesn't update the icons
+    document.addEventListener("turbo:before-render", (e) => {
+        if (config.get("appearance.catppuccinIcons")) {
+            updateIcons(e.detail.newBody);
+        }
+    });
+    document.addEventListener("turbo:load", () => {
+        if (config.get("appearance.catppuccinIcons")) {
+            updateIcons();
+        }
+    });
+    // FIXME: Going back resets the icons
+    // FIXME: Opening another folder on the sidebar produces duplicate icons
 
     // Release features
     /**
@@ -1019,14 +1020,23 @@
     // Debugging
     if (config.get("advanced.debug")) {
         const events = [
+            "turbo:before-cache",
             "turbo:before-render",
             "turbo:before-morph-element",
             "turbo:before-frame-render",
             "turbo:load",
+            "turbo:reload",
             "turbo:render",
             "turbo:morph",
             "turbo:morph-element",
+            "turbo:frame-load",
             "turbo:frame-render",
+            "turbo:visit",
+            "soft-nav:initial",
+            "soft-nav:start",
+            "soft-nav:render",
+            "soft-nav:end",
+            "soft-nav:replace-mechanism",
         ];
         events.forEach((event) => {
             document.addEventListener(event, (e) => log(`Event: ${event}`, e));
