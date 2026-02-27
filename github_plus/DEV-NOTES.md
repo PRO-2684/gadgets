@@ -16,6 +16,11 @@
 
 By investigating source code (thanks for the source mapping) and setting breakpoints, we can find out that GitHub initializes tracking endpoints from certain `<meta>` tags. By clearing these tags' `content` property, we can prevent some tracking.
 
+## Catppuccin Icons
+
+- `associations.json` & `icons.json`: Extracted from [`catppuccin-web-file-explorer-icons-{version}-sources.zip`](https://github.com/catppuccin/web-file-explorer-icons/releases/).
+- `palette.json`: Extracted and [simplified](./simplify-palette.js) from `palette.json` in the [Catppuccin palette](https://github.com/catppuccin/palette).
+
 ## Research Notes
 
 ### Commit Signatures

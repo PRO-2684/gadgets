@@ -18,7 +18,11 @@
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
 // @grant        GM_addElement
+// @grant        GM_getResourceText
 // @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
+// @resource     catppuccin-associations https://raw.githubusercontent.com/PRO-2684/gadgets/refs/heads/main/github_plus/associations.json
+// @resource     catppuccin-icons https://raw.githubusercontent.com/PRO-2684/gadgets/refs/heads/main/github_plus/icons.json
+// @resource     catppuccin-palette https://raw.githubusercontent.com/PRO-2684/gadgets/refs/heads/main/github_plus/palette.json
 // ==/UserScript==
 
 (function () {
@@ -412,6 +416,60 @@
         enumStyleHelper(prop, config.get(prop));
     }
     // Catppuccin icons
+    const catppuccinPalette = JSON.parse(
+        GM_getResourceText("catppuccin-palette"),
+    );
+    function injectCatppuccinStyles(flavor = "mocha") {
+        const id = "ghp-catppuccin-icons-css-variables";
+
+        const styleEl = document.createElement("style");
+        styleEl.setAttribute("id", id);
+        document.documentElement.appendChild(styleEl);
+
+        const colors = catppuccinPalette[flavor];
+        const vars = Object.entries(colors)
+            .map(([name, hex]) => `  --ctp-${name}: ${hex};`)
+            .join("\n");
+
+        styleEl.textContent = `:root {\n${vars}\n}`;
+    }
+    injectCatppuccinStyles();
+    const catppuccinAssociations = JSON.parse(
+        GM_getResourceText("catppuccin-associations"),
+    );
+    const catppuccinIcons = JSON.parse(GM_getResourceText("catppuccin-icons"));
+    // https://github.com/catppuccin/web-file-explorer-icons/blob/2eded13cf948ad05d20d9de91f12fd1f75ff0c23/src/entries/content/lib.ts#L64-L102
+    function getIconName(filename) {
+        // Special parent directory folder icon
+        if (filename === "..") return "_folder";
+
+        // Compute all possible extensions (e.g. "foo.test.ts" → ["test.ts", "ts"])
+        const fileExtensions = [];
+        if (filename.length <= 255) {
+            for (let i = 0; i < filename.length; i++) {
+                if (filename[i] === ".") {
+                    fileExtensions.push(filename.toLowerCase().slice(i + 1));
+                }
+            }
+        }
+
+        // Match by exact file name (case-sensitive first, then case-insensitive)
+        if (filename in catppuccinAssociations.fileNames)
+            return catppuccinAssociations.fileNames[filename];
+        if (filename.toLowerCase() in catppuccinAssociations.fileNames)
+            return catppuccinAssociations.fileNames[filename.toLowerCase()];
+
+        // Match by extension, then language ID
+        for (const ext of fileExtensions) {
+            if (ext in catppuccinAssociations.fileExtensions)
+                return catppuccinAssociations.fileExtensions[ext];
+            if (ext in catppuccinAssociations.languageIds)
+                return catppuccinAssociations.languageIds[ext];
+        }
+
+        // Fallback
+        return "_file";
+    }
     function updateIcons() {
         const selectors = [
             {
@@ -433,7 +491,19 @@
                 const filenameEl = row.querySelector(filename);
                 if (!iconEl || !filenameEl) return;
                 const name = filenameEl.textContent.trim();
-                log(name, iconEl);
+                const iconName = getIconName(name);
+                log(`${name} -> ${iconName}`);
+                const svg = catppuccinIcons[iconName];
+                const newIcon = new DOMParser()
+                    .parseFromString(svg, "image/svg+xml")
+                    .querySelector("svg");
+                if (newIcon) {
+                    newIcon.setAttribute("width", "16");
+                    newIcon.setAttribute("height", "16");
+                    iconEl.replaceWith(newIcon);
+                } else {
+                    warn(`Icon "${iconName}" not found for file "${name}"`);
+                }
             });
         });
     }
