@@ -434,22 +434,35 @@
         styleEl.textContent = `:root {\n${vars}\n}`;
     }
     injectCatppuccinStyles();
-    const catppuccinAssociations = JSON.parse(
+    const associations = JSON.parse(
         GM_getResourceText("catppuccin-associations"),
     );
-    const catppuccinIcons = JSON.parse(GM_getResourceText("catppuccin-icons"));
+    const icons = JSON.parse(GM_getResourceText("catppuccin-icons"));
     // https://github.com/catppuccin/web-file-explorer-icons/blob/2eded13cf948ad05d20d9de91f12fd1f75ff0c23/src/entries/content/lib.ts#L64-L102
-    function getIconName(filename, isDir = false) {
-        if (isDir) {
-            if (filename in catppuccinAssociations.folderNames)
-                return catppuccinAssociations.folderNames[filename];
-            if (filename.toLowerCase() in catppuccinAssociations.folderNames)
-                return catppuccinAssociations.folderNames[
-                    filename.toLowerCase()
-                ];
+    function getIconName(filename, filetype = "file") {
+        if (filetype === "submodule") {
+            return "folder_git";
+        }
+        if (filetype === "folder") {
+            if (filename in associations.folderNames)
+                return associations.folderNames[filename];
+            if (filename.toLowerCase() in associations.folderNames)
+                return associations.folderNames[filename.toLowerCase()];
 
             return "_folder";
         }
+
+        // Match by exact file name (case-sensitive first, then case-insensitive)
+        if (filename in associations.fileNames)
+            return associations.fileNames[filename];
+        if (filename.toLowerCase() in associations.fileNames)
+            return associations.fileNames[filename.toLowerCase()];
+
+        // Match by exact file name (case-sensitive first, then case-insensitive)
+        if (filename in associations.fileNames)
+            return associations.fileNames[filename];
+        if (filename.toLowerCase() in associations.fileNames)
+            return associations.fileNames[filename.toLowerCase()];
 
         // Compute all possible extensions (e.g. "foo.test.ts" → ["test.ts", "ts"])
         const fileExtensions = [];
@@ -460,19 +473,12 @@
                 }
             }
         }
-
-        // Match by exact file name (case-sensitive first, then case-insensitive)
-        if (filename in catppuccinAssociations.fileNames)
-            return catppuccinAssociations.fileNames[filename];
-        if (filename.toLowerCase() in catppuccinAssociations.fileNames)
-            return catppuccinAssociations.fileNames[filename.toLowerCase()];
-
         // Match by extension, then language ID
         for (const ext of fileExtensions) {
-            if (ext in catppuccinAssociations.fileExtensions)
-                return catppuccinAssociations.fileExtensions[ext];
-            if (ext in catppuccinAssociations.languageIds)
-                return catppuccinAssociations.languageIds[ext];
+            if (ext in associations.fileExtensions)
+                return associations.fileExtensions[ext];
+            if (ext in associations.languageIds)
+                return associations.languageIds[ext];
         }
 
         // Fallback
@@ -503,15 +509,23 @@
             $$(rows).forEach((row) => {
                 const iconEl = row.querySelector(icon);
                 const filenameEl = row.querySelector(filename);
-                const isDir =
-                    iconEl?.classList.contains("octicon-file-directory") ||
-                    iconEl?.classList.contains("octicon-file-directory-fill");
                 if (!iconEl || !filenameEl) return;
+                let filetype = "file";
+                if (
+                    iconEl.classList.contains("octicon-file-directory") ||
+                    iconEl.classList.contains("octicon-file-directory-fill")
+                ) {
+                    filetype = "folder";
+                } else if (
+                    iconEl.classList.contains("octicon-file-submodule")
+                ) {
+                    filetype = "submodule";
+                }
 
                 const name = filenameEl.textContent.trim();
-                const iconName = getIconName(name, isDir);
+                const iconName = getIconName(name, filetype);
                 log(`${name} -> ${iconName}`);
-                const svg = catppuccinIcons[iconName];
+                const svg = icons[iconName];
                 const newIcon = new DOMParser()
                     .parseFromString(svg, "image/svg+xml")
                     .querySelector("svg");
