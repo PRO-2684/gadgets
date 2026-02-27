@@ -439,9 +439,17 @@
     );
     const catppuccinIcons = JSON.parse(GM_getResourceText("catppuccin-icons"));
     // https://github.com/catppuccin/web-file-explorer-icons/blob/2eded13cf948ad05d20d9de91f12fd1f75ff0c23/src/entries/content/lib.ts#L64-L102
-    function getIconName(filename) {
-        // Special parent directory folder icon
-        if (filename === "..") return "_folder";
+    function getIconName(filename, isDir = false) {
+        if (isDir) {
+            if (filename in catppuccinAssociations.folderNames)
+                return catppuccinAssociations.folderNames[filename];
+            if (filename.toLowerCase() in catppuccinAssociations.folderNames)
+                return catppuccinAssociations.folderNames[
+                    filename.toLowerCase()
+                ];
+
+            return "_folder";
+        }
 
         // Compute all possible extensions (e.g. "foo.test.ts" → ["test.ts", "ts"])
         const fileExtensions = [];
@@ -479,6 +487,12 @@
                 filename: ".react-directory-filename-cell a",
             },
             {
+                // Main file explorer - parent directory
+                rows: "#folder-row-0 a",
+                icon: "svg.octicon",
+                filename: "div",
+            },
+            {
                 // Sidebar file explorer
                 rows: ".PRIVATE_TreeView-item > .PRIVATE_TreeView-item-container > .PRIVATE_TreeView-item-content",
                 icon: ".PRIVATE_TreeView-item-visual svg.octicon",
@@ -489,9 +503,13 @@
             $$(rows).forEach((row) => {
                 const iconEl = row.querySelector(icon);
                 const filenameEl = row.querySelector(filename);
+                const isDir =
+                    iconEl?.classList.contains("octicon-file-directory") ||
+                    iconEl?.classList.contains("octicon-file-directory-fill");
                 if (!iconEl || !filenameEl) return;
+
                 const name = filenameEl.textContent.trim();
-                const iconName = getIconName(name);
+                const iconName = getIconName(name, isDir);
                 log(`${name} -> ${iconName}`);
                 const svg = catppuccinIcons[iconName];
                 const newIcon = new DOMParser()
