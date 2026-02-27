@@ -443,13 +443,19 @@
         if (filetype === "submodule") {
             return "folder_git";
         }
-        if (filetype === "folder") {
-            if (filename in associations.folderNames)
-                return associations.folderNames[filename];
-            if (filename.toLowerCase() in associations.folderNames)
-                return associations.folderNames[filename.toLowerCase()];
+        if (filetype === "folder" || filetype === "folder-open") {
+            let iconName = "_folder";
+            if (filename in associations.folderNames) {
+                iconName = associations.folderNames[filename];
+            } else if (filename.toLowerCase() in associations.folderNames) {
+                iconName = associations.folderNames[filename.toLowerCase()];
+            }
 
-            return "_folder";
+            if (filetype === "folder-open") {
+                return iconName + "_open";
+            } else {
+                return iconName;
+            }
         }
 
         // Match by exact file name (case-sensitive first, then case-insensitive)
@@ -516,6 +522,13 @@
                     iconEl.classList.contains("octicon-file-directory-fill")
                 ) {
                     filetype = "folder";
+                } else if (
+                    iconEl.classList.contains("octicon-file-directory-open") ||
+                    iconEl.classList.contains(
+                        "octicon-file-directory-open-fill",
+                    )
+                ) {
+                    filetype = "folder-open";
                 } else if (
                     iconEl.classList.contains("octicon-file-submodule")
                 ) {
