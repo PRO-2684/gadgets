@@ -22,6 +22,8 @@
     - **↗️ Right Sidebar**: Configures the right sidebar. (`Default`, `Hide 'Latest changes'`, `Hide 'Explore repositories'`, `Hide Completely`)
     - **📌 Sticky Avatar**: Make the avatar sticky. (Experimental, does not work for all avatars)
     - **🫥 Hide Header Underline**: Hide the underline of the header. (the border below the header)
+    - **🐱 Catppuccin Icons**: Use [catppuccin icons](https://github.com/catppuccin/web-file-explorer-icons/) for folders and files (HIGHLY EXPERIMENTAL, need refresh to apply changes)
+        - Buggy when you navigate back and forth, and folders might have duplicate icons on the sidebar.
 - **📦 Release Features**
     - **⬆️ Release Uploader**: Show uploader of release assets.
         - Shows a user hover card on hover if the uploader is a user.

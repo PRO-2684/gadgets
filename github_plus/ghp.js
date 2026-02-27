@@ -149,9 +149,15 @@
                 },
                 catppuccinIcons: {
                     name: "🐱 Catppuccin Icons",
-                    title: "Use catppuccin icons for folders and files (HIGHLY EXPERIMENTAL)",
-                    type: "bool",
-                    value: false,
+                    title: "Use catppuccin icons for folders and files (HIGHLY EXPERIMENTAL), need refresh to apply changes",
+                    type: "enum",
+                    options: [
+                        "🚫 Default",
+                        "🌻 Latte",
+                        "🪴 Frappé",
+                        "🌺 Macchiato",
+                        "🌿 Mocha",
+                    ],
                 },
             },
         },
@@ -416,15 +422,25 @@
         enumStyleHelper(prop, config.get(prop));
     }
     // Catppuccin icons
+    const flavors = ["default", "latte", "frappe", "macchiato", "mocha"];
+    const flavor = flavors[config.get("appearance.catppuccinIcons")];
     const catppuccinPalette = JSON.parse(
         GM_getResourceText("catppuccin-palette"),
     );
-    function injectCatppuccinStyles(flavor = "mocha") {
+    function updateCatppuccinColors(flavor = "mocha") {
         const id = "ghp-catppuccin-icons-css-variables";
 
-        const styleEl = document.createElement("style");
-        styleEl.setAttribute("id", id);
-        document.documentElement.appendChild(styleEl);
+        let styleEl = $(`#${id}`);
+        if (!styleEl) {
+            styleEl = document.createElement("style");
+            styleEl.setAttribute("id", id);
+            document.documentElement.appendChild(styleEl);
+        }
+
+        if (flavor === "default") {
+            styleEl.textContent = "";
+            return;
+        }
 
         const colors = catppuccinPalette[flavor];
         const vars = Object.entries(colors)
@@ -433,7 +449,7 @@
 
         styleEl.textContent = `:root {\n${vars}\n}`;
     }
-    injectCatppuccinStyles();
+    updateCatppuccinColors(flavor);
     const associations = JSON.parse(
         GM_getResourceText("catppuccin-associations"),
     );
@@ -491,6 +507,7 @@
         return "_file";
     }
     function updateIcons(body = document.body) {
+        if (config.get("appearance.catppuccinIcons") === 0) return;
         const selectors = [
             {
                 // Main file explorer
@@ -553,19 +570,13 @@
         });
     }
     document.addEventListener("soft-nav:render", () => {
-        if (config.get("appearance.catppuccinIcons")) {
-            updateIcons();
-        }
+        updateIcons();
     });
     document.addEventListener("turbo:before-render", (e) => {
-        if (config.get("appearance.catppuccinIcons")) {
-            updateIcons(e.detail.newBody);
-        }
+        updateIcons(e.detail.newBody);
     });
     document.addEventListener("turbo:load", () => {
-        if (config.get("appearance.catppuccinIcons")) {
-            updateIcons();
-        }
+        updateIcons();
     });
     // FIXME: Going back resets the icons
     // FIXME: Opening another folder on the sidebar produces duplicate icons
@@ -1046,6 +1057,10 @@
     // Callbacks
     const callbacks = {
         "code.tabSize": tabSize,
+        "appearance.catppuccinIcons": (value) => {
+            const flavor = flavors[value];
+            updateCatppuccinColors(flavor);
+        },
     };
     for (const [prop, callback] of Object.entries(callbacks)) {
         callback(config.get(prop));
