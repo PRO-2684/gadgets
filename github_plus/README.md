@@ -85,6 +85,14 @@ Example of going to an issue from search suggestions by typing `#1` in the searc
 
 </details>
 
+<details><summary>
+Catppuccin Icons (🌿 Mocha)
+</summary>
+
+![](./images/catppuccin-icons.png)
+
+</details>
+
 ## 🔑 Personal Access Token (PAT)
 
 - Without a PAT, only $60$ requests per hour are allowed; with a PAT, $5000$ requests per hour are allowed, which suffices for most users.

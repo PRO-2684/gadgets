@@ -85,6 +85,14 @@
 
 </details>
 
+<details><summary>
+Catppuccin 图标 (🌿 Mocha)
+</summary>
+
+![](./images/catppuccin-icons.png)
+
+</details>
+
 ## 🔑 个人访问令牌 (PAT)
 
 - 没有 PAT，每小时只允许 $60$ 次请求；有 PAT，每小时允许 $5000$ 次请求，对大多数用户来说足够了。
