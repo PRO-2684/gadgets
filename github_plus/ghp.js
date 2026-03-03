@@ -342,14 +342,22 @@
             "[data-testid='navigation-cursor'] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }",
         "code.fullWidth": "#copilot-button-positioner { padding-right: 0; }",
         "appearance.stickyAvatar": `
-            div.TimelineItem-avatar { /* .js-timeline-item > .TimelineItem > .TimelineItem-avatar */
+            .pull-discussion-timeline .TimelineItem-avatar {
                 position: relative;
                 margin-left: -40px;
                 left: -32px;
-                & > a[data-hovercard-type='user'] {
+                & > a[data-hovercard-type='user'], & > img.avatar {
                     position: sticky;
                     top: 5em;
                 }
+            }
+            #issue-timeline [class*='Avatar-module__avatarOuter__'] {
+                position: sticky;
+                top: 3em;
+            }
+            [data-testid='issue-viewer-issue-container'] [class*='Avatar-module__avatarOuter__'] {
+                position: sticky;
+                top: 4em;
             }
             /* .page-responsive .timeline-comment--caret {
                 &::before, &::after {
