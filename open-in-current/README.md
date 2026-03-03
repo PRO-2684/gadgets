@@ -10,4 +10,14 @@ By default, it **doesn't apply to any websites**. In order for this script to ta
 
 ## 🤔 How it works
 
-Only keep `noopener`, `noreferrer`, and `attributionsrc` in the [`windowFeatures` argument](https://developer.mozilla.org/en-US/docs/Web/API/Window/open#windowfeatures).
+Intercept [`window.open`](https://developer.mozilla.org/en-US/docs/Web/API/Window/open), and only keep `noopener`, `noreferrer`, and `attributionsrc` in the [`windowFeatures` argument](https://developer.mozilla.org/en-US/docs/Web/API/Window/open#windowfeatures).
+
+## 🔗 Comparison
+
+[Open links in current tab](https://greasyfork.org/scripts/4416) allows you to open links in the current tab, instead of a new tab. It might seem similar to this script, but is fundamentally different.
+
+| | Open in Current | Open links in current tab |
+| - | - | - |
+| Focus | Disable popups | Disable new tabs |
+| Method | Intercept `window.open` | Intercept clicks and `window.open` |
+| Default scope | No website | All websites |
