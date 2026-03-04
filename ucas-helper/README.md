@@ -33,6 +33,11 @@
     - 🏁 Force finish*: Allows you to forcibly mark the file as finished, useful if you got stuck on certain files. Currently supported file type(s):
         - PDF
 
+## ➕ Auxiliary scripts
+
+- [MOOC Bug Fix](./mooc-bug-fix.js): Fix various bugs in the MOOC system
+    - [Avatar changing page](https://i.mooc.ucas.edu.cn/settings/photo)
+
 ## 🖼️ Screenshots
 
 ### Native selector
