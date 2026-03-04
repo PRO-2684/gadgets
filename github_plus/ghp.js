@@ -577,17 +577,14 @@
             });
         });
     }
-    document.addEventListener("soft-nav:render", () => {
+    document.addEventListener("soft-nav:react-done", () => {
         updateIcons();
-    });
-    document.addEventListener("turbo:before-render", (e) => {
-        updateIcons(e.detail.newBody);
     });
     document.addEventListener("turbo:load", () => {
         updateIcons();
     });
-    // FIXME: Going back resets the icons
     // FIXME: Opening another folder on the sidebar produces duplicate icons
+    // aria-expanded="true"
 
     // Release features
     /**
@@ -1028,6 +1025,7 @@
                 GM_getValue("trackingPrevented", 0) + 1,
             );
         }
+        // TODO: Un-patch window.fetch
     }
     if (config.get("additional.trackingPrevention")) {
         // document.addEventListener("DOMContentLoaded", preventTracking);
@@ -1051,11 +1049,23 @@
             "turbo:frame-load",
             "turbo:frame-render",
             "turbo:visit",
+            "turbo:before-fetch-request",
+            "turbo:before-fetch-response",
             "soft-nav:initial",
             "soft-nav:start",
             "soft-nav:render",
             "soft-nav:end",
+            "soft-nav:react-done",
             "soft-nav:replace-mechanism",
+            "soft-nav:frame-update",
+            "soft-nav:progress-bar:end",
+            "soft-nav:external:success",
+            "filterable:change",
+            "menu:activated",
+            "beforetoggle",
+            "load",
+            "textInput",
+            "toggle",
         ];
         events.forEach((event) => {
             document.addEventListener(event, (e) => log(`Event: ${event}`, e));
