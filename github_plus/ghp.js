@@ -514,28 +514,33 @@
         // Fallback
         return "_file";
     }
+    const iconClass = "ghp-catppuccin-icon";
+    const selectors = [
+        {
+            // Main file explorer
+            rows: ".react-directory-row .react-directory-filename-column",
+            icon: "svg.octicon",
+            filename: ".react-directory-filename-cell a",
+        },
+        {
+            // Main file explorer - parent directory
+            rows: "#folder-row-0 a",
+            icon: "svg.octicon",
+            filename: "div",
+        },
+        {
+            // Sidebar file explorer
+            rows: ".PRIVATE_TreeView-item > .PRIVATE_TreeView-item-container > .PRIVATE_TreeView-item-content",
+            icon: ".PRIVATE_TreeView-item-visual svg.octicon",
+            filename: ".PRIVATE_TreeView-item-content-text",
+        },
+    ];
+    injectCSS(
+        "catppuccin-icons-hide",
+        "svg.octicon:has(+ .ghp-catppuccin-icon) { display: none; }",
+    );
     function updateIcons(body = document.body) {
         if (config.get("appearance.catppuccinIcons") === 0) return;
-        const selectors = [
-            {
-                // Main file explorer
-                rows: ".react-directory-row .react-directory-filename-column",
-                icon: "svg.octicon",
-                filename: ".react-directory-filename-cell a",
-            },
-            {
-                // Main file explorer - parent directory
-                rows: "#folder-row-0 a",
-                icon: "svg.octicon",
-                filename: "div",
-            },
-            {
-                // Sidebar file explorer
-                rows: ".PRIVATE_TreeView-item > .PRIVATE_TreeView-item-container > .PRIVATE_TreeView-item-content",
-                icon: ".PRIVATE_TreeView-item-visual svg.octicon",
-                filename: ".PRIVATE_TreeView-item-content-text",
-            },
-        ];
         selectors.forEach(({ rows, icon, filename }) => {
             body.querySelectorAll(rows).forEach((row) => {
                 const iconEl = row.querySelector(icon);
@@ -570,7 +575,12 @@
                 if (newIcon) {
                     newIcon.setAttribute("width", "16");
                     newIcon.setAttribute("height", "16");
-                    iconEl.replaceWith(newIcon);
+                    newIcon.classList.add(iconClass);
+                    // Remove existing custom icon if any
+                    const existingIcon = row.querySelector(`.${iconClass}`);
+                    existingIcon?.remove();
+                    // Insert the new icon
+                    iconEl.insertAdjacentElement("afterend", newIcon);
                 } else {
                     warn(`Icon "${iconName}" not found for file "${name}"`);
                 }
