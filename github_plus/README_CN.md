@@ -23,7 +23,7 @@
     - **📌 Sticky Avatar**: 使头像固定。(实验性功能，不适用于所有头像)
     - **🫥 Hide Header Underline**: 隐藏标题的下划线。(即标题下边框)
     - **🐱 Catppuccin Icons**: 使用 [catppuccin icons](https://github.com/catppuccin/web-file-explorer-icons/) 为文件夹和文件提供图标 (高度实验性，需要刷新以应用更改)
-        - 在来回导航时可能会出现问题，并且文件夹在侧边栏上可能会有重复的图标。
+        - 在侧边栏展开文件夹时不会更新图标。
 - **📦 Release Features**
     - **⬆️ Release Uploader**: 显示 Release 中文件的上传者。
         - 如果上传者是用户，则悬停时显示用户悬停卡片。

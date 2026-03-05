@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.4.3
+// @version      0.4.4
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -537,7 +537,8 @@
     ];
     injectCSS(
         "catppuccin-icons-hide",
-        "svg.octicon:has(+ .ghp-catppuccin-icon) { display: none; }",
+        // "svg.octicon:has(+ .ghp-catppuccin-icon) { display: none; }",
+        ".ghp-catppuccin-icon + svg.octicon { display: none; }",
     );
     function updateIcons(body = document.body) {
         if (config.get("appearance.catppuccinIcons") === 0) return;
@@ -580,7 +581,7 @@
                     const existingIcon = row.querySelector(`.${iconClass}`);
                     existingIcon?.remove();
                     // Insert the new icon
-                    iconEl.insertAdjacentElement("afterend", newIcon);
+                    iconEl.insertAdjacentElement("beforebegin", newIcon);
                 } else {
                     warn(`Icon "${iconName}" not found for file "${name}"`);
                 }
