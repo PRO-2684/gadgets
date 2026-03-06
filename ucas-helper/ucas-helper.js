@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.2.2
+// @version      0.2.3
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
@@ -9,9 +9,9 @@
 // @match        https://xkgodj.ucas.ac.cn/*
 // @match        https://jwxk.ucas.ac.cn/*
 // @match        https://xkcts.ucas.ac.cn:8443/*
-// @match        https://mooc.ucas.edu.cn/portal
-// @match        https://mooc.mooc.ucas.edu.cn/mooc-ans/js/*
-// @match        https://mooc.mooc.ucas.edu.cn/ananas/modules/pdf/index.html*
+// @match        https://mooc.ucas.edu.cn/*
+// @match        https://mooc.mooc.ucas.edu.cn/*
+// @match        https://i.mooc.ucas.edu.cn/*
 // @icon         https://ucas.ac.cn/publish/xww/images/icon1.png
 // @license      gpl-3.0
 // @grant        unsafeWindow
@@ -169,6 +169,18 @@
                 forceFinish: {
                     name: "🏁 Force finish*",
                     title: "Allows you to forcibly mark the file as finished, useful if you got stuck on certain files",
+                    type: "bool",
+                    value: false,
+                },
+                newLayout: {
+                    name: "🆕 New layout*",
+                    title: "Redirect to the new course layout for a better experience",
+                    type: "bool",
+                    value: false,
+                },
+                hideCover: {
+                    name: "🖼️ Hide course cover",
+                    title: "Hide the course cover in the course list for a compact view (only for new layout)",
                     type: "bool",
                     value: false,
                 },
@@ -522,6 +534,38 @@
                         location.href = "http://i.mooc.ucas.edu.cn/";
                     }
                 }
+                case "/fyportal/courselist/course": {
+                    // Hub page - replace course links to new layout
+                    const courseList = $("#stuCourseList");
+                    courseList.addEventListener("click", onClick);
+                    const processedAttr = "ucas-helper-processed";
+                    function onClick(e) {
+                        const link = e.target.closest(
+                            ".course-list > .w_couritem a",
+                        );
+                        if (link.hasAttribute(processedAttr)) {
+                            return;
+                        }
+                        e.preventDefault();
+                        // Extract courseId from the link
+                        const url = new URL(link.href);
+                        const courseId = url.searchParams.get("courseId");
+                        const classId = url.searchParams.get("clazzId");
+                        const personId = url.searchParams.get("cpi");
+                        // Modify link to new layout page /visit/stucoursemiddle?courseid=${courseId}&clazzid=${classId}&cpi=${personId}&...
+                        link.href = `https://mooc.mooc.ucas.edu.cn/visit/stucoursemiddle?courseid=${courseId}&clazzid=${classId}&cpi=${personId}&ismooc2=1&pageHeader=-1&skipFaceTimeStamp=&skipFaceEnc=&taskrefId=&workOrExam=`;
+                        link.toggleAttribute(processedAttr, true);
+                        link.click();
+                    }
+                    // Hide course cover
+                    setupDynamicStyles("mooc", config, {
+                        hideCover: `#stuCourseList > .course-list > li.w_couritem {
+                                height: auto;
+                                > .course-cover { display: none; }
+                            }`,
+                    });
+                    break;
+                }
                 default:
                     debug("No actions for this page:", location.href);
                     break;
@@ -594,6 +638,27 @@
                             }
                         });
                         anchor.insertAdjacentElement("afterend", button);
+                    }
+                    break;
+                }
+                default: {
+                    debug("No actions for this page:", location.href);
+                    break;
+                }
+            }
+            break;
+        }
+        case "i.mooc.ucas.edu.cn": {
+            switch (location.pathname) {
+                case "/space/index": {
+                    // Personal space page - redirect the hub iframe to use new layout
+                    const newLayout = config.get("mooc.newLayout");
+                    if (newLayout) {
+                        const iframe = $("#frame_content");
+                        if (iframe) {
+                            iframe.src =
+                                "https://mooc.ucas.edu.cn/fyportal/courselist/course?version=1";
+                        }
                     }
                     break;
                 }
