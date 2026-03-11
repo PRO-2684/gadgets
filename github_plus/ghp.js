@@ -19,6 +19,7 @@
 // @grant        GM_addValueChangeListener
 // @grant        GM_addElement
 // @grant        GM_getResourceText
+// @grant        unsafeWindow
 // @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
 // @resource     catppuccin-associations https://raw.githubusercontent.com/PRO-2684/gadgets/refs/heads/main/github_plus/associations.json
 // @resource     catppuccin-icons https://raw.githubusercontent.com/PRO-2684/gadgets/refs/heads/main/github_plus/icons.json
@@ -594,8 +595,6 @@
     document.addEventListener("turbo:load", () => {
         updateIcons();
     });
-    // FIXME: Opening another folder on the sidebar produces duplicate icons
-    // aria-expanded="true"
 
     // Release features
     /**
@@ -1038,11 +1037,18 @@
         }
         // TODO: Un-patch window.fetch
     }
+    function preventFetchPatching() {
+        Object.defineProperty(unsafeWindow, "fetch", {
+            writable: false,
+        });
+        log("Unhooked window.fetch");
+    }
     if (config.get("additional.trackingPrevention")) {
         // document.addEventListener("DOMContentLoaded", preventTracking);
         // All we need to remove is in the `head` element, so we can run it immediately.
         preventTracking();
         document.addEventListener("turbo:before-render", preventTracking);
+        preventFetchPatching();
     }
 
     // Debugging
