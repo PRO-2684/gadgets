@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.4.4
+// @version      0.4.5
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -206,13 +206,19 @@
             name: "🪄 Additional Features",
             type: "folder",
             items: {
+                extendedUserInfo: {
+                    name: "👤 Extended User Info",
+                    title: "Show extended information about users",
+                    type: "bool",
+                    value: false,
+                },
                 trackingPrevention: {
                     name: "🎭 Tracking Prevention",
                     title: () => {
                         return `Prevent some tracking by GitHub (${name} has prevented tracking ${GM_getValue("trackingPrevented", 0)} time(s))`;
                     },
                     type: "bool",
-                    value: true,
+                    value: false,
                 },
             },
         },
@@ -1005,6 +1011,67 @@
         });
     }
 
+    // Extended user info
+    const octicons = {
+        repo: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"></path></svg>',
+        calendar:
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M4.75 0a.75.75 0 0 1 .75.75V2h5V.75a.75.75 0 0 1 1.5 0V2h1.25c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 13.25 16H2.75A1.75 1.75 0 0 1 1 14.25V3.75C1 2.784 1.784 2 2.75 2H4V.75A.75.75 0 0 1 4.75 0ZM2.5 7.5v6.75c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25V7.5Zm10.75-4H2.75a.25.25 0 0 0-.25.25V6h11V3.75a.25.25 0 0 0-.25-.25Z"></path></svg>',
+        id_badge:
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3 7.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-3Zm10 .25a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1 0-1.5h4.5a.75.75 0 0 1 .75.75ZM10.25 11a.75.75 0 0 0 0-1.5h-2.5a.75.75 0 0 0 0 1.5h2.5Z"></path><path d="M7.25 0h1.5c.966 0 1.75.784 1.75 1.75V3h3.75c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25v-8.5C0 3.784.784 3 1.75 3H5.5V1.75C5.5.784 6.284 0 7.25 0Zm3.232 4.5A1.75 1.75 0 0 1 8.75 6h-1.5a1.75 1.75 0 0 1-1.732-1.5H1.75a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25v-8.5a.25.25 0 0 0-.25-.25ZM7 1.75v2.5c0 .138.112.25.25.25h1.5A.25.25 0 0 0 9 4.25v-2.5a.25.25 0 0 0-.25-.25h-1.5a.25.25 0 0 0-.25.25Z"></path></svg>',
+    };
+    function extendedUserInfo() {
+        const profile = $(
+            ".js-profile-editable-replace .js-profile-editable-area > ul.vcard-details",
+        );
+        const username = $("meta[property='profile:username']")?.content;
+        const existingInfo = profile.querySelector(".ghp-extended-info");
+        if (!profile || !username || existingInfo) return;
+        const fetchPromise = fetchWithToken(
+            `https://api.${topDomain}/users/${username}`,
+        )
+            .then((response) => response.json())
+            .catch((error) => {
+                warn("Failed to fetch user info:", error);
+                return null;
+            });
+        function addInfoRow(icon_name, name, lambda) {
+            const icon = octicons[icon_name] || "";
+            const row = document.createElement("li");
+            row.classList.add("vcard-detail", "pt-1", "ghp-extended-info");
+            row.innerHTML = `${icon}<span>${name}: Loading...</span>`;
+            row.querySelector("svg").classList.add("octicon");
+            profile.appendChild(row);
+            fetchPromise.then((info) => {
+                const span = row.querySelector("span");
+                if (info) {
+                    span.innerHTML = `${name}: ${lambda(info)}`;
+                } else {
+                    span.textContent = `${name}: Error`;
+                }
+            });
+            return row;
+        }
+        addInfoRow("repo", "Public", (info) => {
+            function formatCount(count, label) {
+                return `${count} ${label}${count !== 1 ? "s" : ""}`;
+            }
+            const repos = `<a href="/${username}?tab=repositories" class="Link--primary wb-break-all" data-tab-item="repositories" data-turbo-frame="user-profile-frame">${formatCount(info.public_repos, "repo")}</a>`;
+            const gists = `<a href="https://gist.github.com/${username}" class="Link--primary wb-break-all" target="_blank">${formatCount(info.public_gists, "gist")}</a>`;
+            return `${repos}, ${gists}`;
+        });
+        addInfoRow("calendar", "Joined", (info) =>
+            new Date(info.created_at).toLocaleString(),
+        );
+        addInfoRow("calendar", "Updated", (info) =>
+            new Date(info.updated_at).toLocaleString(),
+        );
+        addInfoRow("id_badge", "Node ID", (info) => info.node_id);
+    }
+    if (config.get("additional.extendedUserInfo")) {
+        document.addEventListener("soft-nav:end", extendedUserInfo);
+        document.addEventListener("turbo:load", extendedUserInfo);
+    }
+
     // Tracking prevention
     function preventTracking() {
         log("Calling preventTracking");
@@ -1035,7 +1102,6 @@
                 GM_getValue("trackingPrevented", 0) + 1,
             );
         }
-        // TODO: Un-patch window.fetch
     }
     function preventFetchPatching() {
         Object.defineProperty(unsafeWindow, "fetch", {

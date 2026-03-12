@@ -41,6 +41,10 @@
         - `@owner/repo#123`: go to issue/PR number 123 in the repository
         - `#123`: go to issue/PR number 123 in the current repository (if any)
 - **🪄 Additional Features**
+    - **👤 Extended User Info**: Show extended information about users.
+        - Joined date (`created_at`)
+        - Updated date (`updated_at`)
+        - Node ID (`node_id`)
     - **🎭 Tracking Prevention**: Prevents some tracking by GitHub.
 - **⚙️ Advanced Settings**
     - **🔑 Personal Access Token**: Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit). For more information, see the [Personal Access Token (PAT)](#-personal-access-token-pat) section.
@@ -90,6 +94,14 @@ Catppuccin Icons (🌿 Mocha)
 </summary>
 
 ![](./images/catppuccin-icons.png)
+
+</details>
+
+<details><summary>
+👤 Extended User Info
+</summary>
+
+![](./images/extended-user-info.png)
 
 </details>
 

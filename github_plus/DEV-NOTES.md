@@ -104,3 +104,24 @@ if (config.get("appearance.catppuccinIcons")) {
     }
 }
 ```
+
+### User API
+
+- `site_admin`: Sample `true` for [jonmagic](https://api.github.com/users/jonmagic)
+- `node_id`: Seems to be a base64-encoded string. For example, for [jonmagic](https://api.github.com/users/jonmagic), the `node_id` is `MDQ6VXNlcjYyMw==`, which can be decoded to `04:User623`.
+- `type`: For normal users, it's `User`. Is `User` for [actions-user](https://api.github.com/users/actions-user), but `Organization` for [dependabot](https://api.github.com/users/dependabot).
+- `public_repos`, `public_gists`
+- `gravatar_id`
+- `events_url`, `received_events_url`
+
+### Breadcrumbs
+
+```javascript
+const crumbs = $("react-partial[partial-name='global-nav-bar']")?.embeddedDataJSON?.props?.contextRegion?.crumbs;
+```
+
+### Global Variables
+
+```javascript
+window.a; // class ClientDefinedProviderElement, used in command palette
+```
