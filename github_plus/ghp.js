@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.4.5
+// @version      0.4.6
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -1024,7 +1024,7 @@
             ".js-profile-editable-replace .js-profile-editable-area > ul.vcard-details",
         );
         const username = $("meta[property='profile:username']")?.content;
-        const existingInfo = profile.querySelector(".ghp-extended-info");
+        const existingInfo = profile?.querySelector?.(".ghp-extended-info");
         if (!profile || !username || existingInfo) return;
         const fetchPromise = fetchWithToken(
             `https://api.${topDomain}/users/${username}`,
