@@ -41,6 +41,11 @@
         - `@owner/repo#123`: 跳转到该仓库的 issue/PR 编号 123
         - `#123`: 跳转到当前仓库的 issue/PR 编号 123（若有）
 - **🪄 Additional Features**
+    - **👤 Extended User Info**: 显示用户的扩展信息。
+        - 公开的仓库和 gists 数量 (`public_repos`, `public_gists`)
+        - 加入日期 (`created_at`)
+        - 更新日期 (`updated_at`)
+        - 节点 ID (`node_id`)
     - **🎭 Tracking Prevention**: 阻止 GitHub 的一些跟踪。
 - **⚙️ Advanced Settings**
     - **🔑 Personal Access Token**: GitHub API 的个人访问令牌，以 `github_pat_` 开头（用于提升速率限制）。详见 [个人访问令牌 (PAT)](#-个人访问令牌-pat) 部分。
@@ -90,6 +95,14 @@ Catppuccin 图标 (🌿 Mocha)
 </summary>
 
 ![](./images/catppuccin-icons.png)
+
+</details>
+
+<details><summary>
+Extended User Info
+</summary>
+
+![](./images/extended-user-info.png)
 
 </details>
 

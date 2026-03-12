@@ -42,6 +42,7 @@
         - `#123`: go to issue/PR number 123 in the current repository (if any)
 - **🪄 Additional Features**
     - **👤 Extended User Info**: Show extended information about users.
+        - Public repositories & gists count (`public_repos`, `public_gists`)
         - Joined date (`created_at`)
         - Updated date (`updated_at`)
         - Node ID (`node_id`)
@@ -98,7 +99,7 @@ Catppuccin Icons (🌿 Mocha)
 </details>
 
 <details><summary>
-👤 Extended User Info
+Extended User Info
 </summary>
 
 ![](./images/extended-user-info.png)
