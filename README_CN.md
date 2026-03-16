@@ -46,7 +46,7 @@
 | [`arxiv_html_debloate`](./arxiv_html_debloate) | [#16559](https://userstyles.world/style/16559) | 隐藏 `arxiv.org/html/*` 上的不必要元素，让你拥有一个干净的阅读体验。 |
 | [`baidu_debloate`](./baidu_debloate) | [#17133](https://userstyles.world/style/17133) | 隐藏百度站点上的一些垃圾玩意儿，包括 `baike.baidu.com`，`jingyan.baidu.com`，`tieba.baidu.com` 和 `fanyi.baidu.com`。 |
 | [`docs.rs-ferris`](./docs.rs-ferris) | [#20844](https://userstyles.world/style/20844) | 在 `docs.rs` 的代码示例中显示 Ferris 螃蟹，就像 Rust Book 一样。 |
-| [`hide-ai-disclaimer`](./hide-ai-disclaimer) | [27114](https://userstyles.world/style/27114) | 隐藏各个网站的 AI 免责声明。 |
+| [`hide-ai-disclaimer`](./hide-ai-disclaimer) | [#27114](https://userstyles.world/style/27114) | 隐藏各个网站的 AI 免责声明。 |
 | [`scrollbar_mod`](./scrollbar_mod) | [#16203](https://userstyles.world/style/16203) | 轻松定制你的滚动条。 |
 | [`tooltips_mod`](./tooltips_mod) | [#19461](https://userstyles.world/style/19461) | 在触摸屏设备上将 `title` 属性显示为工具提示。 |
 
