@@ -46,7 +46,7 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 | [`arxiv_html_debloate`](./arxiv_html_debloate) | [#16559](https://userstyles.world/style/16559) | Hides unnecessary elements on `arxiv.org/html/*`, giving you a clean view. |
 | [`baidu_debloate`](./baidu_debloate) | [#17133](https://userstyles.world/style/17133) | Hides some gibberish on Baidu sites, including `baike.baidu.com`, `jingyan.baidu.com`, `tieba.baidu.com` and `fanyi.baidu.com`. |
 | [`docs.rs-ferris`](./docs.rs-ferris) | [#20844](https://userstyles.world/style/20844) | Show Ferris the crab on `docs.rs` code examples, just like on the Rust book. |
-| [`hide-ai-disclaimer`](./hide-ai-disclaimer) | N/A | Hides the AI disclaimer for various websites. |
+| [`hide-ai-disclaimer`](./hide-ai-disclaimer) | [27114](https://userstyles.world/style/27114) | Hides the AI disclaimer for various websites. |
 | [`scrollbar_mod`](./scrollbar_mod) | [#16203](https://userstyles.world/style/16203) | Customize your scrollbar easily. |
 | [`tooltips_mod`](./tooltips_mod) | [#19461](https://userstyles.world/style/19461) | Implement `title` attribute display as a tooltip on touch screen devices. |
 
