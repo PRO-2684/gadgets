@@ -1,0 +1,46 @@
+/* ==UserStyle==
+@name           Hide AI Disclaimer
+@namespace      github.com/PRO-2684
+@version        0.1.0
+@description    Hides the AI disclaimer for various websites.
+@author         PRO-2684
+@license     	gpl-3.0
+@preprocessor   default
+==/UserStyle== */
+
+/* ChatGPT by OpenAI */
+@-moz-document domain("chatgpt.com") {
+    /* "ChatGPT can make mistakes. Check important info." */
+    [class~='[view-transition-name:var(--vt-disclaimer)]'] {
+        display: none;
+    }
+}
+
+/* Claude by Anthropic */
+@-moz-document domain("claude.ai") {
+    /* "Claude is AI and can make mistakes. Please double-check responses." */
+    div[role="note"][data-disclaimer="true"] > a {
+        display: none;
+    }
+}
+
+/* Google AI Studio */
+@-moz-document domain("aistudio.google.com") {
+    /* "Google AI models may make mistakes, so double-check outputs." */
+    ms-hallucinations-disclaimer[class="chat-hallucinations-disclaimer ng-star-inserted"] {
+        display: none;
+    }
+}
+
+/* Grok doesn't seem to have a disclaimer */
+
+/* DeepSeek by DeepSeek */
+@-moz-document domain("chat.deepseek.com") {
+    /* "AI-generated, for reference only" */
+    .ds-virtual-list > ._871cbca {
+        padding-bottom: 12px;
+        > ._0fcaa63 {
+            display: none;
+        }
+    }
+}
