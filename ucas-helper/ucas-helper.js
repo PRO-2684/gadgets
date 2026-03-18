@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.2.3
+// @version      0.2.4
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
@@ -538,6 +538,7 @@
                     // Hub page - replace course links to new layout
                     const courseList = $("#stuCourseList");
                     courseList.addEventListener("click", onClick);
+                    courseList.addEventListener("auxclick", onClick);
                     const processedAttr = "ucas-helper-processed";
                     function onClick(e) {
                         const link = e.target.closest(
@@ -546,7 +547,6 @@
                         if (link.hasAttribute(processedAttr)) {
                             return;
                         }
-                        e.preventDefault();
                         // Extract courseId from the link
                         const url = new URL(link.href);
                         const courseId = url.searchParams.get("courseId");
@@ -555,7 +555,6 @@
                         // Modify link to new layout page /visit/stucoursemiddle?courseid=${courseId}&clazzid=${classId}&cpi=${personId}&...
                         link.href = `https://mooc.mooc.ucas.edu.cn/visit/stucoursemiddle?courseid=${courseId}&clazzid=${classId}&cpi=${personId}&ismooc2=1&pageHeader=-1&skipFaceTimeStamp=&skipFaceEnc=&taskrefId=&workOrExam=`;
                         link.toggleAttribute(processedAttr, true);
-                        link.click();
                     }
                     // Hide course cover
                     setupDynamicStyles("mooc", config, {
