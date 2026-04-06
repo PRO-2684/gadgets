@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.9.7
+// @version      0.9.8
 // @description  Enhance your experience at GreasyFork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
@@ -258,7 +258,7 @@
             .animate__fadeOut { -webkit-animation-name: fadeOut; animation-name: fadeOut; }
         `,
         "display.hideButtons": `div#float-buttons { display: none; }`,
-        "display.stickyPagination": `.sidebarred-main-content > .pagy { position: sticky; bottom: 0; backdrop-filter: blur(1px) brightness(0.4); padding: 0.5em; }`,
+        "display.stickyPagination": `.sidebarred-main-content > .pagy { position: sticky; bottom: 0; backdrop-filter: blur(1px) brightness(0.6); padding: 0.5em; }`,
         "display.flatLayout": `
             .script-list > li {
                 &:not(.ad-entry) { padding-right: 0; }
