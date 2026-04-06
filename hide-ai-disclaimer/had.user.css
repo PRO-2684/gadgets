@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Hide AI Disclaimer
 @namespace      github.com/PRO-2684
-@version        0.1.0
+@version        0.1.1
 @description    Hides the AI disclaimer for various websites.
 @author         PRO-2684
 @license     	gpl-3.0
@@ -40,6 +40,17 @@
     .ds-virtual-list > ._871cbca {
         padding-bottom: 12px;
         > ._0fcaa63 {
+            display: none;
+        }
+    }
+}
+
+/* Google */
+@-moz-document url-prefix("https://www.google.com/search?") {
+    [data-container-id="content-placeholder"] [data-ve-view] [data-container-id="footer-placeholder"] [data-subtree="dfa"] {
+        /* Hide second and third child */
+        > :nth-child(2),
+        > :nth-child(3) {
             display: none;
         }
     }
