@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.4.6
+// @version      0.4.7
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -209,6 +209,12 @@
                 extendedUserInfo: {
                     name: "👤 Extended User Info",
                     title: "Show extended information about users",
+                    type: "bool",
+                    value: false,
+                },
+                previewPlus: {
+                    name: "🔮 Preview Plus",
+                    title: "Allow previewing more file types (e.g. MP4, WEBM) (may not work, see README)",
                     type: "bool",
                     value: false,
                 },
@@ -1070,6 +1076,51 @@
     if (config.get("additional.extendedUserInfo")) {
         document.addEventListener("soft-nav:end", extendedUserInfo);
         document.addEventListener("turbo:load", extendedUserInfo);
+    }
+
+    // Preview plus
+    const mediaExtensions = {
+        // https://www.chromium.org/audio-video/
+        video: ["webm", "ogv", "mkv", "mp4", "mov"],
+        audio: ["mp3", "flac", "ogg", "opus", "wav", "m4a", "aac"],
+    };
+    const extensionToType = {};
+    for (const [type, extensions] of Object.entries(mediaExtensions)) {
+        extensions.forEach((ext) => {
+            extensionToType[ext] = type;
+        });
+    }
+    function previewPlus() {
+        const container = $(
+            'section[aria-labelledby="file-name-id-wide file-name-id-mobile"]',
+        );
+        // Too large: BlobContent-module__tooLargeError__n0H_w > prc-Link-Link-9ZwDx
+        // - Possible another `p`: (Sorry about that, but we can’t show files that are this big right now.)
+        // Image: d-flex flex-justify-center width-full
+        // Markdown: BlobContent-module__markdownBlob__T8jpG
+        // Code: CodeBlob-module__codeBlobWrapper__RS6In
+        const tooLarge = container?.querySelector(
+            "[class^=BlobContent-module__tooLargeError]",
+        );
+        const rawLink = tooLarge?.querySelector("a");
+        const existingPreview = container?.querySelector(".ghp-preview-plus");
+        if (!tooLarge || !rawLink || existingPreview) return;
+        const fileName = rawLink.href.split("/").pop();
+        const suffix = fileName.split(".").pop().toLowerCase();
+
+        const type = extensionToType[suffix];
+        const previewEl = GM_addElement(tooLarge, type, {
+            controls: true,
+            autoplay: false,
+            muted: false,
+            src: rawLink.href,
+            class: "ghp-preview-plus",
+        });
+        log(`Previewing ${fileName} as ${type}`, previewEl);
+    }
+    if (config.get("additional.previewPlus")) {
+        document.addEventListener("soft-nav:end", previewPlus);
+        document.addEventListener("turbo:load", previewPlus);
     }
 
     // Tracking prevention

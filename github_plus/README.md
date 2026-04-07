@@ -46,6 +46,8 @@
         - Joined date (`created_at`)
         - Updated date (`updated_at`)
         - Node ID (`node_id`)
+    - **🔮 Preview Plus**: Allow previewing more file types (e.g. MP4, WEBM)
+        - **WON'T WORK FOR NOW** because of a [Tampermonkey](https://github.com/Tampermonkey/tampermonkey/issues/2743) / [Chromium](https://issues.chromium.org/issues/500280350) bug
     - **🎭 Tracking Prevention**: Prevents some tracking by GitHub.
 - **⚙️ Advanced Settings**
     - **🔑 Personal Access Token**: Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit). For more information, see the [Personal Access Token (PAT)](#-personal-access-token-pat) section.

@@ -46,6 +46,8 @@
         - 加入日期 (`created_at`)
         - 更新日期 (`updated_at`)
         - 节点 ID (`node_id`)
+    - **🔮 Preview Plus**: 允许浏览更多文件类型 (e.g. MP4, WEBM)
+        - **现在无法生效**，由于 [Tampermonkey](https://github.com/Tampermonkey/tampermonkey/issues/2743) / [Chromium](https://issues.chromium.org/issues/500280350) 的一个 bug
     - **🎭 Tracking Prevention**: 阻止 GitHub 的一些跟踪。
 - **⚙️ Advanced Settings**
     - **🔑 Personal Access Token**: GitHub API 的个人访问令牌，以 `github_pat_` 开头（用于提升速率限制）。详见 [个人访问令牌 (PAT)](#-个人访问令牌-pat) 部分。
