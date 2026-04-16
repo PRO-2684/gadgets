@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Hide AI Disclaimer
 @namespace      github.com/PRO-2684
-@version        0.1.1
+@version        0.1.2
 @description    Hides the AI disclaimer for various websites.
 @author         PRO-2684
 @license     	gpl-3.0
@@ -36,11 +36,24 @@
 
 /* DeepSeek by DeepSeek */
 @-moz-document domain("chat.deepseek.com") {
-    /* "AI-generated, for reference only" */
-    .ds-virtual-list > ._871cbca {
-        padding-bottom: 12px;
-        > ._0fcaa63 {
+    .ds-virtual-list {
+        /* At the bottom of the message */
+        /*
+          riskTipFinance: "This response may contain financial investment advice. AI-generated content, for reference only. Please consult a professional financial advisor.",
+          riskTipGeneral: "This response is AI-generated, for reference only.",
+          riskTipLegal: "This response may contain legal advice. AI-generated content, for reference only. Please consult a professional lawyer.",
+          riskTipMedical: "This response may contain medical advice. AI-generated content, for reference only. Please seek medical attention if necessary.",
+          riskTipProfanity: "This response may contain inappropriate language. AI-generated content, not reflective of any real opinions or positions.",
+        */
+        .ds-virtual-list-visible-items .ds-message > .dbe8cf4a {
             display: none;
+        }
+        /* "AI-generated, for reference only" at bottom of the input */
+        > ._871cbca {
+            padding-bottom: 12px;
+            > ._0fcaa63 {
+                display: none;
+            }
         }
     }
 }
