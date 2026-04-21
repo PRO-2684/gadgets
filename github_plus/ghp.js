@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.4.7
+// @version      0.4.8
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -159,6 +159,12 @@
                         "🌺 Macchiato",
                         "🌿 Mocha",
                     ],
+                },
+                visibleDetails: {
+                    name: "👀 Visible Details",
+                    title: "Apply indent and borders around <details> elements to make them more visible",
+                    type: "bool",
+                    value: false,
                 },
             },
         },
@@ -382,6 +388,25 @@
             } */
         `,
         "appearance.hideHeaderUnderline": `.markdown-heading > .heading-element { border-bottom: none; }`,
+        "appearance.visibleDetails": `
+            .markdown-body details {
+                padding: 0 1em; /* Indent content */
+                border: 1px solid var(--borderColor-default,var(--color-border-default));
+                border-radius: 0.5em;
+
+                > summary {
+                    padding: 0.5em 1em; /* Enlarge clickable area */
+                    margin: 0 -1em; /* Align summary with content edges */
+                }
+
+                &:open {
+                    > summary {
+                        margin: 0 -1em 1em -1em; /* Gap between summary and content */
+                        border-bottom: 1px dashed var(--borderColor-default,var(--color-border-default)); /* Nice little separator */
+                    }
+                }
+            }
+        `,
     };
     for (const prop in dynamicStyles) {
         cssHelper(prop, config.get(prop));

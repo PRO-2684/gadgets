@@ -24,6 +24,7 @@
     - **🫥 Hide Header Underline**: Hide the underline of the header. (the border below the header)
     - **🐱 Catppuccin Icons**: Use [catppuccin icons](https://github.com/catppuccin/web-file-explorer-icons/) for folders and files (HIGHLY EXPERIMENTAL, need refresh to apply changes)
         - Does not update icons when expanding folders at the sidebar.
+    - **👀 Visible Details**: Apply indent and borders around `<details>` elements to make them more visible
 - **📦 Release Features**
     - **⬆️ Release Uploader**: Show uploader of release assets.
         - Shows a user hover card on hover if the uploader is a user.
@@ -105,6 +106,14 @@ Extended User Info
 </summary>
 
 ![](./images/extended-user-info.png)
+
+</details>
+
+<details><summary>
+Visible Details
+</summary>
+
+![](./images/visible-details.png)
 
 </details>
 
