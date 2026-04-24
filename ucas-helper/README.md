@@ -32,6 +32,7 @@
     - 📂 Native selector: Use the native file selector instead of the custom one, allowing drag-and-drop
     - 🏁 Force finish*: Allows you to forcibly mark the file as finished, useful if you got stuck on certain files. Currently supported file type(s):
         - PDF
+    - 🚫 Hide watermark: Hide the watermark over the videos
     - 🆕 New layout*: Redirect to the new course layout for a better experience
     - 🖼️ Hide course cover: Hide the course cover in the course list for a compact view (only for new layout)
 

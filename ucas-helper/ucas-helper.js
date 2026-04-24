@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         UCAS Helper
 // @namespace    http://tampermonkey.net/
-// @version      0.2.4
+// @version      0.2.5
 // @description  A helper script for UCAS online systems.
 // @author       PRO-2684
 // @match        https://sep.ucas.ac.cn/*
@@ -171,6 +171,12 @@
                     title: "Allows you to forcibly mark the file as finished, useful if you got stuck on certain files",
                     type: "bool",
                     value: false,
+                },
+                hideWatermark: {
+                    name: "🚫 Hide watermark",
+                    title: "Hide the watermark over the videos",
+                    type: "bool",
+                    value: true,
                 },
                 newLayout: {
                     name: "🆕 New layout*",
@@ -638,6 +644,17 @@
                         });
                         anchor.insertAdjacentElement("afterend", button);
                     }
+                    break;
+                }
+                case "/ananas/modules/video/index.html": {
+                    // Video player page
+                    setupDynamicStyles("mooc", config, {
+                        hideWatermark: `
+                            #reader > .video-js > .mask_div {
+                                display: none !important;
+                            }
+                        `,
+                    });
                     break;
                 }
                 default: {
