@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.4.8
+// @version      0.4.9
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -98,7 +98,13 @@
                 },
                 fullWidth: {
                     name: "🔲 Full Width",
-                    title: "Make the code block full width (copilot button may cover the end of the line)",
+                    title: "Make the code block full width (other buttons may cover the end of the line)",
+                    type: "bool",
+                    value: false,
+                },
+                hideReadonlyTip: {
+                    name: "🫥 Hide Readonly Tip",
+                    title: "Hide the 'Code view is read-only.' tip in code blocks",
                     type: "bool",
                     value: false,
                 },
@@ -360,6 +366,8 @@
         "code.cursorAnimation":
             "[data-testid='navigation-cursor'] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }",
         "code.fullWidth": "#copilot-button-positioner { padding-right: 0; }",
+        "code.hideReadonlyTip":
+            "[class^='CodeBlob-module__cursorContainer__'] .position-absolute.color-bg-subtle { display: none; }",
         "appearance.stickyAvatar": `
             .pull-discussion-timeline .TimelineItem-avatar {
                 position: relative;

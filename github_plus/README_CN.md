@@ -16,6 +16,8 @@
     - **➡️ Tab Size**: 设置 Tab 缩进大小。
     - **😉 Cursor Blink**: 启用光标闪烁。
     - **🌊 Cursor Animation**: 使光标平滑移动。
+    - **🔲 Full Width**: 使代码块占满宽度（其他按钮可能会覆盖行尾）。
+    - **🫥 Hide Readonly Tip**: 隐藏代码块中的 'Code view is read-only.' 提示。
 - **🎨 Appearance**
     - **📰 Dashboard**: 配置仪表盘。(`Default`, `Hide Copilot`, `Hide Feed`, `Mobile-Like`)
     - **↖️ Left Sidebar**: 配置左侧栏。(`Default`, `Hidden`)

@@ -16,6 +16,8 @@
     - **➡️ Tab Size**: Set Tab indentation size.
     - **😉 Cursor Blink**: Enable cursor blinking.
     - **🌊 Cursor Animation**: Make cursor move smoothly.
+    - **🔲 Full Width**: Make the code block full width (other buttons may cover the end of the line).
+    - **🫥 Hide Readonly Tip**: Hide the 'Code view is read-only.' tip in code blocks.
 - **🎨 Appearance**
     - **📰 Dashboard**: Configures the dashboard. (`Default`, `Hide Copilot`, `Hide Feed`, `Mobile-Like`)
     - **↖️ Left Sidebar**: Configures the left sidebar. (`Default`, `Hidden`)
