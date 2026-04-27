@@ -43,7 +43,7 @@
 | 用户样式 | UserStyles.world | 描述 |
 | --- | --- | --- |
 | [`ar5iv_plus`](./ar5iv_plus) | [#18946](https://userstyles.world/style/18946) | 为 `ar5iv.labs.arxiv.org/html/` 增加各种调整和改进。 |
-| [`arxiv_html_debloate`](./arxiv_html_debloate) | [#16559](https://userstyles.world/style/16559) | 隐藏 `arxiv.org/html/*` 上的不必要元素，让你拥有一个干净的阅读体验。 |
+| [`arxiv_html_debloate`](./arxiv_html_debloate) * | [#16559](https://userstyles.world/style/16559) | 隐藏 `arxiv.org/html/*` 上的不必要元素，让你拥有一个干净的阅读体验。 |
 | [`baidu_debloate`](./baidu_debloate) | [#17133](https://userstyles.world/style/17133) | 隐藏百度站点上的一些垃圾玩意儿，包括 `baike.baidu.com`，`jingyan.baidu.com`，`tieba.baidu.com` 和 `fanyi.baidu.com`。 |
 | [`docs.rs-ferris`](./docs.rs-ferris) | [#20844](https://userstyles.world/style/20844) | 在 `docs.rs` 的代码示例中显示 Ferris 螃蟹，就像 Rust Book 一样。 |
 | [`hide-ai-disclaimer`](./hide-ai-disclaimer) | [#27114](https://userstyles.world/style/27114) | 隐藏各个网站的 AI 免责声明。 |

@@ -43,7 +43,7 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 | UserStyle | UserStyles.world | Description |
 | --- | --- | --- |
 | [`ar5iv_plus`](./ar5iv_plus) | [#18946](https://userstyles.world/style/18946) | Enhance `ar5iv.labs.arxiv.org/html/` with various tweaks and improvements. |
-| [`arxiv_html_debloate`](./arxiv_html_debloate) | [#16559](https://userstyles.world/style/16559) | Hides unnecessary elements on `arxiv.org/html/*`, giving you a clean view. |
+| [`arxiv_html_debloate`](./arxiv_html_debloate) * | [#16559](https://userstyles.world/style/16559) | Hides unnecessary elements on `arxiv.org/html/*`, giving you a clean view. |
 | [`baidu_debloate`](./baidu_debloate) | [#17133](https://userstyles.world/style/17133) | Hides some gibberish on Baidu sites, including `baike.baidu.com`, `jingyan.baidu.com`, `tieba.baidu.com` and `fanyi.baidu.com`. |
 | [`docs.rs-ferris`](./docs.rs-ferris) | [#20844](https://userstyles.world/style/20844) | Show Ferris the crab on `docs.rs` code examples, just like on the Rust book. |
 | [`hide-ai-disclaimer`](./hide-ai-disclaimer) | [#27114](https://userstyles.world/style/27114) | Hides the AI disclaimer for various websites. |
