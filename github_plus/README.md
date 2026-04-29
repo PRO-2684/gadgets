@@ -49,6 +49,12 @@
         - Joined date (`created_at`)
         - Updated date (`updated_at`)
         - Node ID (`node_id`)
+    - **📁 Extended Repo Info**: Show extended information about repositories. (Experimental)
+        - Size (`size`, in KB)
+        - Created date (`created_at`)
+        - Updated date (`updated_at`)
+        - Pushed date (`pushed_at`)
+        - Node ID (`node_id`)
     - **🔮 Preview Plus**: Allow previewing more file types (e.g. MP4, WEBM)
         - **WON'T WORK FOR NOW** because of a [Tampermonkey](https://github.com/Tampermonkey/tampermonkey/issues/2743) / [Chromium](https://issues.chromium.org/issues/500280350) bug
     - **🎭 Tracking Prevention**: Prevents some tracking by GitHub.
@@ -121,10 +127,9 @@ Visible Details
 
 ## 🔑 Personal Access Token (PAT)
 
-- Without a PAT, only $60$ requests per hour are allowed; with a PAT, $5000$ requests per hour are allowed, which suffices for most users.
+- Without a PAT, only $60$ requests per hour are allowed, and GitHub Plus won't be able to fetch extended information for private repos; with a PAT, $5000$ requests per hour are allowed, which suffices for most users, and GitHub Plus can also fetch extended information for private repos that you have access to.
 - Find out how to create a fine-grained personal access token [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token).
-- Simply select `Public Repositories (read-only)` under `Repository access` tab, which is the default setup. An example image is shown below for reference.
-- Do note that this script won't be able to add additional information on private repositories.
+- Simply select `All repositories` under `Repository access` section, and add read-only `Metadata` access under `Permissions` section. An example image is shown below for reference.
 - Remember to *generate a new token when it expires*.
 - Use a personal access token on a mirror site at your own risk.
 
@@ -132,7 +137,7 @@ Visible Details
 Example setup for personal access token
 </summary>
 
-![](./images/token.jpeg)
+![](./images/token.png)
 
 </details>
 

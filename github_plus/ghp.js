@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.4.9
+// @version      0.5.0
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -221,6 +221,12 @@
                 extendedUserInfo: {
                     name: "👤 Extended User Info",
                     title: "Show extended information about users",
+                    type: "bool",
+                    value: false,
+                },
+                extendedRepoInfo: {
+                    name: "📁 Extended Repo Info",
+                    title: "Show extended information about repositories (Experimental)",
                     type: "bool",
                     value: false,
                 },
@@ -583,7 +589,6 @@
     ];
     injectCSS(
         "catppuccin-icons-hide",
-        // "svg.octicon:has(+ .ghp-catppuccin-icon) { display: none; }",
         ".ghp-catppuccin-icon + svg.octicon { display: none; }",
     );
     function updateIcons(body = document.body) {
@@ -1050,13 +1055,15 @@
         });
     }
 
-    // Extended user info
+    // Extended user & repo info
     const octicons = {
         repo: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.087a.249.249 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"></path></svg>',
         calendar:
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M4.75 0a.75.75 0 0 1 .75.75V2h5V.75a.75.75 0 0 1 1.5 0V2h1.25c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0 1 13.25 16H2.75A1.75 1.75 0 0 1 1 14.25V3.75C1 2.784 1.784 2 2.75 2H4V.75A.75.75 0 0 1 4.75 0ZM2.5 7.5v6.75c0 .138.112.25.25.25h10.5a.25.25 0 0 0 .25-.25V7.5Zm10.75-4H2.75a.25.25 0 0 0-.25.25V6h11V3.75a.25.25 0 0 0-.25-.25Z"></path></svg>',
         id_badge:
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3 7.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-3Zm10 .25a.75.75 0 0 1-.75.75h-4.5a.75.75 0 0 1 0-1.5h4.5a.75.75 0 0 1 .75.75ZM10.25 11a.75.75 0 0 0 0-1.5h-2.5a.75.75 0 0 0 0 1.5h2.5Z"></path><path d="M7.25 0h1.5c.966 0 1.75.784 1.75 1.75V3h3.75c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0 1 14.25 15H1.75A1.75 1.75 0 0 1 0 13.25v-8.5C0 3.784.784 3 1.75 3H5.5V1.75C5.5.784 6.284 0 7.25 0Zm3.232 4.5A1.75 1.75 0 0 1 8.75 6h-1.5a1.75 1.75 0 0 1-1.732-1.5H1.75a.25.25 0 0 0-.25.25v8.5c0 .138.112.25.25.25h12.5a.25.25 0 0 0 .25-.25v-8.5a.25.25 0 0 0-.25-.25ZM7 1.75v2.5c0 .138.112.25.25.25h1.5A.25.25 0 0 0 9 4.25v-2.5a.25.25 0 0 0-.25-.25h-1.5a.25.25 0 0 0-.25.25Z"></path></svg>',
+        file_zip:
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.5 1.75v11.5c0 .09.048.173.126.217a.75.75 0 0 1-.752 1.298A1.748 1.748 0 0 1 2 13.25V1.75C2 .784 2.784 0 3.75 0h5.586c.464 0 .909.185 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v8.586A1.75 1.75 0 0 1 12.25 15h-.5a.75.75 0 0 1 0-1.5h.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177L9.513 1.573a.25.25 0 0 0-.177-.073H7.25a.75.75 0 0 1 0 1.5h-.5a.75.75 0 0 1 0-1.5h-3a.25.25 0 0 0-.25.25Zm3.75 8.75h.5c.966 0 1.75.784 1.75 1.75v3a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1-.75-.75v-3c0-.966.784-1.75 1.75-1.75ZM6 5.25a.75.75 0 0 1 .75-.75h.5a.75.75 0 0 1 0 1.5h-.5A.75.75 0 0 1 6 5.25Zm.75 2.25h.5a.75.75 0 0 1 0 1.5h-.5a.75.75 0 0 1 0-1.5ZM8 6.75A.75.75 0 0 1 8.75 6h.5a.75.75 0 0 1 0 1.5h-.5A.75.75 0 0 1 8 6.75ZM8.75 3h.5a.75.75 0 0 1 0 1.5h-.5a.75.75 0 0 1 0-1.5ZM8 9.75A.75.75 0 0 1 8.75 9h.5a.75.75 0 0 1 0 1.5h-.5A.75.75 0 0 1 8 9.75Zm-1 2.5v2.25h1v-2.25a.25.25 0 0 0-.25-.25h-.5a.25.25 0 0 0-.25.25Z"></path></svg>',
     };
     function extendedUserInfo() {
         const profile = $(
@@ -1107,8 +1114,93 @@
         addInfoRow("id_badge", "Node ID", (info) => info.node_id);
     }
     if (config.get("additional.extendedUserInfo")) {
-        document.addEventListener("soft-nav:end", extendedUserInfo);
-        document.addEventListener("turbo:load", extendedUserInfo);
+        document.addEventListener("soft-nav:end", extendedUserInfo); // First load
+        document.addEventListener("turbo:load", extendedUserInfo); // Subsequent soft navigations that don't trigger `soft-nav:end`
+    }
+    function extendedRepoInfo() {
+        log("Fetching extended repository info");
+        const reactRoot = $("[data-target='react-app.reactRoot']");
+        const properties = reactRoot?.querySelector(
+            "[data-partial-name='codeViewRepoRoute.Sidebar'] .hide-sm.hide-md",
+        );
+        const repoLink = reactRoot?.querySelector("#code-view-repo-link");
+        if (!properties || !repoLink) return;
+        const repoName = repoLink.getAttribute("href").slice(1); // Remove leading slash
+        const existingInfo = properties.querySelector(".ghp-extended-info");
+        if (existingInfo) return;
+        const fetchPromise = fetchWithToken(
+            `https://api.${topDomain}/repos/${repoName}`,
+        )
+            .then((response) => response.json())
+            .catch((error) => {
+                warn("Failed to fetch repository info:", error);
+                return null;
+            });
+        function addRow(icon_name, name, lambda) {
+            const h3 = document.createElement("h3");
+            h3.classList.add("sr-only", "ghp-extended-info");
+            h3.textContent = name;
+            const icon = octicons[icon_name] || "";
+            const container = document.createElement("div");
+            container.classList.add("mt-2", "ghp-extended-info");
+            const link = document.createElement("a");
+            link.classList.add("Link", "Link--muted");
+            link.innerHTML = `${icon}Loading...`;
+            link.querySelector("svg").classList.add(
+                "octicon",
+                "mr-2",
+                "tmp-mr-2",
+            );
+            container.appendChild(link);
+            properties.appendChild(h3);
+            properties.appendChild(container);
+            fetchPromise.then((info) => {
+                if (info) {
+                    link.innerHTML = `${icon} ${lambda(info)}`;
+                } else {
+                    link.textContent = `${icon} Error`;
+                }
+                link.querySelector("svg").classList.add(
+                    "octicon",
+                    "mr-2",
+                    "tmp-mr-2",
+                );
+            });
+        }
+        function addRows() {
+            log("Adding extended repository info rows");
+            addRow(
+                "file_zip",
+                "Size",
+                (info) => `<strong>${info.size.toFixed(2)}</strong> KB`,
+            );
+            addRow(
+                "calendar",
+                "Created",
+                (info) =>
+                    "Created: " + new Date(info.created_at).toLocaleString(),
+            );
+            addRow(
+                "calendar",
+                "Updated",
+                (info) =>
+                    "Updated: " + new Date(info.updated_at).toLocaleString(),
+            );
+            addRow(
+                "calendar",
+                "Pushed",
+                (info) =>
+                    "Pushed: " + new Date(info.pushed_at).toLocaleString(),
+            );
+            addRow("id_badge", "Node ID", (info) => info.node_id);
+        }
+        // addRows();
+        requestIdleCallback(addRows, { timeout: 1000 }); // Execute a little later
+        // FIXME: Sometimes it got removed. Maybe determine a better injection time.
+    }
+    if (config.get("additional.extendedRepoInfo")) {
+        document.addEventListener("soft-nav:end", extendedRepoInfo); // First load
+        document.addEventListener("turbo:load", extendedRepoInfo); // Subsequent soft navigations that don't trigger `soft-nav:end`
     }
 
     // Preview plus

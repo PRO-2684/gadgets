@@ -49,6 +49,12 @@
         - 加入日期 (`created_at`)
         - 更新日期 (`updated_at`)
         - 节点 ID (`node_id`)
+    - **📁 Extended Repo Info**: 显示仓库的扩展信息。(实验性功能)
+        - 大小 (`size`, 单位为 KB)
+        - 创建日期 (`created_at`)
+        - 更新日期 (`updated_at`)
+        - 推送日期 (`pushed_at`)
+        - 节点 ID (`node_id`)
     - **🔮 Preview Plus**: 允许浏览更多文件类型 (e.g. MP4, WEBM)
         - **现在无法生效**，由于 [Tampermonkey](https://github.com/Tampermonkey/tampermonkey/issues/2743) / [Chromium](https://issues.chromium.org/issues/500280350) 的一个 bug
     - **🎭 Tracking Prevention**: 阻止 GitHub 的一些跟踪。
@@ -121,10 +127,9 @@ Visible Details
 
 ## 🔑 个人访问令牌 (PAT)
 
-- 没有 PAT，每小时只允许 $60$ 次请求；有 PAT，每小时允许 $5000$ 次请求，对大多数用户来说足够了。
+- 没有 PAT，每小时只允许 $60$ 次请求，并且 GitHub Plus 无法展示私有仓库的扩展信息；有 PAT，每小时允许 $5000$ 次请求，对大多数用户来说足够了，并且 GitHub Plus 可以展示您有访问权限的私有仓库的扩展信息。
 - [在这里](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token) 了解如何创建细粒度的个人访问令牌。
-- 在 `Repository access` 选项卡下只需选择 `Public Repositories (read-only)`（默认设置）。此部分后面展示了一张示例图片，以供参考。
-- 请注意，此脚本无法在私有仓库上添加额外信息。
+- 在 `Repository access` 部分选择 `All repositories`，并在 `Permissions` 部分添加只读的 `Metadata` 权限。此部分后面展示了一张示例图片，以供参考。
 - 记得 *在令牌过期时生成一个新令牌*。
 - 自行承担在镜像站上使用个人访问令牌的风险。
 
@@ -132,7 +137,7 @@ Visible Details
 个人访问令牌示例设置
 </summary>
 
-![](./images/token.jpeg)
+![](./images/token.png)
 
 </details>
 
