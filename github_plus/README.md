@@ -49,7 +49,7 @@
         - Joined date (`created_at`)
         - Updated date (`updated_at`)
         - Node ID (`node_id`)
-    - **📁 Extended Repo Info**: Show extended information about repositories. (Experimental)
+    - **📁 Extended Repo Info**: Show extended information about repositories.
         - Size (`size`, in KB)
         - Created date (`created_at`)
         - Updated date (`updated_at`)

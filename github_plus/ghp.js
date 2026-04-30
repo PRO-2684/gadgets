@@ -226,7 +226,7 @@
                 },
                 extendedRepoInfo: {
                     name: "📁 Extended Repo Info",
-                    title: "Show extended information about repositories (Experimental)",
+                    title: "Show extended information about repositories",
                     type: "bool",
                     value: false,
                 },
@@ -1147,6 +1147,7 @@
                 warn("Failed to fetch repository info:", error);
                 return null;
             });
+        const insertionPoint = properties.lastElementChild; // "Report repository" button
         function addRow(icon_name, name, lambda) {
             const h3 = document.createElement("h3");
             h3.classList.add("sr-only", "ghp-extended-repo-info");
@@ -1161,8 +1162,8 @@
                 .classList.add("octicon", "mr-2", "tmp-mr-2");
             entry.title = name;
             container.appendChild(entry);
-            properties.appendChild(h3);
-            properties.appendChild(container);
+            properties.insertBefore(h3, insertionPoint);
+            properties.insertBefore(container, insertionPoint);
             fetchPromise.then((info) => {
                 if (info) {
                     entry.innerHTML = `${icon} ${lambda(info)}`;
