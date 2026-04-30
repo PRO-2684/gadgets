@@ -118,6 +118,14 @@ Extended User Info
 </details>
 
 <details><summary>
+Extended Repo Info
+</summary>
+
+![](./images/extended-repo-info.png)
+
+</details>
+
+<details><summary>
 Visible Details
 </summary>
 
