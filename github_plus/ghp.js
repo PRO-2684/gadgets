@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.5.0
+// @version      0.5.1
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -1148,7 +1148,7 @@
                 return null;
             });
         const insertionPoint = properties.lastElementChild; // "Report repository" button
-        function addRow(icon_name, name, lambda) {
+        function addRow(icon_name, name, text_cb, title_cb = null) {
             const h3 = document.createElement("h3");
             h3.classList.add("sr-only", "ghp-extended-repo-info");
             h3.textContent = name;
@@ -1166,7 +1166,10 @@
             properties.insertBefore(container, insertionPoint);
             fetchPromise.then((info) => {
                 if (info) {
-                    entry.innerHTML = `${icon} ${lambda(info)}`;
+                    entry.innerHTML = `${icon} ${text_cb(info)}`;
+                    if (title_cb) {
+                        entry.title = title_cb(info);
+                    }
                 } else {
                     entry.textContent = `${icon} Error`;
                 }
@@ -1175,12 +1178,26 @@
                     .classList.add("octicon", "mr-2", "tmp-mr-2");
             });
         }
+        function formatRepoSize(sizeInKb) {
+            const units = ["KB", "MB", "GB", "TB"];
+            let size = sizeInKb;
+            let unitIndex = 0;
+            while (size >= 1024 && unitIndex < units.length - 1) {
+                size /= 1024;
+                unitIndex++;
+            }
+            const maximumFractionDigits = unitIndex === 0 ? 0 : 2;
+            return `${size.toLocaleString(undefined, {
+                maximumFractionDigits,
+            })} ${units[unitIndex]}`;
+        }
         function addRows() {
             log("Adding extended repository info rows");
             addRow(
                 "file_zip",
                 "Size",
-                (info) => `<strong>${info.size}</strong> KB`,
+                (info) => `<strong>${formatRepoSize(info.size)}</strong>`,
+                (info) => `Size: ${info.size} KB`, // Raw size in title
             );
             addRow(
                 "calendar",
