@@ -50,7 +50,7 @@
         - 更新日期 (`updated_at`)
         - 节点 ID (`node_id`)
     - **📁 Extended Repo Info**: 显示仓库的扩展信息。
-        - 大小 (`size`, 单位为 KB)
+        - 大小 (`size`)
         - 创建日期 (`created_at`)
         - 更新日期 (`updated_at`)
         - 推送日期 (`pushed_at`)
