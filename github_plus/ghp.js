@@ -1119,15 +1119,18 @@
     }
     function extendedRepoInfo() {
         log("Fetching extended repository info");
-        const reactRoot = $("[data-target='react-app.reactRoot']");
-        const properties = reactRoot?.querySelector(
-            "[data-partial-name='codeViewRepoRoute.Sidebar'] .hide-sm.hide-md",
+        const repoSidebar = $(
+            "[data-partial-name='codeViewRepoRoute.Sidebar']",
         );
-        const repoLink = reactRoot?.querySelector("#code-view-repo-link");
+        const properties = repoSidebar?.querySelector(".hide-sm.hide-md");
+        const repoLink = $("#code-view-repo-link");
         if (!properties || !repoLink) return;
         const repoName = repoLink.getAttribute("href").slice(1); // Remove leading slash
-        const existingInfo = properties.querySelector(".ghp-extended-info");
-        if (existingInfo) return;
+        if (properties.dataset.ghpExtendedRepoInfo === repoName) return;
+        properties.dataset.ghpExtendedRepoInfo = repoName;
+        properties.querySelectorAll(".ghp-extended-info").forEach((element) => {
+            element.remove();
+        });
         const fetchPromise = fetchWithToken(
             `https://api.${topDomain}/repos/${repoName}`,
         )
@@ -1172,7 +1175,7 @@
             addRow(
                 "file_zip",
                 "Size",
-                (info) => `<strong>${info.size.toFixed(2)}</strong> KB`,
+                (info) => `<strong>${info.size}</strong> KB`,
             );
             addRow(
                 "calendar",
@@ -1194,13 +1197,13 @@
             );
             addRow("id_badge", "Node ID", (info) => info.node_id);
         }
-        // addRows();
-        requestIdleCallback(addRows, { timeout: 1000 }); // Execute a little later
-        // FIXME: Sometimes it got removed. Maybe determine a better injection time.
+        addRows();
     }
     if (config.get("additional.extendedRepoInfo")) {
-        document.addEventListener("soft-nav:end", extendedRepoInfo); // First load
-        document.addEventListener("turbo:load", extendedRepoInfo); // Subsequent soft navigations that don't trigger `soft-nav:end`
+        document.addEventListener("soft-nav:react-done", extendedRepoInfo);
+        document.addEventListener("turbo:load", () =>
+            requestAnimationFrame(extendedRepoInfo),
+        ); // Fallback for pages that don't finish through React soft-nav
     }
 
     // Preview plus
