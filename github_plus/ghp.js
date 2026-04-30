@@ -1070,7 +1070,9 @@
             ".js-profile-editable-replace .js-profile-editable-area > ul.vcard-details",
         );
         const username = $("meta[property='profile:username']")?.content;
-        const existingInfo = profile?.querySelector?.(".ghp-extended-info");
+        const existingInfo = profile?.querySelector?.(
+            ".ghp-extended-user-info",
+        );
         if (!profile || !username || existingInfo) return;
         const fetchPromise = fetchWithToken(
             `https://api.${topDomain}/users/${username}`,
@@ -1083,7 +1085,7 @@
         function addInfoRow(icon_name, name, lambda) {
             const icon = octicons[icon_name] || "";
             const row = document.createElement("li");
-            row.classList.add("vcard-detail", "pt-1", "ghp-extended-info");
+            row.classList.add("vcard-detail", "pt-1", "ghp-extended-user-info");
             row.innerHTML = `${icon}<span>${name}: Loading...</span>`;
             row.querySelector("svg").classList.add("octicon");
             profile.appendChild(row);
@@ -1117,6 +1119,10 @@
         document.addEventListener("soft-nav:end", extendedUserInfo); // First load
         document.addEventListener("turbo:load", extendedUserInfo); // Subsequent soft navigations that don't trigger `soft-nav:end`
     }
+    injectCSS(
+        "extended-repo-info",
+        ".ghp-extended-repo-info > span { color: var(--fgColor-muted); }",
+    );
     function extendedRepoInfo() {
         log("Fetching extended repository info");
         const repoSidebar = $(
@@ -1128,9 +1134,11 @@
         const repoName = repoLink.getAttribute("href").slice(1); // Remove leading slash
         if (properties.dataset.ghpExtendedRepoInfo === repoName) return;
         properties.dataset.ghpExtendedRepoInfo = repoName;
-        properties.querySelectorAll(".ghp-extended-info").forEach((element) => {
-            element.remove();
-        });
+        properties
+            .querySelectorAll(".ghp-extended-repo-info")
+            .forEach((element) => {
+                element.remove();
+            });
         const fetchPromise = fetchWithToken(
             `https://api.${topDomain}/repos/${repoName}`,
         )
@@ -1141,33 +1149,29 @@
             });
         function addRow(icon_name, name, lambda) {
             const h3 = document.createElement("h3");
-            h3.classList.add("sr-only", "ghp-extended-info");
+            h3.classList.add("sr-only", "ghp-extended-repo-info");
             h3.textContent = name;
             const icon = octicons[icon_name] || "";
             const container = document.createElement("div");
-            container.classList.add("mt-2", "ghp-extended-info");
-            const link = document.createElement("a");
-            link.classList.add("Link", "Link--muted");
-            link.innerHTML = `${icon}Loading...`;
-            link.querySelector("svg").classList.add(
-                "octicon",
-                "mr-2",
-                "tmp-mr-2",
-            );
-            container.appendChild(link);
+            container.classList.add("mt-2", "ghp-extended-repo-info");
+            const entry = document.createElement("span");
+            entry.innerHTML = `${icon} Loading...`;
+            entry
+                .querySelector("svg")
+                .classList.add("octicon", "mr-2", "tmp-mr-2");
+            entry.title = name;
+            container.appendChild(entry);
             properties.appendChild(h3);
             properties.appendChild(container);
             fetchPromise.then((info) => {
                 if (info) {
-                    link.innerHTML = `${icon} ${lambda(info)}`;
+                    entry.innerHTML = `${icon} ${lambda(info)}`;
                 } else {
-                    link.textContent = `${icon} Error`;
+                    entry.textContent = `${icon} Error`;
                 }
-                link.querySelector("svg").classList.add(
-                    "octicon",
-                    "mr-2",
-                    "tmp-mr-2",
-                );
+                entry
+                    .querySelector("svg")
+                    .classList.add("octicon", "mr-2", "tmp-mr-2");
             });
         }
         function addRows() {
