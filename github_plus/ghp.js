@@ -1139,6 +1139,9 @@
             .forEach((element) => {
                 element.remove();
             });
+        const reportBtn = properties.querySelector(
+            "a[href^='/contact/report-content']",
+        );
         const fetchPromise = fetchWithToken(
             `https://api.${topDomain}/repos/${repoName}`,
         )
@@ -1147,7 +1150,6 @@
                 warn("Failed to fetch repository info:", error);
                 return null;
             });
-        const insertionPoint = properties.lastElementChild; // "Report repository" button
         function addRow(icon_name, name, text_cb, title_cb = null) {
             const h3 = document.createElement("h3");
             h3.classList.add("sr-only", "ghp-extended-repo-info");
@@ -1162,8 +1164,13 @@
                 .classList.add("octicon", "mr-2", "tmp-mr-2");
             entry.title = name;
             container.appendChild(entry);
-            properties.insertBefore(h3, insertionPoint);
-            properties.insertBefore(container, insertionPoint);
+            if (reportBtn) {
+                reportBtn.insertAdjacentElement("beforebegin", h3);
+                reportBtn.insertAdjacentElement("beforebegin", container);
+            } else {
+                properties.appendChild(h3);
+                properties.appendChild(container);
+            }
             fetchPromise.then((info) => {
                 if (info) {
                     entry.innerHTML = `${icon} ${text_cb(info)}`;
