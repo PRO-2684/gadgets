@@ -10,6 +10,8 @@
     - You need to add the mirror site to **this script's `User matches` list**
     - `Dashboard` - `Installed Userscripts` - `GitHub Plus` - `Settings` - `Includes/Excludes` - `User matches` - `Add...`
 
+> You might also like: [GitHub Preview (UserScript)](https://greasyfork.org/scripts/577730). Adds a button on GitHub to preview HTML files directly.
+
 ## ⚙️ Configuration
 
 - **🔢 Code Features**
@@ -138,7 +140,7 @@ Visible Details
 - Without a PAT, only $60$ requests per hour are allowed, and GitHub Plus won't be able to fetch extended information for private repos; with a PAT, $5000$ requests per hour are allowed, which suffices for most users, and GitHub Plus can also fetch extended information for private repos that you have access to.
 - Find out how to create a fine-grained personal access token [here](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token).
 - Simply select `All repositories` under `Repository access` section, and add read-only `Metadata` access under `Permissions` section. An example image is shown below for reference.
-- Remember to *generate a new token when it expires*.
+- Remember to _generate a new token when it expires_.
 - Use a personal access token on a mirror site at your own risk.
 
 <details><summary>

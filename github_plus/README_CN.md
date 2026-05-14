@@ -10,6 +10,8 @@
     - 需自行将镜像站添加到**此脚本的 `用户匹配` 列表**
     - `管理面板` - `已安装脚本` - `GitHub 增强` - `设置` - `包括/排除` - `用户匹配` - `添加...`
 
+> 你可能也喜欢：[GitHub Preview (UserScript)](https://greasyfork.org/scripts/577730)。在 GitHub 上添加一个按钮，可以直接预览 HTML 文件。
+
 ## ⚙️ 配置
 
 - **🔢 Code Features**
@@ -138,7 +140,7 @@ Visible Details
 - 没有 PAT，每小时只允许 $60$ 次请求，并且 GitHub Plus 无法展示私有仓库的扩展信息；有 PAT，每小时允许 $5000$ 次请求，对大多数用户来说足够了，并且 GitHub Plus 可以展示您有访问权限的私有仓库的扩展信息。
 - [在这里](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token) 了解如何创建细粒度的个人访问令牌。
 - 在 `Repository access` 部分选择 `All repositories`，并在 `Permissions` 部分添加只读的 `Metadata` 权限。此部分后面展示了一张示例图片，以供参考。
-- 记得 *在令牌过期时生成一个新令牌*。
+- 记得 _在令牌过期时生成一个新令牌_。
 - 自行承担在镜像站上使用个人访问令牌的风险。
 
 <details><summary>
