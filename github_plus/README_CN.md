@@ -38,13 +38,6 @@
         - 如果只有零个或一个 Release 文件，则不会显示。
         - 如果没有任何 Release 文件被下载，则不会显示。
     - **🫥 Hide Archives**: 隐藏 Release 中的源代码归档。(实验性功能)
-- **🔍 Extended Search**
-    - **🚀 Go To**: 在搜索建议中添加跳转仓库、issue 等的选项，例如：
-        - `@owner`: 跳转到作者的个人资料
-        - `/repo`: 跳转到当前作者的仓库（若有）
-        - `owner/repo`: 跳转到仓库
-        - `@owner/repo#123`: 跳转到该仓库的 issue/PR 编号 123
-        - `#123`: 跳转到当前仓库的 issue/PR 编号 123（若有）
 - **🪄 Additional Features**
     - **👤 Extended User Info**: 显示用户的扩展信息。
         - 公开的仓库和 gists 数量 (`public_repos`, `public_gists`)
@@ -64,6 +57,12 @@
     - **🔑 Personal Access Token**: GitHub API 的个人访问令牌，以 `github_pat_` 开头（用于提升速率限制）。详见 [个人访问令牌 (PAT)](#-个人访问令牌-pat) 部分。
     - **📈 Rate Limit**: 查看当前速率限制状态。
     - **🐞 Debug**: 启用调试模式。
+
+<details><summary>已移除的功能：</summary>
+
+- **🔍 Extended Search**: 请直接使用 [GitHub 的 command palette](https://docs.github.com/en/get-started/accessibility/github-command-palette)。
+
+</details>
 
 ## 🖼️ 效果展示
 

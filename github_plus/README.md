@@ -38,13 +38,6 @@
         - Does not show up if there is only zero or one release asset.
         - Does not show up if none of the release assets have been downloaded.
     - **🫥 Hide Archives**: Hide source code archives (zip, tar.gz) in the release assets. (Experimental)
-- **🔍 Extended Search**
-    - **🚀 Go To**: Add items for going to repositories, issues etc. in search suggestions, like:
-        - `@owner`: go to owner's profile
-        - `/repo`: go to repository of current owner (if any)
-        - `owner/repo`: go to repository
-        - `@owner/repo#123`: go to issue/PR number 123 in the repository
-        - `#123`: go to issue/PR number 123 in the current repository (if any)
 - **🪄 Additional Features**
     - **👤 Extended User Info**: Show extended information about users.
         - Public repositories & gists count (`public_repos`, `public_gists`)
@@ -64,6 +57,12 @@
     - **🔑 Personal Access Token**: Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit). For more information, see the [Personal Access Token (PAT)](#-personal-access-token-pat) section.
     - **📈 Rate Limit**: View the current rate limit status.
     - **🐞 Debug**: Enable debug mode.
+
+<details><summary>Removed features</summary>
+
+- **🔍 Extended Search**: Use [GitHub's command palette](https://docs.github.com/en/get-started/accessibility/github-command-palette) instead.
+
+</details>
 
 ## 🖼️ Showcases
 
