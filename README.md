@@ -7,64 +7,65 @@
 Some miscellaneous code snippets, including userscripts and userstyles etc. See READMEs under subfolders for detailed description if you're interested in some of them. Note that:
 
 - While most of the snippets are well-tested, snippets under [Unreleased](#-unreleased) are the exceptions.
-- Snippets marked with asterisk (*) are archived and not actively maintained.
+- Snippets marked with asterisk (\*) are archived and not actively maintained.
 
 ## 📃 List
 
 ### 🧩 UserScripts
 
-| UserScript | GreasyFork | Description |
-| --- | --- | --- |
-| [`52_enhance`](./52_enhance) | [#469051](https://greasyfork.org/scripts/469051) | 52 forum enhancement script. |
-| [`baidu_fanyi_plus`](./baidu_fanyi_plus) | [#539757](https://greasyfork.org/scripts/539757) | Enhance Baidu Fanyi with additional features. |
-| [`better-recaptcha`](./better-recaptcha) | N/A | Various QoL improvements to reCAPTCHA. |
-| [`CORS_helper`](./CORS_helper) | [#508769](https://greasyfork.org/scripts/508769) | A simple, customizable script that helps you to bypass CORS restrictions. |
-| [`draggy`](./draggy) | [#511154](https://greasyfork.org/scripts/511154) | Drag a link to open in a new tab, drag a piece of text to search in a new tab. |
-| [`editio`](./editio) | [#519147](https://greasyfork.org/scripts/519147) | A simple script that adds some extra features to inputs and textareas, inspired by Visual Studio Code. |
-| [`export_cookies`](./export_cookies) | [#517291](https://greasyfork.org/scripts/517291) | Export cookies of current tab to a file. |
-| [`favio`](./favio) | N/A | List the favicons of the current page in one click. |
-| [`github_plus`](./github_plus) | [#510742](https://greasyfork.org/scripts/510742) | Enhance GitHub with additional features. |
-| ~~[`GM_config`](./GM_config)~~ | [#470224](https://greasyfork.org/scripts/470224) | Moved to [PRO-2684/GM_config](https://github.com/PRO-2684/GM_config). Simple config lib for Tampermonkey scripts. |
-| [`greasyfork_enhance`](./greasyfork_enhance) | [#467078](https://greasyfork.org/scripts/467078) | Enhance your experience at Greasyfork. |
-| [`latex-copy`](./latex-copy) | N/A | A userscript that enables copying LaTeX code from rendered equations on web pages. |
-| [`linux-po`](./linux-po) | [#523904](https://greasyfork.org/scripts/523904) | Various enhancements for linux.do site. |
-| [`minecraft-helper-rev`](./minecraft-helper-rev) | [#551621](https://greasyfork.org/scripts/551621) | Helpful script dedicated to Minecraft players. |
-| [`no-keywords`](./no-keywords) | [#523904](https://greasyfork.org/scripts/469656) | Get rid of fucking highlighted search keywords. |
-| [`open-in-current`](./open-in-current) | [#552802](https://greasyfork.org/scripts/552802) | Always open pages in the current window, instead of creating a popup. |
-| [`purlfy_for_tm`](./purlfy_for_tm) | [#492480](https://greasyfork.org/scripts/492480) | The ultimate URL purifier - Tampermonkey version. |
-| [`telegraphio`](./telegraphio) | [#535483](https://greasyfork.org/scripts/535483) | Various enhancements for [Telegraph](https://telegra.ph/). |
-| [`wechat-plus`](./wechat-plus) | [#535482](https://greasyfork.org/scripts/535482) | Various enhancements for posts of WeChat official accounts. |
-| [`auto_grading`](./auto_grading) * | [#457282](https://greasyfork.org/scripts/457282) | Auto grading for `tqm.ustc.edu.cn`. |
-| [`ucas-helper`](./ucas-helper/) | [#552801](https://greasyfork.org/scripts/552801) | A helper script for UCAS online systems. |
-| [`uhp`](./uhp) * | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more. |
+| UserScript                                       | GreasyFork                                       | Description                                                                                                                                |
+| ------------------------------------------------ | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`52_enhance`](./52_enhance)                     | [#469051](https://greasyfork.org/scripts/469051) | 52 forum enhancement script.                                                                                                               |
+| [`baidu_fanyi_plus`](./baidu_fanyi_plus)         | [#539757](https://greasyfork.org/scripts/539757) | Enhance Baidu Fanyi with additional features.                                                                                              |
+| [`better-recaptcha`](./better-recaptcha)         | N/A                                              | Various QoL improvements to reCAPTCHA.                                                                                                     |
+| [`CORS_helper`](./CORS_helper)                   | [#508769](https://greasyfork.org/scripts/508769) | A simple, customizable script that helps you to bypass CORS restrictions.                                                                  |
+| [`draggy`](./draggy)                             | [#511154](https://greasyfork.org/scripts/511154) | Drag a link to open in a new tab, drag a piece of text to search in a new tab.                                                             |
+| [`editio`](./editio)                             | [#519147](https://greasyfork.org/scripts/519147) | A simple script that adds some extra features to inputs and textareas, inspired by Visual Studio Code.                                     |
+| [`export_cookies`](./export_cookies)             | [#517291](https://greasyfork.org/scripts/517291) | Export cookies of current tab to a file.                                                                                                   |
+| [`favio`](./favio)                               | N/A                                              | List the favicons of the current page in one click.                                                                                        |
+| [`github_plus`](./github_plus)                   | [#510742](https://greasyfork.org/scripts/510742) | Enhance GitHub with additional features.                                                                                                   |
+| ~~[`GM_config`](./GM_config)~~                   | [#470224](https://greasyfork.org/scripts/470224) | Moved to [PRO-2684/GM_config](https://github.com/PRO-2684/GM_config). Simple config lib for Tampermonkey scripts.                          |
+| [`greasyfork_enhance`](./greasyfork_enhance)     | [#467078](https://greasyfork.org/scripts/467078) | Enhance your experience at Greasyfork.                                                                                                     |
+| [`latex-copy`](./latex-copy)                     | N/A                                              | A userscript that enables copying LaTeX code from rendered equations on web pages.                                                         |
+| [`linux-po`](./linux-po)                         | [#523904](https://greasyfork.org/scripts/523904) | Various enhancements for linux.do site.                                                                                                    |
+| [`minecraft-helper-rev`](./minecraft-helper-rev) | [#551621](https://greasyfork.org/scripts/551621) | Helpful script dedicated to Minecraft players.                                                                                             |
+| [`no-keywords`](./no-keywords)                   | [#523904](https://greasyfork.org/scripts/469656) | Get rid of fucking highlighted search keywords.                                                                                            |
+| [`open-in-current`](./open-in-current)           | [#552802](https://greasyfork.org/scripts/552802) | Always open pages in the current window, instead of creating a popup.                                                                      |
+| [`purlfy_for_tm`](./purlfy_for_tm)               | [#492480](https://greasyfork.org/scripts/492480) | The ultimate URL purifier - Tampermonkey version.                                                                                          |
+| [`telegraphio`](./telegraphio)                   | [#535483](https://greasyfork.org/scripts/535483) | Various enhancements for [Telegraph](https://telegra.ph/).                                                                                 |
+| [`wechat-plus`](./wechat-plus)                   | [#535482](https://greasyfork.org/scripts/535482) | Various enhancements for posts of WeChat official accounts.                                                                                |
+| [`auto_grading`](./auto_grading) \*              | [#457282](https://greasyfork.org/scripts/457282) | Auto grading for `tqm.ustc.edu.cn`.                                                                                                        |
+| [`ucas-helper`](./ucas-helper/)                  | [#552801](https://greasyfork.org/scripts/552801) | A helper script for UCAS online systems.                                                                                                   |
+| [`uhp`](./uhp) \*                                | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more. |
 
 ### 🎨 UserStyles
 
-| UserStyle | UserStyles.world | Description |
-| --- | --- | --- |
-| [`ar5iv_plus`](./ar5iv_plus) | [#18946](https://userstyles.world/style/18946) | Enhance `ar5iv.labs.arxiv.org/html/` with various tweaks and improvements. |
-| [`arxiv_html_debloate`](./arxiv_html_debloate) * | [#16559](https://userstyles.world/style/16559) | Hides unnecessary elements on `arxiv.org/html/*`, giving you a clean view. |
-| [`baidu_debloate`](./baidu_debloate) | [#17133](https://userstyles.world/style/17133) | Hides some gibberish on Baidu sites, including `baike.baidu.com`, `jingyan.baidu.com`, `tieba.baidu.com` and `fanyi.baidu.com`. |
-| [`docs.rs-ferris`](./docs.rs-ferris) | [#20844](https://userstyles.world/style/20844) | Show Ferris the crab on `docs.rs` code examples, just like on the Rust book. |
-| [`hide-ai-disclaimer`](./hide-ai-disclaimer) | [#27114](https://userstyles.world/style/27114) | Hides the AI disclaimer for various websites. |
-| [`scrollbar_mod`](./scrollbar_mod) | [#16203](https://userstyles.world/style/16203) | Customize your scrollbar easily. |
-| [`tooltips_mod`](./tooltips_mod) | [#19461](https://userstyles.world/style/19461) | Implement `title` attribute display as a tooltip on touch screen devices. |
+| UserStyle                                         | UserStyles.world                               | Description                                                                                                                     |
+| ------------------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| [`ar5iv_plus`](./ar5iv_plus)                      | [#18946](https://userstyles.world/style/18946) | Enhance `ar5iv.labs.arxiv.org/html/` with various tweaks and improvements.                                                      |
+| [`arxiv_html_debloate`](./arxiv_html_debloate) \* | [#16559](https://userstyles.world/style/16559) | Hides unnecessary elements on `arxiv.org/html/*`, giving you a clean view.                                                      |
+| [`baidu_debloate`](./baidu_debloate)              | [#17133](https://userstyles.world/style/17133) | Hides some gibberish on Baidu sites, including `baike.baidu.com`, `jingyan.baidu.com`, `tieba.baidu.com` and `fanyi.baidu.com`. |
+| [`docs.rs-ferris`](./docs.rs-ferris)              | [#20844](https://userstyles.world/style/20844) | Show Ferris the crab on `docs.rs` code examples, just like on the Rust book.                                                    |
+| [`hide-ai-disclaimer`](./hide-ai-disclaimer)      | [#27114](https://userstyles.world/style/27114) | Hides the AI disclaimer for various websites.                                                                                   |
+| [`scrollbar_mod`](./scrollbar_mod)                | [#16203](https://userstyles.world/style/16203) | Customize your scrollbar easily.                                                                                                |
+| [`tooltips_mod`](./tooltips_mod)                  | [#19461](https://userstyles.world/style/19461) | Implement `title` attribute display as a tooltip on touch screen devices.                                                       |
 
 ### 🛠️ Others
 
-| Snippet | Description |
-| --- | --- |
-| [`bb_batch_reconcile`](./bb_batch_reconcile) * | Batch reconcile student grades in [Blackboard](https://www.blackboard.com/) system. |
-| [`checkbox_patch`](./checkbox_patch) * | Patches the property `checked` of a certain checkbox, so that a `change` event will be issued when the `checked` value is modified by other scripts. |
-| [`clean-vscode`](./clean-vscode) | Clean up unnecessary files and directories under `.vscode-server`. |
-| [`devcontainer`](./devcontainer) | Utilities for working with devcontainers. |
-| [`etag_server`](./etag_server) * | Simple HTTP server that serves files, but using `ETag` instead of `Last-Modified` for caching. |
-| [`hover_card`](./hover_card) * | Get Github hovercard for given repo. |
-| [`naive_jq`](./naive_jq) * | A naive implementation of `jq` in Node.js, only for quick testing. |
-| [`sanitify_header_id`](./sanitify_header_id) * | Sanitify/Sanitize given string (header id) so that it is (hopefully) free of emojis, with its spaces replaced by `-`. |
-| [`subnet_helper`](./subnet_helper) * | Converts binary subnet mask to human-friendly notation (dot-decimal with length) and vice versa. In addition, it can provide available IP range and count in the given subnet. |
-| [`url_summary`](./url_summary) * | Get summary of a given URL, including favicon, title, description and keywords. |
-| [`wechat_video`](./wechat_video) * | Download videos from video posts by WeChat Official Accounts. |
+| Snippet                                         | Description                                                                                                                                                                    |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`bad-tempered`](./bad-tempered)                | "Bad-Tempered" shell command for downloaders, retrying aggressively with minimal timeout and delay.                                                                            |
+| [`bb_batch_reconcile`](./bb_batch_reconcile) \* | Batch reconcile student grades in [Blackboard](https://www.blackboard.com/) system.                                                                                            |
+| [`checkbox_patch`](./checkbox_patch) \*         | Patches the property `checked` of a certain checkbox, so that a `change` event will be issued when the `checked` value is modified by other scripts.                           |
+| [`clean-vscode`](./clean-vscode)                | Clean up unnecessary files and directories under `.vscode-server`.                                                                                                             |
+| [`devcontainer`](./devcontainer)                | Utilities for working with devcontainers.                                                                                                                                      |
+| [`etag_server`](./etag_server) \*               | Simple HTTP server that serves files, but using `ETag` instead of `Last-Modified` for caching.                                                                                 |
+| [`hover_card`](./hover_card) \*                 | Get Github hovercard for given repo.                                                                                                                                           |
+| [`naive_jq`](./naive_jq) \*                     | A naive implementation of `jq` in Node.js, only for quick testing.                                                                                                             |
+| [`sanitify_header_id`](./sanitify_header_id) \* | Sanitify/Sanitize given string (header id) so that it is (hopefully) free of emojis, with its spaces replaced by `-`.                                                          |
+| [`subnet_helper`](./subnet_helper) \*           | Converts binary subnet mask to human-friendly notation (dot-decimal with length) and vice versa. In addition, it can provide available IP range and count in the given subnet. |
+| [`url_summary`](./url_summary) \*               | Get summary of a given URL, including favicon, title, description and keywords.                                                                                                |
+| [`wechat_video`](./wechat_video) \*             | Download videos from video posts by WeChat Official Accounts.                                                                                                                  |
 
 ## 🚧 Unreleased
 
