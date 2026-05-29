@@ -30,7 +30,7 @@
             code: ".katex-mathml semantics annotation[encoding='application/x-tex']",
         },
         MathJaxV2: {
-            container: ".math-container",
+            container: ".math-container, .MathJax_Display, .MathJax",
             code: "script[type='math/tex'], script[type='math/tex; mode=display']",
         },
     };
