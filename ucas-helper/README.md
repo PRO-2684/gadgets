@@ -43,6 +43,8 @@
 
 ## 🖼️ Screenshots
 
+> Visit [GitHub repo](https://github.com/PRO-2684/gadgets/tree/main/ucas-helper) in case the images are not displayed properly.
+
 <details><summary>Native selector</summary>
 
 ![native-selector](./images/native-selector.png)
