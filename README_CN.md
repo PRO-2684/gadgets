@@ -32,6 +32,7 @@
 | [`no-keywords`](./no-keywords)                   | [#523904](https://greasyfork.org/scripts/469656)       | 去你妈的傻逼高亮搜索关键词。                                                                           |
 | [`open-in-current`](./open-in-current)           | [#552802](https://greasyfork.org/scripts/552802)       | 总是在当前窗口打开页面，而非打开弹窗。                                                                 |
 | [`purlfy_for_tm`](./purlfy_for_tm)               | [#492480](https://greasyfork.org/scripts/492480)       | 终极 URL 净化器 - Tampermonkey 版本。                                                                  |
+| [`rettiwt-key-export`](./rettiwt-key-export)     | N/A                                                    | 提取 API_KEY，用于 [Rettiwt-API](https://github.com/Rishikant181/Rettiwt-API).                         |
 | [`telegraphio`](./telegraphio)                   | [#535483](https://greasyfork.org/scripts/535483)       | 对 [Telegraph](https://telegra.ph/) 的各种增强。                                                       |
 | [`wechat-plus`](./wechat-plus)                   | [#535482](https://greasyfork.org/zh-CN/scripts/535482) | 针对微信公众号文章的增强脚本。                                                                         |
 | [`auto_grading`](./auto_grading) \*              | [#457282](https://greasyfork.org/scripts/457282)       | 自动评教 `tqm.ustc.edu.cn`。                                                                           |
