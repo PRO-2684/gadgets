@@ -93,16 +93,6 @@
 </details>
 
 <details><summary>
-搜索建议中跳转 Issue/PR 示例
-</summary>
-
-从搜索建议中跳转到 Issue 的示例，方法是在搜索框中输入 `#1`。
-
-![](./images/go-to-issue.png)
-
-</details>
-
-<details><summary>
 Catppuccin 图标 (🌿 Mocha)
 </summary>
 

@@ -93,16 +93,6 @@ Example Dashboard, with `📰 Dashboard` set to `Mobile-Like`, `↖️ Left Side
 </details>
 
 <details><summary>
-Go to Issue/PR from Search Suggestions
-</summary>
-
-Example of going to an issue from search suggestions by typing `#1` in the search box.
-
-![](./images/go-to-issue.png)
-
-</details>
-
-<details><summary>
 Catppuccin Icons (🌿 Mocha)
 </summary>
 
