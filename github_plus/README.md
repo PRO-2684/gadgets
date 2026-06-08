@@ -10,8 +10,6 @@
     - You need to add the mirror site to **this script's `User matches` list**
     - `Dashboard` - `Installed Userscripts` - `GitHub Plus` - `Settings` - `Includes/Excludes` - `User matches` - `Add...`
 
-> You might also like: [GitHub Preview (UserScript)](https://greasyfork.org/scripts/577730). Adds a button on GitHub to preview HTML files directly.
-
 ## ⚙️ Configuration
 
 - **🔢 Code Features**
@@ -50,8 +48,6 @@
         - Updated date (`updated_at`)
         - Pushed date (`pushed_at`)
         - Node ID (`node_id`)
-    - **🔮 Preview Plus**: Allow previewing more file types (e.g. MP4, WEBM)
-        - **WON'T WORK FOR NOW** because of a [Tampermonkey](https://github.com/Tampermonkey/tampermonkey/issues/2743) / [Chromium](https://issues.chromium.org/issues/500280350) bug
     - **🎭 Tracking Prevention**: Prevents some tracking by GitHub.
 - **⚙️ Advanced Settings**
     - **🔑 Personal Access Token**: Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit). For more information, see the [Personal Access Token (PAT)](#-personal-access-token-pat) section.
@@ -61,8 +57,14 @@
 <details><summary>Removed features</summary>
 
 - **🔍 Extended Search**: Use [GitHub's command palette](https://docs.github.com/en/get-started/accessibility/github-command-palette) instead.
+- **🔮 Preview Plus**: Use [GitHub Preview (UserScript)](https://greasyfork.org/scripts/577730) instead.
+    - **WON'T WORK** because of a [Tampermonkey](https://github.com/Tampermonkey/tampermonkey/issues/2743) / [Chromium](https://issues.chromium.org/issues/500280350) bug
 
 </details>
+
+## ➕ Recommended Addition
+
+[GitHub Preview (UserScript)](https://greasyfork.org/scripts/577730) will add a button on GitHub to preview HTML and media files directly.
 
 ## 🖼️ Showcases
 
