@@ -50,8 +50,6 @@
         - 更新日期 (`updated_at`)
         - 推送日期 (`pushed_at`)
         - 节点 ID (`node_id`)
-    - **🔮 Preview Plus**: 允许浏览更多文件类型 (e.g. MP4, WEBM)
-        - **现在无法生效**，由于 [Tampermonkey](https://github.com/Tampermonkey/tampermonkey/issues/2743) / [Chromium](https://issues.chromium.org/issues/500280350) 的一个 bug
     - **🎭 Tracking Prevention**: 阻止 GitHub 的一些跟踪。
 - **⚙️ Advanced Settings**
     - **🔑 Personal Access Token**: GitHub API 的个人访问令牌，以 `github_pat_` 开头（用于提升速率限制）。详见 [个人访问令牌 (PAT)](#-个人访问令牌-pat) 部分。
@@ -61,8 +59,14 @@
 <details><summary>已移除的功能：</summary>
 
 - **🔍 Extended Search**: 请直接使用 [GitHub 的 command palette](https://docs.github.com/en/get-started/accessibility/github-command-palette)。
+- **🔮 Preview Plus**: 允许浏览更多文件类型 (e.g. MP4, WEBM)。请使用 [GitHub Preview (UserScript)](https://greasyfork.org/scripts/577730) 作为替代。
+    - 由于 [Tampermonkey](https://github.com/Tampermonkey/tampermonkey/issues/2743) / [Chromium](https://issues.chromium.org/issues/500280350) 的一个 bug **无法生效**
 
 </details>
+
+## ➕ 推荐添加
+
+[GitHub Preview (UserScript)](https://greasyfork.org/scripts/577730) 将在 GitHub 上添加一个按钮，可以直接预览 HTML 和媒体文件。
 
 ## 🖼️ 效果展示
 

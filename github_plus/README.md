@@ -57,7 +57,7 @@
 <details><summary>Removed features</summary>
 
 - **🔍 Extended Search**: Use [GitHub's command palette](https://docs.github.com/en/get-started/accessibility/github-command-palette) instead.
-- **🔮 Preview Plus**: Use [GitHub Preview (UserScript)](https://greasyfork.org/scripts/577730) instead.
+- **🔮 Preview Plus**: Allow previewing more file types (e.g. MP4, WEBM). Use [GitHub Preview (UserScript)](https://greasyfork.org/scripts/577730) instead.
     - **WON'T WORK** because of a [Tampermonkey](https://github.com/Tampermonkey/tampermonkey/issues/2743) / [Chromium](https://issues.chromium.org/issues/500280350) bug
 
 </details>
