@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.6.1
+// @version      0.6.2
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -946,7 +946,7 @@
     }
     injectCSS(
         "extended-repo-info",
-        ".ghp-extended-repo-info > span { color: var(--fgColor-muted); }",
+        ".ghp-extended-repo-info { color: var(--fgColor-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }",
     );
     function extendedRepoInfo() {
         log("Fetching extended repository info");
