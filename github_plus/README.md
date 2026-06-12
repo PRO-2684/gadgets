@@ -23,6 +23,7 @@
     - **↖️ Left Sidebar**: Configures the left sidebar. (`Default`, `Hidden`)
     - **↗️ Right Sidebar**: Configures the right sidebar. (`Default`, `Hide 'Latest changes'`, `Hide 'Explore repositories'`, `Hide Completely`)
     - **📌 Sticky Avatar**: Make the avatar sticky. (Experimental, does not work for all avatars)
+    - **📌 Sticky More**: Make more elements sticky (e.g. issue & comment headers). (Experimental)
     - **🫥 Hide Header Underline**: Hide the underline of the header. (the border below the header)
     - **🐱 Catppuccin Icons**: Use [catppuccin icons](https://github.com/catppuccin/web-file-explorer-icons/) for folders and files (HIGHLY EXPERIMENTAL, need refresh to apply changes)
         - Does not update icons when expanding folders at the sidebar.

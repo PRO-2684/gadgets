@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.6.2
+// @version      0.6.3
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -145,6 +145,12 @@
                 stickyAvatar: {
                     name: "📌 Sticky Avatar",
                     title: "Make the avatar sticky",
+                    type: "bool",
+                    value: false,
+                },
+                stickyMore: {
+                    name: "📌 Sticky More",
+                    title: "Make more elements sticky (e.g. issue & comment headers)",
                     type: "bool",
                     value: false,
                 },
@@ -383,6 +389,10 @@
                 }
             } */
         `,
+        "appearance.stickyMore": `
+            .react-issue-body [class^='IssueBodyHeader-module__IssueBodyHeaderContainer__'],
+            .react-issue-comment [data-testid="comment-header"]
+            { position: sticky; top: 4em; z-index: 1; backdrop-filter: brightness(0.1); }`,
         "appearance.hideHeaderUnderline": `.markdown-heading > .heading-element { border-bottom: none; }`,
         "appearance.visibleDetails": `
             .markdown-body details {

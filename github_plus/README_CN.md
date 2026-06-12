@@ -25,6 +25,7 @@
     - **↖️ Left Sidebar**: 配置左侧栏。(`Default`, `Hidden`)
     - **↗️ Right Sidebar**: 配置右侧栏。(`Default`, `Hide 'Latest changes'`, `Hide 'Explore repositories'`, `Hide Completely`)
     - **📌 Sticky Avatar**: 使头像固定。(实验性功能，不适用于所有头像)
+    - **📌 Sticky More**: 使更多元素固定（例如 issue 和评论的标题）。(实验性功能)
     - **🫥 Hide Header Underline**: 隐藏标题的下划线。(即标题下边框)
     - **🐱 Catppuccin Icons**: 使用 [catppuccin icons](https://github.com/catppuccin/web-file-explorer-icons/) 为文件夹和文件提供图标 (高度实验性，需要刷新以应用更改)
         - 在侧边栏展开文件夹时不会更新图标。
