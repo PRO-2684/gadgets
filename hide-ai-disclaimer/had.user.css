@@ -68,3 +68,10 @@
         }
     }
 }
+
+/* Google Scholar */
+@-moz-document url-prefix("https://scholar.google.com/scholar_labs/search") {
+    #gs_as_hp_main #gs_as_i_dc {
+        display: none;
+    }
+}
