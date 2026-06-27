@@ -1,0 +1,57 @@
+/* ==UserStyle==
+@name           Disco
+@namespace      github.com/PRO-2684
+@version        0.1.0
+@description    Hides annoying items on Discord.
+@author         PRO-2684
+@license     	gpl-3.0
+@preprocessor   stylus
+@var checkbox   HideSuperReactions      "Hide Super Reactions" 1
+@var checkbox   HideNitroAd             "Hide Nitro AD"        1
+@var checkbox   HideServerBoosts        "Hide Server Boosts"   1
+@var checkbox   HideTopBar              "Hide Top Bar"         0
+==/UserStyle== */
+
+@-moz-document domain("discord.com") {
+    if (HideSuperReactions) {
+        [class^="messageListItem__"] > [aria-roledescription="Message"] > [id^="message-accessories-"] [id^="message-reactions-"] {
+            [class^="reactionInner__"] [class^="effectsWrapper_"] {
+                display: none; /* Hide reaction animation */
+            }
+            img.emoji[data-type="emoji"] {
+                opacity: 1; /* Keep original emoji */
+            }
+        }
+    }
+    if (HideNitroAd) {
+        .user-profile-popout [class^="upsellContainer__"] {
+            display: none; /* "Amp up your profile" in user profile popout */
+        }
+        [data-nav-anchor-key="appearance_custom_themes_upsell"], /* "Make your Discord look *juuusst* right" */
+        [data-nav-anchor-key="appearance_client_themes"] { /* The entire section of "Settings - Appearance - Color Themes" requires Nitro */
+            display: none;
+        }
+        [data-nav-anchor-key="appearance_in_app_icon_category"] [class^="expressiveWrapper_"] {
+            display: none; /* "Unlock with Nitro" button in "Settings - Appearance - App Icon" */
+        }
+        .user-profile-modal-v2 [class^="upsellContainer__"] {
+            display: none; /* "Amp up your profile" button when editing user profile */
+        }
+        #profile-modal-editing-panel > [class^="panelInner_"] > [class^="floatingUpsellContainer_"] {
+            display: none; /* "Level up your look, only with Nitro" when editing user profile */
+        }
+    }
+    if (HideServerBoosts) {
+        #channels > ul[aria-label="Channels"] > [class^="container__"][role="button"] {
+            display: none; /* Boost progress for servers */
+        }
+    }
+    if (HideTopBar) {
+        [data-layer="base"] > div > [class^="base__"] {
+            --custom-app-top-bar-height: var(--space-8); /* Reduce height to prevent empty space */
+            > [class^="bar_"] {
+                display: none;
+            }
+        }
+    }
+}
