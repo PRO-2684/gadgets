@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Disco
 @namespace      github.com/PRO-2684
-@version        0.1.0
+@version        0.1.1
 @description    Hides annoying items on Discord.
 @author         PRO-2684
 @license     	gpl-3.0
@@ -39,6 +39,9 @@
         }
         #profile-modal-editing-panel > [class^="panelInner_"] > [class^="floatingUpsellContainer_"] {
             display: none; /* "Level up your look, only with Nitro" when editing user profile */
+        }
+        [class^="burstReactionTooltipPrompt_"] {
+            display: none; /* "Want to start the hype train? Get Nitro to add a Super Reaction." when hovering over a super reaction */
         }
     }
     if (HideServerBoosts) {
