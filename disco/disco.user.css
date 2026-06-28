@@ -1,7 +1,7 @@
 /* ==UserStyle==
 @name           Disco
 @namespace      github.com/PRO-2684
-@version        0.1.1
+@version        0.1.2
 @description    Hides annoying items on Discord.
 @author         PRO-2684
 @license     	gpl-3.0
@@ -14,8 +14,9 @@
 
 @-moz-document domain("discord.com") {
     if (HideSuperReactions) {
-        [class^="messageListItem__"] > [aria-roledescription="Message"] > [id^="message-accessories-"] [id^="message-reactions-"] {
-            [class^="reactionInner__"] [class^="effectsWrapper_"] {
+        [class^="messageListItem__"] > [aria-roledescription="Message"] > [id^="message-accessories-"] [id^="message-reactions-"] [class^="reactionInner__"], /* Reactions section after each message */
+        [class^="reactorsContainer_"] > [class^="burstEmojiSection_"] { /* "View Reactions" popover */
+            [class^="effectsWrapper_"] {
                 display: none; /* Hide reaction animation */
             }
             img.emoji[data-type="emoji"] {
