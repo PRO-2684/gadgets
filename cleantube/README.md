@@ -9,6 +9,7 @@ Clean up Youtube by hiding unnecessary elements and distractions. Fully customiz
     - Hide Ask Button
     - Hide Save Button
     - Hide Extra Content
+    - Hide Branding
 - Sidebar
     - Hide Section 1
     - Hide Section 2

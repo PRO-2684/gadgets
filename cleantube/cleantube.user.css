@@ -11,6 +11,7 @@
 @var checkbox   HideAskButton        "  Hide Ask Button"          0
 @var checkbox   HideSaveButton       "  Hide Save Button"         0
 @var checkbox   HideExtraContent     "  Hide Extra Content"       0
+@var checkbox   HideBranding         "  Hide Branding"            0
 @var select     __Section_Sidebar    "¶ Sidebar"                  ["Enabled", "Disabled"]
 @var checkbox   HideSideSection1     "  Hide Section 1"           0
 @var checkbox   HideSideSection2     "  Hide Section 2"           0
@@ -45,6 +46,11 @@
         }
         #description-inline-expander [slot="extra-content"] {
             if (HideExtraContent) {
+                display: none;
+            }
+        }
+        if (HideBranding) {
+            #ytd-player .iv-branding {
                 display: none;
             }
         }
