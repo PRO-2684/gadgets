@@ -1,0 +1,87 @@
+/* ==UserStyle==
+@name           CleanTube
+@namespace      github.com/PRO-2684
+@version        0.1.0
+@description    Clean up Youtube by hiding unnecessary elements and distractions. Fully customizable.
+@author         PRO-2684
+@license     	gpl-3.0
+@preprocessor   stylus
+@var select     __Section_Player     "¶ Player"                   ["Enabled", "Disabled"]
+@var checkbox   HideShareButton      "  Hide Share Button"        0
+@var checkbox   HideAskButton        "  Hide Ask Button"          0
+@var checkbox   HideSaveButton       "  Hide Save Button"         0
+@var checkbox   HideExtraContent     "  Hide Extra Content"       0
+@var select     __Section_Sidebar    "¶ Sidebar"                  ["Enabled", "Disabled"]
+@var checkbox   HideSideSection1     "  Hide Section 1"           0
+@var checkbox   HideSideSection2     "  Hide Section 2"           0
+@var checkbox   HideSideSection3     "  Hide Section 3"           0
+@var checkbox   HideSideSection4     "  Hide Section 4"           0
+@var checkbox   HideSideSection5     "  Hide Section 5"           0
+@var checkbox   HideSideSection6     "  Hide Section 6"           0
+==/UserStyle== */
+
+@-moz-document domain("www.youtube.com") {
+    if (__Section_Player == "Enabled") {
+        ytd-watch-metadata {
+            if (HideShareButton) {
+                #top-level-buttons-computed {
+                        > yt-button-view-model.ytd-menu-renderer { /* Share button */
+                            display: none;
+                        }
+                }
+            }
+            #flexible-item-buttons {
+                if (HideAskButton) {
+                    > yt-button-view-model.ytd-menu-renderer:nth-of-type(1) { /* Ask button */
+                        display: none;
+                    }
+                }
+                if (HideSaveButton) {
+                    > yt-button-view-model.ytd-menu-renderer:nth-of-type(2) { /* Save button */
+                        display: none;
+                    }
+                }
+            }
+        }
+        #description-inline-expander [slot="extra-content"] {
+            if (HideExtraContent) {
+                display: none;
+            }
+        }
+    }
+
+    if (__Section_Sidebar == "Enabled") {
+        #guide-renderer > #sections > ytd-guide-section-renderer{ /* Side panel sections */
+            &:nth-of-type(1) {
+                if (HideSideSection1) {
+                    display: none;
+                }
+            }
+            &:nth-of-type(2) {
+                if (HideSideSection2) {
+                    display: none;
+                }
+            }
+            &:nth-of-type(3) {
+                if (HideSideSection3) {
+                    display: none;
+                }
+            }
+            &:nth-of-type(4) {
+                if (HideSideSection4) {
+                    display: none;
+                }
+            }
+            &:nth-of-type(5) {
+                if (HideSideSection5) {
+                    display: none;
+                }
+            }
+            &:nth-of-type(6) {
+                if (HideSideSection6) {
+                    display: none;
+                }
+            }
+        }
+    }
+}
