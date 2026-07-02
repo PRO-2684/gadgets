@@ -75,8 +75,10 @@
 
 - [`cinnamon`](./cinnamon)
 - [`google_scholar_plus`](./google_scholar_plus)
+- [`memportreto`](./memportreto)
 - [`kill_adobe`](./kill_adobe)
 - [`stickers_wiki_downloader`](./stickers_wiki_downloader)
+- [`svgdarko`](./svgdarko)
 
 ## 📄 README 模板
 
