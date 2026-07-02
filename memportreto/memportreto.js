@@ -25,22 +25,42 @@
             name: "Language",
             title: "Language override, set to empty to disable",
             type: "str",
-            value: "en",
+            value: "en-US",
+        },
+        timezone: {
+            name: "Timezone",
+            title: "Timezone override, set to empty to disable",
+            type: "str",
+            value: "America/New_York",
         },
     };
     const config = new GM_config(configDesc);
 
-    const lang = config.get("language");
-    if (lang) {
-        Object.defineProperty(navigator, "language", {
+    /**
+     * Overrides a property of an object with a specified value.
+     * @param {Object} obj - The object whose property is to be overridden.
+     * @param {string} prop - The name of the property to override.
+     * @param {*} value - The value to return when the property is accessed.
+     */
+    function override(obj, prop, value) {
+        Object.defineProperty(obj, prop, {
             get: function () {
-                return lang;
+                return value;
             },
         });
-        Object.defineProperty(navigator, "languages", {
-            get: function () {
-                return [lang];
-            },
+    }
+
+    const lang = config.get("language");
+    if (lang) {
+        override(navigator, "language", lang);
+        override(navigator, "languages", [lang]);
+    }
+
+    const tz = config.get("timezone");
+    if (tz) {
+        const originalOptions = Intl.DateTimeFormat().resolvedOptions();
+        override(Intl.DateTimeFormat.prototype, "resolvedOptions", function () {
+            return { ...originalOptions, timeZone: tz };
         });
     }
 })();
