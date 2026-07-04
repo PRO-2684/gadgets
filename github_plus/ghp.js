@@ -21,9 +21,9 @@
 // @grant        GM_getResourceText
 // @grant        unsafeWindow
 // @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
-// @resource     catppuccin-associations https://raw.githubusercontent.com/PRO-2684/gadgets/refs/heads/main/github_plus/associations.json
-// @resource     catppuccin-icons https://raw.githubusercontent.com/PRO-2684/gadgets/refs/heads/main/github_plus/icons.json
-// @resource     catppuccin-palette https://raw.githubusercontent.com/PRO-2684/gadgets/refs/heads/main/github_plus/palette.json
+// @resource     catppuccin-associations https://raw.githubusercontent.com/PRO-2684/gadgets/refs/heads/main/github_plus/catppuccin/associations.json
+// @resource     catppuccin-icons https://raw.githubusercontent.com/PRO-2684/gadgets/refs/heads/main/github_plus/catppuccin/icons.json
+// @resource     catppuccin-palette https://raw.githubusercontent.com/PRO-2684/gadgets/refs/heads/main/github_plus/catppuccin/palette.json
 // ==/UserScript==
 
 (function () {

@@ -19,14 +19,17 @@ By investigating source code (thanks for the source mapping) and setting breakpo
 ## Catppuccin Icons
 
 - `associations.json` & `icons.json`: Extracted from [`catppuccin-web-file-explorer-icons-{version}-sources.zip`](https://github.com/catppuccin/web-file-explorer-icons/releases/).
-- `palette.json`: Extracted and [simplified](./simplify-palette.js) from `palette.json` in the [Catppuccin palette](https://github.com/catppuccin/palette).
+- `palette.json`: Extracted and [simplified](./catppuccin/simplify-palette.js) from `palette.json` in the [Catppuccin palette](https://github.com/catppuccin/palette).
 
 ## Research Notes
 
 ### Commit Signatures
 
 ```javascript
-$$("[class^='ListItem-module__listItem']").forEach(e => console.log(e.__reactProps$8h4h1f32xkn.children[3].props.children.props.deferredData.signatureInformation))
+$(
+    'react-app[app-name="commits"] [data-component="PageLayout.Content"] [class^="prc-Timeline-Timeline"] li[data-testid="commit-row-item"] [class^="MetadataContainer-module__container__"] [class*="CommitRow-module__ListItemMetadata_"]:has([class^="SignedCommitBadge-module__clickableLabel__"])',
+).__reactProps$5dxy0j2hqhc.children.props.deferredData.signatureInformation;
+// signedByGitHub, signerLogin, verifiedAt...
 // Note that the string after __reactProps$ may vary
 ```
 
@@ -58,9 +61,13 @@ $$("[class^='ListItem-module__listItem']").forEach(e => console.log(e.__reactPro
         - `attachProvider`
             ```javascript
             const provider = {}; // TODO
-            qb.addEventListener("query-builder:request-provider", e => {
-                qb.attachProvider(provider);
-            }, {once: true});
+            qb.addEventListener(
+                "query-builder:request-provider",
+                (e) => {
+                    qb.attachProvider(provider);
+                },
+                { once: true },
+            );
             await qb.requestProviders();
             ```
 
@@ -117,7 +124,8 @@ if (config.get("appearance.catppuccinIcons")) {
 ### Breadcrumbs
 
 ```javascript
-const crumbs = $("react-partial[partial-name='global-nav-bar']")?.embeddedDataJSON?.props?.contextRegion?.crumbs;
+const crumbs = $("react-partial[partial-name='global-nav-bar']")
+    ?.embeddedDataJSON?.props?.contextRegion?.crumbs;
 ```
 
 ### Global Variables
