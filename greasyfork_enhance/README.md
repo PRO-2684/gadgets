@@ -27,6 +27,8 @@
     - **Tab size**: Set Tab indentation size
     - **Animation**: Enable animation for toggling code blocks
     - **Metadata**: Parses certain important script metadata and displays it on the script code page
+        - `@grant`, `@connect`, `@require`, `@resource`
+        - `@icon`, `@icon64`
 - **🎨 Display**
     - **Hide buttons**: Hide floating buttons added by this script
     - **Sticky pagination**: Make pagination bar sticky

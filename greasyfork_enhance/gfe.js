@@ -2,7 +2,7 @@
 // @name         Greasy Fork Enhance
 // @name:zh-CN   Greasy Fork 增强
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  Enhance your experience at GreasyFork.
 // @description:zh-CN 增进 Greasyfork 浏览体验。
 // @match        https://greasyfork.org/*
@@ -1026,6 +1026,10 @@
         const id = idPrefix + "metadata";
         const current = document.getElementById(id);
         if (current && !enable) {
+            const scriptIcon = document.getElementById(
+                idPrefix + "script-icon",
+            );
+            scriptIcon?.remove();
             current.remove();
         } else if (!current && enable) {
             const scriptCodeBlock = document.querySelector(
@@ -1059,7 +1063,23 @@
                 npm: "NPM",
                 gh: "GitHub",
             };
-            // We're interested in `@grant`, `@connect`, `@require`, `@resource`
+            // Display `@icon`
+            const icons = metadata.icon64 || metadata.icon; // Prefer larger icon
+            const iconUrl = Array.isArray(icons) ? icons[0] : icons;
+            log("Icons:", icons, "Resolved Icon URL:", iconUrl);
+            if (iconUrl) {
+                const a = document.createElement("a");
+                const img = a.appendChild(document.createElement("img"));
+                a.href = iconUrl;
+                a.title = "Script icon";
+                a.id = idPrefix + "script-icon";
+                a.style.float = "right";
+                img.src = iconUrl;
+                img.alt = "Script icon";
+                img.style.width = "4em";
+                $("#script-links").after(a);
+            }
+            // Show `@grant`, `@connect`, `@require`, `@resource` as a list
             const interestedMetadata = {};
             const interestedKeys = {
                 grant: {
