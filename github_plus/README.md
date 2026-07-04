@@ -33,6 +33,7 @@
         - Shows a user hover card on hover if the uploader is a user.
         - Colored as green if the uploader is a GitHub App.
     - **📥 Release Downloads**: Show download counts of release assets.
+        - Note: GitHub is now displaying downloads for your repo, which may cause stats to be duplicated. When the feature expands to all repos, this config will be removed.
     - **📊 Release Histogram**: Show a histogram of download counts for each release asset.
         - Does not show up if there is only zero or one release asset.
         - Does not show up if none of the release assets have been downloaded.
