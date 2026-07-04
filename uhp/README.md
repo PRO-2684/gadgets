@@ -1,4 +1,4 @@
-![Greasy Fork](https://img.shields.io/greasyfork/dt/453530) [![](https://img.shields.io/badge/Crazy%20Thur.-V%20me%2050-red?logo=kfc)](https://greasyfork.org/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaWZvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10e04ed7ed56ae18d22cec6d675b34fd579cecab/wechat.jpeg?locale=zh-CN)
+![Greasy Fork](https://img.shields.io/greasyfork/dt/453530) [![Support on Afdian](https://img.shields.io/badge/Support-Afdian-%23946CE6?style=flat&logo=afdian)](https://afdian.com/a/PRO-2684)
 
 > 🎓 Since I have graduated, this script may no longer receive any updates. Thanks for using this script!
 
@@ -23,7 +23,7 @@
 
 5. [Education Administration System](https://jw.ustc.edu.cn)
     - Auto focus on or click login button.
-    - Shortcut support (``` ` ``` for going back to homepage)
+    - Shortcut support (`` ` `` for going back to homepage)
     - Hide your scores at "我的成绩" page using "尚未评教"
         - Double click a certain entry to hide/show it
         - Double click the table header to hide/show all entries

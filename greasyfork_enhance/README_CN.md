@@ -1,4 +1,4 @@
-[![Greasy Fork](https://img.shields.io/greasyfork/dt/467078?logo=greasyfork)](https://greasyfork.org/scripts/467078) [![](https://img.shields.io/badge/Crazy%20Thur.-V%20me%2050-red?logo=kfc)](https://greasyfork.org/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaWZvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10e04ed7ed56ae18d22cec6d675b34fd579cecab/wechat.jpeg?locale=zh-CN) [![GitHub Repo stars](https://img.shields.io/github/stars/PRO-2684/gadgets?style=flat&logo=github)](https://github.com/PRO-2684/gadgets/tree/main/greasyfork_enhance)
+[![Greasy Fork](https://img.shields.io/greasyfork/dt/467078?logo=greasyfork)](https://greasyfork.org/scripts/467078) [![Support on Afdian](https://img.shields.io/badge/Support-Afdian-%23946CE6?style=flat&logo=afdian)](https://afdian.com/a/PRO-2684) [![GitHub Repo stars](https://img.shields.io/github/stars/PRO-2684/gadgets?style=flat&logo=github)](https://github.com/PRO-2684/gadgets/tree/main/greasyfork_enhance)
 
 > 如果你在 Greasy Fork 上查看自述文件时遇到格式问题，请访问 [GitHub 上的自述文件](https://github.com/PRO-2684/gadgets/blob/main/greasyfork_enhance/README_CN.md) 以获得更好的体验。
 

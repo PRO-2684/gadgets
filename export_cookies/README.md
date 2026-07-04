@@ -1,4 +1,4 @@
-[![Greasy Fork](https://img.shields.io/greasyfork/dt/517291)](https://greasyfork.org/scripts/517291) [![](https://img.shields.io/badge/Crazy%20Thur.-V%20me%2050-red?logo=kfc)](https://greasyfork.org/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaWZvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10e04ed7ed56ae18d22cec6d675b34fd579cecab/wechat.jpeg?locale=zh-CN)
+[![Greasy Fork](https://img.shields.io/greasyfork/dt/517291)](https://greasyfork.org/scripts/517291) [![Support on Afdian](https://img.shields.io/badge/Support-Afdian-%23946CE6?style=flat&logo=afdian)](https://afdian.com/a/PRO-2684)
 
 ## 🪄 Features
 

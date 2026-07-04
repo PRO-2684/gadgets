@@ -1,4 +1,4 @@
-![Greasy Fork](https://img.shields.io/greasyfork/dt/453530) [![](https://img.shields.io/badge/Crazy%20Thur.-V%20me%2050-red?logo=kfc)](https://greasyfork.org/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaWZvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10e04ed7ed56ae18d22cec6d675b34fd579cecab/wechat.jpeg?locale=zh-CN)
+![Greasy Fork](https://img.shields.io/greasyfork/dt/453530) [![Support on Afdian](https://img.shields.io/badge/Support-Afdian-%23946CE6?style=flat&logo=afdian)](https://afdian.com/a/PRO-2684)
 
 > 🎓 由于本人已毕业，此脚本将不再及时更新。感谢您的使用！
 
@@ -23,7 +23,7 @@
 
 5. [综合教务系统](https://jw.ustc.edu.cn)
     - 自动聚焦或点击登录按钮
-    - 快捷键支持（``` ` ``` 回主页）
+    - 快捷键支持（`` ` `` 回主页）
     - “我的成绩”界面使用“尚未评教”遮挡成绩
         - 双击单个条目以遮挡/还原此项
         - 双击表头以遮挡/还原所有项目

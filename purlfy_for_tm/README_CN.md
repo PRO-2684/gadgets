@@ -2,7 +2,7 @@
 
 # pURLfy for Tampermonkey
 
-[![Greasy Fork](https://img.shields.io/greasyfork/dt/492480)](https://greasyfork.org/scripts/492480) [![](https://img.shields.io/badge/Crazy%20Thur.-V%20me%2050-red?logo=kfc)](https://greasyfork.org/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBaWZvIiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--10e04ed7ed56ae18d22cec6d675b34fd579cecab/wechat.jpeg?locale=zh-CN)
+[![Greasy Fork](https://img.shields.io/greasyfork/dt/492480)](https://greasyfork.org/scripts/492480) [![Support on Afdian](https://img.shields.io/badge/Support-Afdian-%23946CE6?style=flat&logo=afdian)](https://afdian.com/a/PRO-2684)
 
 终极 URL 净化器 - Tampermonkey 版本。此脚本使用了 [pURLfy core](https://github.com/PRO-2684/pURLfy) 作为核心，并将其净化 URL 的功能集成到了 Tampermonkey 脚本中。
 
@@ -51,12 +51,12 @@
 
 以下为两种模式对比表：
 
-| 功能         | 严格模式   | 无感模式 |
-|-------------|-----------|---------|
-| URL净化优先级 | 高        | 中      |
-| 隐私保护级别  | 严格       | 中等    |
-| 潜在故障风险  | 可能发生   | 极低概率 |
-| 目标用户群体  | 高级用户   | 普通用户 |
+| 功能          | 严格模式 | 无感模式 |
+| ------------- | -------- | -------- |
+| URL净化优先级 | 高       | 中       |
+| 隐私保护级别  | 严格     | 中等     |
+| 潜在故障风险  | 可能发生 | 极低概率 |
+| 目标用户群体  | 高级用户 | 普通用户 |
 
 技术细节：
 
