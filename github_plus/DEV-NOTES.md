@@ -29,8 +29,9 @@ By investigating source code (thanks for the source mapping) and setting breakpo
 $(
     'react-app[app-name="commits"] [data-component="PageLayout.Content"] [class^="prc-Timeline-Timeline"] li[data-testid="commit-row-item"] [class^="MetadataContainer-module__container__"] [class*="CommitRow-module__ListItemMetadata_"]:has([class^="SignedCommitBadge-module__clickableLabel__"])',
 ).__reactProps$5dxy0j2hqhc.children.props.deferredData.signatureInformation;
-// signedByGitHub, signerLogin, verifiedAt...
 // Note that the string after __reactProps$ may vary
+// Keys: signedByGitHub, signerLogin, verifiedAt...
+// Cannot determine the suitable event
 ```
 
 ### Global Search

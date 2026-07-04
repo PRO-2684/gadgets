@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.6.4
+// @version      0.6.5
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -633,12 +633,24 @@
             });
         });
     }
-    document.addEventListener("soft-nav:react-done", () => {
-        updateIcons();
-    });
-    document.addEventListener("turbo:load", () => {
-        updateIcons();
-    });
+    document.addEventListener(
+        "soft-nav:react-done",
+        () => {
+            updateIcons();
+        },
+        {
+            passive: true,
+        },
+    );
+    document.addEventListener(
+        "turbo:load",
+        () => {
+            updateIcons();
+        },
+        {
+            passive: true,
+        },
+    );
 
     // Release features
     /**
@@ -824,7 +836,7 @@
                 fragment.addEventListener(
                     "include-fragment-replace",
                     onFragmentReplace,
-                    { once: true },
+                    { once: true, passive: true },
                 );
                 if (config.get("release.hideArchives")) {
                     // Fix assets count
@@ -850,9 +862,12 @@
         // Only run on GitHub main site
         document.addEventListener("DOMContentLoaded", setupListeners, {
             once: true,
+            passive: true,
         });
         // Examine event listeners on `document`, and you can see the event listeners for the `turbo:*` events. (Remember to check `Framework Listeners`)
-        document.addEventListener("turbo:load", setupListeners);
+        document.addEventListener("turbo:load", setupListeners, {
+            passive: true,
+        });
         // Other possible approaches and reasons against them:
         // - Use `MutationObserver` - Not efficient
         // - Hook `CustomEvent` to make `include-fragment-replace` events bubble - Monkey-patching
@@ -953,8 +968,12 @@
         addInfoRow("id_badge", "Node ID", (info) => info.node_id);
     }
     if (config.get("additional.extendedUserInfo")) {
-        document.addEventListener("soft-nav:end", extendedUserInfo); // First load
-        document.addEventListener("turbo:load", extendedUserInfo); // Subsequent soft navigations that don't trigger `soft-nav:end`
+        document.addEventListener("soft-nav:end", extendedUserInfo, {
+            passive: true,
+        }); // First load
+        document.addEventListener("turbo:load", extendedUserInfo, {
+            passive: true,
+        }); // Subsequent soft navigations that don't trigger `soft-nav:end`
     }
     injectCSS(
         "extended-repo-info",
@@ -1063,9 +1082,15 @@
         addRows();
     }
     if (config.get("additional.extendedRepoInfo")) {
-        document.addEventListener("soft-nav:react-done", extendedRepoInfo);
-        document.addEventListener("turbo:load", () =>
-            requestAnimationFrame(extendedRepoInfo),
+        document.addEventListener("soft-nav:react-done", extendedRepoInfo, {
+            passive: true,
+        });
+        document.addEventListener(
+            "turbo:load",
+            () => requestAnimationFrame(extendedRepoInfo),
+            {
+                passive: true,
+            },
         ); // Fallback for pages that don't finish through React soft-nav
     }
 
@@ -1110,7 +1135,9 @@
         // document.addEventListener("DOMContentLoaded", preventTracking);
         // All we need to remove is in the `head` element, so we can run it immediately.
         preventTracking();
-        document.addEventListener("turbo:before-render", preventTracking);
+        document.addEventListener("turbo:before-render", preventTracking, {
+            passive: true,
+        });
         preventFetchPatching();
     }
 
@@ -1148,7 +1175,9 @@
             "toggle",
         ];
         events.forEach((event) => {
-            document.addEventListener(event, (e) => log(`Event: ${event}`, e));
+            document.addEventListener(event, (e) => log(`Event: ${event}`, e), {
+                passive: true,
+            });
         });
     }
 
