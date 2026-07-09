@@ -27,6 +27,8 @@
     - **Tab size**: Tab 缩进大小
     - **Animation**: 启用动画
     - **Metadata**: 解析部分重要的脚本元数据并在脚本代码页显示
+        - `@grant`, `@connect`, `@require`, `@resource`
+        - `@icon`, `@icon64`
 - **🎨 Display**
     - **Hide buttons**: 是否隐藏悬浮按钮
     - **Sticky pagination**: 使分页栏浮动
