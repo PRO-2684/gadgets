@@ -16,6 +16,7 @@
 | 用户脚本                                         | GreasyFork                                             | 描述                                                                                                   |
 | ------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
 | [`52_enhance`](./52_enhance)                     | [#469051](https://greasyfork.org/scripts/469051)       | 52 破解论坛增强脚本。                                                                                  |
+| [`auto_grading`](./auto_grading) \*              | [#457282](https://greasyfork.org/scripts/457282)       | 自动评教 `tqm.ustc.edu.cn`。                                                                           |
 | [`better-recaptcha`](./better-recaptcha)         | N/A                                                    | 一些对 reCAPTCHA 的 QoL 提升。                                                                         |
 | [`baidu_fanyi_plus`](./baidu_fanyi_plus)         | [#539757](https://greasyfork.org/scripts/539757)       | 一系列针对百度翻译的功能增强。                                                                         |
 | [`CORS_helper`](./CORS_helper)                   | [#508769](https://greasyfork.org/scripts/508769)       | 一个简单的、可自定义的脚本，帮助你绕过 CORS 限制。                                                     |
@@ -34,10 +35,10 @@
 | [`purlfy_for_tm`](./purlfy_for_tm)               | [#492480](https://greasyfork.org/scripts/492480)       | 终极 URL 净化器 - Tampermonkey 版本。                                                                  |
 | [`rettiwt-key-export`](./rettiwt-key-export)     | N/A                                                    | 提取 API_KEY，用于 [Rettiwt-API](https://github.com/Rishikant181/Rettiwt-API).                         |
 | [`telegraphio`](./telegraphio)                   | [#535483](https://greasyfork.org/scripts/535483)       | 对 [Telegraph](https://telegra.ph/) 的各种增强。                                                       |
-| [`wechat-plus`](./wechat-plus)                   | [#535482](https://greasyfork.org/zh-CN/scripts/535482) | 针对微信公众号文章的增强脚本。                                                                         |
-| [`auto_grading`](./auto_grading) \*              | [#457282](https://greasyfork.org/scripts/457282)       | 自动评教 `tqm.ustc.edu.cn`。                                                                           |
 | [`ucas-helper`](./ucas-helper/)                  | [#552801](https://greasyfork.org/scripts/552801)       | UCAS 在线系统的辅助脚本。                                                                              |
 | [`uhp`](./uhp) \*                                | [#453530](https://greasyfork.org/scripts/453530)       | USTC Helper - 为 USTC 学生定制的各类实用功能：验证码识别，自动登录，睿客网性能优化以及更多。           |
+| [`wasm-test`](./wasm-test)                       | N/A                                                    | 在 Tampermonkey 中使用 WASM 的测试。                                                                   |
+| [`wechat-plus`](./wechat-plus)                   | [#535482](https://greasyfork.org/zh-CN/scripts/535482) | 针对微信公众号文章的增强脚本。                                                                         |
 
 ### 🎨 用户样式
 

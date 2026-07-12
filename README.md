@@ -16,6 +16,7 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 | UserScript                                       | GreasyFork                                       | Description                                                                                                                                |
 | ------------------------------------------------ | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | [`52_enhance`](./52_enhance)                     | [#469051](https://greasyfork.org/scripts/469051) | 52 forum enhancement script.                                                                                                               |
+| [`auto_grading`](./auto_grading) \*              | [#457282](https://greasyfork.org/scripts/457282) | Auto grading for `tqm.ustc.edu.cn`.                                                                                                        |
 | [`baidu_fanyi_plus`](./baidu_fanyi_plus)         | [#539757](https://greasyfork.org/scripts/539757) | Enhance Baidu Fanyi with additional features.                                                                                              |
 | [`better-recaptcha`](./better-recaptcha)         | N/A                                              | Various QoL improvements to reCAPTCHA.                                                                                                     |
 | [`CORS_helper`](./CORS_helper)                   | [#508769](https://greasyfork.org/scripts/508769) | A simple, customizable script that helps you to bypass CORS restrictions.                                                                  |
@@ -34,10 +35,10 @@ Some miscellaneous code snippets, including userscripts and userstyles etc. See 
 | [`purlfy_for_tm`](./purlfy_for_tm)               | [#492480](https://greasyfork.org/scripts/492480) | The ultimate URL purifier - Tampermonkey version.                                                                                          |
 | [`rettiwt-key-export`](./rettiwt-key-export)     | N/A                                              | Export API_KEY for use with [Rettiwt-API](https://github.com/Rishikant181/Rettiwt-API).                                                    |
 | [`telegraphio`](./telegraphio)                   | [#535483](https://greasyfork.org/scripts/535483) | Various enhancements for [Telegraph](https://telegra.ph/).                                                                                 |
-| [`wechat-plus`](./wechat-plus)                   | [#535482](https://greasyfork.org/scripts/535482) | Various enhancements for posts of WeChat official accounts.                                                                                |
-| [`auto_grading`](./auto_grading) \*              | [#457282](https://greasyfork.org/scripts/457282) | Auto grading for `tqm.ustc.edu.cn`.                                                                                                        |
 | [`ucas-helper`](./ucas-helper/)                  | [#552801](https://greasyfork.org/scripts/552801) | A helper script for UCAS online systems.                                                                                                   |
 | [`uhp`](./uhp) \*                                | [#453530](https://greasyfork.org/scripts/453530) | USTC Helper - Various useful functions for USTC students: verification code recognition, auto login, rec performance improvement and more. |
+| [`wasm-test`](./wasm-test)                       | N/A                                              | A simple test of using WASM in Tampermonkey.                                                                                               |
+| [`wechat-plus`](./wechat-plus)                   | [#535482](https://greasyfork.org/scripts/535482) | Various enhancements for posts of WeChat official accounts.                                                                                |
 
 ### 🎨 UserStyles
 
