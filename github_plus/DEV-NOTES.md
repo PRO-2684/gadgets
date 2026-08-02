@@ -134,3 +134,18 @@ const crumbs = $("react-partial[partial-name='global-nav-bar']")
 ```javascript
 window.a; // class ClientDefinedProviderElement, used in command palette
 ```
+
+### Pancake Icon
+
+```css
+[data-testid="top-nav-left"]
+    button[data-component="IconButton"]
+    > .GlobalNavMenuToggle-module__pancakeIcon__dE2fg {
+    width: var(--base-size-16);
+    height: var(--base-size-16);
+    font-size: var(--text-title-size-medium);
+    justify-content: center;
+    align-items: center;
+    display: inline-flex;
+}
+```

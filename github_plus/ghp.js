@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.6.5
+// @version      0.6.6
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -177,6 +177,12 @@
                     title: "Apply indent and borders around <details> elements to make them more visible",
                     type: "bool",
                     value: false,
+                },
+                customMenuIcon: {
+                    name: "🥞 Custom Menu Icon",
+                    title: "Use a custom icon for the menu, leave empty to use the default",
+                    type: "str",
+                    value: "",
                 },
             },
         },
@@ -415,6 +421,16 @@
                 }
             }
         `,
+        "appearance.customMenuIcon": `
+            [data-testid="top-nav-left"] button[data-component="IconButton"] span.ghp-custom-menu-icon {
+                width: var(--base-size-16);
+                height: var(--base-size-16);
+                font-size: var(--text-title-size-medium);
+                justify-content: center;
+                align-items: center;
+                display: inline-flex;
+            }
+        `,
     };
     for (const prop in dynamicStyles) {
         cssHelper(prop, config.get(prop));
@@ -650,6 +666,42 @@
         {
             passive: true,
         },
+    );
+    // Custom Menu Icon
+    document.addEventListener(
+        "DOMContentLoaded",
+        () => {
+            const partial = $('react-partial[partial-name="global-nav-bar"]');
+            const obs = new MutationObserver(init);
+            obs.observe(partial, { attributeFilter: ["class"] });
+            function init() {
+                obs.disconnect();
+                const menuBtn = $(
+                    '[data-testid="top-nav-left"] button[data-component="IconButton"]',
+                );
+                const originalIcon = menuBtn.children[0];
+                log("Replacing menu icon:", originalIcon);
+                const customIcon = document.createElement("span");
+                customIcon.classList.add("ghp-custom-menu-icon");
+                function customMenuIcon(icon) {
+                    if (icon) {
+                        customIcon.textContent = icon;
+                        originalIcon.remove();
+                        menuBtn.appendChild(customIcon);
+                    } else {
+                        customIcon.remove();
+                        menuBtn.appendChild(originalIcon);
+                    }
+                }
+                customMenuIcon(config.get("appearance.customMenuIcon"));
+                config.addEventListener("set", (e) => {
+                    if (e.detail.prop === "appearance.customMenuIcon") {
+                        customMenuIcon(e.detail.after);
+                    }
+                });
+            }
+        },
+        { once: true, passive: true },
     );
 
     // Release features

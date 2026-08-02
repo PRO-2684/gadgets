@@ -4,7 +4,7 @@
 
 ## 🪄 特点
 
-- 不使用 `MutationObserver` 或 `setInterval`，纯粹基于事件驱动，比类似功能的脚本更高效
+- 不使用递归 `MutationObserver` 或 `setInterval`，纯粹基于事件驱动，比类似功能的脚本更高效
 - 没有危险的动态修补，确保兼容性
 - 实验性支持各种 GitHub 镜像站
     - 需自行将镜像站添加到**此脚本的 `用户匹配` 列表**
@@ -30,6 +30,8 @@
     - **🐱 Catppuccin Icons**: 使用 [catppuccin icons](https://github.com/catppuccin/web-file-explorer-icons/) 为文件夹和文件提供图标 (高度实验性，需要刷新以应用更改)
         - 在侧边栏展开文件夹时不会更新图标。
     - **👀 Visible Details**: 对 `<details>` 元素应用缩进和边框，使其更明显
+    - **🥞 Custom Menu Icon**: 自定义菜单的图标，留空以使用默认图标
+        - e.g. `🥞`, `🍔`
 - **📦 Release Features**
     - **⬆️ Release Uploader**: 显示 Release 中文件的上传者。
         - 如果上传者是用户，则悬停时显示用户悬停卡片。

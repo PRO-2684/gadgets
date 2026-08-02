@@ -4,7 +4,7 @@
 
 ## 🪄 Features
 
-- No use of `MutationObserver` or `setInterval`, purely event-driven, making it more efficient than scripts of similar functionality
+- No use of recursive `MutationObserver` or `setInterval`, purely event-driven, making it more efficient than scripts of similar functionality
 - No dangerous monkey patching, ensuring compatibility
 - Experimental support for all GitHub mirrors
     - You need to add the mirror site to **this script's `User matches` list**
@@ -28,6 +28,8 @@
     - **🐱 Catppuccin Icons**: Use [catppuccin icons](https://github.com/catppuccin/web-file-explorer-icons/) for folders and files (HIGHLY EXPERIMENTAL, need refresh to apply changes)
         - Does not update icons when expanding folders at the sidebar.
     - **👀 Visible Details**: Apply indent and borders around `<details>` elements to make them more visible
+    - **🥞 Custom Menu Icon**: Use a custom icon for the menu, leave empty to use the default
+        - e.g. `🥞`, `🍔`
 - **📦 Release Features**
     - **⬆️ Release Uploader**: Show uploader of release assets.
         - Shows a user hover card on hover if the uploader is a user.
