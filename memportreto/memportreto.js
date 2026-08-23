@@ -50,12 +50,14 @@
         });
     }
 
+    // Override navigator.language and navigator.languages
     const lang = config.get("language");
     if (lang) {
         override(navigator, "language", lang);
         override(navigator, "languages", [lang]);
     }
 
+    // Override Intl.DateTimeFormat().resolvedOptions().timeZone
     const tz = config.get("timezone");
     if (tz) {
         const originalOptions = Intl.DateTimeFormat().resolvedOptions();
