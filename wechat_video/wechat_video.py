@@ -1,6 +1,7 @@
 from argparse import ArgumentParser
 from math import log10
 from os import chdir, path
+from os.path import basename as safe_basename
 from re import DOTALL, search, sub
 from shutil import move
 from time import sleep
@@ -82,8 +83,13 @@ def best_quality(data: list) -> dict:
     return item
 
 
+def _safe_filename(filename: str) -> str:
+    """Return a sanitized filename, preventing path traversal."""
+    return safe_basename(filename)
+
 def download_video(video_url: str, filename: str):
     """Download the video given the video URL."""
+    filename = _safe_filename(filename)
     print(f"  🔍 Downloading {filename}...", end="\r")
     tmp_file_path = filename + ".tmp"
     if not path.exists(filename) or path.exists(tmp_file_path):
@@ -143,6 +149,7 @@ def download_video(video_url: str, filename: str):
 def download_single(article_url: str, filename: str):
     """Download a single video from the given `article_url`."""
     # `article_url` be like: https://mp.weixin.qq.com/s?__biz=Mzg5ODU0MjM2NA%3D%3D&mid=2247483677&idx=1&sn=e299cc8de66a97041cb0832c282f94d4#rd
+    filename = path.basename(filename)  # Prevent path traversal
     assert article_url.startswith("https://mp.weixin.qq.com/s"), "Invalid article URL"
     print(f"Extracting video from {article_url}...")
     r = x.get(article_url)
@@ -209,6 +216,7 @@ if __name__ == "__main__":
     parser.add_argument("--output", "-o", help="Output file name (without extension; in the case of a single post)", default="video")
     args = parser.parse_args()
     url = args.url
+    args.output = path.basename(args.output)  # Prevent path traversal
     chdir(args.output_dir)
     if url.startswith("https://mp.weixin.qq.com/mp/appmsgalbum?"):
         download_album(url)
