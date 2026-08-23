@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.6.6
+// @version      0.6.7
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -35,6 +35,23 @@
      * @type {string}
      */
     const topDomain = location.hostname.split(".").slice(-2).join(".");
+    /**
+     * A promise that resolves when the document is ready.
+     * @type {Promise<void>}
+     */
+    const documentReady = new Promise((resolve) => {
+        if (document.readyState === "loading") {
+            document.addEventListener(
+                "DOMContentLoaded",
+                () => {
+                    resolve();
+                },
+                { once: true, passive: true },
+            );
+        } else {
+            resolve();
+        }
+    });
     /**
      * The official domain of GitHub.
      * @type {string}
@@ -432,22 +449,6 @@
             }
         `,
     };
-    for (const prop in dynamicStyles) {
-        cssHelper(prop, config.get(prop));
-    }
-
-    // Code features
-    /**
-     * Set the tab size for the code blocks.
-     * @param {number} size The tab size to set.
-     */
-    function tabSize(size) {
-        const id = idPrefix + "tabSize";
-        const style = document.getElementById(id) ?? injectCSS(id, "");
-        style.textContent = `pre, code { tab-size: ${size}; }`;
-    }
-
-    // Appearance features
     /**
      * Dynamic styles for the enum settings.
      * @type {Object<string, Array<string>>}
@@ -488,9 +489,57 @@
             document.getElementById(idPrefix + id) ?? injectCSS(id, "");
         style.textContent = enumStyles[id][mode];
     }
-    for (const prop in enumStyles) {
-        enumStyleHelper(prop, config.get(prop));
+    /**
+     * Fixed styles.
+     * @type {Object<string, string>}
+     */
+    const fixedStyles = {
+        "catppuccin-icons-hide":
+            ".ghp-catppuccin-icon + svg.octicon { display: none; }",
+        "extended-repo-info":
+            ".ghp-extended-repo-info { color: var(--fgColor-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }",
+        release: `
+            @media (min-width: 1012px) { /* Making more room for the additional info */
+                .ghp-release-asset .col-lg-6 {
+                    width: 40%; /* Originally ~50% */
+                }
+            }
+            .nowrap { /* Preventing text wrapping */
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .ghp-release-asset { /* Styling the histogram */
+                background: linear-gradient(to right, var(--bgColor-accent-muted) var(--percent, 0%), transparent 0);
+            }
+        `,
+    };
+    documentReady.then(() => {
+        for (const prop in dynamicStyles) {
+            cssHelper(prop, config.get(prop));
+        }
+        for (const prop in enumStyles) {
+            enumStyleHelper(prop, config.get(prop));
+        }
+        for (const prop in fixedStyles) {
+            injectCSS(prop, fixedStyles[prop]);
+        }
+    });
+
+    // Code features
+    /**
+     * Set the tab size for the code blocks.
+     * @param {number} size The tab size to set.
+     */
+    function tabSize(size) {
+        const id = "tabSize";
+        documentReady.then(() => {
+            const style =
+                document.getElementById(idPrefix + id) ?? injectCSS(id, "");
+            style.textContent = `pre, code { tab-size: ${size}; }`;
+        });
     }
+
     // Catppuccin icons
     const flavors = ["default", "latte", "frappe", "macchiato", "mocha"];
     const flavor = flavors[config.get("appearance.catppuccinIcons")];
@@ -597,10 +646,6 @@
             filename: ".PRIVATE_TreeView-item-content-text",
         },
     ];
-    injectCSS(
-        "catppuccin-icons-hide",
-        ".ghp-catppuccin-icon + svg.octicon { display: none; }",
-    );
     function updateIcons(body = document.body) {
         if (config.get("appearance.catppuccinIcons") === 0) return;
         selectors.forEach(({ rows, icon, filename }) => {
@@ -668,41 +713,37 @@
         },
     );
     // Custom Menu Icon
-    document.addEventListener(
-        "DOMContentLoaded",
-        () => {
-            const partial = $('react-partial[partial-name="global-nav-bar"]');
-            const obs = new MutationObserver(init);
-            obs.observe(partial, { attributeFilter: ["class"] });
-            function init() {
-                obs.disconnect();
-                const menuBtn = $(
-                    '[data-testid="top-nav-left"] button[data-component="IconButton"]',
-                );
-                const originalIcon = menuBtn.children[0];
-                log("Replacing menu icon:", originalIcon);
-                const customIcon = document.createElement("span");
-                customIcon.classList.add("ghp-custom-menu-icon");
-                function customMenuIcon(icon) {
-                    if (icon) {
-                        customIcon.textContent = icon;
-                        originalIcon.remove();
-                        menuBtn.appendChild(customIcon);
-                    } else {
-                        customIcon.remove();
-                        menuBtn.appendChild(originalIcon);
-                    }
+    documentReady.then(() => {
+        const partial = $('react-partial[partial-name="global-nav-bar"]');
+        const obs = new MutationObserver(init);
+        obs.observe(partial, { attributeFilter: ["class"] });
+        function init() {
+            obs.disconnect();
+            const menuBtn = $(
+                '[data-testid="top-nav-left"] button[data-component="IconButton"]',
+            );
+            const originalIcon = menuBtn.children[0];
+            log("Replacing menu icon:", originalIcon);
+            const customIcon = document.createElement("span");
+            customIcon.classList.add("ghp-custom-menu-icon");
+            function customMenuIcon(icon) {
+                if (icon) {
+                    customIcon.textContent = icon;
+                    originalIcon.remove();
+                    menuBtn.appendChild(customIcon);
+                } else {
+                    customIcon.remove();
+                    menuBtn.appendChild(originalIcon);
                 }
-                customMenuIcon(config.get("appearance.customMenuIcon"));
-                config.addEventListener("set", (e) => {
-                    if (e.detail.prop === "appearance.customMenuIcon") {
-                        customMenuIcon(e.detail.after);
-                    }
-                });
             }
-        },
-        { once: true, passive: true },
-    );
+            customMenuIcon(config.get("appearance.customMenuIcon"));
+            config.addEventListener("set", (e) => {
+                if (e.detail.prop === "appearance.customMenuIcon") {
+                    customMenuIcon(e.detail.after);
+                }
+            });
+        }
+    });
 
     // Release features
     /**
@@ -912,10 +953,7 @@
     }
     if (location.hostname === topDomain) {
         // Only run on GitHub main site
-        document.addEventListener("DOMContentLoaded", setupListeners, {
-            once: true,
-            passive: true,
-        });
+        documentReady.then(setupListeners);
         // Examine event listeners on `document`, and you can see the event listeners for the `turbo:*` events. (Remember to check `Framework Listeners`)
         document.addEventListener("turbo:load", setupListeners, {
             passive: true,
@@ -927,24 +965,6 @@
         //   - Monkey-patching
         //   - If using regex to modify the response, it would be tedious to maintain
         //   - If using `DOMParser`, the same HTML would be parsed twice
-        injectCSS(
-            "release",
-            `
-            @media (min-width: 1012px) { /* Making more room for the additional info */
-                .ghp-release-asset .col-lg-6 {
-                    width: 40%; /* Originally ~50% */
-                }
-            }
-            .nowrap { /* Preventing text wrapping */
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-            .ghp-release-asset { /* Styling the histogram */
-                background: linear-gradient(to right, var(--bgColor-accent-muted) var(--percent, 0%), transparent 0);
-            }
-        `,
-        );
     }
 
     // Extended user & repo info
@@ -1027,10 +1047,6 @@
             passive: true,
         }); // Subsequent soft navigations that don't trigger `soft-nav:end`
     }
-    injectCSS(
-        "extended-repo-info",
-        ".ghp-extended-repo-info { color: var(--fgColor-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }",
-    );
     function extendedRepoInfo() {
         log("Fetching extended repository info");
         const repoSidebar = $(
@@ -1184,7 +1200,6 @@
         log("Unhooked window.fetch");
     }
     if (config.get("additional.trackingPrevention")) {
-        // document.addEventListener("DOMContentLoaded", preventTracking);
         // All we need to remove is in the `head` element, so we can run it immediately.
         preventTracking();
         document.addEventListener("turbo:before-render", preventTracking, {
