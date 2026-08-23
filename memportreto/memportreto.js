@@ -33,6 +33,12 @@
             type: "str",
             value: "America/New_York",
         },
+        hideFonts: {
+            name: "Hide Fonts",
+            title: "Hide language-specific fonts from the canvas context",
+            type: "bool",
+            value: true,
+        },
     };
     const config = new GM_config(configDesc);
 
@@ -63,6 +69,62 @@
         const originalOptions = Intl.DateTimeFormat().resolvedOptions();
         override(Intl.DateTimeFormat.prototype, "resolvedOptions", function () {
             return { ...originalOptions, timeZone: tz };
+        });
+    }
+
+    // Hide fonts from the canvas context
+    if (config.get("hideFonts")) {
+        const hiddenFonts = [
+            "DengXian",
+            "FangSong",
+            "方正小标宋简体",
+            "小标宋体",
+            "仿宋_GB2312",
+            "HarmonyOS Sans",
+            "Alibaba PuHuiTi",
+            "Smiley Sans",
+
+            // Optional broader coverage:
+            "KaiTi",
+            "SimHei",
+            "SimSun",
+            "NSimSun",
+            "Microsoft YaHei",
+            "Microsoft YaHei UI",
+            "Microsoft JhengHei",
+            "Microsoft JhengHei UI",
+            "MingLiU",
+            "PMingLiU",
+            "DFKai-SB",
+        ];
+
+        const proto = CanvasRenderingContext2D.prototype;
+        const descriptor = Object.getOwnPropertyDescriptor(proto, "font");
+
+        Object.defineProperty(proto, "font", {
+            ...descriptor,
+
+            set(value) {
+                let font = String(value);
+
+                for (const name of hiddenFonts) {
+                    const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+                    // Quoted family
+                    font = font.replace(
+                        new RegExp(`(["'])${escaped}\\1\\s*,?\\s*`, "gi"),
+                        "",
+                    );
+
+                    // Unquoted family
+                    font = font.replace(
+                        new RegExp(`\\b${escaped}\\b\\s*,?\\s*`, "gi"),
+                        "",
+                    );
+                }
+
+                descriptor.set.call(this, font);
+            },
         });
     }
 })();

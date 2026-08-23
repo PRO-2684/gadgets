@@ -11,7 +11,7 @@ Managing user profiles for different sites.
 
 ## 📖 Notes
 
-- Sometimes the patches are applied AFTER the site's scripts. Will have to investigate further.
+For Tampermonkey, you should go to "Content Script API" and choose "UserScripts API Dynamic" for this script to work reliably.
 
 ## 🎉 Credits
 
