@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.6.7
+// @version      0.6.8
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -1269,16 +1269,18 @@
             );
         }
     });
-    config.addEventListener("set", (e) => {
-        if (e.detail.prop in dynamicStyles) {
-            cssHelper(e.detail.prop, e.detail.after);
-        }
-        if (e.detail.prop in enumStyles) {
-            enumStyleHelper(e.detail.prop, e.detail.after);
-        }
-        if (e.detail.prop in callbacks) {
-            callbacks[e.detail.prop](e.detail.after);
-        }
+    documentReady.then(() => {
+        config.addEventListener("set", (e) => {
+            if (e.detail.prop in dynamicStyles) {
+                cssHelper(e.detail.prop, e.detail.after);
+            }
+            if (e.detail.prop in enumStyles) {
+                enumStyleHelper(e.detail.prop, e.detail.after);
+            }
+            if (e.detail.prop in callbacks) {
+                callbacks[e.detail.prop](e.detail.after);
+            }
+        });
     });
 
     log(`${name} v${version} has been loaded 🎉`);
