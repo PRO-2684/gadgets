@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         52 Enhance
 // @namespace    http://tampermonkey.net/
-// @version      0.8.3
+// @version      0.8.4
 // @description  52 破解论坛增强脚本
 // @author       PRO
 // @run-at       document-start
@@ -188,6 +188,23 @@
     };
     const config = new GM_config(configDesc);
     const configProxy = config.proxy;
+    /**
+     * A promise that resolves when the document is ready.
+     * @type {Promise<void>}
+     */
+    const documentReady = new Promise((resolve) => {
+        if (document.readyState === "loading") {
+            document.addEventListener(
+                "DOMContentLoaded",
+                () => {
+                    resolve();
+                },
+                { once: true, passive: true },
+            );
+        } else {
+            resolve();
+        }
+    });
     // Styles
     const styleData = {
         forumInactive:
@@ -335,7 +352,7 @@
             regexFilterOne(regex, thread);
         });
     }
-    document.addEventListener("DOMContentLoaded", () => {
+    documentReady.then(() => {
         const threadsContainer = $("#threadlisttableid");
         if (threadsContainer) {
             const observer = new MutationObserver((mutations) => {
@@ -360,17 +377,21 @@
         }
     });
     // Hide
+    documentReady.then(() => {
+        injectCSS(
+            "hide.oneClick",
+            `div.hidden, tr.hidden { display: none; }
+            td.hidden { cursor: help; background: repeating-linear-gradient(135deg, transparent 0, transparent 6px, #e7e7e7 6px, #e7e7e7 12px, transparent 12px) no-repeat 0 0, #eee; }
+            td.hidden > div { pointer-events: none; }
+            td.hidden > div > div > em::after { content: "此回复已被隐藏，点击以重新显示"; }
+            .plhin:hover td.hidden .hin { opacity: 0.2; }
+            .toggle-reply-header { opacity: 0.6; }
+            .toggle-reply-footer { display: block; text-align: center; position: relative; top: 0.8em; }
+            @media (max-width: 650px) { td.hidden > div > div > em::after { content: ""; } }`,
+        );
+    });
     function hideOneClick() {
         // Basic CSS
-        const css = `div.hidden, tr.hidden { display: none; }
-        td.hidden { cursor: help; background: repeating-linear-gradient(135deg, transparent 0, transparent 6px, #e7e7e7 6px, #e7e7e7 12px, transparent 12px) no-repeat 0 0, #eee; }
-        td.hidden > div { pointer-events: none; }
-        td.hidden > div > div > em::after { content: "此回复已被隐藏，点击以重新显示"; }
-        .plhin:hover td.hidden .hin { opacity: 0.2; }
-        .toggle-reply-header { opacity: 0.6; }
-        .toggle-reply-footer { display: block; text-align: center; position: relative; top: 0.8em; }
-        @media (max-width: 650px) { td.hidden > div > div > em::after { content: ""; } }`;
-        injectCSS("hide.oneClick", css);
         // Hide code
         function toggleCode() {
             const code = this.parentNode.parentNode.lastChild;
@@ -653,11 +674,13 @@
     }
 
     // CSS injection
-    for (const prop in dynamicStyles) {
-        cssHelper(prop, configProxy[prop]);
-    }
+    documentReady.then(() => {
+        for (const prop in dynamicStyles) {
+            cssHelper(prop, configProxy[prop]);
+        }
+    });
     // Run on DOMContentLoaded
-    document.addEventListener("DOMContentLoaded", () => {
+    documentReady.then(() => {
         configProxy["hide.oneClick"] && hideOneClick();
         configProxy["display.nativeTip"] && nativeTip();
         configProxy["utility.getToTop"] && getToTop();
@@ -675,13 +698,15 @@
         "utility.shortcut": shortcut,
         "utility.infiniteScroll": infiniteScroll,
     };
-    config.addEventListener("set", (e) => {
-        const callback = callbacks[e.detail.prop];
-        if (callback && e.detail.before !== e.detail.after) {
-            callback(e.detail.after);
-        }
-        if (e.detail.prop in dynamicStyles) {
-            cssHelper(e.detail.prop, e.detail.after);
-        }
+    documentReady.then(() => {
+        config.addEventListener("set", (e) => {
+            const callback = callbacks[e.detail.prop];
+            if (callback && e.detail.before !== e.detail.after) {
+                callback(e.detail.after);
+            }
+            if (e.detail.prop in dynamicStyles) {
+                cssHelper(e.detail.prop, e.detail.after);
+            }
+        });
     });
 })();
