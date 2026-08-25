@@ -1049,9 +1049,7 @@
     }
     function extendedRepoInfo() {
         log("Fetching extended repository info");
-        const repoSidebar = $(
-            "[data-partial-name='codeViewRepoRoute.Sidebar']",
-        );
+        const repoSidebar = $("[data-component='SplitPageLayout.Pane']");
         const properties = repoSidebar?.querySelector(".hide-sm.hide-md");
         const repoLink = $("#code-view-repo-link");
         if (!properties || !repoLink) return;
