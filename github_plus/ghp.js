@@ -28,6 +28,236 @@
 
 (function () {
     "use strict";
+    function createStyleSheetModule({
+        document,
+        ready,
+        settings,
+        idPrefix,
+        catppuccinPalette,
+    }) {
+        const conditionalStyles = {
+            "code.cursorBlink":
+                "[data-testid='navigation-cursor'] { animation: blink 1s step-end infinite; }",
+            "code.cursorAnimation":
+                "[data-testid='navigation-cursor'] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }",
+            "code.fullWidth":
+                "#copilot-button-positioner { padding-right: 0; }",
+            "code.hideReadonlyTip":
+                "[class^='CodeBlob-module__cursorContainer__'] .position-absolute.color-bg-subtle { display: none; }",
+            "appearance.stickyAvatar": `
+                .pull-discussion-timeline .TimelineItem-avatar {
+                    position: relative;
+                    margin-left: -40px;
+                    left: -32px;
+                    & > a[data-hovercard-type='user'], & > a[href^="/apps/"], & > img.avatar {
+                        position: sticky;
+                        top: 5em;
+                    }
+                }
+                #issue-timeline [class*='Avatar-module__avatarOuter__'] {
+                    position: sticky;
+                    top: 3em;
+                }
+                [data-testid='issue-viewer-issue-container'] [class*='Avatar-module__avatarOuter__'] {
+                    position: sticky;
+                    top: 4em;
+                }
+            `,
+            "appearance.stickyMore": `
+                .react-issue-body [class^='IssueBodyHeader-module__IssueBodyHeaderContainer__'],
+                .react-issue-comment [data-testid="comment-header"]
+                { position: sticky; top: 4em; z-index: 1; backdrop-filter: brightness(0.1); }
+                .timeline-comment-group .timeline-comment-header
+                { position: sticky; top: 5em; z-index: 1; backdrop-filter: brightness(0.1); }`,
+            "appearance.hideHeaderUnderline":
+                ".markdown-heading > .heading-element { border-bottom: none; }",
+            "appearance.visibleDetails": `
+                .markdown-body details {
+                    padding: 0 1em;
+                    border: 1px solid var(--borderColor-default,var(--color-border-default));
+                    border-radius: 0.5em;
+
+                    > summary {
+                        padding: 0.5em 1em;
+                        margin: 0 -1em;
+                    }
+
+                    &:open > summary {
+                        margin: 0 -1em 1em -1em;
+                        border-bottom: 1px dashed var(--borderColor-default,var(--color-border-default));
+                    }
+                }
+            `,
+            "appearance.customMenuIcon": `
+                [data-testid="top-nav-left"] button[data-component="IconButton"] span.ghp-custom-menu-icon {
+                    width: var(--base-size-16);
+                    height: var(--base-size-16);
+                    font-size: var(--text-title-size-medium);
+                    justify-content: center;
+                    align-items: center;
+                    display: inline-flex;
+                }
+            `,
+        };
+        const enumStyles = {
+            "appearance.dashboard": [
+                "",
+                "/* Hide Copilot */ #dashboard > .news > .copilotPreview__container { display: none; }",
+                "/* Hide Feed */ #dashboard > .news > feed-container { display: none; }",
+                `/* Mobile-Like */
+                .application-main > div > aside[aria-label="Account context"] {
+                    display: block !important;
+                }
+                #dashboard > .news {
+                    > .copilotPreview__container { display: none; }
+                    > feed-container { display: none; }
+                    > .d-block.d-md-none { display: block !important; }
+                }`,
+            ],
+            "appearance.leftSidebar": [
+                "",
+                "/* Hidden */ .application-main .feed-background > aside.feed-left-sidebar { display: none; }",
+            ],
+            "appearance.rightSidebar": [
+                "",
+                "/* Hide 'Latest changes' */ aside.feed-right-sidebar > .dashboard-changelog { display: none; }",
+                "/* Hide 'Explore repositories' */ aside.feed-right-sidebar > [aria-label='Explore repositories'] { display: none; }",
+                "/* Hide Completely */ aside.feed-right-sidebar { display: none; }",
+            ],
+        };
+        const fixedStyles = {
+            "catppuccin-icons-hide":
+                ".ghp-catppuccin-icon + svg.octicon { display: none; }",
+            "extended-repo-info":
+                ".ghp-extended-repo-info { color: var(--fgColor-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }",
+            release: `
+                @media (min-width: 1012px) {
+                    .ghp-release-asset .col-lg-6 { width: 40%; }
+                }
+                .nowrap {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                .ghp-release-asset {
+                    background: linear-gradient(to right, var(--bgColor-accent-muted) var(--percent, 0%), transparent 0);
+                }
+            `,
+        };
+        const flavors = ["default", "latte", "frappe", "macchiato", "mocha"];
+        const definitions = [
+            ...Object.entries(conditionalStyles).map(([setting, css]) => ({
+                id: setting,
+                setting,
+                render: () => css,
+                disabled: (value) => !value,
+            })),
+            ...Object.entries(enumStyles).map(([setting, choices]) => ({
+                id: setting,
+                setting,
+                render(value) {
+                    if (!(value in choices))
+                        throw new RangeError(`Invalid value for ${setting}`);
+                    return choices[value];
+                },
+            })),
+            ...Object.entries(fixedStyles).map(([id, css]) => ({
+                id,
+                render: () => css,
+            })),
+            {
+                id: "tabSize",
+                setting: "code.tabSize",
+                render: (size) => `pre, code { tab-size: ${size}; }`,
+            },
+            {
+                id: "catppuccin-icons-css-variables",
+                setting: "appearance.catppuccinIcons",
+                render(value) {
+                    const flavor = flavors[value];
+                    if (!flavor)
+                        throw new RangeError(
+                            "Invalid value for appearance.catppuccinIcons",
+                        );
+                    if (flavor === "default") return "";
+                    const colors = catppuccinPalette[flavor];
+                    if (!colors)
+                        throw new RangeError(`Missing palette for ${flavor}`);
+                    const variables = Object.entries(colors)
+                        .map(([name, hex]) => `  --ctp-${name}: ${hex};`)
+                        .join("\n");
+                    return `:root {\n${variables}\n}`;
+                },
+            },
+        ];
+        const bySetting = new Map(
+            definitions
+                .filter(({ setting }) => setting)
+                .map((definition) => [definition.setting, definition]),
+        );
+        const pendingValues = new Map();
+        let mountPromise;
+
+        function getStyle(definition) {
+            const id = idPrefix + definition.id;
+            let style = document.getElementById(id);
+            if (style && style.tagName !== "STYLE")
+                throw new TypeError(`#${id} is not a style element`);
+            if (!style) {
+                style = document.createElement("style");
+                style.id = id;
+            }
+            if (style.parentElement !== document.head)
+                document.head.appendChild(style);
+            return style;
+        }
+
+        function update(definition, value) {
+            const style = getStyle(definition);
+            style.textContent = definition.render(value);
+            style.disabled = definition.disabled?.(value) ?? false;
+        }
+
+        function valueFor(setting) {
+            return pendingValues.has(setting)
+                ? pendingValues.get(setting)
+                : settings.get(setting);
+        }
+
+        function mount() {
+            mountPromise ??= Promise.resolve(ready).then(() => {
+                if (!document.head)
+                    throw new Error("Document head is unavailable after readiness");
+                for (const definition of definitions) {
+                    update(
+                        definition,
+                        definition.setting
+                            ? valueFor(definition.setting)
+                            : undefined,
+                    );
+                }
+            });
+            return mountPromise;
+        }
+
+        async function applySetting(prop, value) {
+            const definition = bySetting.get(prop);
+            if (!definition) return false;
+            pendingValues.set(prop, value);
+            await mount();
+            update(definition, value);
+            return true;
+        }
+
+        return { mount, applySetting };
+    }
+
+    const testHook = globalThis.__GHP_TEST_HOOK__;
+    if (typeof testHook === "function") {
+        testHook({ createStyleSheetModule });
+        return;
+    }
+
     const { name, version } = GM_info.script;
     const idPrefix = "ghp-"; // Prefix for the IDs of the elements
     /**
@@ -281,23 +511,6 @@
     };
     const config = new GM_config(configDesc);
 
-    // Helper function for css
-    function injectCSS(id, css) {
-        const style = document.head.appendChild(
-            document.createElement("style"),
-        );
-        style.id = idPrefix + id;
-        style.textContent = css;
-        return style;
-    }
-    function cssHelper(id, enable) {
-        const current = document.getElementById(idPrefix + id);
-        if (current) {
-            current.disabled = !enable;
-        } else if (enable) {
-            injectCSS(id, dynamicStyles[id]);
-        }
-    }
     // General functions
     const $ = document.querySelector.bind(document);
     const $$ = document.querySelectorAll.bind(document);
@@ -376,199 +589,18 @@
         return r;
     }
 
-    // CSS-related features
-    const dynamicStyles = {
-        "code.cursorBlink":
-            "[data-testid='navigation-cursor'] { animation: blink 1s step-end infinite; }",
-        "code.cursorAnimation":
-            "[data-testid='navigation-cursor'] { transition: top 0.1s ease-in-out, left 0.1s ease-in-out; }",
-        "code.fullWidth": "#copilot-button-positioner { padding-right: 0; }",
-        "code.hideReadonlyTip":
-            "[class^='CodeBlob-module__cursorContainer__'] .position-absolute.color-bg-subtle { display: none; }",
-        "appearance.stickyAvatar": `
-            .pull-discussion-timeline .TimelineItem-avatar {
-                position: relative;
-                margin-left: -40px;
-                left: -32px;
-                & > a[data-hovercard-type='user'], & > a[href^="/apps/"], & > img.avatar {
-                    position: sticky;
-                    top: 5em;
-                }
-            }
-            #issue-timeline [class*='Avatar-module__avatarOuter__'] {
-                position: sticky;
-                top: 3em;
-            }
-            [data-testid='issue-viewer-issue-container'] [class*='Avatar-module__avatarOuter__'] {
-                position: sticky;
-                top: 4em;
-            }
-            /* .page-responsive .timeline-comment--caret {
-                &::before, &::after {
-                    position: sticky;
-                    top: 4em;
-                    margin-top: -1em;
-                    transform: translate(-0.5em, 2em);
-                }
-            } */
-        `,
-        "appearance.stickyMore": `
-            .react-issue-body [class^='IssueBodyHeader-module__IssueBodyHeaderContainer__'],
-            .react-issue-comment [data-testid="comment-header"]
-            { position: sticky; top: 4em; z-index: 1; backdrop-filter: brightness(0.1); }
-            .timeline-comment-group .timeline-comment-header
-            { position: sticky; top: 5em; z-index: 1; backdrop-filter: brightness(0.1); }`,
-        "appearance.hideHeaderUnderline": `.markdown-heading > .heading-element { border-bottom: none; }`,
-        "appearance.visibleDetails": `
-            .markdown-body details {
-                padding: 0 1em; /* Indent content */
-                border: 1px solid var(--borderColor-default,var(--color-border-default));
-                border-radius: 0.5em;
-
-                > summary {
-                    padding: 0.5em 1em; /* Enlarge clickable area */
-                    margin: 0 -1em; /* Align summary with content edges */
-                }
-
-                &:open {
-                    > summary {
-                        margin: 0 -1em 1em -1em; /* Gap between summary and content */
-                        border-bottom: 1px dashed var(--borderColor-default,var(--color-border-default)); /* Nice little separator */
-                    }
-                }
-            }
-        `,
-        "appearance.customMenuIcon": `
-            [data-testid="top-nav-left"] button[data-component="IconButton"] span.ghp-custom-menu-icon {
-                width: var(--base-size-16);
-                height: var(--base-size-16);
-                font-size: var(--text-title-size-medium);
-                justify-content: center;
-                align-items: center;
-                display: inline-flex;
-            }
-        `,
-    };
-    /**
-     * Dynamic styles for the enum settings.
-     * @type {Object<string, Array<string>>}
-     */
-    const enumStyles = {
-        "appearance.dashboard": [
-            "/* Default */",
-            "/* Hide Copilot */ #dashboard > .news > .copilotPreview__container { display: none; }",
-            "/* Hide Feed */ #dashboard > .news > feed-container { display: none; }",
-            `/* Mobile-Like */
-            .application-main > div > aside[aria-label="Account context"] {
-                display: block !important;
-            }
-            #dashboard > .news {
-                > .copilotPreview__container { display: none; }
-                > feed-container { display: none; }
-                > .d-block.d-md-none { display: block !important; }
-            }`,
-        ],
-        "appearance.leftSidebar": [
-            "/* Default */",
-            "/* Hidden */ .application-main .feed-background > aside.feed-left-sidebar { display: none; }",
-        ],
-        "appearance.rightSidebar": [
-            "/* Default */",
-            "/* Hide 'Latest changes' */ aside.feed-right-sidebar > .dashboard-changelog { display: none; }",
-            "/* Hide 'Explore repositories' */ aside.feed-right-sidebar > [aria-label='Explore repositories'] { display: none; }",
-            "/* Hide Completely */ aside.feed-right-sidebar { display: none; }",
-        ],
-    };
-    /**
-     * Helper function to configure enum styles.
-     * @param {string} id The ID of the style.
-     * @param {string} mode The mode to set.
-     */
-    function enumStyleHelper(id, mode) {
-        const style =
-            document.getElementById(idPrefix + id) ?? injectCSS(id, "");
-        style.textContent = enumStyles[id][mode];
-    }
-    /**
-     * Fixed styles.
-     * @type {Object<string, string>}
-     */
-    const fixedStyles = {
-        "catppuccin-icons-hide":
-            ".ghp-catppuccin-icon + svg.octicon { display: none; }",
-        "extended-repo-info":
-            ".ghp-extended-repo-info { color: var(--fgColor-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }",
-        release: `
-            @media (min-width: 1012px) { /* Making more room for the additional info */
-                .ghp-release-asset .col-lg-6 {
-                    width: 40%; /* Originally ~50% */
-                }
-            }
-            .nowrap { /* Preventing text wrapping */
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-            .ghp-release-asset { /* Styling the histogram */
-                background: linear-gradient(to right, var(--bgColor-accent-muted) var(--percent, 0%), transparent 0);
-            }
-        `,
-    };
-    documentReady.then(() => {
-        for (const prop in dynamicStyles) {
-            cssHelper(prop, config.get(prop));
-        }
-        for (const prop in enumStyles) {
-            enumStyleHelper(prop, config.get(prop));
-        }
-        for (const prop in fixedStyles) {
-            injectCSS(prop, fixedStyles[prop]);
-        }
-    });
-
-    // Code features
-    /**
-     * Set the tab size for the code blocks.
-     * @param {number} size The tab size to set.
-     */
-    function tabSize(size) {
-        const id = "tabSize";
-        documentReady.then(() => {
-            const style =
-                document.getElementById(idPrefix + id) ?? injectCSS(id, "");
-            style.textContent = `pre, code { tab-size: ${size}; }`;
-        });
-    }
-
     // Catppuccin icons
-    const flavors = ["default", "latte", "frappe", "macchiato", "mocha"];
-    const flavor = flavors[config.get("appearance.catppuccinIcons")];
     const catppuccinPalette = JSON.parse(
         GM_getResourceText("catppuccin-palette"),
     );
-    function updateCatppuccinColors(flavor = "mocha") {
-        const id = "ghp-catppuccin-icons-css-variables";
-
-        let styleEl = $(`#${id}`);
-        if (!styleEl) {
-            styleEl = document.createElement("style");
-            styleEl.setAttribute("id", id);
-            document.documentElement.appendChild(styleEl);
-        }
-
-        if (flavor === "default") {
-            styleEl.textContent = "";
-            return;
-        }
-
-        const colors = catppuccinPalette[flavor];
-        const vars = Object.entries(colors)
-            .map(([name, hex]) => `  --ctp-${name}: ${hex};`)
-            .join("\n");
-
-        styleEl.textContent = `:root {\n${vars}\n}`;
-    }
-    updateCatppuccinColors(flavor);
+    const styleSheets = createStyleSheetModule({
+        document,
+        ready: documentReady,
+        settings: { get: (prop) => config.get(prop) },
+        idPrefix,
+        catppuccinPalette,
+    });
+    void styleSheets.mount();
     const associations = JSON.parse(
         GM_getResourceText("catppuccin-associations"),
     );
@@ -1246,18 +1278,6 @@
         });
     }
 
-    // Callbacks
-    const callbacks = {
-        "code.tabSize": tabSize,
-        "appearance.catppuccinIcons": (value) => {
-            const flavor = flavors[value];
-            updateCatppuccinColors(flavor);
-        },
-    };
-    for (const [prop, callback] of Object.entries(callbacks)) {
-        callback(config.get(prop));
-    }
-
     // Show rate limit
     config.addEventListener("get", (e) => {
         if (e.detail.prop === "advanced.rateLimit") {
@@ -1269,15 +1289,7 @@
     });
     documentReady.then(() => {
         config.addEventListener("set", (e) => {
-            if (e.detail.prop in dynamicStyles) {
-                cssHelper(e.detail.prop, e.detail.after);
-            }
-            if (e.detail.prop in enumStyles) {
-                enumStyleHelper(e.detail.prop, e.detail.after);
-            }
-            if (e.detail.prop in callbacks) {
-                callbacks[e.detail.prop](e.detail.after);
-            }
+            void styleSheets.applySetting(e.detail.prop, e.detail.after);
         });
     });
 
