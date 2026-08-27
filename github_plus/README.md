@@ -74,7 +74,7 @@
 ## 🖼️ Showcases
 
 <details><summary>
-Example "Assets" section
+📦 Example "Assets" section
 </summary>
 
 Following example release "Assets" section has `Release Downloads`, `Release Uploader` and `Release Histogram` enabled.
@@ -90,7 +90,7 @@ Following example release "Assets" section has `Release Downloads`, `Release Upl
 </details>
 
 <details><summary>
-Example Dashboard
+📰 Example Dashboard
 </summary>
 
 Example Dashboard, with `📰 Dashboard` set to `Mobile-Like`, `↖️ Left Sidebar` set to `Hidden` and `↗️ Right Sidebar` set to `Hide 'Latest changes'`.
@@ -100,7 +100,7 @@ Example Dashboard, with `📰 Dashboard` set to `Mobile-Like`, `↖️ Left Side
 </details>
 
 <details><summary>
-Catppuccin Icons (🌿 Mocha)
+🐱 Catppuccin Icons (🌿 Mocha)
 </summary>
 
 ![](./images/catppuccin-icons.png)
@@ -108,7 +108,7 @@ Catppuccin Icons (🌿 Mocha)
 </details>
 
 <details><summary>
-Extended User Info
+👤 Extended User Info
 </summary>
 
 ![](./images/extended-user-info.png)
@@ -116,7 +116,7 @@ Extended User Info
 </details>
 
 <details><summary>
-Extended Repo Info
+📁 Extended Repo Info
 </summary>
 
 ![](./images/extended-repo-info.png)
@@ -124,10 +124,18 @@ Extended Repo Info
 </details>
 
 <details><summary>
-Visible Details
+👀 Visible Details
 </summary>
 
 ![](./images/visible-details.png)
+
+</details>
+
+<details><summary>
+⭐ Archived Repo Stars
+</summary>
+
+![](./images/archived-repo-stars.png)
 
 </details>
 

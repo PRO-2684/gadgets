@@ -76,7 +76,7 @@
 ## 🖼️ 效果展示
 
 <details><summary>
-"Assets" 部分示例
+📦 "Assets" 部分示例
 </summary>
 
 下述 Release "Assets" 部分的示例均启用了 `Release Downloads`, `Release Uploader` 和 `Release Histogram`。
@@ -92,7 +92,7 @@
 </details>
 
 <details><summary>
-仪表盘示例
+📰 仪表盘示例
 </summary>
 
 这是一个仪表盘界面的示例，其中 `📰 Dashboard` 设置为 `Mobile-Like`, `↖️ Left Sidebar` 设置为 `Hidden`, `↗️ Right Sidebar` 设置为 `Hide 'Latest changes'`。
@@ -102,7 +102,7 @@
 </details>
 
 <details><summary>
-Catppuccin 图标 (🌿 Mocha)
+🐱 Catppuccin 图标 (🌿 Mocha)
 </summary>
 
 ![](./images/catppuccin-icons.png)
@@ -110,7 +110,7 @@ Catppuccin 图标 (🌿 Mocha)
 </details>
 
 <details><summary>
-Extended User Info
+👤 Extended User Info
 </summary>
 
 ![](./images/extended-user-info.png)
@@ -118,7 +118,7 @@ Extended User Info
 </details>
 
 <details><summary>
-Extended Repo Info
+📁 Extended Repo Info
 </summary>
 
 ![](./images/extended-repo-info.png)
@@ -126,10 +126,18 @@ Extended Repo Info
 </details>
 
 <details><summary>
-Visible Details
+👀 Visible Details
 </summary>
 
 ![](./images/visible-details.png)
+
+</details>
+
+<details><summary>
+⭐ Archived Repo Stars
+</summary>
+
+![](./images/archived-repo-stars.png)
 
 </details>
 
