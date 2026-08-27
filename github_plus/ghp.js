@@ -2,7 +2,7 @@
 // @name         GitHub Plus
 // @name:zh-CN   GitHub 增强
 // @namespace    http://tampermonkey.net/
-// @version      0.6.8
+// @version      0.7.0
 // @description  Enhance GitHub with additional features.
 // @description:zh-CN 为 GitHub 增加额外的功能。
 // @author       PRO-2684
@@ -74,6 +74,7 @@
      * @property {() => void} refreshReleases
      * @property {() => void} refreshUserInfo
      * @property {() => void} refreshRepoInfo
+     * @property {(root?: Document | Element) => boolean} patchArchivedRepoStars
      * @property {() => void} clearTrackingMetadata
      * @property {() => void} protectFetch
      * @property {() => void} showRateLimit
@@ -86,7 +87,7 @@
      * @property {LifecycleSettings} settings Configuration adapter.
      * @property {{on: (name: string, listener: (event: Event) => void, options: AddEventListenerOptions) => void}} events Document-event adapter.
      * @property {(callback: () => void) => void} scheduleFrame Frame scheduler.
-     * @property {{isMainSite: boolean}} environment Stable startup environment.
+     * @property {{isMainSite: boolean, readyState: DocumentReadyState}} environment Stable startup environment.
      * @property {LifecycleActions} actions Feature implementations invoked by lifecycle policy.
      */
 
@@ -408,6 +409,24 @@
 
             const tasks = [actions.styleSheets.mount()];
 
+            if (settings.get("additional.archivedRepoStars")) {
+                if (environment.readyState === "loading") {
+                    events.on(
+                        "readystatechange",
+                        (event) => {
+                            if (event.target.readyState === "interactive")
+                                actions.patchArchivedRepoStars();
+                        },
+                        { once: true, passive: true },
+                    );
+                } else {
+                    actions.patchArchivedRepoStars();
+                }
+                on("turbo:before-render", (event) =>
+                    actions.patchArchivedRepoStars(event.detail.newBody),
+                );
+            }
+
             on("soft-nav:react-done", () => actions.refreshIcons());
             on("turbo:load", () => actions.refreshIcons());
 
@@ -476,9 +495,44 @@
         return { start };
     }
 
+    /**
+     * Enable GitHub's native star action for an archived repository.
+     * @param {Document | Element} root Root containing the React app payload.
+     * @returns {boolean} Whether the payload was patched.
+     */
+    function patchArchivedRepoStarData(root) {
+        const script = root.querySelector(
+            'react-app[app-name="code-view"] script[data-target="react-app.embeddedData"]',
+        );
+        if (!script) return false;
+
+        let data;
+        try {
+            data = JSON.parse(script.textContent);
+        } catch {
+            return false;
+        }
+        const { repo, star, viewer } = data.payload?.sidebarAbout ?? {};
+        if (
+            !repo?.isArchived ||
+            star?.canStar !== false ||
+            !viewer?.isLoggedIn ||
+            viewer?.emuContributionBlocked
+        )
+            return false;
+
+        star.canStar = true;
+        script.textContent = JSON.stringify(data);
+        return true;
+    }
+
     const testHook = globalThis.__GHP_TEST_HOOK__;
     if (typeof testHook === "function") {
-        testHook({ createStyleSheetModule, createFeatureLifecycleModule });
+        testHook({
+            createStyleSheetModule,
+            createFeatureLifecycleModule,
+            patchArchivedRepoStarData,
+        });
         return;
     }
 
@@ -698,6 +752,12 @@
                 extendedRepoInfo: {
                     name: "📁 Extended Repo Info",
                     title: "Show extended information about repositories",
+                    type: "bool",
+                    value: false,
+                },
+                archivedRepoStars: {
+                    name: "⭐ Archived Repo Stars",
+                    title: "Allow starring archived repositories",
                     type: "bool",
                     value: false,
                 },
@@ -1422,7 +1482,10 @@
                 document.addEventListener(name, listener, options),
         },
         scheduleFrame: (callback) => requestAnimationFrame(callback),
-        environment: { isMainSite: location.hostname === topDomain },
+        environment: {
+            isMainSite: location.hostname === topDomain,
+            readyState: document.readyState,
+        },
         actions: {
             styleSheets,
             refreshIcons: updateIcons,
@@ -1430,6 +1493,8 @@
             refreshReleases: setupListeners,
             refreshUserInfo: extendedUserInfo,
             refreshRepoInfo: extendedRepoInfo,
+            patchArchivedRepoStars: (root = document) =>
+                patchArchivedRepoStarData(root),
             clearTrackingMetadata: preventTracking,
             protectFetch: preventFetchPatching,
             showRateLimit,

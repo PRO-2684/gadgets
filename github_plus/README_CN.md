@@ -54,6 +54,7 @@
         - 更新日期 (`updated_at`)
         - 推送日期 (`pushed_at`)
         - 节点 ID (`node_id`)
+    - **⭐ Archived Repo Stars**: 允许为已归档仓库添加 Star。（实验性功能）
     - **🎭 Tracking Prevention**: 阻止 GitHub 的一些跟踪。
 - **⚙️ Advanced Settings**
     - **🔑 Personal Access Token**: GitHub API 的个人访问令牌，以 `github_pat_` 开头（用于提升速率限制）。详见 [个人访问令牌 (PAT)](#-个人访问令牌-pat) 部分。

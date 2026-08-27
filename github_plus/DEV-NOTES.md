@@ -16,6 +16,13 @@
 
 By investigating source code (thanks for the source mapping) and setting breakpoints, we can find out that GitHub initializes tracking endpoints from certain `<meta>` tags. By clearing these tags' `content` property, we can prevent some tracking. Also, GitHub patches `fetch` to also send analytics data, so we need to revert this patch as well.
 
+### `Archived Repo Stars` Feature
+
+- GitHub passes the repository header's star state through the `react-app[app-name="code-view"]` embedded JSON. For archived repositories, `payload.sidebarAbout.star.canStar` may be `false`, leaving the native React button inactive.
+- Since GitHub's runtime is loaded by module scripts, the `readystatechange` event at `interactive` provides an event-driven seam after the HTML payload has been parsed but before hydration. The feature changes only that payload and lets GitHub's native `StarButton` handle the action.
+- `turbo:before-render` provides the detached replacement body for Turbo navigation. Both hooks are installed only when `additional.archivedRepoStars` is enabled; no polling or recursive observation is needed.
+- The patch remains restricted to archived repositories with a logged-in viewer who is not blocked by an enterprise managed-user policy.
+
 ## Catppuccin Icons
 
 - `associations.json` & `icons.json`: Extracted from [`catppuccin-web-file-explorer-icons-{version}-sources.zip`](https://github.com/catppuccin/web-file-explorer-icons/releases/).

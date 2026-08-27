@@ -98,11 +98,12 @@ function createStyleFixture(overrides = {}) {
     };
 }
 
-function createLifecycleFixture(overrides = {}) {
+function createLifecycleFixture(overrides = {}, environmentOverrides = {}) {
     const values = {
         "appearance.customMenuIcon": "",
         "additional.extendedUserInfo": false,
         "additional.extendedRepoInfo": false,
+        "additional.archivedRepoStars": false,
         "additional.trackingPrevention": false,
         "advanced.debug": false,
         ...overrides,
@@ -151,6 +152,8 @@ function createLifecycleFixture(overrides = {}) {
             calls.push(["refreshUserInfo", ...args]),
         refreshRepoInfo: (...args) =>
             calls.push(["refreshRepoInfo", ...args]),
+        patchArchivedRepoStars: (...args) =>
+            calls.push(["patchArchivedRepoStars", ...args]),
         clearTrackingMetadata: (...args) =>
             calls.push(["clearTrackingMetadata", ...args]),
         protectFetch: () => calls.push(["protectFetch"]),
@@ -165,7 +168,11 @@ function createLifecycleFixture(overrides = {}) {
         scheduleFrame(fn) {
             frames.push(fn);
         },
-        environment: { isMainSite: true },
+        environment: {
+            isMainSite: true,
+            readyState: "loading",
+            ...environmentOverrides,
+        },
         actions,
     });
 
@@ -176,8 +183,12 @@ function createLifecycleFixture(overrides = {}) {
         ready,
         connectMenu: (setIcon) => connectMenu(setIcon),
         emit(name, event = { type: name }) {
-            for (const { listener } of eventListeners.get(name) ?? [])
-                listener(event);
+            const registered = eventListeners.get(name) ?? [];
+            for (const { listener } of [...registered]) listener(event);
+            eventListeners.set(
+                name,
+                registered.filter(({ options }) => !options.once),
+            );
         },
         emitGet(prop) {
             for (const listener of settingListeners.get) listener({ prop });
@@ -203,6 +214,92 @@ test("test hook exposes the feature-lifecycle factory", () => {
     const factories = loadFactories();
 
     assert.equal(typeof factories?.createFeatureLifecycleModule, "function");
+});
+
+test("archived repositories enable the native star action before hydration", () => {
+    const { patchArchivedRepoStarData } = loadFactories();
+    const script = {
+        textContent: JSON.stringify({
+            payload: {
+                sidebarAbout: {
+                    repo: { isArchived: true },
+                    star: { canStar: false, viewerHasStarred: false },
+                    viewer: {
+                        isLoggedIn: true,
+                        emuContributionBlocked: false,
+                    },
+                },
+            },
+        }),
+    };
+    const root = { querySelector: () => script };
+
+    assert.equal(patchArchivedRepoStarData(root), true);
+    assert.deepEqual(JSON.parse(script.textContent), {
+        payload: {
+            sidebarAbout: {
+                repo: { isArchived: true },
+                star: { canStar: true, viewerHasStarred: false },
+                viewer: {
+                    isLoggedIn: true,
+                    emuContributionBlocked: false,
+                },
+            },
+        },
+    });
+});
+
+test("server star restrictions remain unchanged", () => {
+    const { patchArchivedRepoStarData } = loadFactories();
+    const cases = [
+        {
+            name: "active repository",
+            repo: { isArchived: false },
+            star: { canStar: false },
+            viewer: { isLoggedIn: true, emuContributionBlocked: false },
+        },
+        {
+            name: "logged-out viewer",
+            repo: { isArchived: true },
+            star: { canStar: false },
+            viewer: { isLoggedIn: false, emuContributionBlocked: false },
+        },
+        {
+            name: "EMU-blocked viewer",
+            repo: { isArchived: true },
+            star: { canStar: false },
+            viewer: { isLoggedIn: true, emuContributionBlocked: true },
+        },
+        {
+            name: "already-enabled payload",
+            repo: { isArchived: true },
+            star: { canStar: true },
+            viewer: { isLoggedIn: true, emuContributionBlocked: false },
+        },
+    ];
+
+    for (const { name, repo, star, viewer } of cases) {
+        const payload = { payload: { sidebarAbout: { repo, star, viewer } } };
+        const script = { textContent: JSON.stringify(payload) };
+
+        assert.equal(
+            patchArchivedRepoStarData({ querySelector: () => script }),
+            false,
+            name,
+        );
+        assert.deepEqual(JSON.parse(script.textContent), payload, name);
+    }
+});
+
+test("malformed embedded data is ignored", () => {
+    const { patchArchivedRepoStarData } = loadFactories();
+    const script = { textContent: "{" };
+
+    assert.equal(
+        patchArchivedRepoStarData({ querySelector: () => script }),
+        false,
+    );
+    assert.equal(script.textContent, "{");
 });
 
 test("mount waits for readiness and creates stable styles under head", async () => {
@@ -319,7 +416,8 @@ test("lifecycle preserves startup gates and navigation routing", async () => {
     fixture.emit("soft-nav:end");
     fixture.emit("soft-nav:react-done");
     fixture.emit("turbo:load");
-    fixture.emit("turbo:before-render");
+    const newBody = {};
+    fixture.emit("turbo:before-render", { detail: { newBody } });
 
     assert.equal(fixture.frames.length, 1);
     fixture.frames[0]();
@@ -336,6 +434,60 @@ test("lifecycle preserves startup gates and navigation routing", async () => {
 
     fixture.ready.resolve();
     await started;
+});
+
+test("lifecycle patches star data before initial and Turbo rendering", () => {
+    const fixture = createLifecycleFixture({
+        "additional.archivedRepoStars": true,
+    });
+    const newBody = { marker: "new body" };
+
+    fixture.lifecycle.start();
+    fixture.emit("readystatechange", {
+        target: { readyState: "interactive" },
+    });
+    fixture.emit("readystatechange", {
+        target: { readyState: "complete" },
+    });
+    fixture.emit("turbo:before-render", { detail: { newBody } });
+
+    assert.equal(fixture.listenerCount("readystatechange"), 0);
+    assert.deepEqual(fixture.calls.slice(-2), [
+        ["patchArchivedRepoStars"],
+        ["patchArchivedRepoStars", newBody],
+    ]);
+});
+
+test("lifecycle patches immediately when startup is already interactive", () => {
+    const fixture = createLifecycleFixture(
+        { "additional.archivedRepoStars": true },
+        { readyState: "interactive" },
+    );
+
+    fixture.lifecycle.start();
+
+    assert.deepEqual(fixture.calls.slice(0, 2), [
+        ["mountStyles"],
+        ["patchArchivedRepoStars"],
+    ]);
+    assert.equal(fixture.listenerCount("readystatechange"), 0);
+});
+
+test("archived repository stars remain disabled by default", () => {
+    const fixture = createLifecycleFixture();
+
+    fixture.lifecycle.start();
+    fixture.emit("readystatechange", {
+        target: { readyState: "interactive" },
+    });
+    fixture.emit("turbo:before-render", { detail: { newBody: {} } });
+
+    assert.equal(fixture.listenerCount("readystatechange"), 0);
+    assert.equal(fixture.listenerCount("turbo:before-render"), 0);
+    assert.equal(
+        fixture.calls.some(([name]) => name === "patchArchivedRepoStars"),
+        false,
+    );
 });
 
 test("lifecycle routes live style and delayed custom-menu settings", async () => {

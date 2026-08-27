@@ -52,6 +52,7 @@
         - Updated date (`updated_at`)
         - Pushed date (`pushed_at`)
         - Node ID (`node_id`)
+    - **⭐ Archived Repo Stars**: Allow starring archived repositories. (Experimental)
     - **🎭 Tracking Prevention**: Prevents some tracking by GitHub.
 - **⚙️ Advanced Settings**
     - **🔑 Personal Access Token**: Your personal access token for GitHub API, starting with `github_pat_` (used for increasing rate limit). For more information, see the [Personal Access Token (PAT)](#-personal-access-token-pat) section.
