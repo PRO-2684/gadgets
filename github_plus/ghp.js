@@ -28,6 +28,77 @@
 
 (function () {
     "use strict";
+
+    /**
+     * @typedef {Object} StyleDefinition
+     * @property {string} id Relative style ID, without the userscript prefix.
+     * @property {string} [setting] Configuration property that controls the style.
+     * @property {(value: unknown) => string} render Converts a setting value to CSS.
+     * @property {(value: unknown) => boolean} [disabled] Determines whether the style is disabled.
+     */
+
+    /**
+     * @typedef {Object} StyleSheetOptions
+     * @property {Document} document Document whose head owns the styles.
+     * @property {Promise<void>} ready Resolves when document.head is available.
+     * @property {{get: (prop: string) => unknown}} settings Configuration reader.
+     * @property {string} idPrefix Prefix applied to every owned style ID.
+     * @property {Record<string, Record<string, string>>} catppuccinPalette Catppuccin colors by flavor.
+     */
+
+    /**
+     * @typedef {Object} StyleSheetModule
+     * @property {() => Promise<void>} mount Mounts every owned style once.
+     * @property {(prop: string, value: unknown) => Promise<boolean>} applySetting Updates an owned setting style.
+     */
+
+    /**
+     * @typedef {Object} SettingChange
+     * @property {string} prop Configuration property name.
+     * @property {unknown} [before] Previous value.
+     * @property {unknown} [after] New value.
+     */
+
+    /**
+     * @typedef {Object} LifecycleSettings
+     * @property {(prop: string) => unknown} get Reads a configuration value.
+     * @property {(listener: (change: SettingChange) => void) => void} onGet Subscribes to reads.
+     * @property {(listener: (change: SettingChange) => void) => void} onSet Subscribes to changes.
+     */
+
+    /**
+     * @typedef {Object} LifecycleActions
+     * @property {StyleSheetModule} styleSheets
+     * @property {() => void} refreshIcons
+     * @property {(onConnected: (setIcon: (icon: unknown) => void) => void) => void} connectCustomMenu
+     * @property {() => void} refreshReleases
+     * @property {() => void} refreshUserInfo
+     * @property {() => void} refreshRepoInfo
+     * @property {() => void} clearTrackingMetadata
+     * @property {() => void} protectFetch
+     * @property {() => void} showRateLimit
+     * @property {(name: string, event: Event) => void} logEvent
+     */
+
+    /**
+     * @typedef {Object} FeatureLifecycleOptions
+     * @property {Promise<void>} ready Resolves when document-level initialization may run.
+     * @property {LifecycleSettings} settings Configuration adapter.
+     * @property {{on: (name: string, listener: (event: Event) => void, options: AddEventListenerOptions) => void}} events Document-event adapter.
+     * @property {(callback: () => void) => void} scheduleFrame Frame scheduler.
+     * @property {{isMainSite: boolean}} environment Stable startup environment.
+     * @property {LifecycleActions} actions Feature implementations invoked by lifecycle policy.
+     */
+
+    /**
+     * @typedef {Object} FeatureLifecycleModule
+     * @property {() => Promise<void>} start Installs lifecycle behavior once.
+     */
+
+    /**
+     * @param {StyleSheetOptions} options
+     * @returns {StyleSheetModule}
+     */
     function createStyleSheetModule({
         document,
         ready,
@@ -145,6 +216,7 @@
             `,
         };
         const flavors = ["default", "latte", "frappe", "macchiato", "mocha"];
+        /** @type {StyleDefinition[]} */
         const definitions = [
             ...Object.entries(conditionalStyles).map(([setting, css]) => ({
                 id: setting,
@@ -156,9 +228,10 @@
                 id: setting,
                 setting,
                 render(value) {
-                    if (!(value in choices))
+                    const index = /** @type {number} */ (value);
+                    if (!(index in choices))
                         throw new RangeError(`Invalid value for ${setting}`);
-                    return choices[value];
+                    return choices[index];
                 },
             })),
             ...Object.entries(fixedStyles).map(([id, css]) => ({
@@ -174,7 +247,7 @@
                 id: "catppuccin-icons-css-variables",
                 setting: "appearance.catppuccinIcons",
                 render(value) {
-                    const flavor = flavors[value];
+                    const flavor = flavors[/** @type {number} */ (value)];
                     if (!flavor)
                         throw new RangeError(
                             "Invalid value for appearance.catppuccinIcons",
@@ -190,44 +263,61 @@
                 },
             },
         ];
-        const bySetting = new Map(
-            definitions
-                .filter(({ setting }) => setting)
-                .map((definition) => [definition.setting, definition]),
-        );
+        /** @type {Map<string, StyleDefinition>} */
+        const bySetting = new Map();
+        for (const definition of definitions) {
+            if (definition.setting)
+                bySetting.set(definition.setting, definition);
+        }
+        /** @type {Map<string, unknown>} */
         const pendingValues = new Map();
+        /** @type {Promise<void> | undefined} */
         let mountPromise;
 
+        /**
+         * @param {StyleDefinition} definition
+         * @returns {HTMLStyleElement}
+         */
         function getStyle(definition) {
             const id = idPrefix + definition.id;
-            let style = document.getElementById(id);
+            const head = document.head;
+            if (!head) throw new Error("Document head is unavailable");
+            let style = /** @type {HTMLStyleElement | null} */ (
+                document.getElementById(id)
+            );
             if (style && style.tagName !== "STYLE")
                 throw new TypeError(`#${id} is not a style element`);
             if (!style) {
                 style = document.createElement("style");
                 style.id = id;
+                head.appendChild(style);
             }
-            if (style.parentElement !== document.head)
-                document.head.appendChild(style);
             return style;
         }
 
+        /**
+         * @param {StyleDefinition} definition
+         * @param {unknown} value
+         */
         function update(definition, value) {
             const style = getStyle(definition);
             style.textContent = definition.render(value);
             style.disabled = definition.disabled?.(value) ?? false;
         }
 
+        /**
+         * @param {string} setting
+         * @returns {unknown}
+         */
         function valueFor(setting) {
             return pendingValues.has(setting)
                 ? pendingValues.get(setting)
                 : settings.get(setting);
         }
 
+        /** @returns {Promise<void>} */
         function mount() {
             mountPromise ??= Promise.resolve(ready).then(() => {
-                if (!document.head)
-                    throw new Error("Document head is unavailable after readiness");
                 for (const definition of definitions) {
                     update(
                         definition,
@@ -240,6 +330,11 @@
             return mountPromise;
         }
 
+        /**
+         * @param {string} prop
+         * @param {unknown} value
+         * @returns {Promise<boolean>}
+         */
         async function applySetting(prop, value) {
             const definition = bySetting.get(prop);
             if (!definition) return false;
@@ -252,6 +347,10 @@
         return { mount, applySetting };
     }
 
+    /**
+     * @param {FeatureLifecycleOptions} options
+     * @returns {FeatureLifecycleModule}
+     */
     function createFeatureLifecycleModule({
         ready,
         settings,
@@ -292,12 +391,18 @@
             "toggle",
         ];
         const passive = { passive: true };
+        /** @type {Promise<void> | undefined} */
         let startPromise;
 
+        /**
+         * @param {string} name
+         * @param {(event: Event) => void} listener
+         */
         function on(name, listener) {
             events.on(name, listener, passive);
         }
 
+        /** @returns {Promise<void>} */
         function start() {
             if (startPromise) return startPromise;
 

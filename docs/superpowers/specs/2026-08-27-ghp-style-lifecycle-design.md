@@ -19,10 +19,10 @@ Deepen style-sheet and feature-lifecycle behavior into two independently committ
 
 `createStyleSheetModule({ document, ready, settings, idPrefix, catppuccinPalette })` returns:
 
-- `mount(): Promise<void>` — idempotently creates or adopts every owned stylesheet after readiness.
+- `mount(): Promise<void>` — idempotently creates or reuses every owned stylesheet after readiness.
 - `applySetting(prop, value): Promise<boolean>` — updates an owned configuration style and returns `false` for unrelated settings.
 
-The implementation privately owns style declarations, setting classification, ID normalization, readiness, mounting, adoption, update rules, and CSS rendering. Repeated and pre-readiness updates preserve node identity and use the latest value.
+The implementation privately owns style declarations, setting classification, ID normalization, readiness, mounting, update rules, and CSS rendering. Repeated and pre-readiness updates preserve node identity and use the latest value.
 
 ## Feature-lifecycle module
 

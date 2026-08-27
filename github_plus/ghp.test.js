@@ -31,45 +31,28 @@ function deferred() {
 }
 
 function createDocument() {
-    const nodes = [];
-    function createParent() {
-        const children = [];
-        return {
-            children,
-            appendChild(node) {
-                const previous = node.parentElement?.children;
-                if (previous) {
-                    const index = previous.indexOf(node);
-                    if (index !== -1) previous.splice(index, 1);
-                }
-                if (!children.includes(node)) children.push(node);
-                node.parentElement = this;
-                return node;
-            },
-        };
-    }
-    const head = createParent();
-    const other = createParent();
+    const children = [];
+    const head = {
+        children,
+        appendChild(node) {
+            if (!children.includes(node)) children.push(node);
+            node.parentElement = head;
+            return node;
+        },
+    };
     return {
         head,
-        other,
         createElement(tagName) {
-            const node = {
+            return {
                 tagName: tagName.toUpperCase(),
                 id: "",
                 textContent: "",
                 disabled: false,
                 parentElement: null,
             };
-            nodes.push(node);
-            return node;
         },
         getElementById(id) {
-            return (
-                nodes.find(
-                    (node) => node.parentElement && node.id === id,
-                ) ?? null
-            );
+            return children.find((node) => node.id === id) ?? null;
         },
     };
 }
@@ -264,20 +247,6 @@ test("latest pre-ready setting wins and value styles reuse their node", async ()
     await fixture.styleSheets.applySetting("code.tabSize", 2);
     assert.equal(fixture.find("ghp-tabSize"), tabSize);
     assert.equal(tabSize.textContent, "pre, code { tab-size: 2; }");
-});
-
-test("mount adopts an existing owned style into head", async () => {
-    const fixture = createStyleFixture();
-    const existing = fixture.document.createElement("style");
-    existing.id = "ghp-tabSize";
-    fixture.document.other.appendChild(existing);
-
-    fixture.ready.resolve();
-    await fixture.styleSheets.mount();
-
-    assert.equal(fixture.find("ghp-tabSize"), existing);
-    assert.equal(existing.parentElement, fixture.document.head);
-    assert.equal(existing.textContent, "pre, code { tab-size: 4; }");
 });
 
 test("Catppuccin variables use the shared style seam", async () => {
