@@ -2,9 +2,9 @@
 
 Show Ferris the crab on `docs.rs` code examples, just like on the Rust book.
 
-![compile_fail](./images/compile_fail.png)
+![compile_fail](./images/compile_fail.webp)
 
-![should_panic](./images/should_panic.png)
+![should_panic](./images/should_panic.webp)
 
 - [UserStyles.World](https://userstyles.world/style/20844) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://userstyles.world/api/style/20844.user.css)
 - [GitHub](https://github.com/PRO-2684/gadgets/raw/main/docs.rs-ferris/) [![Install directly with Stylus](https://img.shields.io/badge/Install%20directly%20with-Stylus-00adad.svg)](https://github.com/PRO-2684/gadgets/raw/main/docs.rs-ferris/ferris.user.css)
@@ -36,7 +36,7 @@ Here's a list of rustdoc attributes and their corresponding Ferris:
 
 Show the attribute above the code block. Only supports attributes mentioned in the [Details](#details) section.
 
-![show_attributes](./images/show_attributes.png)
+![show_attributes](./images/show_attributes.webp)
 
 ### Show Ferris on `ignore`
 

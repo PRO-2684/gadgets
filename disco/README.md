@@ -11,4 +11,4 @@ Hides annoying items on Discord.
 
 ## Screenshots
 
-![Showcase](./disco-showcase.png)
+![Showcase](./disco-showcase.webp)

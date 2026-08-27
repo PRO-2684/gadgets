@@ -15,4 +15,4 @@ Enhance ar5iv with various tweaks and improvements.
 
 ## 🖼️ Screenshot
 
-![Screenshot](./ar5iv_plus.jpg)
+![Screenshot](./ar5iv_plus.webp)

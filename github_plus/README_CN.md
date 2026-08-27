@@ -83,11 +83,11 @@
 
 [microsoft/terminal@v1.22.2702.0](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0):
 
-![microsoft/terminal@v1.22.2702.0](./images/assets-1.jpg)
+![microsoft/terminal@v1.22.2702.0](./images/assets-1.webp)
 
 [PRO-2684/GM_config@v1.2.1](https://github.com/PRO-2684/GM_config/releases/tag/v1.2.1):
 
-![PRO-2684/GM_config@v1.2.1](./images/assets-2.jpg)
+![PRO-2684/GM_config@v1.2.1](./images/assets-2.webp)
 
 </details>
 
@@ -97,7 +97,7 @@
 
 这是一个仪表盘界面的示例，其中 `📰 Dashboard` 设置为 `Mobile-Like`, `↖️ Left Sidebar` 设置为 `Hidden`, `↗️ Right Sidebar` 设置为 `Hide 'Latest changes'`。
 
-![](./images/dashboard.jpg)
+![](./images/dashboard.webp)
 
 </details>
 
@@ -105,7 +105,7 @@
 🐱 Catppuccin 图标 (🌿 Mocha)
 </summary>
 
-![](./images/catppuccin-icons.png)
+![](./images/catppuccin-icons.webp)
 
 </details>
 
@@ -113,7 +113,7 @@
 👤 Extended User Info
 </summary>
 
-![](./images/extended-user-info.png)
+![](./images/extended-user-info.webp)
 
 </details>
 
@@ -121,7 +121,7 @@
 📁 Extended Repo Info
 </summary>
 
-![](./images/extended-repo-info.png)
+![](./images/extended-repo-info.webp)
 
 </details>
 
@@ -129,7 +129,7 @@
 👀 Visible Details
 </summary>
 
-![](./images/visible-details.png)
+![](./images/visible-details.webp)
 
 </details>
 
@@ -137,7 +137,7 @@
 ⭐ Archived Repo Stars
 </summary>
 
-![](./images/archived-repo-stars.png)
+![](./images/archived-repo-stars.webp)
 
 </details>
 
@@ -153,7 +153,7 @@
 个人访问令牌示例设置
 </summary>
 
-![](./images/token.png)
+![](./images/token.webp)
 
 </details>
 

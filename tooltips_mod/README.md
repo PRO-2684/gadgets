@@ -9,8 +9,8 @@ This is a mod version for the [Tooltips on android](https://userstyles.world/sty
 
 | Theme | Screenshot |
 | --- | --- |
-| Chrome | ![Chrome](./chrome.jpg) |
-| Edge | ![Edge](./edge.jpg) |
+| Chrome | ![Chrome](./chrome.webp) |
+| Edge | ![Edge](./edge.webp) |
 
 ## Features & Configuration
 

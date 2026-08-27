@@ -13,4 +13,4 @@ Hides unnecessary elements on `arxiv.org/html/*`, giving you a clean view.
 - `Hide License and Watermark`: Hides the license and watermark before the actual content.
 - `Hide Header`: Hides the big red header of the page.
 
-![Before & After](arxiv.jpg)
+![Before & After](arxiv.webp)

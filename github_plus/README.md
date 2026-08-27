@@ -81,11 +81,11 @@ Following example release "Assets" section has `Release Downloads`, `Release Upl
 
 [microsoft/terminal@v1.22.2702.0](https://github.com/microsoft/terminal/releases/tag/v1.22.2702.0):
 
-![microsoft/terminal@v1.22.2702.0](./images/assets-1.jpg)
+![microsoft/terminal@v1.22.2702.0](./images/assets-1.webp)
 
 [PRO-2684/GM_config@v1.2.1](https://github.com/PRO-2684/GM_config/releases/tag/v1.2.1):
 
-![PRO-2684/GM_config@v1.2.1](./images/assets-2.jpg)
+![PRO-2684/GM_config@v1.2.1](./images/assets-2.webp)
 
 </details>
 
@@ -95,7 +95,7 @@ Following example release "Assets" section has `Release Downloads`, `Release Upl
 
 Example Dashboard, with `📰 Dashboard` set to `Mobile-Like`, `↖️ Left Sidebar` set to `Hidden` and `↗️ Right Sidebar` set to `Hide 'Latest changes'`.
 
-![](./images/dashboard.jpg)
+![](./images/dashboard.webp)
 
 </details>
 
@@ -103,7 +103,7 @@ Example Dashboard, with `📰 Dashboard` set to `Mobile-Like`, `↖️ Left Side
 🐱 Catppuccin Icons (🌿 Mocha)
 </summary>
 
-![](./images/catppuccin-icons.png)
+![](./images/catppuccin-icons.webp)
 
 </details>
 
@@ -111,7 +111,7 @@ Example Dashboard, with `📰 Dashboard` set to `Mobile-Like`, `↖️ Left Side
 👤 Extended User Info
 </summary>
 
-![](./images/extended-user-info.png)
+![](./images/extended-user-info.webp)
 
 </details>
 
@@ -119,7 +119,7 @@ Example Dashboard, with `📰 Dashboard` set to `Mobile-Like`, `↖️ Left Side
 📁 Extended Repo Info
 </summary>
 
-![](./images/extended-repo-info.png)
+![](./images/extended-repo-info.webp)
 
 </details>
 
@@ -127,7 +127,7 @@ Example Dashboard, with `📰 Dashboard` set to `Mobile-Like`, `↖️ Left Side
 👀 Visible Details
 </summary>
 
-![](./images/visible-details.png)
+![](./images/visible-details.webp)
 
 </details>
 
@@ -135,7 +135,7 @@ Example Dashboard, with `📰 Dashboard` set to `Mobile-Like`, `↖️ Left Side
 ⭐ Archived Repo Stars
 </summary>
 
-![](./images/archived-repo-stars.png)
+![](./images/archived-repo-stars.webp)
 
 </details>
 
@@ -151,7 +151,7 @@ Example Dashboard, with `📰 Dashboard` set to `Mobile-Like`, `↖️ Left Side
 Example setup for personal access token
 </summary>
 
-![](./images/token.png)
+![](./images/token.webp)
 
 </details>
 

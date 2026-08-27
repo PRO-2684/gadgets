@@ -32,8 +32,8 @@ Human-friendly: 224.0.0.0/10
 
 截图:
 
-![normal](./images/normal.jpg)
+![normal](./images/normal.webp)
 
 如果你安装了 `rich` 模块，你可以得到彩色的输出:
 
-![rich](./images/rich.jpg)
+![rich](./images/rich.webp)

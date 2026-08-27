@@ -47,14 +47,14 @@
 
 <details><summary>Native selector</summary>
 
-![native-selector](./images/native-selector.png)
+![native-selector](./images/native-selector.webp)
 
 </details>
 
 <details><summary>New layout + Hide course cover</summary>
 
-![new-layout-1](./images/new-layout-1.png)
+![new-layout-1](./images/new-layout-1.webp)
 
-![new-layout-2](./images/new-layout-2.png)
+![new-layout-2](./images/new-layout-2.webp)
 
 </details>

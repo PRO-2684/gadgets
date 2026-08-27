@@ -15,4 +15,4 @@
 
 ## 🖼️ 截图
 
-![截图](./ar5iv_plus.jpg)
+![截图](./ar5iv_plus.webp)

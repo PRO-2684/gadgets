@@ -32,8 +32,8 @@ Human-friendly: 224.0.0.0/10
 
 Screenshot:
 
-![normal](./images/normal.jpg)
+![normal](./images/normal.webp)
 
 If you have `rich` module installed, you can get a colored output:
 
-![rich](./images/rich.jpg)
+![rich](./images/rich.webp)
