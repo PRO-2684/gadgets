@@ -37,4 +37,3 @@ The implementation privately owns the existing mapping from configuration gates 
 Factories are defined before browser-dependent startup. When `globalThis.__GHP_TEST_HOOK__` is a function, the userscript passes the currently available factories to it and returns before reading GM or browser globals. Node tests evaluate the production file through `node:vm`, capture factories, and supply in-memory adapters.
 
 Commit 1 exposes only `createStyleSheetModule`; commit 2 extends the hook with `createFeatureLifecycleModule`.
-

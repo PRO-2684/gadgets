@@ -252,9 +252,128 @@
         return { mount, applySetting };
     }
 
+    function createFeatureLifecycleModule({
+        ready,
+        settings,
+        events,
+        scheduleFrame,
+        environment,
+        actions,
+    }) {
+        const debugEvents = [
+            "turbo:before-cache",
+            "turbo:before-render",
+            "turbo:before-morph-element",
+            "turbo:before-frame-render",
+            "turbo:load",
+            "turbo:reload",
+            "turbo:render",
+            "turbo:morph",
+            "turbo:morph-element",
+            "turbo:frame-load",
+            "turbo:frame-render",
+            "turbo:visit",
+            "turbo:before-fetch-request",
+            "turbo:before-fetch-response",
+            "soft-nav:initial",
+            "soft-nav:start",
+            "soft-nav:render",
+            "soft-nav:end",
+            "soft-nav:react-done",
+            "soft-nav:replace-mechanism",
+            "soft-nav:frame-update",
+            "soft-nav:progress-bar:end",
+            "soft-nav:external:success",
+            "filterable:change",
+            "menu:activated",
+            "beforetoggle",
+            "load",
+            "textInput",
+            "toggle",
+        ];
+        const passive = { passive: true };
+        let startPromise;
+
+        function on(name, listener) {
+            events.on(name, listener, passive);
+        }
+
+        function start() {
+            if (startPromise) return startPromise;
+
+            const tasks = [actions.styleSheets.mount()];
+
+            on("soft-nav:react-done", () => actions.refreshIcons());
+            on("turbo:load", () => actions.refreshIcons());
+
+            tasks.push(
+                Promise.resolve(ready).then(() => {
+                    actions.connectCustomMenu((setIcon) => {
+                        setIcon(settings.get("appearance.customMenuIcon"));
+                        settings.onSet(({ prop, after }) => {
+                            if (prop === "appearance.customMenuIcon")
+                                setIcon(after);
+                        });
+                    });
+                }),
+            );
+
+            if (environment.isMainSite) {
+                tasks.push(
+                    Promise.resolve(ready).then(() =>
+                        actions.refreshReleases(),
+                    ),
+                );
+                on("turbo:load", () => actions.refreshReleases());
+            }
+
+            if (settings.get("additional.extendedUserInfo")) {
+                on("soft-nav:end", () => actions.refreshUserInfo());
+                on("turbo:load", () => actions.refreshUserInfo());
+            }
+
+            if (settings.get("additional.extendedRepoInfo")) {
+                on("soft-nav:react-done", () => actions.refreshRepoInfo());
+                on("turbo:load", () =>
+                    scheduleFrame(() => actions.refreshRepoInfo()),
+                );
+            }
+
+            if (settings.get("additional.trackingPrevention")) {
+                actions.clearTrackingMetadata();
+                on("turbo:before-render", () =>
+                    actions.clearTrackingMetadata(),
+                );
+                actions.protectFetch();
+            }
+
+            if (settings.get("advanced.debug")) {
+                for (const name of debugEvents) {
+                    on(name, (event) => actions.logEvent(name, event));
+                }
+            }
+
+            settings.onGet(({ prop }) => {
+                if (prop === "advanced.rateLimit") actions.showRateLimit();
+            });
+            tasks.push(
+                Promise.resolve(ready).then(() => {
+                    settings.onSet(({ prop, after }) => {
+                        void actions.styleSheets.applySetting(prop, after);
+                    });
+                }),
+            );
+
+            startPromise = Promise.all(tasks).then(() => undefined);
+            return startPromise;
+        }
+
+        return { start };
+    }
+
     const testHook = globalThis.__GHP_TEST_HOOK__;
     if (typeof testHook === "function") {
-        testHook({ createStyleSheetModule });
+        testHook({ createStyleSheetModule, createFeatureLifecycleModule });
         return;
     }
 
@@ -600,7 +719,6 @@
         idPrefix,
         catppuccinPalette,
     });
-    void styleSheets.mount();
     const associations = JSON.parse(
         GM_getResourceText("catppuccin-associations"),
     );
@@ -726,26 +844,8 @@
             });
         });
     }
-    document.addEventListener(
-        "soft-nav:react-done",
-        () => {
-            updateIcons();
-        },
-        {
-            passive: true,
-        },
-    );
-    document.addEventListener(
-        "turbo:load",
-        () => {
-            updateIcons();
-        },
-        {
-            passive: true,
-        },
-    );
     // Custom Menu Icon
-    documentReady.then(() => {
+    function connectCustomMenu(onConnected) {
         const partial = $('react-partial[partial-name="global-nav-bar"]');
         const obs = new MutationObserver(init);
         obs.observe(partial, { attributeFilter: ["class"] });
@@ -768,14 +868,9 @@
                     menuBtn.appendChild(originalIcon);
                 }
             }
-            customMenuIcon(config.get("appearance.customMenuIcon"));
-            config.addEventListener("set", (e) => {
-                if (e.detail.prop === "appearance.customMenuIcon") {
-                    customMenuIcon(e.detail.after);
-                }
-            });
+            onConnected(customMenuIcon);
         }
-    });
+    }
 
     // Release features
     /**
@@ -983,21 +1078,8 @@
             }
         });
     }
-    if (location.hostname === topDomain) {
-        // Only run on GitHub main site
-        documentReady.then(setupListeners);
-        // Examine event listeners on `document`, and you can see the event listeners for the `turbo:*` events. (Remember to check `Framework Listeners`)
-        document.addEventListener("turbo:load", setupListeners, {
-            passive: true,
-        });
-        // Other possible approaches and reasons against them:
-        // - Use `MutationObserver` - Not efficient
-        // - Hook `CustomEvent` to make `include-fragment-replace` events bubble - Monkey-patching
-        // - Patch `IncludeFragmentElement.prototype.fetch`, just like GitHub itself did at `https://github.githubassets.com/assets/app/assets/modules/github/include-fragment-element-hacks.ts`
-        //   - Monkey-patching
-        //   - If using regex to modify the response, it would be tedious to maintain
-        //   - If using `DOMParser`, the same HTML would be parsed twice
-    }
+    // `include-fragment-replace` avoids reparsing responses or observing the
+    // entire document. Feature lifecycle owns initial and Turbo scheduling.
 
     // Extended user & repo info
     const octicons = {
@@ -1070,14 +1152,6 @@
             relativeTime(info.updated_at),
         );
         addInfoRow("id_badge", "Node ID", (info) => info.node_id);
-    }
-    if (config.get("additional.extendedUserInfo")) {
-        document.addEventListener("soft-nav:end", extendedUserInfo, {
-            passive: true,
-        }); // First load
-        document.addEventListener("turbo:load", extendedUserInfo, {
-            passive: true,
-        }); // Subsequent soft navigations that don't trigger `soft-nav:end`
     }
     function extendedRepoInfo() {
         log("Fetching extended repository info");
@@ -1179,19 +1253,6 @@
         }
         addRows();
     }
-    if (config.get("additional.extendedRepoInfo")) {
-        document.addEventListener("soft-nav:react-done", extendedRepoInfo, {
-            passive: true,
-        });
-        document.addEventListener(
-            "turbo:load",
-            () => requestAnimationFrame(extendedRepoInfo),
-            {
-                passive: true,
-            },
-        ); // Fallback for pages that don't finish through React soft-nav
-    }
-
     // Tracking prevention
     function preventTracking() {
         log("Calling preventTracking");
@@ -1229,69 +1290,49 @@
         });
         log("Unhooked window.fetch");
     }
-    if (config.get("additional.trackingPrevention")) {
-        // All we need to remove is in the `head` element, so we can run it immediately.
-        preventTracking();
-        document.addEventListener("turbo:before-render", preventTracking, {
-            passive: true,
-        });
-        preventFetchPatching();
+    function showRateLimit() {
+        const resetDate = new Date(rateLimit.reset * 1000).toLocaleString();
+        alert(
+            `Rate limit: remaining ${rateLimit.remaining}/${rateLimit.limit}, resets at ${resetDate}.\nIf you see -1, it means the rate limit has not been fetched yet, or GitHub has not provided the rate limit information.`,
+        );
     }
 
-    // Debugging
-    if (config.get("advanced.debug")) {
-        const events = [
-            "turbo:before-cache",
-            "turbo:before-render",
-            "turbo:before-morph-element",
-            "turbo:before-frame-render",
-            "turbo:load",
-            "turbo:reload",
-            "turbo:render",
-            "turbo:morph",
-            "turbo:morph-element",
-            "turbo:frame-load",
-            "turbo:frame-render",
-            "turbo:visit",
-            "turbo:before-fetch-request",
-            "turbo:before-fetch-response",
-            "soft-nav:initial",
-            "soft-nav:start",
-            "soft-nav:render",
-            "soft-nav:end",
-            "soft-nav:react-done",
-            "soft-nav:replace-mechanism",
-            "soft-nav:frame-update",
-            "soft-nav:progress-bar:end",
-            "soft-nav:external:success",
-            "filterable:change",
-            "menu:activated",
-            "beforetoggle",
-            "load",
-            "textInput",
-            "toggle",
-        ];
-        events.forEach((event) => {
-            document.addEventListener(event, (e) => log(`Event: ${event}`, e), {
-                passive: true,
-            });
-        });
-    }
-
-    // Show rate limit
-    config.addEventListener("get", (e) => {
-        if (e.detail.prop === "advanced.rateLimit") {
-            const resetDate = new Date(rateLimit.reset * 1000).toLocaleString();
-            alert(
-                `Rate limit: remaining ${rateLimit.remaining}/${rateLimit.limit}, resets at ${resetDate}.\nIf you see -1, it means the rate limit has not been fetched yet, or GitHub has not provided the rate limit information.`,
-            );
-        }
+    const featureLifecycle = createFeatureLifecycleModule({
+        ready: documentReady,
+        settings: {
+            get: (prop) => config.get(prop),
+            onGet(listener) {
+                config.addEventListener("get", (event) =>
+                    listener(event.detail),
+                );
+            },
+            onSet(listener) {
+                config.addEventListener("set", (event) =>
+                    listener(event.detail),
+                );
+            },
+        },
+        events: {
+            on: (name, listener, options) =>
+                document.addEventListener(name, listener, options),
+        },
+        scheduleFrame: (callback) => requestAnimationFrame(callback),
+        environment: { isMainSite: location.hostname === topDomain },
+        actions: {
+            styleSheets,
+            refreshIcons: updateIcons,
+            connectCustomMenu,
+            refreshReleases: setupListeners,
+            refreshUserInfo: extendedUserInfo,
+            refreshRepoInfo: extendedRepoInfo,
+            clearTrackingMetadata: preventTracking,
+            protectFetch: preventFetchPatching,
+            showRateLimit,
+            logEvent: (eventName, event) =>
+                log(`Event: ${eventName}`, event),
+        },
     });
-    documentReady.then(() => {
-        config.addEventListener("set", (e) => {
-            void styleSheets.applySetting(e.detail.prop, e.detail.after);
-        });
-    });
+    void featureLifecycle.start();
 
     log(`${name} v${version} has been loaded 🎉`);
 })();

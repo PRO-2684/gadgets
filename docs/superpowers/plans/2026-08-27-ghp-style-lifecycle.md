@@ -184,4 +184,3 @@ git log -2 --oneline
 - [ ] **Step 2: Review both commit ranges**
 
 Review the first commit against the style-sheet requirements and the second against the behavior-preserving lifecycle requirements. Fix Critical or Important findings in the corresponding commit when safe; otherwise add a follow-up commit and report why.
-
