@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.5.8
+// @version      0.6.0
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -16,22 +16,23 @@
 // @grant        GM_unregisterMenuCommand
 // @grant        GM_addValueChangeListener
 // @grant        GM_getResourceText
+// @grant        GM.getResourceUrl
 // @grant        GM_setClipboard
 // @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
 // @connect      *
 // @require      https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.3.0
-// @require      https://update.greasyfork.org/scripts/492078/1499254/pURLfy.js
 // @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
-// @resource     rules-tracking https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/tracking.min.json
-// @resource     rules-outgoing https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/outgoing.min.json
-// @resource     rules-shortener https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/shortener.min.json
-// @resource     rules-alternative https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/alternative.min.json
-// @resource     rules-other https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.3.x/other.min.json
+// @resource     purlfy https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy@v0.4.2/src/purlfy.min.js
+// @resource     rules-tracking https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.4.x/tracking.min.json
+// @resource     rules-outgoing https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.4.x/outgoing.min.json
+// @resource     rules-shortener https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.4.x/shortener.min.json
+// @resource     rules-alternative https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.4.x/alternative.min.json
+// @resource     rules-other https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.4.x/other.min.json
 // @license      gpl-3.0
 // ==/UserScript==
 
-(function () {
+(async function () {
     const tag1 = "purlfy-purifying";
     const tag2 = "purlfy-purified";
     const eventName = "purlfy-purify-done";
@@ -224,6 +225,7 @@
             console.log("[pURLfy for Tampermonkey]", ...args);
     }
     // Initialize pURLfy core
+    const { default: Purlfy } = await import(await GM.getResourceUrl("purlfy"));
     const purifier = new Purlfy({
         fetchEnabled: true,
         lambdaEnabled: true,
