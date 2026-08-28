@@ -4,7 +4,7 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.6.0
 // @description  The ultimate URL purifier - for Tampermonkey
-// @description:zh-cn 终极 URL 净化器 - Tampermonkey 版本
+// @description:zh-CN 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
 // @author       PRO
 // @match        *://*/*
