@@ -23,7 +23,7 @@
 // @connect      *
 // @require      https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.3.0
 // @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
-// @require      https://github.com/PRO-2684/pURLfy/releases/download/v0.4.3/purlfy.user.min.js
+// @require      https://github.com/PRO-2684/pURLfy/releases/download/v0.4.3/purlfy.user.min.js#sha256=3909ccf0aaa187deb652111067d444cb5aa4e7f71fb21694290982b9106aa4bd
 // @resource     rules-tracking https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.4.x/tracking.min.json
 // @resource     rules-outgoing https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.4.x/outgoing.min.json
 // @resource     rules-shortener https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.4.x/shortener.min.json
