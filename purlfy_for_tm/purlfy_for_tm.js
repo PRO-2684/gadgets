@@ -2,7 +2,7 @@
 // @name         pURLfy for Tampermonkey
 // @name:zh-CN   pURLfy for Tampermonkey
 // @namespace    http://tampermonkey.net/
-// @version      0.6.0
+// @version      0.6.1
 // @description  The ultimate URL purifier - for Tampermonkey
 // @description:zh-CN 终极 URL 净化器 - Tampermonkey 版本
 // @icon         https://github.com/PRO-2684/pURLfy/raw/main/images/logo.svg
@@ -23,7 +23,7 @@
 // @connect      *
 // @require      https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.3.0
 // @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
-// @resource     purlfy https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy@v0.4.2/src/purlfy.min.js
+// @require      https://github.com/PRO-2684/pURLfy/releases/download/v0.4.3/purlfy.user.min.js
 // @resource     rules-tracking https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.4.x/tracking.min.json
 // @resource     rules-outgoing https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.4.x/outgoing.min.json
 // @resource     rules-shortener https://cdn.jsdelivr.net/gh/PRO-2684/pURLfy-rules@core-0.4.x/shortener.min.json
@@ -225,7 +225,6 @@
             console.log("[pURLfy for Tampermonkey]", ...args);
     }
     // Initialize pURLfy core
-    const { default: Purlfy } = await import(await GM.getResourceUrl("purlfy"));
     const purifier = new Purlfy({
         fetchEnabled: true,
         lambdaEnabled: true,
