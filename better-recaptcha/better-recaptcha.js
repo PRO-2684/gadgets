@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Better reCAPTCHA
 // @namespace    http://tampermonkey.net/
-// @version      0.1.2
+// @version      0.1.3
 // @description  Various QoL improvements to reCAPTCHA.
 // @author       PRO
 // @run-at       document-end
@@ -19,8 +19,8 @@
 // @require      https://github.com/PRO-2684/GM_config/releases/download/v1.2.2/config.min.js#md5=c45f9b0d19ba69bb2d44918746c4d7ae
 // ==/UserScript==
 
-(function() {
-    'use strict';
+(function () {
+    "use strict";
     const { name, version } = GM.info.script;
     const lastPart = location.pathname.slice(16); // `anchor` or `bframe`
     const $ = document.querySelector.bind(document);
@@ -36,7 +36,7 @@
         },
         slideSelect: {
             name: "Slide select",
-            title: "[Image Select] Hold down the primary button on your mouse and slide across tiles to (de)select them",
+            title: "[Image Select] Drag to select or deselect based on the first tile; retrace your path to undo",
             type: "bool",
             value: true,
         },
@@ -57,12 +57,30 @@
         }
         return;
     } else if (lastPart !== "bframe") {
-        log(`Unknown path, ignoring: ${lastPart}`)
+        log(`Unknown path, ignoring: ${lastPart}`);
         return;
     }
 
     // Slide select
+    let slidePath = [];
+    let slideSelected = false;
+    function endSlideSelect() {
+        slidePath = [];
+    }
+    function isTileSelected(tile) {
+        return tile.classList.contains("rc-imageselect-tileselected");
+    }
+    function setTileSelected(tile, selected) {
+        if (isTileSelected(tile) !== selected) {
+            tile.click();
+        }
+    }
     function slideSelect() {
+        document.addEventListener("mouseup", endSlideSelect, true);
+        window.addEventListener("blur", endSlideSelect);
+        document.addEventListener("mousemove", (e) => {
+            if (e.buttons !== 1) endSlideSelect();
+        });
         const div = $("div");
         const obs = new MutationObserver((mutations, _obs) => {
             let succ = trySetupSlideSelect();
@@ -76,31 +94,52 @@
         if (!body) {
             return false;
         }
-        body.addEventListener("click", (e) => {
-            if (e.isTrusted) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        }, { capture: true });
+        body.addEventListener(
+            "click",
+            (e) => {
+                if (e.isTrusted) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            },
+            { capture: true },
+        );
         const tiles = body.querySelectorAll("tr > td");
-        tiles.forEach(tile => {
+        tiles.forEach((tile) => {
             tile.addEventListener("mouseenter", slideSelectEnterHandler);
             tile.addEventListener("mousedown", slideSelectDownHandler);
         });
         return true;
     }
     function slideSelectEnterHandler(e) {
-        if (e.buttons === 1) {
-            // Left button is pressed
-            e.preventDefault();
-            this.click();
+        if (
+            e.buttons !== 1 ||
+            slidePath.some(({ tile }) => !tile.isConnected)
+        ) {
+            endSlideSelect();
+            return;
+        }
+        if (!slidePath.length) return;
+        e.preventDefault();
+        const index = slidePath.findIndex(({ tile }) => tile === this);
+        if (index !== -1) {
+            // Keep the endpoint; restore only the tiles removed by backtracking.
+            while (slidePath.length > index + 1) {
+                const { tile, selected } = slidePath.pop();
+                setTileSelected(tile, selected);
+            }
+        } else {
+            slidePath.push({ tile: this, selected: isTileSelected(this) });
+            setTileSelected(this, slideSelected);
         }
     }
     function slideSelectDownHandler(e) {
         if (e.buttons === 1) {
-            // Left button is pressed
             e.preventDefault();
-            this.click();
+            const selected = isTileSelected(this);
+            slidePath = [{ tile: this, selected }];
+            slideSelected = !selected;
+            setTileSelected(this, slideSelected);
         }
     }
     if (config.get("slideSelect")) {
